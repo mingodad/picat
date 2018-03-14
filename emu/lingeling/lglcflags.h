@@ -1,0 +1,2 @@
+#define LGL_CC "gcc (GCC) 4.3.4 20090804 (release) 1"
+#define LGL_CFLAGS "-Wall -O3 -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT "

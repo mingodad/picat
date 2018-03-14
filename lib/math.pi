@@ -1,0 +1,206 @@
+module math.  % imported by default
+
+abs(X) = abs(X).
+acos(X) = acos(X).
+% acot(X) = acot(X).
+% acoth(X) = acoth(X).
+% acsc(X) = acsc(X).
+% acsch(X) = acsch(X).
+% asec(X) = asec(X).
+% asech(X) = asech(X).
+asin(X) = asin(X).
+atan(X) = atan(X).
+atan2(X,Y) = atan2(X,Y).
+ceiling(X) = ceiling(X).
+cos(X) = cos(X).
+% cot(X) = cot(X).
+% coth(X) = coth(X).
+% csc(X) = csc(X).
+% csch(X) = csch(X).
+e = 2.71828182845904523536.
+even(X) => even(X).
+exp(X) = exp(X).
+factorial(N) = factorial(N).
+floor(X) = floor(X).
+frand() = frand().
+frand(Low,High) = frand(Low,High).
+gcd(A,B) = gcd(A,B).
+log(B,X) = log(B,X).
+log(X) = log(X).
+log10(X) = log10(X).
+log2(X) = log2(X).
+modf(X) = modf(X).
+odd(X) => odd(X).
+pi = 3.14159265358979323846.
+pow(X,Y) = pow(X,Y).
+pow_mod(X,Y,Z) = V => bp.picat_pow_mod(X,Y,Z,V).
+prime(X) => prime(X).
+primes(N)=primes(N).
+rand_max() = rand_max().
+random() = random().
+random(Low,High) = random(Low,High).
+random(Seed) = random(Seed).
+random2() = random2().
+round(X) = round(X).
+% sec(X) = sec(X).
+% sech(X) = sech(X).
+sign(X) = sign(X).
+sin(X) = sin(X).
+sqrt(X) = sqrt(X).
+tan(X) = tan(X).
+to_degrees(X) = (X/3.141592653589793)*180.0.
+to_radians(X) = X/180.0*3.141592653589793.
+truncate(X) = truncate(X).
+%%
+% secant of X radians
+sec(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+
+   if X == pi / 2 || X == 3 * pi / 2 then      % secant cannot be given odd multiples of pi / 2
+      throw $error(domain_error(Orig), sec)
+   else
+      Val = 1 / cos(X)
+   end.
+
+% cosecant of X radians
+csc(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+
+   if X == 0 || X == 0.0 || X == pi() then     % cosecant cannot be given multiples of pi
+      throw $error(domain_error(Orig), csc)
+   else
+      Val = 1 / sin(X)
+   end.
+
+% cotangent of X radians
+cot(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+   if X == 0 || X == 0.0 || X == pi() then     % cotangent cannot be given multiples of pi
+      throw $error(domain_error(Orig), cot)
+   elseif X == pi / 2 || X == 3 * pi / 2 then  % tan(X) is undefined, so manually assign 0
+      Val = 0.0
+   else
+      Val = cos(X) / sin(X)
+   end.
+
+% inverse secant
+asec(X) = Val =>
+   if X > -1 && X < 1 then                     % acos must be passed values in the range [-1, 1]
+      throw $error(domain_error(X), asec)
+   else
+      Val = acos(1 / X)
+   end.
+
+% inverse cosecant
+acsc(X) = Val =>                               
+   if X > -1 && X < 1 then                     % asin must be passed values in the range [-1, 1]
+      throw $error(domain_error(X), acsc)
+   else
+      Val = asin(1 / X)
+   end.
+
+% inverse cotangent
+acot(X) = Val =>
+   if X == 0 || X == 0.0 then
+      Val = pi / 2
+   else
+      Val = atan(1 / X)
+   end.
+
+% hyperbolic sine
+sinh(X) = Val =>
+     Val = (exp(X) - exp(-X)) / 2.
+
+% hyperbolic cosine
+cosh(X) = Val =>
+     Val = (exp(X) + exp(-X)) / 2.
+
+% hyperbolic tangent
+tanh(X) = Val =>
+     Val = (exp(2 * X) - 1) / (exp(2 * X) + 1).
+
+% hyperbolic secant
+sech(X) = Val =>
+     Val = 2 / (exp(X) + exp(-X)).
+
+% hyperbolic cosecant
+csch(X) = Val =>
+     if X == 0 || X == 0.0 then
+        throw $error(domain_error(X), csch)
+     else
+        Val = 2 / (exp(X) - exp(-X))
+     end.
+
+% hyperbolic cotangent
+coth(X) = Val =>
+     if X == 0 || X == 0.0 then
+        throw $error(domain_error(X), coth)
+     else
+        Val = (exp(2 * X) + 1) / (exp(2 * X) - 1)
+     end.
+
+% inverse hyperbolic sine
+asinh(X) = Val =>
+     Val = log(X + sqrt(1 + X ** 2)).
+
+% inverse hyperbolic cosine
+acosh(X) = Val =>
+      if X < 1 then
+         throw $error(domain_error(X), acosh)
+      else
+         Val = log(X + sqrt(X + 1) * sqrt(X - 1))
+      end.
+
+% inverse hyperbolic tangent
+atanh(X) = Val =>
+      if X <= -1 || X >= 1 then
+         throw $error(domain_error(X), atanh)
+      else
+         Val = (log(1 + X) - log(1 - X)) / 2
+      end.
+
+% inverse hyperbolic secant
+asech(X) = Val =>
+      if X <= 0 || X > 1 then
+         throw $error(domain_error(X), asech)
+      else
+         Val = log(sqrt(1 / X - 1) * sqrt(1 / X + 1) + 1 / X)
+      end.
+
+% inverse hyperbolic cosecant
+acsch(X) = Val =>
+      if X == 0 || X == 0.0 then
+         throw $error(domain_error(X), acsch)
+      else
+         Val = log(sqrt(1 + 1 / (X ** 2)) + 1 / X)
+      end.
+
+% inverse hyperbolic cotangent
+acoth(X) = Val =>
+      if X >= -1 && X <= 1 then
+         throw $error(domain_error(X), acoth)
+      else
+         Val = (log(1 + 1 / X) - log(1 - 1 / X)) / 2
+      end.
+

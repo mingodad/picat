@@ -1,0 +1,32 @@
+import os.
+
+main =>
+    Files = listdir("."),
+    foreach (File in Files, append(_,".out",File))
+        main([File])
+    end.
+
+
+main([File]) =>
+    IS = open(File),
+    Map = new_map(),
+    Line = IS.read_line(),
+    (Line !== end_of_file -> printf("analyzing %s\n",File); true),
+    proc_lines(Line,IS,Map),
+    List = [(Val,Key) : (Key=Val) in Map].sort_down(),
+    foreach((Val,Key) in List, Val >= 100)
+        printf("%s:  %w\n",Key,Val)
+    end,
+    close(IS).
+
+proc_lines(end_of_file,_IS,_Map) => true.
+proc_lines(Line,IS,Map) => 
+    Count = Map.get(Line,0),
+    Map.put(Line,Count+1),
+    NLine = IS.read_line(),
+    proc_lines(NLine,IS,Map).
+
+    
+
+
+    

@@ -1,0 +1,208 @@
+/*
+Last week I ran into Picat, and found it a very interesting experience.
+
+For the statistical / data processing stuff I wanted to try, there were some things missing.
+So I wrote some functions/predicates, and though that they might be useful for other people here (Code below):
+
+- pdist /sqpdist: Pairwise Euclidean distances between a set of vectors (and squared versions, avoiding the extra sqrt)
+- pdist2/sqpdist2: Pairwise Euclidean distances between 2 different sets of vectors
+- sortind : sorts an array and returns tuples of (index, value) where index is the index of value in the sorted array (Inspired by grade_up from apl_utils).
+- center : Center data around column averages , or  arbitrary vector
+- cov : Calculate the sample covariance matrix of a set of vectors (rows = samples, columns are variables)
+- idmat: Identity matrix
+- gaussjordan : Reduces a system of linear equations (with multiple right hand sides) to row echelon form.
+- backsubst : After gaussjordan, backsubst solves the system.
+- inv : inverse of a matrix via gaussjordan. (watch out for badly conditioned matrices)
+- mvnpdf/logmvnpdf: probability density function for a multivariate normal distribution. (log version is handy for likelihood).
+- normpdf/lognormpdf: probability density function for a uni-variate normal distribution.
+- std: Sample standard deviation
+- permpar: predicate finding the parity of a permutation (as of now, only permutations of 1..N ).
+- det: determinant of a matrix
+
+As these are about the only things I ever wrote in Picat, I'm curious for comments, or recommendations.
+I hope they can come in handy for someone.
+
+Jan-Pieter
+*/
+import util.
+
+% Calculate pairwise squared Euclidean distances between vectors.
+% calculates only half of the distances: symmetry
+sqpdist(M) = M3 =>
+    M3 = new_array(M.length, M.length),
+    foreach(I in 1..M.length, J in I..M.length)
+        M3[I,J] = sum([(M[I,K]-M[J,K])**2 : K in 1..M[1].length]),
+        M3[J,I] = M3[I,J]
+    end.
+
+% Non-squared version
+pdist(M) = D =>
+    S = sqdist(M),
+    D = new_array(S.len,S.len),
+    foreach (I in 1..S.len, J in I..S.len)
+        D[I,J] = sqrt(S[I,J]),
+        D[J,I] = D[I,J]
+    end.
+
+% Calculates pairwise squared distances between each row in the first matrix vs. the
+% rows in the second matrix
+sqpdist2(M1,M2) = M3 =>
+    M3 = new_array(M1.length, M2.length),
+    foreach(I in 1..M1.length, J in 1..M2.length)
+        M3[I,J] = sum([(M1[I,K]-M2[J,K])**2 : K in 1..M1[1].length])
+    end.
+
+% Non-squared version
+pdist2(M) = D =>
+    S = sqdist(M),
+    D = new_array(S.len,S[1].len),
+    foreach (I in 1..S.len, J in 1..S.len)
+        D[I,J] = sqrt(S[I,J])
+    end.
+
+% Small utility printing a matrix
+printmat(M) => foreach (X in 1 .. M.length) writeln(M[X]) end.
+
+% Get indices for permutation turning the array into a sorted array
+grade_up(L) = [ I : (E,I) in sort([(E,I) : {E,I} in zip(L,1..L.length)])].
+% Same as grade_up, but also get the values
+sortind(L)  = [ (I,E) : (E,I) in sort([(E,I) : {E,I} in zip(L,1..L.length)])].
+
+% Center data around column averages
+center(Dat) = Centered =>
+    Dat_T = transpose(Dat),
+    M = Dat[1].length,
+    A = [avg(to_list(Dat_T[I])): I in 1 .. M],
+    Centered = center(Dat,A).
+
+% Center a data set around A.
+center(Dat,A) = Centered =>
+    [N,M] = [Dat.length, Dat[1].length],
+    Centered = new_array(N, M),
+    foreach (I in 1..N , J in 1..M)
+            Centered[I,J] = Dat[I,J] - A[J]
+    end.
+
+% Sample Covariance matrix (samples in rows, variables in columns).
+cov(Dat) = Cov =>
+    Cen = center(Dat),
+    [N,M] = [length(Dat),length(Dat[1])],
+    Cov = matrix_multi(transpose(Cen),Cen),
+    foreach(I in 1..M, J in 1..M)
+        Cov[I,J]:=Cov[I,J]/(N-1)
+    end.
+
+% Identity matrix of size(N,N)
+idmat(N) = I =>
+    I = new_array(N,N),
+    foreach ( K in 1..N, L in 1..N)
+        I[K,L]= cond( K==L, 1,0)
+    end.
+
+% Reduce [L | R] augmented matrix to row-echolon form
+gaussjordan(L,R) = [LL,RR] =>
+    [N,M1,M2] = [length(L),length(L[1]),length(R[1])],
+    LL = new_array(N,M1),
+    foreach ( I in 1..N, J in 1..M1) LL[I,J]=L[I,J] end,
+    RR = new_array(N,M2),
+    foreach ( I in 1..N, J in 1..M2) RR[I,J]=R[I,J] end,
+    % Make Echelon form.
+    foreach(J in 1..N, I in J+1..N)
+        C = LL[I,J]/LL[J,J],
+        foreach(K in 1 .. M1) % Process LHS
+            LL[I,K]:=LL[I,K]-C*LL[J,K]
+        end,
+        foreach(K in 1 .. M2) % Process RHS
+            RR[I,K]:=RR[I,K]-C*RR[J,K]
+        end
+    end.
+
+% Do back-substitution to obtain solutions for right hand sides.
+% Does not reduce L to unity matrix to save operations.
+backsubst(L,R) = RR =>
+    [N,M2] = [length(L),length(R[1])],
+    RR = new_array(N,M2),
+    foreach(I in 1..N, J in 1..M2) RR[I,J] = R[I,J] end,
+    % Do backsubstitution, start from the bottom row, and work up.
+    foreach (I in N .. -1 .. 1)
+        foreach(K in 1..M2)
+            Sum = 0,
+            foreach(J in I+1 .. N)
+                Sum := Sum + L[I,J]*RR[J,K]
+            end,
+            RR[I,K] := (RR[I,K]-Sum)/L[I,I]
+        end
+    end.
+
+% Matrix inverse via Gauss-Jordan.
+% Note that for badly conditioned matrices, and larger matrices
+% errors might accumulate... There are better ways...
+inv(M) = Id =>
+    N = length(M),
+    MM = new_array(N,N), % Copy to avoid overwriting original
+    foreach(I in 1..N,J in 1..N)
+        MM[I,J]=M[I,J]
+    end,
+    [L,R] = gaussjordan(MM,idmat(N)),
+    Id = backsubst(L,R).
+
+table
+% Logarithm of the probability density function of the
+% multivariate normal distribution around mean M and with covariance S.
+logmvnpdf(X,M,S) = L =>
+    % X should be 2D, M 1D, S 2D.
+    K = length(X[1]),
+    Xc  = center(X,M),
+    E  = matrix_multi(matrix_multi(Xc,inv(S)),transpose(Xc)),
+    L  = -(log(det(S)) + E[1,1] + K*log(2*math.pi))/2.
+
+% Un-log the logmvnpdf.
+mvnpdf(X,M,S) = exp(logmvnpdf(X,M,S)).
+
+% Sample standard deviation
+std(L) = S =>
+    N = L.len,
+    S = sqrt(sum([ (L[I]-avg(L))**2 : I in 1..N]) / (N-1)).
+
+table
+% Logarithm of the probability density function of the univariate
+% normal distribution around mean M and standard deviation S.
+lognormpdf(X,M,S) = L =>
+    L = -((X -M)**2/(S**2) + log(2*math.pi * S**2))/2.
+
+% Un-log the above normpdf
+normpdf(X,M,S) = P =>
+    P = exp(lognormpdf(X,M,S)).
+
+% Calculate the Levi-Civita permutation symbol aka. permutation parity.
+table(+,-)
+permpar(P,S),not permutation(P,1..length(P)) => S=0.    % not a permutation
+permpar([],S) => S=1.                                   % Empty set is always sorted.
+permpar([1|T],S) =>                                     % 1 is already in front, continue
+        TT = [T[K]-1 : K in 1..T.len],
+        permpar(TT,S).
+permpar([H|T],S) =>                                     % All other cases:
+        X=find_first_of(zip(T,1..T.len),{1,X}),         %  Find 1
+        TT = [ T[K]-1: K in 1..T.len],                  %  subtract 1 (for next iteration)
+        TT[X] := H-1,                                   %  swap 1 and H (-1 because after prev)
+        permpar(TT,S2),                                 %  Continue on the rest.
+        S = -S2.                                        %  Swap happened: flip sign.
+
+% Calculate the determinant of a matrix
+det(A) = D,length(A)=length(A[1]) =>
+    N = A.length,
+    Per = permutations(1..N),
+    NP = Per.len,
+
+    Par = [S: K in 1 .. NP, permpar(Per[K],S)],
+    Contrib = new_list(NP),
+    foreach (K in 1..NP)
+        Sig = Per[K],
+        Comp = new_list(N),
+        foreach (I in 1..N)
+            Id = Sig[I],
+            Comp[I] = A[I,Id]
+        end,
+        Contrib[K] = Par[K]*prod(Comp)
+    end,
+    D = sum(Contrib).

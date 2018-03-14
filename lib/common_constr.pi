@@ -1,0 +1,229 @@
+module common_constr.
+
+regular_constr(L, Q, S, M, Q0, Fs, Solver), list(L) =>
+    regular_constr_aux(L, Q, S, M, Q0, Fs, Solver).
+regular_constr(L, Q, S, M, Q0, Fs ,Solver), array(L) =>
+    regular_constr_aux(to_list(L), Q, S, M, Q0, Fs ,Solver).
+regular_constr(L, _Q, _S, _M, _Q0, _Fs, _Solver) =>
+    handle_exception($list_or_array_expected(L),regular).
+
+% If W (a list) has index set 1..n, then Visited[1] is the initial state (Q0),
+% and Visited[i+1] holds the state we're in after  processing W[i].
+% If Visited[n+1] is in Fs, then we succeed (ie. accept the string).
+%
+regular_constr_aux([], _Q, _S, _M, Q0, Fs, Solver) =>
+    if Solver == cp then
+        bp.element(_,Fs,Q0)
+    else
+        bp.'$element'(_,Fs,Q0)
+    end.
+regular_constr_aux(W, Q, S, M, Q0, Fs, Solver) =>
+    check_regular_args(Q, S, M, Q0, Fs, Matrix, FsLst),   
+    N = len(W),
+    Visited = new_array(N+1),            % states
+    bp.domain(to_list(Visited),1,Q),
+    bp.domain(W,1,S),
+    Visited[1] = Q0,                    % initial state
+    bp.'::'(Visited[N+1],FsLst),
+    %    
+    preprocess_regular_constr(Q,S,Matrix,Q0,FsLst,Visited,N),
+    matrix_element_table(Matrix,Q,S,Table,NFA),
+    regular_transitions(W,1,Visited,VarTuples),
+    (Solver == cp ->
+        bp.table_in(VarTuples,Table)
+    ;        
+        bp.'$table_in'(VarTuples,Table)
+    ),
+    if Solver == cp && NFA == 1 then 
+        bp.wait_to_check_regular(Matrix,Q0,FsLst,W)      % needed for NFA
+    end.  
+
+check_regular_args(Q, S, M, Q0, Fs, Matrix, FsList) =>
+    (integer(Q), Q > 0 -> true; handle_exception($positive_integer_expected(Q),regular)),
+    (integer(Q0), Q0 > 0 -> true; handle_exception($positive_integer_expected(Q0),regular)),    
+    (integer(S), S > 0 -> true; handle_exception($positive_integer_expected(S),regular)),
+    (array(Fs) -> FsList = to_list(Fs); FsList=Fs),
+    (int_list(FsList) -> true; handle_exception($integer_list_or_array_expected(Fs),regular)),
+    (list(M) -> bp.list_matrix_to_array_matrix(M,Matrix); Matrix=M),
+    (ground(Matrix) -> true; handle_exception($ground_matrix_expected(M),regular)),
+    (check_matrix(Matrix,Q,S) -> true; handle_exception($invalid_matrix(M),regular)).
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Visited is a vector of state variables created for the automaton. Visited[I]
+% is the state visited in time I (Visited[1] = Q0). For a state, let D0 be the
+% shortest distance to it from Q0. Then the state cannot be visited in times
+% 1,..., D0. Likewise, let Df be the shortest distance from the state to any final
+% state. Then the state cannot be visited in times N-Df+2..N.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+preprocess_regular_constr(Q,S,Matrix,Q0,FsLst,Visited,N) =>
+    SDFromQ0 = new_array(Q),                                  % SDFromQ0[I], the shortest distance to state I from Q0
+    SDFromQ0[Q0] = 0,
+    fa_shortest_distance([Q0],S,Matrix,SDFromQ0),           
+    %      
+    transport_trans_matrix(Matrix,TMatrix),
+    SDFromF = new_array(Q),                                   % SDFromF[I], the shortest distance to I from any state in FsLst
+    foreach (F in FsLst)
+        SDFromF[F] = 0
+    end,
+    fa_shortest_distance(FsLst,S,TMatrix,SDFromF),
+    %
+    foreach (State in 1..Q)
+        foreach (T in 2..SDFromQ0[State])
+            bp.domain_set_false(Visited[T],State)
+        end,
+        foreach (T in (N-SDFromF[State]+2)..N)
+            bp.domain_set_false(Visited[T],State)
+        end
+    end.
+
+fa_shortest_distance([],_S,_Matrix,_DistVect) => true.
+fa_shortest_distance([State|Queue],S,Matrix,DistVect) =>
+   NStates = [],
+   foreach (Input in 1..S)
+       Entry = Matrix[State,Input],
+       if list(Entry) then
+            foreach (NextState in Entry)
+                if (var(DistVect[NextState])) then
+                    NStates := [NextState|NStates],
+                    DistVect[NextState] = DistVect[State]+1
+                elseif DistVect[NextState] > DistVect[State] + 1 then
+                    NStates := [NextState|NStates],
+                    DistVect[NextState] := DistVect[State]+1
+                end
+            end
+       elseif Entry !== 0 then
+            if (var(DistVect[Entry])) then
+                NStates := [Entry|NStates],
+                DistVect[Entry] = DistVect[State]+1
+            elseif DistVect[Entry] > DistVect[State] + 1 then
+                NStates := [Entry|NStates],
+                DistVect[Entry] := DistVect[State]+1
+            end
+        end
+    end,
+    if NStates !== [] then
+        append(Queue,NStates,NewQueue)
+    else
+        NewQueue = Queue
+    end,
+    fa_shortest_distance(NewQueue,S,Matrix,DistVect).
+
+% convert a matrix to a table
+%  {I,J,M[I,J]}
+%
+matrix_element_table(M,NRows,NCols,TableO,NFA) =>
+    Table = [],
+    foreach(R in 1..NRows, C in 1..NCols)
+        Entry = M[R,C],
+        ((list(Entry); struct(Entry)) ->
+		    NFA = 1,
+            foreach(E in Entry)
+                Table := [{R,C,E}|Table]
+            end
+        ;Entry !== 0 ->
+            Table := [{R,C,Entry}|Table]
+        ;
+            true
+        )
+    end,
+	TableO = Table.
+
+% Here is MiniZinc's infamous matrix element
+%     a[i+1] = d[a[i], x[i]]
+%
+regular_transitions([],_I,_Visited,VarTuples) => VarTuples = [].
+regular_transitions([E|L],I,Visited,VarTuples) =>
+    I1 is I+1,
+	VarTuples = [{Visited[I],E,Visited[I1]}|VarTuplesR],
+    regular_transitions(L,I1,Visited,VarTuplesR).
+
+int_list([]) => true.
+int_list([I|Is]) => integer(I), int_list(Is).
+
+check_matrix(M,NRows,NCols) =>
+    NRows = M.length,
+    NCols = M[1].length,
+    foreach(R in 2..NRows) 
+        M[R].length==NCols 
+    end.
+
+matrix_element(M,NRows,NCols,I,J,MIJ,Solver),ground(M),var(MIJ) =>
+    bp.domain(I,1,NRows),
+    bp.domain(J,1,NCols),
+    (bp.dvar_or_int(MIJ) -> true; bp.fd_new_var(MIJ)),
+    Table = [],
+    foreach(R in 1..NRows, C in 1..NCols)
+        if bp.b_DM_TRUE_cc(I,R) && bp.b_DM_TRUE_cc(J,C) then
+            Entry = M[R,C],
+            (bp.b_DM_TRUE_cc(MIJ,Entry) ->
+                Table := [{R,C,Entry}|Table]
+            ;
+                true
+            )
+        end
+    end,
+    VarTuple = {I,J,MIJ},
+    (Solver==cp ->
+        bp.table_in(VarTuple,Table)
+    ;        
+        bp.'$table_in'(VarTuple,Table)
+    ).
+matrix_element(M,NRows,NCols,I,J,MIJ,Solver) =>
+    bp.bp_matrix_element(M,NRows,NCols,I,J,MIJ,Solver).
+
+
+/* Reverse the transition relation of the automaton */
+transport_trans_matrix(Matrix,TMatrix) =>
+    Q = Matrix.length, S = Matrix[1].length,   % Q is the number of states, S is the number of symbols
+    TMatrix = new_array(Q,S),
+    foreach (State in 1..Q, Input in 1..S)
+        TMatrix[State,Input] = 0
+    end,
+    foreach (State in 1..Q, Input in 1..S)
+        Entry = Matrix[State,Input],
+        (list(Entry) ->
+            foreach (PreState in Entry)
+                TEntry = TMatrix[PreState,Input],
+                (TEntry == 0 ->
+                    TMatrix[PreState,Input] := State
+                ;integer(TEntry) ->
+                    TMatrix[PreState,Input] := [State,TEntry]
+                ;   % TEntry is list
+                    TMatrix[PreState,Input] := [State|TEntry]
+                )
+            end
+        ; Entry !== 0 ->
+            TEntry = TMatrix[Entry,Input],
+            (TEntry == 0 ->
+                TMatrix[Entry,Input] := State
+            ;integer(TEntry) ->
+                TMatrix[Entry,Input] := [State,TEntry]            
+            ;
+                TMatrix[Entry,Input] := [State|TEntry]
+            )
+        ;
+            true
+        )
+    end.
+
+%%
+check_scalars(A,X) =>
+    if list_or_array(A) then
+        if list_or_array(X) then
+            if length(A) !== length(X) then
+                handle_exception($scalars_of_different_lengths(A,X),scalar_product)
+            end
+        else
+            handle_exception($list_or_array_expected(X),scalar_product)
+        end
+    else
+        handle_exception($list_or_array_expected(A),scalar_product)
+    end.
+
+list_or_array(A), list(A) => true.
+list_or_array(A), array(A) => true.
+
+check_neqs_args([],List) => List=[].
+check_neqs_args([X #!= Y|Neqs],List) => List=['#\\='(X,Y)|ListR],check_neqs_args(Neqs,ListR).
+check_neqs_args([Neq|_],_) => handle_exception($neq_constraint_expected(Neq),neqs).
+

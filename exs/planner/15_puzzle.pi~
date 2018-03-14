@@ -1,0 +1,38 @@
+import planner.
+
+main =>
+    InitS = [(1,2),(2,2),(4,4),(1,3),
+             (1,1),(3,2),(1,4),(2,4),
+             (4,2),(3,1),(3,3),(2,3),
+             (2,1),(4,1),(4,3),(3,4)],
+    best_plan(InitS,Plan),
+    foreach (Action in Plan)
+       println(Action)
+    end.
+
+final(State) => State=[(1,1),(1,2),(1,3),(1,4),
+                       (2,1),(2,2),(2,3),(2,4),
+                       (3,1),(3,2),(3,3),(3,4),
+                       (4,1),(4,2),(4,3),(4,4)].
+
+action([P0@(R0,C0)|Tiles],NextS,Action,Cost) =>
+    Cost = 1,
+    (R1 = R0-1, R1 >= 1, C1 = C0, Action = up;
+     R1 = R0+1, R1 =< 4, C1 = C0, Action = down;
+     R1 = R0, C1 = C0-1, C1 >= 1, Action = left;
+     R1 = R0, C1 = C0+1, C1 =< 4, Action = right),
+    P1 = (R1,C1),
+    slide(P0,P1,Tiles,NTiles),
+    NextS = [P1|NTiles].
+
+% slide the tile at P1 to the empty square at P0
+slide(P0,P1,[P1|Tiles],NTiles) =>
+    NTiles = [P0|Tiles].
+slide(P0,P1,[Tile|Tiles],NTiles) =>
+    NTiles=[Tile|NTilesR],
+    slide(P0,P1,Tiles,NTilesR).
+
+heuristic([_|Tiles]) = Dist =>
+    final([_|FTiles]),
+    Dist = sum([abs(R-FR)+abs(C-FC) : 
+                {(R,C),(FR,FC)} in zip(Tiles,FTiles)]).

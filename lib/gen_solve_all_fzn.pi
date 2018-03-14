@@ -1,0 +1,16 @@
+/* for each file with the extension name ".pi", generate a command line to execute the file */
+/* by Neng-Fa Zhou, 2015                                                                    */
+
+import os.
+
+main =>
+    gen(".").
+
+gen(Dir) =>
+    Files = listdir(Dir),
+	foreach (File in Files, append(_,".fzn",File))
+	    printf("echo solving %s\n",File),
+		printf("time timeout -k 900 900 /cygdrive/c/BProlog/Emulator/fzn_picat_sat.exe -log %s\n",File)
+	end.
+
+		

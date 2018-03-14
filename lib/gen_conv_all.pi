@@ -1,0 +1,6 @@
+main =>
+    Lines = read_file_lines("all"),
+    foreach(Line in Lines)
+        printf("echo %s\n",Line),
+		printf("/cygdrive/c/BProlog/Emulator/picat.exe /cygdrive/c/BProlog/Picat/sugar2pi %s\n",Line)
+  	end.

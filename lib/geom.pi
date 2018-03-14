@@ -1,0 +1,208 @@
+module geom.
+
+/*
+    Representations:
+        point(X,Y)
+        line(A,B,C) which represents the line A*X+B*Y+C = 0
+        segment(P1,P2)
+        polygon(N,Array)
+        triangle(P1,P2,P3)
+        circle(P,R)
+*/
+epsilon() = 0.000001.
+
+points_to_line(point(X1,Y1),point(X2,Y2)) = Line =>
+    if X1 == X2 then
+        A = 1, B = 0, C = -X1
+    else
+        B = 1,
+        A = -(Y1-Y2)/(X1-X2);
+        C = -(A * X1) - Y1
+    end,
+    Line = $line(A,B,C).
+
+point_and_slope_to_line(point(X,Y), M) = Line =>
+    A = -M, B = 1, 
+    C = -(A*X + Y),
+    Line = $line(A,B,C).
+
+parallelQ(line(A1,B1,_C1), line(A2,B2,_C2)) =>
+    abs(A1-A2) =< epsilon(),
+    abs(B1-B2) =< epsilon().
+
+same_lineQ(line(A1,B1,C1), line(A2,B2,C2)) =>
+    abs(A1-A2) =< epsilon(),
+    abs(B1-B2) =< epsilon(),
+    abs(C1-C2) =< epsilon().
+
+intersection_point(line(A1,B1,C1), line(A2,B2,C2)) = Point =>
+    (abs(A1-A2) =< epsilon(), abs(B1-B2) =< epsilon() ->
+        (abs(C1-C2) =< epsilon() ->
+            printf("%% warning: Identical lines, all points intersect.\n")
+        ;
+            throw("%% Error: Distinct parallel lines do not intersect.\n")
+        )
+    ;
+        Point = $point(X,Y),
+        X = (B2*C1-B1*C2)/(A2*B1-A1*B2),
+        (abs(B1) > epsilon() ->
+            Y = - (A1*X+C1)/B1
+        ;
+            Y = - (A2*X+C2)/B2
+        )
+    ).
+
+closest_point(Pin@point(X,Y), Line@line(A,B,C)) = Point =>
+    if (abs(B) =< EPSILON) then     /* vertical line */
+        Xc = -C,
+        Yc = Y,
+          Point = $point(Xc,Yc)
+    elseif (abs(A) =< EPSILON) then    /* horizontal line */
+        Xc = X,
+        Yc = -C,
+        Point = $point(Xc,Yc)
+    else
+        Perp = point_and_slope_to_line(Pin, 1/A), /* non-degenerate line */
+        Point = intersection_point(Line, Perp)
+    end.
+
+distance(Point1, Point2) = Dist =>
+    D = 0.0,
+    foreach (I in 1..len(Point1))
+        D := D + (Point1[I]-Point2[I])*(Point1[I]-Point2[I])
+    end,
+    Dist = sqrt(D).
+
+point_in_box(Point, Corner1, Corner2) =>
+    Point[1] >= min(Corner1[1],Corner2[1]),
+    Point[1] <= max(Corner1[1],Corner2[1]),
+    Point[2] >= min(Corner1[2],Corner2[2]),
+    Point[2] <= max(Corner1[2],Corner2[2]).
+
+segments_intersect(segment(P11,P12), segment(P21,P22)) =>
+    Line1 = points_to_line(P11,P12),
+    Line2 = points_to_line(P21,P22),
+    if (same_lineQ(Line1,Line2)) then      /* overlapping or disjoint segments */
+        once (point_in_box(P11,P21,P22);
+              point_in_box(P12,P21,P22);
+              point_in_box(P21,P11,P12);
+              point_in_box(P22,P11,P12))
+    else
+        if (parallelQ(Line1,Line2)) then
+            fail
+        else
+            Point = intersection_point(Line1,Line2),
+            point_in_box(Point,P11,P12),
+            point_in_box(Point,P21,P22)
+        end
+    end.
+
+lines_intersect_angle(line(A1,B1,_C1), line(A2,B2,_C2)) = Angle =>
+    Angle = atan(A1*B2-A2*B1)/(A1*A2+B1*B2).
+
+signed_triangle_area(point(Xa,Ya), point(Xb,Yb), point(Xc,Yc)) = Area =>
+    Area = (Xa*Yb - Ya*Xb + Ya*Xc - Xa*Yc + Xb*Yc - Xc*Yb) / 2.0.
+
+triangle_area(A, B, C) = abs(signed_triangle_area(A,B,C)).
+
+% Point C is 
+ccw(A, B, C) =>
+    signed_triangle_area(A,B,C) > epsilon().
+
+cw(A, B, C) =>
+    signed_triangle_area(A,B,C) < -epsilon().
+
+collinear(A, B, C) =>
+    abs(signed_triangle_area(A,B,C)) <= epsilon.
+
+% Graham's scan algorithm
+convex_hull([]) = [].
+convex_hull(Points@[_]) = Points.
+convex_hull(Points@[_,_]) = Points.
+convex_hull(Points) = Hull =>
+    Points1 = sort_remove_dups(Points),
+    Points1 = [First|Points2],
+    Points3 = convex_merge_sort(Points2,First),
+    Points3 = [Second|Points4],
+    convex_select([Second,First],Points4,Stack),
+	(Stack = [_,_] ->
+	    Hull = Stack
+	;
+        convex_select(Stack,[First],Stack1),   % the last angle
+		(Stack1 = [First|Hull] -> true; Hull = Stack1)
+	).
+
+convex_select(Stack,[],Hull) => Hull=Stack.
+convex_select([Top|Tail@[Next|_]],Ps@[P|_],Hull),
+    not ccw(Next,Top,P)
+=>
+    convex_select(Tail,Ps,Hull).
+convex_select(Stack,[P|Ps],Hull) =>
+    convex_select([P|Stack],Ps,Hull).
+
+convex_merge_sort([],_) = [].
+convex_merge_sort(L@[_],_) = L.
+convex_merge_sort([X,Y|L],Ref) = Sorted  =>
+    halve(L, [Y|L], Front, Back),
+    F = convex_merge_sort([X|Front],Ref),
+    B = convex_merge_sort(Back,Ref),
+    convex_merge(F,B,Ref,Sorted).
+
+halve([_,_|Count], [H|T], F, B)  =>
+    F=[H|F1],
+    halve(Count, T, F1, B).
+halve(_, L, F, B) =>
+    F=[],B=L.
+
+convex_merge(L1@[H1|T1],L2@[H2|T2],Ref,Sorted) =>
+    Sorted=[Hm|Tm],
+    Res = convex_compare(Ref,H1,H2),
+    (Res < 0 ->
+         Hm = H1,
+         convex_merge(T1,L2,Ref,Tm)
+    ;
+         Hm = H2,
+         convex_merge(L1,T2,Ref,Tm)
+    ).
+convex_merge([],L,_,Sorted)  => Sorted=L.
+convex_merge(L,[],_,Sorted) => Sorted=L.
+
+convex_compare(RefP,P1,P2) = Res,
+    collinear(RefP,P1,P2)
+=>
+    (distance(RefP,P1) =< distance(RefP,P2) ->
+        Res = -1
+    ;
+        Res = 1
+    ).
+convex_compare(RefP,P1,P2) = Res =>
+    (ccw(RefP,P1,P2) ->
+        Res = -1
+    ;
+        Res = 1
+    ).
+    
+
+test1 =>
+    Hull = 
+    convex_hull($[point(0,0),
+                 point(10,0),
+                 point(10,10),
+                 point(0,10),
+                 point(5,5)]),
+    writeln(Hull).                 
+
+test2 =>
+    Hull = 
+    convex_hull($[
+                point(0,0),
+                point(5,0),
+                point(10,0),
+                point(0,5),
+                point(5,5),
+                point(10,5),
+                point(0,10),
+                point(5,10),
+                point(10,10)]),
+    writeln(Hull).                 
+                

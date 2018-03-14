@@ -1,0 +1,357 @@
+module mip_aux.
+
+mip_solve(Options,Vars) =>
+    proc_mip_solve_options(Options,Format,Obj),
+    (Format = $solve(Solver,_TmpFile), Solver !== dump ->
+        check_mip_solver(Solver)
+    ;
+        true
+    ),
+    (Obj = $min(ObjExp) ->
+        Sense = 0
+    ;Obj = $max(ObjExp) ->
+        Sense = 1
+    ;
+        Sense = 0, ObjExp = 0
+    ),
+    mip_solve_aux(Format,ObjExp,Sense,Vars).
+
+%%
+check_mip_solver(gurobi) =>
+    (check_command("gurobi_cl") ->
+        true
+    ;
+        handle_exception($existence_error(gurobi_cl),solve)
+    ).
+check_mip_solver(glpk) =>
+    (check_command("glpsol") ->
+        true
+    ;
+        handle_exception($existence_error(glpsol),solve)
+    ).
+check_mip_solver(Solver) =>
+    (check_command("gurobi_cl") ->
+        Solver = gurobi
+    ; check_command("glpsol") ->
+        Solver = glpk
+    ;
+        handle_exception($existence_error(mip_solver),solve)
+    ).
+
+private
+check_command(Command) =>
+    bp.c_OS_TYPE_f(OS),
+    (OS == unix ->
+        Command1 = Command
+    ;
+        Command1 = Command ++ ".exe"
+    ),
+    bp.picat_getenv("PATH",PathStr),
+    (OS == windows ->
+        bp.picat_split_string(PathStr,";",Dirs),
+        Separator = '\\'
+    ;
+        bp.picat_split_string(PathStr,":",Dirs),
+        Separator = '/'        
+    ),
+    member(Dir,Dirs),
+    FullPath = Dir ++ [Separator|Command1],
+    bp.b_ACCESS_ccf(FullPath,0,Res),
+    Res == 0.   % 0 means that the command exists
+    
+proc_mip_solve_options([],_Format,Obj) => (var(Obj) -> Obj = 0; true).
+proc_mip_solve_options([gurobi|Options],Format,Obj) =>
+    Format = $solve(Solver,_TmpFile),
+    (var(Solver) -> Solver = gurobi; handle_exception($multiple_mip_solvers(gurobi,Solver),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([glpk|Options],Format,Obj) =>
+    Format = $solve(Solver,_TmpFile),
+    (var(Solver) -> Solver = glpk; handle_exception($multiple_mip_solvers(glpk,Solver),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([dump(File)|Options],Format,Obj) =>
+    Format = $solve(Type,TmpFile),
+    (Type = dump -> true; bp.picat_warning(dump_ignored,solve)),
+    (TmpFile = File -> true; handle_exception($multiple_dump_files(File,TmpFile),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([dump|Options],Format,Obj) =>
+    Format = $solve(Type,_),
+    (Type = dump -> true; bp.picat_warning(dump_ignored,solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([Obj0|Options],Format,Obj), Obj0 = $min(_) =>
+    (Obj = Obj0 -> true; handle_exception($multiple_objectives(Obj,Obj0),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([Obj0|Options],Format,Obj), Obj0 = $max(_) =>
+    (Obj = Obj0 -> true; handle_exception($multiple_objectives(Obj,Obj0),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([tmp(File)|Options],Format,Obj) =>
+    Format = $solve(_,TmpFile),
+    (TmpFile = File -> true; handle_exception($multiple_tmp_files(TmpFile,File),solve)),
+    proc_mip_solve_options(Options,Format,Obj).
+proc_mip_solve_options([Option|Options],Format,Obj) =>
+    bp.picat_warning($unsupported_option(Option),solve),
+    proc_mip_solve_options(Options,Format,Obj).
+
+mip_solve_aux(solve(Solver,TmpFile),ObjExp,Sense,Vars), Solver == dump =>
+    bp.trans_mip_constrs(Vars,ObjExp,ObjTerms,AllVars,Constrs),
+    (var(TmpFile) -> TmpStream = stdout; TmpStream = open(TmpFile,write)),
+    not not mip_dump_lp(TmpStream,Sense,ObjTerms,AllVars,Constrs),
+    close(TmpStream).
+mip_solve_aux(solve(Solver,TmpFile),ObjExp,Sense,Vars) =>   % Solver = gurobi, or glpk
+    mip_check_file(TmpFile,"__tmp.lp",TmpFileStr),
+    (append(MainName,".lp",TmpFileStr) -> true; handle_exception($extension_name_expected(".lp"),solve)),
+    SolFileStr = MainName ++ ".sol",
+    bp.abolish(mip_last_solution,1),
+    (ObjExp == 0, Vars !== [], bp.dvar_or_int_list(Vars) ->
+        VarsArr = to_array(Vars),
+        mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[])
+    ;
+        mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars)
+    ).
+
+mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,Table) ?=>
+    mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars),
+    bp.assert($mip_last_solution(VarsArr)).
+mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,Table),
+    bp.retract($mip_last_solution(Tuple)),
+%	not member(Tuple, Table)                       % somehow this test is needed for Gurobi
+	true
+=>
+    bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
+    mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[Tuple|Table]).
+    
+mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars) =>
+    bp.trans_mip_constrs(Vars,ObjExp,ObjTerms,AllVars,Constrs),
+    TmpStream = open(TmpFileStr,write),
+    not not mip_dump_lp(TmpStream,Sense,ObjTerms,AllVars,Constrs),
+    close(TmpStream),
+    (bp.b_ACCESS_ccf(SolFileStr,0,0) -> bp.delete_file(SolFileStr); true),
+    mip_create_command(Solver,TmpFileStr,SolFileStr,Command),
+    _ = command(Command),
+    mip_retrive_res(Solver,SolFileStr,AllVars).
+%    bp.global_heap_get('$all_constrs',AllConstrs),
+%    (bp.test_constrs(AllConstrs) -> true; writeln('FAILED')).
+
+%%
+mip_create_command(gurobi,TmpFileStr,SolFileStr,Command) =>    
+    Command = "gurobi_cl ResultFile=" ++ SolFileStr ++ [' '|TmpFileStr].
+mip_create_command(glpk,TmpFileStr,SolFileStr,Command) =>
+    Command = "glpsol --lp -o " ++ SolFileStr ++ [' '|TmpFileStr].
+
+mip_retrive_res(Solver,SolFileStr,Vars),
+    bp.b_ACCESS_ccf(SolFileStr,0,0)
+=>
+    (Solver == gurobi ->
+        retrieve_gurobi_res(SolFileStr,Vars)
+    ;
+        retrieve_glpk_res(SolFileStr,Vars)
+    ).
+
+mip_check_file(File,DefaultFileStr,FileStr), var(File) => FileStr = DefaultFileStr.
+mip_check_file(File,_DefaultFileStr,FileStr), atom(File) => FileStr = to_string(File).
+mip_check_file(File,_DefaultFileStr,FileStr), string(File) => FileStr = File.
+mip_check_file(File,_DefaultFileStr,_FileStr) => handle_exception($file_name_expected(File),solve).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+mip_dump_lp(OStream,Sense,ObjTerms,Vars,Constrs) =>
+    mip_dump_lp_obj(OStream,Sense,ObjTerms),        
+    mip_dump_lp_constrs(OStream,Constrs),
+    mip_dump_lp_domains(OStream,Vars,ObjTerms),
+    println(OStream,'End').
+
+mip_dump_lp_obj(OStream,Sense,ObjTerms) =>
+    (Sense == 0 -> printf(OStream,"Minimize\n"); printf(OStream,"Maximize\n")),
+    printf(OStream," obj: "),
+    (ObjTerms == [] ->
+        printf(OStream,"X_1\n")
+    ;
+        ObjTerms = [(Coe,Var)|Terms1],
+        mip_dump_lp_first_term(OStream,Coe,Var),
+        mip_dump_lp_terms(OStream,Terms1),nl(OStream)
+    ).
+
+mip_dump_lp_terms(_OStream,[]) => true.
+mip_dump_lp_terms(OStream,[(Coe,Var)|Terms]) => 
+   mip_dump_lp_term(OStream,Coe,Var),
+   mip_dump_lp_terms(OStream,Terms).
+
+mip_dump_lp_first_term(OStream,Coe,Var) => 
+    bp.get_attr(Var,'$lp',T),
+    T = $'$lp_x'(ColNo,_IsInt,_L,_U,_Constrs),
+    mip_dump_lp_first_col(OStream,Coe,ColNo).
+
+mip_dump_lp_first_col(OStream,Coe,ColNo) =>
+    (Coe == 1 -> true;
+     Coe == -1 -> print(OStream,'-');
+     printf(OStream,"%w ",Coe)
+    ),
+    printf(OStream,"X%w",ColNo).
+
+mip_dump_lp_term(OStream,Coe,Var) => 
+    bp.get_attr(Var,'$lp',T),
+    T = $'$lp_x'(ColNo,_IsInt,_L,_U,_Constrs),
+    (Coe == 1 -> print(OStream,' + ');
+     Coe == -1 -> print(OStream,'-');
+     Coe > 0 -> print(OStream,' + '),print(OStream,Coe),print(OStream,' ');
+     printf(OStream,"%w ",Coe)
+    ),
+    printf(OStream,"X%w",ColNo).
+
+mip_dump_lp_constrs(OStream,[]) =>
+    printf(OStream,"Subject To\n"),
+    println(OStream,"X_1 >= 0").
+mip_dump_lp_constrs(OStream,Constrs) => 
+    printf(OStream,"Subject To\n"),
+    mip_dump_lp_constrs1(OStream,Constrs).
+
+mip_dump_lp_constrs1(_OStream,[]) => true.
+mip_dump_lp_constrs1(OStream,['$lp_c'(_,CoeCols,Const,ConstrType)|Constrs]) =>
+    print(OStream,' '),
+    (CoeCols == [] -> print(OStream,0);
+     CoeCols = [(Coe,Col)|CoeColsR],
+     mip_dump_lp_first_col(OStream,Coe,Col),
+     mip_dump_lp_cols(OStream,CoeColsR)
+    ),
+    print(OStream,' '),
+    (ConstrType == 0 -> print(OStream,'='); print(OStream,'>=')),
+    print(OStream,' '),
+    MConst is -Const,
+    printf(OStream,"%w",MConst),nl(OStream),
+    mip_dump_lp_constrs1(OStream,Constrs).
+
+mip_dump_lp_cols(_OStream,[]) => true.
+mip_dump_lp_cols(OStream,[(Coe,ColNo)|L]) =>
+    (Coe == 1 -> print(OStream,' + ');
+     Coe == -1 -> print(OStream,' - ');
+     Coe>0 -> print(OStream,' + '), print(OStream,Coe), print(OStream,' ')
+     ;
+     MCoe is -Coe, print(OStream,' - '),print(OStream,MCoe),print(OStream,' ')
+    ),
+    printf(OStream,"X%w",ColNo),
+    mip_dump_lp_cols(OStream,L).
+    
+mip_dump_lp_domains(OStream,Vars,ObjTerms) =>
+    printf(OStream,"Bounds\n"),
+    (ObjTerms == [] -> printf(OStream," 0 <= X_1 <= 0\n"); true),
+    mip_dump_lp_bounds(OStream,Vars),
+    printf(OStream,"Integers\n"),
+    (ObjTerms == [] -> printf(OStream," X_1\n"); true),
+    mip_dump_lp_integer_variables(OStream,Vars).
+
+mip_dump_lp_bounds(_OStream,[]) => true.
+mip_dump_lp_bounds(OStream,[Var|Vars]) =>
+    bp.get_attr(Var,'$lp',T),
+    T = $'$lp_x'(ColNo,_IsInt,L,U,_Constrs),
+    (nonvar(L)->
+         (nonvar(U)->
+             mip_dump_lp_lower_upper(OStream,ColNo,L,U)
+         ;
+             mip_dump_lp_lower(OStream,ColNo,L)
+         )
+     ;nonvar(U)->
+         mip_dump_lp_upper(OStream,ColNo,U)
+     ;
+         true
+    ),
+    mip_dump_lp_bounds(OStream,Vars).
+
+mip_dump_lp_lower_upper(OStream,ColNo,L,U) =>
+    print(OStream,' '),
+    print(OStream,L), print(OStream,' '), print(OStream,'<='), print(OStream,' '), print(OStream,'X'),print(OStream,ColNo),
+    print(OStream,' '), print(OStream,'<='), print(OStream,' '), print(OStream,U),nl(OStream).
+
+mip_dump_lp_lower(OStream,ColNo,L) =>
+    print(OStream,' '),
+    print(OStream,L), print(OStream,' '),print(OStream,'<='), print(OStream,'X'),print(OStream,ColNo),nl(OStream).
+
+mip_dump_lp_upper(OStream,ColNo,U) =>
+    print(OStream,' '),
+    print(OStream,'X'),print(OStream,ColNo), print(OStream,' '), print(OStream,'<='), print(OStream,' '), print(OStream,U), nl(OStream).
+
+mip_dump_lp_integer_variables(_OStream,[]) => true.
+mip_dump_lp_integer_variables(OStream,[Var|Vars]) =>
+    bp.get_attr(Var,'$lp',T),
+    T = $'$lp_x'(ColNo,IsInt,_L,_U,_Constrs),
+    (IsInt == 1 ->
+       print(OStream,' '),print(OStream,'X'),print(OStream, ColNo),nl(OStream);
+       true
+    ),
+    mip_dump_lp_integer_variables(OStream,Vars).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+retrieve_gurobi_res(SolFile,Vars) =>
+    IStream = open(SolFile),
+    Line = read_line(IStream),
+    HTab = new_map(),
+    catch(gurobi_read_result(IStream,Line,HTab),Exception,(writeln(Exception),close(IStream),handle_exception($existence_error(solution),gurobi))),
+    close(IStream),
+    mip_bind_vars(Vars,HTab).
+
+% gurobi_read_result(_,Line,_) ?=> writeln($gurobi_read_result(_,Line,_)),fail.
+gurobi_read_result(_,end_of_file,_) => true.
+gurobi_read_result(IStream,['X','_'|_],HTab) => 
+    Line = read_line(IStream),
+    gurobi_read_result(IStream,Line,HTab).
+gurobi_read_result(IStream,['X'|L],HTab) =>
+    once(append(NumToken,[' '|ValToken],L)),
+    VNum = to_integer(NumToken),
+    Val = to_number(ValToken),
+    HTab.put(VNum,Val),
+    Line = read_line(IStream),
+    gurobi_read_result(IStream,Line,HTab).
+gurobi_read_result(IStream,_,HTab) =>
+    Line = read_line(IStream),
+    gurobi_read_result(IStream,Line,HTab).
+
+%%%
+retrieve_glpk_res(SolFile,Vars) =>
+    IStream = open(SolFile),
+    Line = read_line(IStream),
+    HTab = new_map(),
+    catch(glpk_read_result(IStream,Line,HTab),_Exception,(close(IStream),handle_exception($existence_error(solution),glpk))),
+    close(IStream),
+    mip_bind_vars(Vars,HTab).
+
+glpk_read_result(_IStream,end_of_file,_) => true.
+glpk_read_result(IStream,L,_HTab),
+    append(_,"SOLUTION IS INFEASIBLE",_,L)
+=>
+    close(IStream),
+    fail.
+glpk_read_result(IStream,L,HTab), 
+    append(_,['X'|Rest],L)
+=>
+    bp.picat_split_string(Rest,[' '],Tokens),
+    Tokens = [NumToken|Tokens1],
+    NumToken = [Dig|_],
+    (Dig == '_' ->     % X_1 is a dummy variable
+        true
+    ;digit(Dig) ->
+        VNum = to_integer(NumToken),
+        once(append(_,[ValToken,_,_],Tokens1)),
+        Val = to_number(ValToken),
+        HTab.put(VNum,Val)
+    ;
+        true
+    ),
+    Line = read_line(IStream),
+    glpk_read_result(IStream,Line,HTab).
+glpk_read_result(IStream,_,HTab) =>
+    Line = read_line(IStream),
+    glpk_read_result(IStream,Line,HTab).
+
+mip_bind_vars([],_HTab) => true.
+mip_bind_vars([Var|Vars],HTab),var(Var), 
+    bp.get_attr(Var,'$lp',T),
+    T = $'$lp_x'(ColNo,_IsInt,_Low,_Up,_),
+    Val = HTab.get(ColNo,[]),
+    Val !== []
+=>
+    (Var = Val -> true; printf(stderr,"WARNING:: constraints are assumed to be IP unless coefficients or variables are real\n"),handle_exception($invalid_mip_solution(Val),solve)),
+    mip_bind_vars(Vars,HTab).
+mip_bind_vars([Var|Vars],HTab),number(Var) =>
+    mip_bind_vars(Vars,HTab).    
+
+    
