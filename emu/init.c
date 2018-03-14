@@ -99,7 +99,7 @@ void init_toam(argc, argv)
                 break;
 
             case 's': i++;
-                sscanf(argv[i], "%ld", &stack_size);
+                sscanf(argv[i], BPLONG_FMT_STR, &stack_size);
                 if (stack_size<1000000) stack_size=1000000; 
                 break;
                                 

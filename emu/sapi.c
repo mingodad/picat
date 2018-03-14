@@ -366,7 +366,7 @@ int SP_get_number_chars(SP_term_ref t, char **s){
     char *ptr;
     DEREF(t);
     if (ISINT(t)){
-        sprintf(buf,"%d",INTVAL(t));
+        sprintf(buf,BPLONG_FMT_STR,INTVAL(t));
     } else if (ISFLOAT(t)){
         sprintf(buf,"%lf",floatval(t));
     } else {
@@ -587,7 +587,7 @@ int SP_query(SP_pred_ref predicate, ...){
     char *name;
 
     arity = GET_ARITY(predicate);
-    printf("arity=%d\n",arity);
+    printf("arity=" BPLONG_FMT_STR "\n",arity);
   
     if (arity==0){
         query = ADDTAG((BPLONG)predicate,ATM);

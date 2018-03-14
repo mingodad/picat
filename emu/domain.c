@@ -1928,7 +1928,7 @@ void print_domain(dv_ptr)
     last = DV_last(dv_ptr);
   
     if (IS_IT_DOMAIN(dv_ptr)){
-        fprintf(curr_out,"::[%lld..%lld]",first,last);
+        fprintf(curr_out,"::[" BPLONG_FMT_STR " .." BPLONG_FMT_STR "]",first,last);
     } else {
         low = first;
         i = first+1;
@@ -1937,15 +1937,15 @@ void print_domain(dv_ptr)
             while(i<last && dm_true(dv_ptr,i)) i++;
             if (i==last) break;
             high = i-1;
-            if (low==high) fprintf(curr_out,"%lld,",low);
-            else fprintf(curr_out,"%lld..%lld,",low,high);
+            if (low==high) fprintf(curr_out,BPLONG_FMT_STR ",",low);
+            else fprintf(curr_out,BPLONG_FMT_STR ".." BPLONG_FMT_STR ",",low,high);
             i++;
             while (!dm_true(dv_ptr,i) && i<last) i++;
             low = i;
         }
         high = last;
-        if (low==high) fprintf(curr_out,"%lld]",low);
-        else fprintf(curr_out,"%lld..%lld]",low,high);
+        if (low==high) fprintf(curr_out,BPLONG_FMT_STR "]",low);
+        else fprintf(curr_out,BPLONG_FMT_STR ".." BPLONG_FMT_STR "]",low,high);
     }
 }
 

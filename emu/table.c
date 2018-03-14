@@ -1905,13 +1905,13 @@ int table_statistics(){
         subgoal_count += count;
         /*    if (count != 0) fprintf(curr_out,"socket#%d(chainsize%d)\n",i,count); */
     }
-    fprintf(curr_out,"number_of_subgoals=%lld\t\t\n",subgoal_count);
-    fprintf(curr_out,"max_number_of_answers=%lld\t\t\n",max_ans_count);
-    fprintf(curr_out,"number_of_zero_answer_subgoals=%lld\t\t\n",zero_ans_count);
+    fprintf(curr_out,"number_of_subgoals=" BPLONG_FMT_STR "\t\t\n",subgoal_count);
+    fprintf(curr_out,"max_number_of_answers=" BPLONG_FMT_STR "\t\t\n",max_ans_count);
+    fprintf(curr_out,"number_of_zero_answer_subgoals=" BPLONG_FMT_STR "\t\t\n",zero_ans_count);
     fprintf(curr_out,"average_number_of_answers=%.2f\t\t\n",(float)total_ans_count/subgoal_count);
-    fprintf(curr_out,"max_iterations=%lld\t\t\n",max_its_count);
+    fprintf(curr_out,"max_iterations=" BPLONG_FMT_STR "\t\t\n",max_its_count);
     fprintf(curr_out,"average_iterations=%.2f\t\t\n",(float)total_its_count/(float)subgoal_count);
-    fprintf(curr_out,"number_of_scc_nodes=%lld\n",scc_nodes_count);
+    fprintf(curr_out,"number_of_scc_nodes=" BPLONG_FMT_STR "\n",scc_nodes_count);
     return 1;
 }
 
@@ -1983,10 +1983,10 @@ void reset_temp_complete_subgoal_entries(){
         subgoal_entry = (BPLONG_PTR)FOLLOW(subgoalTable+i);
         while (subgoal_entry != NULL) {
             if (GT_TOP_AR(subgoal_entry) == SUBGOAL_TEMP_COMPLETE){
-                printf("TEMP_COMPLETE %x\n",subgoal_entry);
+                printf("TEMP_COMPLETE " BPULONG_FMT_STR "\n",subgoal_entry);
                 ptr = (BPLONG_PTR)GT_SCC_ROOT(subgoal_entry);
-                printf("SCC_ROOT = %x\n", ptr);
-                printf("SCC_ROOT = %x\n", GT_TOP_AR(ptr));
+                printf("SCC_ROOT = " BPULONG_FMT_STR "\n", ptr);
+                printf("SCC_ROOT = " BPULONG_FMT_STR "\n", GT_TOP_AR(ptr));
             }
             //                GT_TOP_AR(subgoal_entry) = (BPLONG)NULL;
             subgoal_entry = (BPLONG_PTR)GT_NEXT(subgoal_entry);

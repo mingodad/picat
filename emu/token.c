@@ -2022,7 +2022,7 @@ int b_NEXT_TOKEN_ff(op1,op2)
         ASSIGN_f_atom(op1,MAKEINT(BADEND));
         break;
     default:
-        Fprintf(stderr, "Internal error %d %s\n", i, AtomStr);
+        Fprintf(stderr, "Internal error " BPLONG_FMT_STR " %s\n", i, AtomStr);
     }
     //  write_term(op1); write_term(op2); printf("\n");
     return BP_TRUE;

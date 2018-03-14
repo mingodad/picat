@@ -79,10 +79,14 @@ typedef unsigned short int  UW16;     /* 16 bits */
 typedef long long int            BPLONG;   /* 64 bits for Win x64*/
 typedef long long int            TERM;     /* 64 bits for Win x64*/
 typedef unsigned long long int   BPULONG;  /* 64 bits for Win x64*/
+#define BPLONG_FMT_STR "%lld"
+#define BPULONG_FMT_STR "%llx"
 #else
 typedef long int            BPLONG;   /* 32 or 64 bits */
 typedef long int            TERM;     /* 32 or 64 bits */
 typedef unsigned long int   BPULONG;  /* 32 or 64 bits */
+#define BPLONG_FMT_STR "%ld"
+#define BPULONG_FMT_STR "%lx"
 #endif
 typedef unsigned int        UW32;     /* 32 bits */
 

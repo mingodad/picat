@@ -792,7 +792,7 @@ void print_linear_constr(n)
 {
     BPLONG i;
     BPLONG c = FOLLOW(arreg+2*n+1);
-    printf("n=%d\n",n);
+    printf("n=" BPLONG_FMT_STR "\n",n);
     /*
       for (i=n;i>0;i--){
       printf("%x ", FOLLOW(arreg+n+i));

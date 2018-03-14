@@ -20,8 +20,11 @@
 
 #define MAXSYMS BUCKET_CHAIN
 
+void inline IGUR(int i) {}  /* Ignore GCC Unused Result */
+void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
+
 #define READ_DATA(x,y)  (y - fread(x, sizeof(*x), y, fp))
-#define READ_DATA_ONLY(x,y)  fread(x, sizeof(*x), y, fp)
+#define READ_DATA_ONLY(x,y) IGUR( fread(x, sizeof(*x), y, fp))
 #define RELOC_ADDR(offset) ((BPLONG_PTR)curr_fence + offset)
 #define BUILTIN 1
 
@@ -297,13 +300,13 @@ int loader(file,file_type,load_damon)
      
         err_msg = load_text();
         if (err_msg != 0) {
-            printf("error %lld loading file %s: bad text segment\n", err_msg, file);
+            printf("error " BPLONG_FMT_STR " loading file %s: bad text segment\n", err_msg, file);
             return 1;  /* eventually upper level routines will determine */
         }
 
         err_msg = load_hashtab();
         if (err_msg != 0) {
-            printf("error %lld in (index) loading file %s: bad index segment\n", err_msg, file);
+            printf("error " BPLONG_FMT_STR " in (index) loading file %s: bad index segment\n", err_msg, file);
             return 1;  /*eventually upper level routines will determine */
         }
 

@@ -722,11 +722,11 @@ int bp_write_var_update_pos(op)
 {
     BPLONG len;
 
-    sprintf(bp_buf,"_%lx",op-(BPULONG)stack_low_addr);
+    sprintf(bp_buf,"_" BPULONG_FMT_STR,op-(BPULONG)stack_low_addr);
     len = strlen(bp_buf);
     line_position += len;
     if (format_output_dest==0){
-        fprintf(curr_out, "_%lx", op-(BPULONG)stack_low_addr);
+        fprintf(curr_out, "_" BPULONG_FMT_STR, op-(BPULONG)stack_low_addr);
     } else {
         CHECK_CHARS_POOL_OVERFLOW(len);
         strcpy((chars_pool+chars_pool_index),bp_buf);
@@ -791,11 +791,11 @@ int bp_write_suspvar_update_pos(op)
     BPLONG_PTR dv_ptr;
 
     dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-    sprintf(bp_buf,"_0%lx",(BPULONG)dv_ptr-(BPULONG)stack_low_addr);
+    sprintf(bp_buf,"_0" BPULONG_FMT_STR,(BPULONG)dv_ptr-(BPULONG)stack_low_addr);
     len = strlen(bp_buf);
     line_position += len;
     if (format_output_dest==0){
-        fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
+        fprintf(curr_out, "_0" BPULONG_FMT_STR, (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
     } else {
         CHECK_CHARS_POOL_OVERFLOW(len);
         strcpy((chars_pool+chars_pool_index),bp_buf);
@@ -815,11 +815,11 @@ int bp_write_int_update_pos(op)
 {
     BPLONG len;
 
-    sprintf(bp_buf,"%lld",op);
+    sprintf(bp_buf,BPLONG_FMT_STR,op);
     len = strlen(bp_buf);
     line_position += len;
     if (format_output_dest==0){
-	  fprintf(curr_out, "%lld", op);
+	  fprintf(curr_out, BPLONG_FMT_STR, op);
     } else {
         CHECK_CHARS_POOL_OVERFLOW(len);
         strcpy((chars_pool+chars_pool_index),bp_buf);
@@ -986,14 +986,14 @@ int b_WRITENAME_c(op)
         }
     */
     SWITCH_OP(op,writename_1,
-              {fprintf(curr_out, "_%lx", op-(BPULONG)stack_low_addr);},
+              {fprintf(curr_out, "_" BPULONG_FMT_STR, op-(BPULONG)stack_low_addr);},
               {
                   if (ISATOM(op)){
                       sym_ptr = GET_ATM_SYM_REC(op);
                       bp_write_pname(GET_NAME(sym_ptr));
                   } else {
                       op = INTVAL(op);
-                      fprintf(curr_out, "%lld", op);
+                      fprintf(curr_out, BPLONG_FMT_STR, op);
                   }
               },
               {fprintf(curr_out, ".");},
@@ -1009,7 +1009,7 @@ int b_WRITENAME_c(op)
               },
               {
                   dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-                  fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
+                  fprintf(curr_out, "_0" BPULONG_FMT_STR, (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
                   if (!IS_UN_DOMAIN(dv_ptr))
                       print_domain(dv_ptr);});
   
@@ -1103,14 +1103,14 @@ int b_WRITE_QUICK_c(op)
         return BP_ERROR;
     }
     SWITCH_OP(op,write_quick_1,
-              {fprintf(curr_out, "_%lx", op-(BPULONG)stack_low_addr);},
+              {fprintf(curr_out, "_" BPULONG_FMT_STR, op-(BPULONG)stack_low_addr);},
               {
                   if (ISATOM(op)){
                       sym_ptr = GET_ATM_SYM_REC(op);
                       bp_write_pname(GET_NAME(sym_ptr));
                   } else {
                       op = INTVAL(op);
-                      fprintf(curr_out, "%lld", op);
+                      fprintf(curr_out, BPLONG_FMT_STR, op);
                   }
               },
               {return BP_FALSE;},
@@ -1125,7 +1125,7 @@ int b_WRITE_QUICK_c(op)
               },
               {
                   dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-                  fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
+                  fprintf(curr_out, "_0" BPULONG_FMT_STR, (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
                   if (!IS_UN_DOMAIN(dv_ptr))
                       print_domain(dv_ptr);});
 
@@ -1167,14 +1167,14 @@ int b_WRITEQNAME_c(op)
     BPLONG_PTR dv_ptr;
   
     SWITCH_OP(op,writeqname_1,
-              {fprintf(curr_out, "_%lx", op-(BPULONG)stack_low_addr);},
+              {fprintf(curr_out, "_" BPULONG_FMT_STR, op-(BPULONG)stack_low_addr);},
               {
                   if (ISATOM(op)){
                       sym_ptr = GET_ATM_SYM_REC(op);
                       bp_write_qname(GET_NAME(sym_ptr), GET_LENGTH(sym_ptr));
                   } else {
                       op = INTVAL(op);
-                      fprintf(curr_out, "%lld", op);
+                      fprintf(curr_out, BPLONG_FMT_STR, op);
                   }
               },
               {fprintf(curr_out, ".");},
@@ -1189,7 +1189,7 @@ int b_WRITEQNAME_c(op)
                   }
               },
               {dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-                  fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);});
+                  fprintf(curr_out, "_0" BPULONG_FMT_STR , (BPULONG)dv_ptr-(BPULONG)stack_low_addr);});
     return BP_TRUE;
 }
 
@@ -1229,14 +1229,14 @@ int b_WRITEQ_QUICK_c(op)
     BPLONG_PTR dv_ptr;
 
     SWITCH_OP(op,writeqquick_1,
-              {fprintf(curr_out, "_%lx", op-(BPULONG)stack_low_addr);},
+              {fprintf(curr_out, "_" BPULONG_FMT_STR, op-(BPULONG)stack_low_addr);},
               {
                   if (ISATOM(op)){
                       sym_ptr = GET_ATM_SYM_REC(op);
                       bp_write_qname(GET_NAME(sym_ptr),GET_LENGTH(sym_ptr));
                   } else {
                       op = INTVAL(op);
-                      fprintf(curr_out, "%lld", op);
+                      fprintf(curr_out, BPLONG_FMT_STR, op);
                   }
               },
               {return BP_FALSE;},
@@ -1248,7 +1248,7 @@ int b_WRITEQ_QUICK_c(op)
                   } else  return BP_FALSE;
               },
               {dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-                  fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);});
+                  fprintf(curr_out, "_0" BPULONG_FMT_STR, (BPULONG)dv_ptr-(BPULONG)stack_low_addr);});
     return BP_TRUE;
 }
 
@@ -1926,7 +1926,11 @@ int get_socket_fd(int index){
     printf("get_socket_fd not supported for non-Linux platforms\n");
     return 0;
 #else
-    return(file_table[index].fdes->_fileno);                                                                    
+#ifdef ANDROID
+    return(file_table[index].fdes->_file);
+#else
+    return(file_table[index].fdes->_fileno);
+#endif
 #endif
 #endif
 #endif
@@ -2528,15 +2532,15 @@ int write_term(op)
     BPLONG_PTR top;
 
     SWITCH_OP(op,write_term_1,
-              {fprintf(curr_out,"_%lx",op-(BPULONG)stack_low_addr);},
+              {fprintf(curr_out,"_" BPULONG_FMT_STR,op-(BPULONG)stack_low_addr);},
 
               {if (ISATOM(op)){
                       sym_ptr = GET_ATM_SYM_REC(op);
                       bp_write_pname(GET_NAME(sym_ptr));
                   }
-				else fprintf(curr_out,"%lld",INTVAL(op));},
+				else fprintf(curr_out,BPLONG_FMT_STR,INTVAL(op));},
 
-              {if (IsNumberedVar(op)){fprintf(curr_out,"$V(%lx)",INTVAL(op));} else { fprintf(curr_out,"["); write_list(op);}},
+              {if (IsNumberedVar(op)){fprintf(curr_out,"$V(" BPULONG_FMT_STR ")",INTVAL(op));} else { fprintf(curr_out,"["); write_list(op);}},
 
               {if (IS_FLOAT_PSC(op)){
                       bp_write_double(op);
@@ -2563,7 +2567,7 @@ int write_term(op)
                       }}},
 
               {dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
-                  fprintf(curr_out, "_0%lx", (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
+                  fprintf(curr_out, "_0" BPULONG_FMT_STR, (BPULONG)dv_ptr-(BPULONG)stack_low_addr);
                   if (!IS_UN_DOMAIN(dv_ptr))
                       print_domain(dv_ptr);});
     return BP_TRUE;
@@ -2587,17 +2591,17 @@ int write_image(op)
     DEREF(op);
     switch (TAG(op)) {
     case REF :
-        fprintf(curr_out,"var      %lx\n",op);
+        fprintf(curr_out,"var      " BPULONG_FMT_STR "\n",op);
         break;
     case LST :
-        fprintf(curr_out,"list     %lx\n",UNTAGGED_ADDR(op));
+        fprintf(curr_out,"list     " BPULONG_FMT_STR "\n",UNTAGGED_ADDR(op));
         UNTAG_ADDR(op);
         op1 = *(BPLONG_PTR)op;
         DEREF(op1);
-        fprintf(curr_out,"car      %lx\n",op1);
+        fprintf(curr_out,"car      " BPULONG_FMT_STR "\n",op1);
         op1 = *((BPLONG_PTR)op+1);
         DEREF(op1);
-        fprintf(curr_out,"cdr      %lx\n",op1);
+        fprintf(curr_out,"cdr      " BPULONG_FMT_STR "\n",op1);
         op1 = *(BPLONG_PTR)op;
         DEREF(op1);
         write_image(op1);
@@ -2607,19 +2611,19 @@ int write_image(op)
         break;
     case ATM :
         if (ISATOM(op))
-            fprintf(curr_out,"atom     %lx\n",UNTAGGED_ADDR(op));
+            fprintf(curr_out,"atom     " BPULONG_FMT_STR "\n",UNTAGGED_ADDR(op));
         else 
-		  fprintf(curr_out,"int      %lld\n",INTVAL(op));
+		  fprintf(curr_out,"int      " BPLONG_FMT_STR "\n",INTVAL(op));
         break;
     case STR:
-        fprintf(curr_out,"str      %lx\n",UNTAGGED_ADDR(op));
+        fprintf(curr_out,"str      " BPULONG_FMT_STR "\n",UNTAGGED_ADDR(op));
         sym_ptr = GET_STR_SYM_REC(op);
         UNTAG_ADDR(op);
         arity = GET_ARITY(sym_ptr);
         for (i=1;i<=arity;i++) {
             op1 = *((BPLONG_PTR)op+i);
             DEREF(op1);
-            fprintf(curr_out,"%lld-arg    %lx\n",i,op1);
+            fprintf(curr_out,BPLONG_FMT_STR "-arg    " BPULONG_FMT_STR "\n",i,op1);
         }
         for (i=1;i<=arity;i++) {
             op1 = *((BPLONG_PTR)op+i);
@@ -2998,7 +3002,7 @@ int c_FORMAT_PRINT_INTEGER(){
         arg = (BPLONG)floatval(arg);
     }
     format[0] = '%';
-    sprintf(&format[1],"%lld%c",number,(int) control);
+    sprintf(&format[1],"%d%c",(int)number,(int) control);
     sprintf(bp_buf,format,arg);
     len = strlen(bp_buf);
     line_position += len;
@@ -3031,7 +3035,7 @@ int c_FORMAT_PRINT_FLOAT(){
     }
     format[0] = '%';
     format[1] = '.';
-    sprintf(&format[2],"%lld%c",number,(int) control);
+    sprintf(&format[2],"%d%c",(int)number,(int) control);
     sprintf(bp_buf,format,val);
     len = strlen(bp_buf);
     line_position += len;
@@ -3050,7 +3054,7 @@ char *format_comma_separated_int(BPLONG amt){
     char loc_buf[100];
     int i,j,c;
   
-    sprintf(loc_buf,"%lld",amt);
+    sprintf(loc_buf,BPLONG_FMT_STR,amt);
     i = strlen(loc_buf)-1;
     j = MAX_STR_LEN-1;
     c = 0;
@@ -3124,16 +3128,16 @@ int b_ATOM_CONCAT_ccf(BPLONG a1, BPLONG a2, BPLONG a3){
 int print_term_to_buf(BPLONG term){
     DEREF(term);
     if (ISREF(term)){
-        sprintf(bp_buf,"_%lx", (BPULONG)term-(BPULONG)stack_low_addr); 
+        sprintf(bp_buf,"_" BPULONG_FMT_STR, (BPULONG)term-(BPULONG)stack_low_addr); 
     } else if (ISINT(term)){
-        sprintf(bp_buf,"%lld", INTVAL(term));
+        sprintf(bp_buf,BPLONG_FMT_STR, INTVAL(term));
     } else if (ISATOM(term)){
         SYM_REC_PTR sym_ptr;
         sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(term);
         sprintf(bp_buf,"%s", GET_NAME(sym_ptr));
     } else if (TAG(term)==STR){
         if (IS_SUSP_VAR(term)){
-            sprintf(bp_buf,"_0%lx", (BPULONG)UNTAGGED_TOPON_ADDR(term)-(BPULONG)stack_low_addr); 
+            sprintf(bp_buf,"_0" BPULONG_FMT_STR, (BPULONG)UNTAGGED_TOPON_ADDR(term)-(BPULONG)stack_low_addr); 
         } else if (ISFLOAT(term)){
             sprintf(bp_buf,"%.15lf", floatval(term));
             bp_trim_trailing_zeros(bp_buf);
@@ -3210,7 +3214,7 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size){
         s = GET_NAME(sym_ptr);
         len = GET_LENGTH(sym_ptr);
         if (i+len >= buf_size){
-            printf("hreg = %lx local_top = %lx buf_size = %x \n", heap_top, local_top, buf_size);
+            printf("hreg = " BPULONG_FMT_STR " local_top = " BPULONG_FMT_STR " buf_size = " BPULONG_FMT_STR " \n", heap_top, local_top, buf_size);
             write_term(lst0); printf("\n");
             quit("buf overfolow in picat_str_to_c_str");
         }

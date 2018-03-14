@@ -1373,16 +1373,16 @@ int c_SHOW_NONDET_FRAME() {
     op1 = ARG(1,1);
     op1 = INTVAL(op1);
     tempreg = (BPLONG_PTR)*arreg;
-    printf("AR=   = %lx\n",tempreg);
-    printf("(AR)  = %lx\n", *tempreg); 
-    printf("CPS   = %lx\n", *(tempreg-1)); 
-    printf("TOP   = %lx\n", *(tempreg-2)); 
-    printf("B     = %lx\n", *(tempreg-3)); 
-    printf("CPF   = %lx\n", *(tempreg-4)); 
-    printf("H     = %lx\n", *(tempreg-5)); 
-    printf("T     = %lx\n", *(tempreg-6)); 
+    printf("AR=   = " BPULONG_FMT_STR "\n",tempreg);
+    printf("(AR)  = " BPULONG_FMT_STR "\n", *tempreg);
+    printf("CPS   = " BPULONG_FMT_STR "\n", *(tempreg-1));
+    printf("TOP   = " BPULONG_FMT_STR "\n", *(tempreg-2));
+    printf("B     = " BPULONG_FMT_STR "\n", *(tempreg-3));
+    printf("CPF   = " BPULONG_FMT_STR "\n", *(tempreg-4));
+    printf("H     = " BPULONG_FMT_STR "\n", *(tempreg-5));
+    printf("T     = " BPULONG_FMT_STR "\n", *(tempreg-6));
     for (i=1;i<= op1 ;i++) {
-        printf("%lx",*(tempreg-6-i));
+        printf(BPULONG_FMT_STR,*(tempreg-6-i));
         if (*(tempreg-6-i) == (BPLONG)(tempreg-6-i))
             printf(" ***\n");
         else
@@ -1687,7 +1687,7 @@ void myquit(overflow_type,src)
     switch (overflow_type) {
     case STACK_OVERFLOW:
         c_STATISTICS();
-        fprintf(stderr,"\nStack overflow in \"%s\" after %lld garbage collections and %lld stack expansions.\n",src,no_gcs,num_stack_expansions);
+        fprintf(stderr,"\nStack overflow in \"%s\" after " BPLONG_FMT_STR " garbage collections and " BPLONG_FMT_STR " stack expansions.\n",src,no_gcs,num_stack_expansions);
 #ifndef PICAT
         fprintf(stderr,"Please start B-Prolog with more stack space as\n");
         fprintf(stderr,"   bp -s xxx\n");
@@ -1697,7 +1697,7 @@ void myquit(overflow_type,src)
 
     case TRAIL_OVERFLOW:
         c_STATISTICS();
-        fprintf(stderr,"\nTRAIL stack overflow in \"%s\" after %lld garbage collections and %lld trail expansions.\n",src,no_gcs,num_trail_expansions);
+        fprintf(stderr,"\nTRAIL stack overflow in \"%s\" after " BPLONG_FMT_STR " garbage collections and " BPLONG_FMT_STR " trail expansions.\n",src,no_gcs,num_trail_expansions);
 #ifndef PICAT
         fprintf(stderr,"Please start B-Prolog with more trail stack space as\n");
         fprintf(stderr,"   bp -b xxx\n");
@@ -1707,7 +1707,7 @@ void myquit(overflow_type,src)
 
     case PAREA_OVERFLOW:
         c_STATISTICS();
-        fprintf(stderr,"\nProgram area overflow in \"%s\" after %lld expansions.\n",src,num_parea_expansions);
+        fprintf(stderr,"\nProgram area overflow in \"%s\" after " BPLONG_FMT_STR " expansions.\n",src,num_parea_expansions);
         exit(1);
 
     case OUT_OF_MEMORY:
