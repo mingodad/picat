@@ -1,11 +1,11 @@
 /********************************************************************
  *   File   : arith.c
  *   Author : Neng-Fa ZHOU Copyright (C) 1994-2018
- *   Purpose: arithmetic functions 
+ *   Purpose: arithmetic functions
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
 #include <stdlib.h>                                                                                                     //branch
@@ -18,7 +18,7 @@
 
 extern FILE *curr_out;
 
-static SYM_REC_PTR 
+static SYM_REC_PTR
 abs1,
     add1,
     add2,
@@ -88,9 +88,9 @@ BPLONG atom_length;
             return BP_ERROR;                                            \
         }                                                               \
     }
-  
+
 void init_arith_sym(){
-  
+
     comp_psc1 = insert_sym("~",1,1);
     abs1 = insert_sym("abs",3,1);
     add1 = insert_sym("+",1,1);
@@ -155,7 +155,7 @@ BPLONG bp_math_add(op1,op2)
     BPLONG op1,op2;
 {
     BPLONG_PTR top;
-  
+
     DEREF(op1);  DEREF(op2);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -201,14 +201,14 @@ BPLONG bp_math_add(op1,op2)
         }
     }
 }
-  
+
 
 BPLONG bp_math_sub(op1,op2)
     BPLONG op1,op2;
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  DEREF(op2);  
+    DEREF(op1);  DEREF(op2);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -230,7 +230,7 @@ BPLONG bp_math_sub(op1,op2)
             return encodefloat1((double)INTVAL(op1) - floatval(op2));
         } else { /* op2 is bigint */
             return bp_sub_bigint_bigint(bp_int_to_bigint(INTVAL(op1)),op2);
-        } 
+        }
     } else if (IS_FLOAT_PSC(op1)){
         if (ISINT(op2)) {
             return encodefloat1(floatval(op1) - (double)INTVAL(op2));
@@ -247,7 +247,7 @@ BPLONG bp_math_sub(op1,op2)
         } else { /* op2 is bigint */
             return bp_sub_bigint_bigint(op1,op2);
         }
-    } 
+    }
 }
 
 
@@ -257,7 +257,7 @@ BPLONG bp_math_mul(op1,op2)
     BPLONG_PTR top;
     BPLONG op3;
 
-    DEREF(op1); DEREF(op2);  
+    DEREF(op1); DEREF(op2);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -286,14 +286,14 @@ BPLONG bp_math_mul(op1,op2)
                 if (BP_IN_28B_INT_RANGE(d1)){
                     res = (BPLONG)d1;
                     return MAKEINT(res);
-                } 
+                }
 #endif
             }
             if (op1 == 0 || op2 == 0) return BP_ZERO;
             op3 = op1*op2;
             if (op3/op2 != op1) {
                 return bp_mul_bigint_bigint(bp_int_to_bigint(op1),bp_int_to_bigint(op2));
-            } 
+            }
             if (BP_IN_1W_INT_RANGE(op3)){
                 return MAKEINT(op3);
             } else {
@@ -329,12 +329,12 @@ BPLONG bp_math_divge(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1); 
+    DEREF(op1);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-    DEREF(op2);  
+    DEREF(op2);
     if (!ISINT(op2)){
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
@@ -351,7 +351,7 @@ BPLONG bp_math_divge(op1,op2)
         } else if (IS_BIGINT(op2)){
             return bp_updiv_bigint_bigint(bp_int_to_bigint(op1),op2);
         } else {
-            exception =  c_type_error(et_INTEGER,op2); 
+            exception =  c_type_error(et_INTEGER,op2);
             return BP_ERROR;
         }
     } else if (IS_BIGINT(op1)){
@@ -360,11 +360,11 @@ BPLONG bp_math_divge(op1,op2)
         } else if (IS_BIGINT(op2)){
             return bp_updiv_bigint_bigint(op1,op2);
         } else {
-            exception =  c_type_error(et_INTEGER,op2); 
+            exception =  c_type_error(et_INTEGER,op2);
             return BP_ERROR;
         }
     } else {
-        exception =  c_type_error(et_INTEGER,op1); 
+        exception =  c_type_error(et_INTEGER,op1);
         return BP_ERROR;
     }
 }
@@ -374,19 +374,19 @@ BPLONG bp_math_divle(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  
+    DEREF(op1);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-    DEREF(op2);  
+    DEREF(op2);
     if (!ISINT(op2)){
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
 
     if (ISINT(op1)){
-        op1 = INTVAL(op1); 
+        op1 = INTVAL(op1);
         if (ISINT(op2)){
             BPLONG tmp_op;
 
@@ -429,7 +429,7 @@ BPLONG bp_math_div(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         if (ISINT(op2)){
             op2 = INTVAL(op2);
@@ -446,7 +446,7 @@ BPLONG bp_math_div(op1,op2)
         } else {
             return encodefloat1((double)INTVAL(op1) / bp_bigint_to_double(op2));
         }
-    } else if (IS_FLOAT_PSC(op1)){ 
+    } else if (IS_FLOAT_PSC(op1)){
         if (ISINT(op2)){
             op2 = INTVAL(op2);
             if (op2==0){
@@ -486,7 +486,7 @@ BPLONG bp_math_idiv(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  DEREF(op2);  
+    DEREF(op1);  DEREF(op2);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -495,7 +495,7 @@ BPLONG bp_math_idiv(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         if (ISINT(op2)){
             op2 = INTVAL(op2);
@@ -544,7 +544,7 @@ BPLONG bp_math_idiv(op1,op2)
             return BP_ERROR;
         }
     } else {
-        exception = c_type_error(et_INTEGER,op1); 
+        exception = c_type_error(et_INTEGER,op1);
         return BP_ERROR;
     }
 }
@@ -564,7 +564,7 @@ BPLONG bp_math_idiv_div(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         if (ISINT(op2)){
             op2 = INTVAL(op2);
@@ -627,7 +627,7 @@ BPLONG bp_math_mod(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         op1 = INTVAL(op1);
         if (ISINT(op2)){
@@ -676,23 +676,23 @@ BPLONG bp_math_mod(op1,op2)
         return BP_ERROR;
     }
 }
-  
+
 BPLONG bp_math_rem(op1,op2)
     BPLONG op1,op2;
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  
+    DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-    DEREF(op2);  
+    DEREF(op2);
     if (!ISNUM(op2)){
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         op1 = INTVAL(op1);
         if (ISINT(op2)) {
@@ -705,7 +705,7 @@ BPLONG bp_math_rem(op1,op2)
             int sign;
 
             if (op1<0){
-                sign = -1; 
+                sign = -1;
                 op1 = -op1;
             } else {
                 sign = 1;
@@ -717,9 +717,9 @@ BPLONG bp_math_rem(op1,op2)
             } else {
                 if (ISINT(op1)){
                     return MAKEINT(-INTVAL(op1));
-                } else 
+                } else
                     return bp_neg_bigint(op1);
-            } 
+            }
         } else {
             exception = c_type_error(et_INTEGER,op1);
             return BP_ERROR;
@@ -734,7 +734,7 @@ BPLONG bp_math_rem(op1,op2)
             }
             if (op2<0){
                 op2 = -op2;
-            } 
+            }
             sign = bp_sign_bigint(op1);
             if (sign<0) op1 = bp_neg_bigint(op1);
             op1 = bp_mod_bigint_bigint(op1,bp_int_to_bigint(op2));
@@ -776,7 +776,7 @@ BPLONG bp_bitwise_and(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  DEREF(op2);  
+    DEREF(op1);  DEREF(op2);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -785,7 +785,7 @@ BPLONG bp_bitwise_and(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         op1 = INTVAL(op1);
         if (ISINT(op2)){
@@ -795,7 +795,7 @@ BPLONG bp_bitwise_and(op1,op2)
             return bp_and_bigint_bigint(bp_int_to_bigint(op1),op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else if (IS_BIGINT(op1)) {
         if (ISINT(op2)){
@@ -804,20 +804,20 @@ BPLONG bp_bitwise_and(op1,op2)
             return bp_and_bigint_bigint(op1,op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else {
         exception = c_type_error(et_INTEGER,op1);
-        return BP_ERROR;      
+        return BP_ERROR;
     }
 }
-    
+
 BPLONG bp_bitwise_or(op1,op2)
     BPLONG op1,op2;
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  DEREF(op2);  
+    DEREF(op1);  DEREF(op2);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -826,7 +826,7 @@ BPLONG bp_bitwise_or(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         op1 = INTVAL(op1);
         if (ISINT(op2)){
@@ -836,7 +836,7 @@ BPLONG bp_bitwise_or(op1,op2)
             return bp_or_bigint_bigint(bp_int_to_bigint(op1),op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else if (IS_BIGINT(op1)) {
         if (ISINT(op2)){
@@ -845,11 +845,11 @@ BPLONG bp_bitwise_or(op1,op2)
             return bp_or_bigint_bigint(op1,op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else {
         exception = c_type_error(et_INTEGER,op1);
-        return BP_ERROR;      
+        return BP_ERROR;
     }
 }
 
@@ -858,17 +858,17 @@ BPLONG bp_bitwise_shiftl(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  
+    DEREF(op1);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-    DEREF(op2);  
+    DEREF(op2);
     if (!ISINT(op2)){
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op2)){
         op2 = INTVAL(op2);
         if (op2<0) return bp_bitwise_shiftr(op1,MAKEINT(-op2));
@@ -885,7 +885,7 @@ BPLONG bp_bitwise_shiftl(op1,op2)
             return bp_shiftl_bigint_int(op1, op2);
         } else {
             exception = c_type_error(et_INTEGER,op1);
-            return BP_ERROR;    
+            return BP_ERROR;
         }
     } else if (IS_BIGINT(op2)){
         if (op1==BP_ZERO) return BP_ZERO;
@@ -893,7 +893,7 @@ BPLONG bp_bitwise_shiftl(op1,op2)
         return BP_ERROR;
     } else {
         exception = c_type_error(et_INTEGER,op2);
-        return BP_ERROR;    
+        return BP_ERROR;
     }
 }
 
@@ -903,7 +903,7 @@ BPLONG bp_bitwise_shiftr(op1,op2)
 {
     BPLONG_PTR top;
 
-    DEREF(op1);  DEREF(op2);  
+    DEREF(op1);  DEREF(op2);
     if (!ISINT(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -912,7 +912,7 @@ BPLONG bp_bitwise_shiftr(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op2)){
         op2 = INTVAL(op2);
         if (op2==0) return op1;
@@ -922,19 +922,19 @@ BPLONG bp_bitwise_shiftr(op1,op2)
             if (BP_IN_28B_INT_RANGE(op1)){
                 return MAKEINT(op1 >> op2);
             } else {
-                return bp_shiftr_bigint_int(bp_int_to_bigint(op1), op2);                
+                return bp_shiftr_bigint_int(bp_int_to_bigint(op1), op2);
             }
         } else if (IS_BIGINT(op1)){
             return bp_shiftr_bigint_int(op1, op2);
         } else {
             exception = c_type_error(et_INTEGER,op1);
-            return BP_ERROR;    
+            return BP_ERROR;
         }
     } else if (IS_BIGINT(op2)){
         return BP_ZERO;
     } else {
         exception = c_type_error(et_INTEGER,op2);
-        return BP_ERROR;    
+        return BP_ERROR;
     }
 }
 
@@ -950,7 +950,7 @@ BPLONG bp_bitwise_complement(op1)
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)) {
         op1 = ~INTVAL(op1);
         if (BP_IN_1W_INT_RANGE(op1)){
@@ -969,7 +969,7 @@ BPLONG bp_bitwise_complement(op1)
         return BP_ERROR;
     }
 }
-  
+
 BPLONG bp_bitwise_xor(op1,op2)
     BPLONG op1,op2;
 {
@@ -984,7 +984,7 @@ BPLONG bp_bitwise_xor(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         if (ISINT(op2)){
             op1 = INTVAL(op2) ^ INTVAL(op1);
@@ -997,7 +997,7 @@ BPLONG bp_bitwise_xor(op1,op2)
             return bp_xor_bigint_bigint(bp_int_to_bigint(INTVAL(op1)),op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else if (IS_BIGINT(op1)) {
         if (ISINT(op2)){
@@ -1006,11 +1006,11 @@ BPLONG bp_bitwise_xor(op1,op2)
             return bp_xor_bigint_bigint(op1,op2);
         } else {
             exception = c_type_error(et_INTEGER,op2);
-            return BP_ERROR;      
+            return BP_ERROR;
         }
     } else {
         exception = c_type_error(et_INTEGER,op1);
-        return BP_ERROR;      
+        return BP_ERROR;
     }
 }
 
@@ -1024,7 +1024,7 @@ BPLONG bp_math_integer(op1)
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1) || IS_BIGINT(op1)){
         return op1;
     } else {
@@ -1051,10 +1051,10 @@ BPLONG bp_math_sign(op1)
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-  
+
     if (ISINT(op1)){
         op1 = INTVAL(op1);
-        if (op1>0){ 
+        if (op1>0){
             return BP_ONE;
         } else if (op1==0){
             return BP_ZERO;
@@ -1103,7 +1103,7 @@ BPLONG bp_math_max(op1,op2)
     }
 
     if (ISINT(op1)){
-        i1 = INTVAL(op1); 
+        i1 = INTVAL(op1);
         if (ISINT(op2)){
             i2 = INTVAL(op2);
             return (i1>i2) ? op1 : op2;
@@ -1159,7 +1159,7 @@ BPLONG bp_math_min(op1,op2)
     }
 
     if (ISINT(op1)){
-        i1 = INTVAL(op1); 
+        i1 = INTVAL(op1);
         if (ISINT(op2)){
             i2 = INTVAL(op2);
             return (i1>i2) ? op2 : op1;
@@ -1196,149 +1196,79 @@ BPLONG bp_math_min(op1,op2)
     }
 }
 
+typedef BPLONG (*bp_math_apply_on_list_or_array_func)(BPLONG op1, BPLONG op2);
+
+static BPLONG bp_math_apply_on_list_or_array(op1, func, seed, seed_first)
+    BPLONG op1;
+    bp_math_apply_on_list_or_array_func func;
+    BPLONG seed;
+    int seed_first;
+{
+    BPLONG result,cur_elm,op0;
+    BPLONG_PTR top,ptr;
+
+    result = seed;
+    DEREF(op1);
+    op0 = op1;
+    if (b_IS_ARRAY_c(op1)){
+        SYM_REC_PTR sym_ptr;
+        int i;
+        if (ISATOM(op1)) return result;
+        ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
+        sym_ptr = (SYM_REC_PTR)FOLLOW(ptr);
+        i = GET_ARITY(sym_ptr);
+        while (i>0){
+            cur_elm = FOLLOW(ptr+i);
+            if(seed_first){
+                seed_first = 0;
+                result = cur_elm;
+            }
+            result = (*func)(result,cur_elm);
+            if (result == BP_ERROR) return BP_ERROR;
+            i--;
+        }
+    } else {
+        while (ISLIST(op1)){
+            ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
+            cur_elm = FOLLOW(ptr);
+            if(seed_first){
+                seed_first = 0;
+                result = cur_elm;
+            }
+            result = (*func)(result,cur_elm);
+            if (result == BP_ERROR) return BP_ERROR;
+            op1 = FOLLOW(ptr+1); DEREF(op1);
+        }
+        if (!ISNIL(op1)){
+            exception = c_type_error(et_LIST,op0);
+            return BP_ERROR;
+        }
+    }
+    return result;
+}
 
 BPLONG bp_math_min1(op1)
     BPLONG op1;
 {
-    BPLONG min_elm,cur_elm,op0;
-    BPLONG_PTR top,ptr;
-
-    DEREF(op1);
-    op0 = op1;
-    if (!ISLIST(op1)) {
-        exception = c_type_error(et_LIST,op1);
-        return BP_ERROR;
-    }
-    ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-    min_elm = FOLLOW(ptr); DEREF(min_elm);
-    op1 = FOLLOW(ptr+1); DEREF(op1);
-    if (!ISNUM(min_elm)){
-        min_elm = eval_arith(min_elm);
-        if (min_elm == BP_ERROR) return BP_ERROR;
-    }
-    while (ISLIST(op1)){
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-        cur_elm = FOLLOW(ptr); 
-        min_elm = bp_math_min(min_elm,cur_elm);
-        if (min_elm == BP_ERROR) return BP_ERROR;
-        op1 = FOLLOW(ptr+1); DEREF(op1);
-    }
-    if (!ISNIL(op1)){
-        exception = c_type_error(et_LIST,op0);
-        return BP_ERROR;
-    }
-    return min_elm;
+    return bp_math_apply_on_list_or_array(op1, bp_math_min, BP_ZERO, 1);
 }
-    
+
 BPLONG bp_math_max1(op1)
     BPLONG op1;
 {
-    BPLONG max_elm,cur_elm,op0;
-    BPLONG_PTR top,ptr;
-
-    DEREF(op1);
-    op0 = op1;
-    if (!ISLIST(op1)) {
-        exception = c_type_error(et_LIST,op1);
-        return BP_ERROR;
-    }
-    ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-    max_elm = FOLLOW(ptr); DEREF(max_elm);
-    op1 = FOLLOW(ptr+1); DEREF(op1);
-    if (!ISNUM(max_elm)){
-        max_elm = eval_arith(max_elm);
-        if (max_elm == BP_ERROR) return BP_ERROR;
-    }
-    while (ISLIST(op1)){
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-        cur_elm = FOLLOW(ptr); 
-        max_elm = bp_math_max(max_elm,cur_elm);
-        if (max_elm == BP_ERROR) return BP_ERROR;
-        op1 = FOLLOW(ptr+1); DEREF(op1);
-    }
-    if (!ISNIL(op1)){
-        exception = c_type_error(et_LIST,op0);
-        return BP_ERROR;
-    }
-    return max_elm;
+    return bp_math_apply_on_list_or_array(op1, bp_math_max, BP_ZERO, 1);
 }
 
 BPLONG bp_math_sum1(op1)
     BPLONG op1;
 {
-    BPLONG sum,cur_elm,op0;
-    BPLONG_PTR top,ptr;
-
-
-    sum = BP_ZERO;
-    DEREF(op1);
-    op0 = op1;
-    if (b_IS_ARRAY_c(op1)){
-        SYM_REC_PTR sym_ptr;
-        int i;
-        if (ISATOM(op1)) return sum;
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-        sym_ptr = (SYM_REC_PTR)FOLLOW(ptr);
-        i = GET_ARITY(sym_ptr);
-        while (i>0){
-            cur_elm = FOLLOW(ptr+i); 
-            sum = bp_math_add(sum,cur_elm);
-            if (sum == BP_ERROR) return BP_ERROR;
-            i--;
-        }
-    } else {
-        while (ISLIST(op1)){
-            ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-            cur_elm = FOLLOW(ptr); 
-            sum = bp_math_add(sum,cur_elm);
-            if (sum == BP_ERROR) return BP_ERROR;
-            op1 = FOLLOW(ptr+1); DEREF(op1);
-        }
-        if (!ISNIL(op1)){
-            exception = c_type_error(et_LIST,op0);
-            return BP_ERROR;
-        }
-    }
-    return sum;
+    return bp_math_apply_on_list_or_array(op1, bp_math_add, BP_ZERO, 0);
 }
 
 BPLONG bp_math_prod1(op1)
     BPLONG op1;
 {
-    BPLONG prod,cur_elm,op0;
-    BPLONG_PTR top,ptr;
-
-
-    prod = BP_ONE;
-    DEREF(op1);
-    op0 = op1;
-    if (b_IS_ARRAY_c(op1)){
-        SYM_REC_PTR sym_ptr;
-        int i;
-        if (ISATOM(op1)) return prod;
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-        sym_ptr = (SYM_REC_PTR)FOLLOW(ptr);
-        i = GET_ARITY(sym_ptr);
-        while (i>0){
-            cur_elm = FOLLOW(ptr+i); 
-            prod = bp_math_mul(prod,cur_elm);
-            if (prod == BP_ERROR) return BP_ERROR;
-            i--;
-        }
-    } else {
-        while (ISLIST(op1)){
-            ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-            cur_elm = FOLLOW(ptr); 
-            prod = bp_math_mul(prod,cur_elm);
-            if (prod == BP_ERROR) return BP_ERROR;
-            op1 = FOLLOW(ptr+1); DEREF(op1);
-        }
-        if (!ISNIL(op1)){
-            exception = c_type_error(et_LIST,op0);
-            return BP_ERROR;
-        }
-    }
-    return prod;
+    return bp_math_apply_on_list_or_array(op1, bp_math_mul, BP_ONE, 0);
 }
 
 
@@ -1364,7 +1294,7 @@ BPLONG bp_math_int_part(op1)
     double f,intf;
     BPLONG_PTR top;
 
-    DEREF(op1);  
+    DEREF(op1);
     if (!ISNUM(op1)){
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -1456,7 +1386,7 @@ BPLONG bp_math_gcd(op1,op2)
         return BP_ERROR;
     }
 }
-    
+
 int b_RAND_MAX_f(rand_max)
     BPLONG rand_max;
 {
@@ -1471,7 +1401,7 @@ int b_GCD_ccf(op1,op2,gcd)
     ASSIGN_sv_heap_term(gcd,op1);
     return BP_TRUE;
 }
-  
+
 /* originally in float.c */
 int equal_to(op1,op2)
     BPLONG op1,op2;
@@ -1488,7 +1418,7 @@ int equal_to(op1,op2)
         op2 = eval_arith(op2);
         if (op2 == BP_ERROR) return BP_ERROR;
     }
-  
+
     /*  printf("compre  %x %x",op1,op2); write_term(op1); printf(" "); write_term(op2); printf("\n"); */
 
     if (ISINT(op1)){
@@ -1501,7 +1431,7 @@ int equal_to(op1,op2)
         }
     } if (IS_FLOAT_PSC(op1)){    /* op1 is not int */
         if (ISINT(op2)){
-            return prettymuch_equal(floatval(op1),(double)INTVAL(op2));      
+            return prettymuch_equal(floatval(op1),(double)INTVAL(op2));
         } else if (IS_FLOAT_PSC(op2)){  /* op1 and op2 are both floats */
             return prettymuch_equal(floatval(op1),floatval(op2));
         } else {
@@ -1510,7 +1440,7 @@ int equal_to(op1,op2)
     } else {
         if (ISINT(op2)){
             return BP_FALSE;
-        } else if (IS_FLOAT_PSC(op2)){  
+        } else if (IS_FLOAT_PSC(op2)){
             return prettymuch_equal(bp_bigint_to_double(op1),floatval(op2));
         } else {
             return (bp_compare_bigint_bigint(op1,op2)==0) ? BP_TRUE : BP_FALSE;
@@ -1537,7 +1467,7 @@ int greater_than(op1,op2)
     if (ISINT(op1)){
         if (ISINT(op2)){
             return (INTVAL(op1) > INTVAL(op2)) ? BP_TRUE : BP_FALSE;
-        } else if (IS_FLOAT_PSC(op2)){ 
+        } else if (IS_FLOAT_PSC(op2)){
             return ((double)INTVAL(op1) > floatval(op2)) ? BP_TRUE : BP_FALSE;
         } else {
             return (bp_sign_bigint(op2) == -1) ? BP_TRUE : BP_FALSE;
@@ -1558,7 +1488,7 @@ int greater_than(op1,op2)
         } else {
             return (bp_compare_bigint_bigint(op1,op2)==1) ? BP_TRUE : BP_FALSE;
         }
-    }    
+    }
 }
 
 int greater_equal(op1,op2)
@@ -1624,11 +1554,11 @@ int b_FLOAT_MINUS_cf(op1,op2)
     ASSIGN_sv_heap_term(op2,op1);
     return BP_TRUE;
 }
- 
+
 BPLONG bp_float_log(BPLONG op1){
     BPLONG_PTR top;
     double f;
-  
+
     DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1639,7 +1569,7 @@ BPLONG bp_float_log(BPLONG op1){
     if (f <= (double)0.0){
         exception = c_domain_error(et_NUMBER,op1);
         return BP_ERROR;
-    } 
+    }
     return encodefloat1(log(f));
 }
 
@@ -1656,7 +1586,7 @@ BPLONG bp_float_log2(BPLONG op1,BPLONG op2){
     BPLONG_PTR top;
     double f1,f2;
 
-  
+
     DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1692,11 +1622,11 @@ BPLONG bp_pow_int_int(BPLONG base, BPLONG ex){
     int sign;
     //  unsigned long long tmp;
     double tmp;
-  
+
     if (base==0){
         return (ex==0) ? BP_ONE : BP_ZERO;
     } else if (base<0){
-        base = -base; 
+        base = -base;
         sign = (ex % 2 ==0) ? 1 : -1;
     } else {
         sign = 1;
@@ -1719,7 +1649,7 @@ BPLONG bp_pow_int_int(BPLONG base, BPLONG ex){
             return BP_ERROR;
         }
         base = (BPLONG)tmp;
-    } 
+    }
     return (sign==1) ? MAKEINT(result) : MAKEINT(-result);
 }
 
@@ -1729,7 +1659,7 @@ BPLONG bp_math_pow(op1,op2)
 {
     double f1,f2,res;
     BPLONG_PTR top;
-  
+
     DEREF(op1);DEREF(op2);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1774,7 +1704,7 @@ BPLONG bp_math_pow(op1,op2)
             if (op2>0){
                 return bp_pow_bigint_int(op1,op2);
             } else {
-                f1 = bp_bigint_to_double(op1); 
+                f1 = bp_bigint_to_double(op1);
                 f2 = (double)op2;
             }
         } else if (IS_FLOAT_PSC(op2)){
@@ -1820,7 +1750,7 @@ int b_REM_ccf(op1,op2,op3)
 BPLONG bp_float_sqrt(BPLONG op1){
     BPLONG_PTR top;
     double f;
-  
+
     DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1828,7 +1758,7 @@ BPLONG bp_float_sqrt(BPLONG op1){
     }
 
     BP_DOUBLE_VAL(op1,f);
-  
+
     if (f >= (double)-0.0){
         return encodefloat1(sqrt(f));
     } else {
@@ -1880,7 +1810,7 @@ int b_FLOAT_ABS_cf(op1,op2)
 BPLONG bp_float_exp(BPLONG op1){
     BPLONG_PTR top;
     double f;
-  
+
     DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1903,7 +1833,7 @@ int b_FLOAT_EXP_cf(op1,op2)
 BPLONG bp_float_sin(BPLONG op1){
     BPLONG_PTR top;
     double f;
-  
+
     DEREF(op1);
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
@@ -1957,7 +1887,7 @@ BPLONG bp_float_tan(BPLONG op1){
     BP_DOUBLE_VAL(op1,f);
     return encodefloat1(tan(f));
 }
-  
+
 
 int b_FLOAT_TAN_cf(op1,op2)
     BPLONG op1,op2;
@@ -1996,7 +1926,7 @@ BPLONG bp_float_atan2(op1,op2)
 {
     double f1,f2;
     BPLONG_PTR top;
-  
+
     DEREF(op1);
     DEREF(op2);
     if (!ISNUM(op1)) {
@@ -2076,7 +2006,7 @@ int b_FLOAT_WRITE_c(op)
     BPLONG_PTR top;
 
     DEREF(op);
-    fprintf(curr_out,"%g",floatval(op)); 
+    fprintf(curr_out,"%g",floatval(op));
     return 1;
 }
 
@@ -2103,7 +2033,7 @@ BPLONG bp_float_floor(op1)
         } else {
             return bp_double_to_bigint(intf);
         }
-    } 
+    }
 }
 
 int b_FLOAT_FLOOR_cf(op1,op2)
@@ -2146,7 +2076,7 @@ int b_FLOAT_FLOAT_cf(op1,op2)
 
 BPLONG bp_float_round(op1)
     BPLONG op1;
-{  
+{
     double f;
 
     if (!ISNUM(op1)) {
@@ -2187,7 +2117,7 @@ int b_FLOAT_ROUND_cf(op1,op2)
 
 BPLONG bp_float_truncate(op1)
     BPLONG op1;
-{  
+{
     double f;
     DEREF(op1);
 
@@ -2212,7 +2142,7 @@ BPLONG bp_float_truncate(op1)
 
 int b_FLOAT_TRUNCATE_cf(op1,op2)
     BPLONG op1,op2;
-{  
+{
     BPLONG_PTR top;
     DEREF(op1);
     op1 = bp_float_truncate(op1);
@@ -2245,7 +2175,7 @@ BPLONG bp_float_ceiling(op1)
         } else {
             return bp_double_to_bigint(intf);
         }
-    } 
+    }
 }
 
 int b_FLOAT_CEILING_cf(op1,op2)
@@ -2302,7 +2232,7 @@ int b_RANDOM_cf(op1,op2)
 {
     BPLONG_PTR top;
     op1 = bp_math_random1(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     DEREF(op2);
     ASSIGN_sv_heap_term(op2, op1);
     return 1;
@@ -2312,7 +2242,7 @@ int b_MAX_ccf(op1,op2,op3)
     BPLONG op1,op2,op3;
 {
     op1 = bp_math_max(op1,op2);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op3,op1);
     return 1;
 }
@@ -2322,25 +2252,25 @@ int b_MIN_ccf(op1,op2,op3)
     BPLONG op1,op2,op3;
 {
     op1 = bp_math_min(op1,op2);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op3,op1);
     return 1;
 }
-  
+
 int b_MAX_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_max1(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
-  
+
 int b_MIN_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_min1(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
@@ -2349,7 +2279,7 @@ int b_SUM_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_sum1(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
@@ -2358,7 +2288,7 @@ int b_PROD_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_prod1(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
@@ -2367,7 +2297,7 @@ int b_FLOAT_FRACT_PART_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_fract_part(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
@@ -2376,7 +2306,7 @@ int b_FLOAT_INT_PART_cf(op1,op2)
     BPLONG op1,op2;
 {
     op1 = bp_math_int_part(op1);
-    if (op1 == BP_ERROR) return BP_ERROR;  
+    if (op1 == BP_ERROR) return BP_ERROR;
     ASSIGN_sv_heap_term(op2,op1);
     return 1;
 }
@@ -2410,11 +2340,11 @@ BPLONG bp_access_array(arr,indexes)
     DEREF(indexes);
     if (ISATOM(indexes)){ /* length? */
         return bp_access_one_array(arr,indexes);
-    } 
+    }
     if (ISSTRUCT(indexes)){ /* A^..^..^ */
         BPLONG_PTR ptr;
         BPLONG index;
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(indexes);       
+        ptr = (BPLONG_PTR)UNTAGGED_ADDR(indexes);
         if (FOLLOW(ptr)!=(BPLONG)cap_psc){
             exception = illegal_arguments;
             return BP_ERROR;
@@ -2430,7 +2360,7 @@ BPLONG bp_access_array(arr,indexes)
         BPLONG index;
         do {
             ptr = (BPLONG_PTR)UNTAGGED_ADDR(indexes);
-            index = FOLLOW(ptr); 
+            index = FOLLOW(ptr);
             arr = bp_access_one_array(arr,index);
             if (arr==BP_ERROR) return BP_ERROR;
             indexes = FOLLOW(ptr+1); DEREF(indexes);
@@ -2486,12 +2416,12 @@ BPLONG bp_access_one_array(arr,index)
         if (!ISINT(index)) goto error_end;
         index = INTVAL(index);
         while (index>1 && ISLIST(arr)){
-            arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(arr); 
+            arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(arr);
             arr = FOLLOW(arr_ptr+1);DEREF(arr);
             index--;
         }
         if (index==1 && ISLIST(arr)){
-            arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(arr); 
+            arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(arr);
             return FOLLOW(arr_ptr);
         } else {
             exception = out_of_bound;
@@ -2503,7 +2433,7 @@ error_end:
     return BP_ERROR;
 }
 
-    
+
 /************************************************************/
 BPLONG eval_arith(ex)
     BPLONG ex;
@@ -2521,7 +2451,7 @@ BPLONG eval_arith(ex)
                       return ex;
                   } else  goto eval_ex;},
 
-              {exception = c_type_error(et_EVALUABLE,ex); 
+              {exception = c_type_error(et_EVALUABLE,ex);
                   return BP_ERROR;},
 
               { if (IS_FLOAT_PSC(ex)){
@@ -2529,7 +2459,7 @@ BPLONG eval_arith(ex)
                   } else if (IS_BIGINT_PSC(ex)){
                       return ex;
                   } goto eval_ex;},
-            
+
               { exception = et_INSTANTIATION_ERROR;return BP_ERROR;});
 
 eval_ex:  /* ex is an exression */
@@ -2539,10 +2469,10 @@ eval_ex:  /* ex is an exression */
     switch (*ch_ptr) {
     case '~':
         if (ptr==comp_psc1){
-            ex = GET_ARG(ex,1); 
+            ex = GET_ARG(ex,1);
             return bp_bitwise_complement(ex);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2555,17 +2485,17 @@ eval_ex:  /* ex is an exression */
 #else
             BPLONG arr,indexes;
 
-            arr = GET_ARG(ex,1); 
-            indexes = GET_ARG(ex,2); 
+            arr = GET_ARG(ex,1);
+            indexes = GET_ARG(ex,2);
             arr = bp_access_array(arr,indexes);
             if (arr==BP_ERROR) return BP_ERROR;
             return eval_arith(arr);
 #endif
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-      
+
     case '+':
         if (ptr==add2) {
             ex1 = GET_ARG(ex,1);
@@ -2575,7 +2505,7 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return eval_arith(ex1);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2588,10 +2518,10 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return bp_math_sub(BP_ZERO,ex1);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case '*':
         if (ptr==ppow2){
             ex1 = GET_ARG(ex,1);
@@ -2603,10 +2533,10 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_math_mul(ex1,ex2);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case '/':
         if (ptr==idiv2){
             ex1 = GET_ARG(ex,1);
@@ -2629,17 +2559,17 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_math_divle(ex1,ex2);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'd':
         if (ptr==idiv_div){
             ex1 = GET_ARG(ex,1);
             ex2 = GET_ARG(ex,2);
             return bp_math_idiv_div(ex1,ex2);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2649,7 +2579,7 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_bitwise_shiftl(ex1,ex2);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2659,10 +2589,10 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_bitwise_shiftr(ex1,ex2);
         } else{
-            exception =  c_type_error(et_EVALUABLE,ex); 
+            exception =  c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case '\\':
         if (ptr==or2){
             ex1 = GET_ARG(ex,1);
@@ -2672,10 +2602,10 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return bp_bitwise_complement(ex1);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'a':
         if (ptr==abs1){
             ex1 = GET_ARG(ex,1);
@@ -2694,7 +2624,7 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return bp_float_acos(ex1);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2710,10 +2640,10 @@ eval_ex:  /* ex is an exression */
             b_CPUTIME_f(res);
             return FOLLOW(res);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'g':
         if (ptr==gcd2){
             ex1 = GET_ARG(ex,1);
@@ -2733,7 +2663,7 @@ eval_ex:  /* ex is an exression */
         } else if (ptr==epsilon0){
             return encodefloat1(EPSILON);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2751,10 +2681,10 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return bp_math_int_part(ex1);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'i':
         if (ptr == integer1){
             ex1 = GET_ARG(ex,1);
@@ -2763,7 +2693,7 @@ eval_ex:  /* ex is an exression */
             exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'l':
         if (ptr==log1){
             ex1 = GET_ARG(ex,1);
@@ -2773,10 +2703,10 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_float_log2(ex1,ex2);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-    
+
     case 'm':
         if (ptr==mod2){
             ex1 = GET_ARG(ex,1);
@@ -2801,7 +2731,7 @@ eval_ex:  /* ex is an exression */
         } else if (ptr==minint){
             return MAKEINT(BP_MININT_1W);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2809,7 +2739,7 @@ eval_ex:  /* ex is an exression */
         if (ptr==pi0){
             return encodefloat1(3.141592653589793);
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
 
@@ -2827,10 +2757,10 @@ eval_ex:  /* ex is an exression */
         } else if (ptr==ran0){
             return bp_math_random0();
         } else {
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-      
+
     case 's':
         if (ptr==sin1){
             ex1 = GET_ARG(ex,1);
@@ -2846,10 +2776,10 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return bp_math_sum1(ex1);
         }  else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
-  
+
     case 't':
         if (ptr==tan1){
             ex1 = GET_ARG(ex,1);
@@ -2858,7 +2788,7 @@ eval_ex:  /* ex is an exression */
             ex1 = GET_ARG(ex,1);
             return  bp_float_truncate(ex1);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
     case 'x':
@@ -2867,15 +2797,15 @@ eval_ex:  /* ex is an exression */
             ex2 = GET_ARG(ex,2);
             return bp_bitwise_xor(ex1,ex2);
         } else{
-            exception = c_type_error(et_EVALUABLE,ex); 
+            exception = c_type_error(et_EVALUABLE,ex);
             return BP_ERROR;
         }
     default:
-        exception = c_type_error(et_NUMBER,ex); 
+        exception = c_type_error(et_NUMBER,ex);
         return BP_ERROR;
     }
 }
-    
+
 /* evaluate an arithmetic exression */
 int b_EVAL_ARITH_cf(ex,res)
     BPLONG ex,res;
@@ -2895,12 +2825,12 @@ int c_MUL_MOD_cccf(){
     BPLONG x, y, z, res;
     BPLONG res0;
     BPLONG_PTR top;
-   
+
     x = ARG(1,4); DEREF(x);
-    y = ARG(2,4); DEREF(y); 
-    z = ARG(3,4); DEREF(z); 
+    y = ARG(2,4); DEREF(y);
+    z = ARG(3,4); DEREF(z);
     res = ARG(4,4);
-  
+
     if (ISINT(x) && ISINT(y) && ISINT(z)) {
         x = INTVAL(x); y = INTVAL(y); z = INTVAL(z);
 
