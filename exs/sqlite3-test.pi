@@ -1,0 +1,7 @@
+main =>
+    bp.sqlite3_open('test.db', DB),
+    write(DB), nl,
+    bp.sqlite3_exec_dml(DB, 'create table if not exists test(id integer primary key, value text);', RC),
+    write(RC), nl,
+    bp.sqlite3_close(DB).
+.

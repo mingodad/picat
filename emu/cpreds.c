@@ -5,7 +5,7 @@
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
 #include <string.h>
@@ -22,38 +22,38 @@ extern char *string_in;
 
 
 /* this function is by Steve Branch */
-int bp_signal(int signo, void user_signal_handler(int, void *), void *userdata)                                         
-{                                                                                                                       
-    user_signal_action[signo] = user_signal_handler;                                                            
-    user_signal_data[signo] = userdata;                                                                         
+int bp_signal(int signo, void user_signal_handler(int, void *), void *userdata)
+{
+    user_signal_action[signo] = user_signal_handler;
+    user_signal_data[signo] = userdata;
 
-    if (signal(signo,exception_handler) == SIG_ERR)                                                                     
-    {                                                                                                           
-        printf("can't catch user signal %d\n", signo);                                                          
-    }                                                                                                           
-    return(BP_TRUE);                                                                                            
-}                                                                                                                       
+    if (signal(signo,exception_handler) == SIG_ERR)
+    {
+        printf("can't catch user signal %d\n", signo);
+    }
+    return(BP_TRUE);
+}
 
 /* this function is by Steve Branch */
-void *bp_get_address(BPLONG t)                                                                                          
-{                                                                                                                       
-    unsigned long int ulint = 0;                                                                                                
+void *bp_get_address(BPLONG t)
+{
+    unsigned long int ulint = 0;
 
     DEREF(t);
     if (ISINT(t)){
         if (t != BP_ZERO) printf("expected address, found integer\n");
-        return(NULL);                   //zero represented as an integer for prolog checks                      
-    } else if (ISADDR(t)) {                                                                                                             
-        UNTAG_ADDR(t);                                                                                          
-        ulint = INTVAL(*((BPLONG_PTR)t+1));                                                                     
+        return(NULL);                   //zero represented as an integer for prolog checks
+    } else if (ISADDR(t)) {
+        UNTAG_ADDR(t);
+        ulint = INTVAL(*((BPLONG_PTR)t+1));
         ulint = ulint << (sizeof(BPLONG)*4);
-        ulint = ulint | INTVAL(*((BPLONG_PTR)t+2));                                                             
-        return((void *)ulint);                                                                                  
-    } else {                                                                                                            
-        exception = number_expected;                                                                            
-        return NULL;                                                                                            
-    }                                                                                                           
-}                                                                                                                       
+        ulint = ulint | INTVAL(*((BPLONG_PTR)t+2));
+        return((void *)ulint);
+    } else {
+        exception = number_expected;
+        return NULL;
+    }
+}
 
 /* this function is by Steve Branch */
 BPLONG bp_build_address(void *address){
@@ -62,13 +62,13 @@ BPLONG bp_build_address(void *address){
     if (address){
         temp = ADDTAG(heap_top,STR);
         NEW_HEAP_NODE((BPLONG)address_psc);     /* '$address'(void *)   */
-        NEW_HEAP_NODE(MAKEINT(((unsigned long int)address >> (sizeof(BPLONG)*4))));     
+        NEW_HEAP_NODE(MAKEINT(((unsigned long int)address >> (sizeof(BPLONG)*4))));
         NEW_HEAP_NODE(MAKEINT(((unsigned long int)address << (sizeof(BPLONG)*4)) >> (sizeof(BPLONG)*4)));
     } else {
         temp = BP_ZERO; // prolog code is checking for zero
     }
     return temp;
-}                                                                                                                       
+}
 
 int identical_VAR_VAR(t1,t2)
     BPLONG t1;
@@ -294,13 +294,13 @@ int picat_is_identical(t1,t2)
 }
 
 /**/
-long bp_get_integer(t) 
+long bp_get_integer(t)
     BPLONG t;
 {
     return picat_get_integer(t) ;
 }
 
-BPLONG picat_get_integer(t) 
+BPLONG picat_get_integer(t)
     BPLONG t;
 {
     BPLONG_PTR top;
@@ -309,7 +309,7 @@ BPLONG picat_get_integer(t)
         return INTVAL(t);
     } else  if (IS_BIGINT(t)){
         return bp_bigint_to_int(t); /* !! may lose bits */
-    } else if(ISADDR(t)){ 
+    } else if(ISADDR(t)){
         printf("integer expected, found address\n");
     } else {
         exception = integer_expected;
@@ -327,7 +327,7 @@ double picat_get_float(t)
     BPLONG t;
 {
     BPLONG_PTR top;
-  
+
     DEREF(t);
     if (ISINT(t)){
         return (double)INTVAL(t);
@@ -492,7 +492,7 @@ BPLONG bp_get_cdr(t)
 {
     return picat_get_cdr(t);
 }
-  
+
 /**/
 BPLONG picat_build_var(){
     NEW_HEAP_FREE;
@@ -530,14 +530,14 @@ BPLONG bp_build_float(f)
 {
     return encodefloat1(f);
 }
-  
-BPLONG picat_build_atom(name) 
+
+BPLONG picat_build_atom(name)
     const char *name;
 {
     return ADDTAG(insert_sym(name,strlen(name),0),ATM);
 }
 
-BPLONG bp_build_atom(name) 
+BPLONG bp_build_atom(name)
     const char *name;
 {
     return picat_build_atom(name);
@@ -619,7 +619,7 @@ int string_2_term(){
     DEREF(op2);
     n = list_length(op1,op1);
     if (!ISLIST(op1) || n<=0){exception=illegal_arguments; return BP_ERROR;};
-    str = (char *)malloc(n+1);  
+    str = (char *)malloc(n+1);
     if (str==NULL) myquit(OUT_OF_MEMORY,"st");
     curr_char_ptr = str;
     list = op1;
@@ -637,7 +637,7 @@ int string_2_term(){
 int term_2_atom(){
     BPLONG op1,op2;
     char *str;
-  
+
     op1 = ARG(1,2);
     op2 = ARG(2,2);
     str = bp_term_2_string(op1);
@@ -647,7 +647,7 @@ int term_2_atom(){
 int term_2_string(){
     BPLONG op1,op2,list;
     char *str;
-  
+
     op1 = ARG(1,2);
     op2 = ARG(2,2);
     str = bp_term_2_string(op1);
@@ -664,7 +664,7 @@ int bp_string_2_term(str, term, vars)
     BPLONG res;
     BPLONG Read;
     int old_bp_gc = bp_gc;
-  
+
     bp_gc = 0;  /* disenable GC */
     string_in = str;
     lastc = ' ';
@@ -680,7 +680,7 @@ int bp_string_2_term(str, term, vars)
     return res;
 }
 
-/* Call a prolog term, the return value can be BP_TRUE, BP_FALSE, or BP_ERROR 
+/* Call a prolog term, the return value can be BP_TRUE, BP_FALSE, or BP_ERROR
    The function call toam() does not return if an exception occurs
    during its execution that is not handled
 */
@@ -688,9 +688,9 @@ int bp_call_term(term)
     BPLONG term;
 {
     BPLONG res;
-  
+
     init_stack(0);
-  
+
     FOLLOW(arreg+1) = term;
 
     if (GET_ETYPE(enter_dyn_call)!= T_PRED){
@@ -698,13 +698,13 @@ int bp_call_term(term)
         return(BP_ERROR);
     }
     inst_begin = (BPLONG_PTR) GET_EP(enter_dyn_call);
-    res= toam(inst_begin,arreg,local_top); 
+    res= toam(inst_begin,arreg,local_top);
     curr_toam_status = TOAM_NOTSET;
 
     return res;
 }
 
-/* Call once(term), breg's value will be restored after the call 
+/* Call once(term), breg's value will be restored after the call
    The function call toam() does not return if an exception occurs
    during its execution that is not handled
 */
@@ -713,19 +713,19 @@ int bp_call_term_once(term)
 {
     BPLONG res;
     BPLONG_PTR old_b =  (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)breg);
-    
+
     init_stack(0);
-  
+
     FOLLOW(arreg+1) = term;
     if (GET_ETYPE(enter_dyn_call)!= T_PRED){
-        exception = illegal_predicate;  
-        return(BP_ERROR);                       
+        exception = illegal_predicate;
+        return(BP_ERROR);
     }
     inst_begin = (BPLONG_PTR) GET_EP(enter_dyn_call);
-    res= toam(inst_begin,arreg,local_top); 
-    breg = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)old_b); 
+    res= toam(inst_begin,arreg,local_top);
+    breg = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)old_b);
     hbreg = (BPLONG_PTR)AR_H(breg);
-  
+
     curr_toam_status = TOAM_NOTSET;
 
     return res;
@@ -739,19 +739,19 @@ int bp_call_term_catch(term)
 {
     BPLONG res;
     BPLONG_PTR old_b =  (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)breg);
-    
+
     init_stack(0);
-  
+
     FOLLOW(arreg+1) = term;
     if (GET_ETYPE(enter_catch_call)!= T_PRED){
-        exception = illegal_predicate;  
-        return(BP_ERROR);                       
+        exception = illegal_predicate;
+        return(BP_ERROR);
     }
     inst_begin = (BPLONG_PTR) GET_EP(enter_catch_call);
-    res= toam(inst_begin,arreg,local_top); 
-    breg = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)old_b); 
+    res= toam(inst_begin,arreg,local_top);
+    breg = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)old_b);
     hbreg = (BPLONG_PTR)AR_H(breg);
-  
+
     curr_toam_status = TOAM_NOTSET;
 
     return res;
@@ -773,7 +773,7 @@ int bp_call_string(cmd)
 
     Pcmd = picat_build_var();
     vars = picat_build_var();
-  
+
     old_bp_gc = bp_gc;
     bp_gc = 0;  /* suppress garbage collection and stack expansion */
     if (bp_string_2_term(cmd,Pcmd,vars) != BP_TRUE){
@@ -793,12 +793,12 @@ int bp_mount_query_string(cmd)
     int old_bp_gc;
     BPLONG term = picat_build_var();
     BPLONG vars = picat_build_var();
-  
+
     old_bp_gc = bp_gc;
     bp_gc = 0;
     res = bp_string_2_term(cmd,term,vars);
     if (res != BP_TRUE) {
-        fprintf(stderr,"***Error: Failed to parse %s",cmd); 
+        fprintf(stderr,"***Error: Failed to parse %s",cmd);
         bp_gc = old_bp_gc;
         return BP_ERROR;
     }
@@ -823,13 +823,13 @@ int bp_next_solution()
         return BP_ERROR;
     } else  if (curr_toam_status == TOAM_DONE) {
         return 0;
-    } else if (curr_toam_status == TOAM_STARTED) { 
+    } else if (curr_toam_status == TOAM_STARTED) {
         inst_begin = addr_fail;
     } else { /* mounted */
         curr_toam_status = TOAM_STARTED;
         inst_begin = (BPLONG_PTR) GET_EP(enter_dyn_call);
     }
-    return toam(inst_begin,arreg,local_top); 
+    return toam(inst_begin,arreg,local_top);
 }
 
 /**/
@@ -970,13 +970,13 @@ int currentTime(){
     struct tm *ct;
     BPLONG Year,Month,Day,Hour,Min,Sec;
 
-    Year   = bp_get_call_arg(1,6); 
-    Month  = bp_get_call_arg(2,6); 
+    Year   = bp_get_call_arg(1,6);
+    Month  = bp_get_call_arg(2,6);
     Day    = bp_get_call_arg(3,6);
     Hour   = bp_get_call_arg(4,6);
     Min    = bp_get_call_arg(5,6);
     Sec    = bp_get_call_arg(6,6);
-  
+
     time(&t);
     ct = localtime(&t);
 
@@ -987,34 +987,34 @@ int currentTime(){
             unify(Min,bp_build_integer(ct->tm_min))   &&
             unify(Sec,bp_build_integer(ct->tm_sec)));
 }
-  
+
 /*  Example usage: p(A1,A2) */
 /*
   int test(){
   TERM a1, a2, a, b, c, f1, l1, f12;
   char *name_ptr;
-  
-  a1 = picat_get_call_arg(1, 2);       // first argument 
+
+  a1 = picat_get_call_arg(1, 2);       // first argument
   a2 = picat_get_call_arg(2, 2);       // second argument
   a = picat_build_atom("a");
   b = picat_build_atom("b");
   c = picat_build_atom("c");
-  f1 = picat_build_structure("f", 1);  // f(1) 
+  f1 = picat_build_structure("f", 1);  // f(1)
   picat_unify(picat_get_arg(1, f1), a);
-  l1 = picat_build_list();             // [1] 
+  l1 = picat_build_list();             // [1]
   picat_unify(picat_get_car(l1), picat_build_integer(1));
   picat_unify(picat_get_cdr(l1), picat_build_nil());
-  f12 = picat_build_float(1.2);        // 1.2 
-  
-  if (!picat_is_atom(a1)) 
+  f12 = picat_build_float(1.2);        // 1.2
+
+  if (!picat_is_atom(a1))
   return PICAT_FALSE;
   name_ptr = picat_get_name(a1);
   switch (*name_ptr){
-  case 'a': 
+  case 'a':
   return (picat_unify(a1, a) ? picat_unify(a2, f1) : PICAT_FALSE);
-  case 'b': 
+  case 'b':
   return (picat_unify(a1, b) ? picat_unify(a2, l1) : PICAT_FALSE);
-  case 'c': 
+  case 'c':
   return (picat_unify(a1, c) ? picat_unify(a2, f12) : PICAT_FALSE);
   default: return PICAT_FALSE;
   }
@@ -1098,7 +1098,7 @@ void Cboot() {
     insert_cpred("number_vars",3,c_NUMBER_VARS);
     insert_cpred("numbervars",3,c_NUMBER_VARS);
     insert_cpred("variant",2,c_VARIANT);
-    insert_cpred("callbp",1,c_CallBpFromC);  
+    insert_cpred("callbp",1,c_CallBpFromC);
     insert_cpred("c_GET_NONEMPTY_LINE",0,c_GET_NONEMPTY_LINE);
     insert_cpred("c_FINISH_GET_LINE",0,c_FINISH_GET_LINE);
     insert_cpred("c_INITIALIZE_TABLE",0,c_INITIALIZE_TABLE);
@@ -1157,7 +1157,7 @@ void Cboot() {
     // insert_cpred("test",2,test);
 
     insert_cpred("c_set_bp_exception",1,c_set_bp_exception);
- 
+
     insert_cpred("c_SAME_ADDR",2,c_SAME_ADDR);
 
     insert_cpred("c_sat_embedded",0,c_sat_embedded);
@@ -1191,7 +1191,7 @@ void Cboot() {
     Cboot_delay();
     Cboot_domain();
 #ifdef JAVA
-    Cboot_plc(); 
+    Cboot_plc();
 #endif
 
 #ifdef CPLEX
@@ -1223,26 +1223,39 @@ void Cboot() {
     bp4p_register_preds();
 #endif
 
-    //  Cboot_TP();                                                                                                             
+#ifdef WITH_SQLITE3
+
+    extern int picat_sqlite3_open();
+    insert_cpred("sqlite3_open", 2, picat_sqlite3_open);
+
+    extern int picat_sqlite3_exec_dml();
+    insert_cpred("sqlite3_exec_dml", 3, picat_sqlite3_exec_dml);
+
+    extern int picat_sqlite3_close();
+    insert_cpred("sqlite3_close", 1, picat_sqlite3_close);
+
+#endif //WITH_SQLITE3
+
+    //  Cboot_TP();
 }
-  
-/* by S. Branch */  
+
+/* by S. Branch */
 /*
-  extern void Cboot_lcm(void);                                                                                  
-  extern void Cboot_libdata(void);                                                                                      
-  extern void Cboot_libklr(void);                                                                                               
-  extern void Cboot_libprofare(void);                                                                                   
-  extern void Cboot_libtaxtextdata(void);                                                                                       
-  extern int c_current_host(void);                                                                                      
-  extern int c_process_id(void);                                                                                        
-  extern int c_socket_server_open(void);                                                                                        
-  extern int c_socket_server_accept(void);                                                                                      
-  extern int c_socket_server_close(void);                                                                                       
-  extern int c_format_to_codes(void);                                                                                   
-  extern int c_now(void);                                                                                               
-  extern int c_term_hash(void);                                                                                         
-  extern int c_random(void);                                                                                            
-  extern int c_simple(void);                                                                                            
+  extern void Cboot_lcm(void);
+  extern void Cboot_libdata(void);
+  extern void Cboot_libklr(void);
+  extern void Cboot_libprofare(void);
+  extern void Cboot_libtaxtextdata(void);
+  extern int c_current_host(void);
+  extern int c_process_id(void);
+  extern int c_socket_server_open(void);
+  extern int c_socket_server_accept(void);
+  extern int c_socket_server_close(void);
+  extern int c_format_to_codes(void);
+  extern int c_now(void);
+  extern int c_term_hash(void);
+  extern int c_random(void);
+  extern int c_simple(void);
 
   void Cboot_TP(void)
   {
