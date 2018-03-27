@@ -1,0 +1,9 @@
+main =>
+	A=max([1,2,9], [4,5]), write(A),nl,
+	B=max({1,2,9}, {4,5}), write(B),nl,
+	AB=max([3,4], [3,4,1]), write(AB),nl,
+	BB=max({1,2}, {3,4,5}), write(BB),nl,
+	BC=max({1,1}, {1,1,1}), write(BC),nl,
+	C=max([1,2,3], {4,5}), write(C),nl,
+	D=max({1,2,3}, [4,5]), write(D),nl.
+.

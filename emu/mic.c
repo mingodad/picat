@@ -6,7 +6,7 @@
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 /* mic.c */
 #ifdef WIN32
@@ -74,7 +74,7 @@ int c_ref_equal(){
     BPLONG op1 = ARG(1,2);
     BPLONG op2 = ARG(2,2);
     BPLONG_PTR top;
-  
+
     DEREF(op1);DEREF(op2);
     return  (op1 == op2);
 }
@@ -122,9 +122,9 @@ BPLONG time_t_2_prolog(t)
     FOLLOW(heap_top++) = (BPLONG)BP_NEW_SYM("time",6);
     FOLLOW(heap_top++) = MAKEINT(tp->tm_year+1900);
     FOLLOW(heap_top++) = MAKEINT(tp->tm_mon);
-    FOLLOW(heap_top++) = MAKEINT(tp->tm_mday);  
-    FOLLOW(heap_top++) = MAKEINT(tp->tm_hour);  
-    FOLLOW(heap_top++) = MAKEINT(tp->tm_min);  
+    FOLLOW(heap_top++) = MAKEINT(tp->tm_mday);
+    FOLLOW(heap_top++) = MAKEINT(tp->tm_hour);
+    FOLLOW(heap_top++) = MAKEINT(tp->tm_min);
     FOLLOW(heap_top++) = MAKEINT(tp->tm_sec);
     return time_in_prolog;
 }
@@ -150,14 +150,14 @@ BPLONG cputime()
   BPLONG cputime()
   { struct tms t;
   (void)times(&t);
-  return (1000*t.tms_utime/CLK_TCK); 
+  return (1000*t.tms_utime/CLK_TCK);
   }
 */
 
 int c_OS_TYPE_f(){
     SYM_REC_PTR sym_ptr;
     BPLONG op;
-  
+
     op = unix_atom;
 #ifdef WIN32
     op = windows_atom;
@@ -165,7 +165,7 @@ int c_OS_TYPE_f(){
 #ifdef CYGWIN
     op = cygwin_atom;
 #endif
-  
+
     return unify(ARG(1,1),op);
 }
 
@@ -190,14 +190,14 @@ int c_TIME_ffffff(){
     h = ARG(4,6);
     mi = ARG(5,6);
     s = ARG(6,6);
-  
+
     time(tp);
     green_t_ptr = localtime(tp);
     unify(y,MAKEINT(green_t_ptr->tm_year));
     unify(mo,MAKEINT(green_t_ptr->tm_mon));
-    unify(d,MAKEINT(green_t_ptr->tm_mday));  
-    unify(h,MAKEINT(green_t_ptr->tm_hour));  
-    unify(mi,MAKEINT(green_t_ptr->tm_min));  
+    unify(d,MAKEINT(green_t_ptr->tm_mday));
+    unify(h,MAKEINT(green_t_ptr->tm_hour));
+    unify(mi,MAKEINT(green_t_ptr->tm_min));
     unify(s,MAKEINT(green_t_ptr->tm_sec));
     return BP_TRUE;
 }
@@ -222,7 +222,7 @@ int c_GETENV_cf(){
     unify(value,ADDTAG((BPLONG)insert_sym(val,strlen(val),0),ATM));
     return BP_TRUE;
 }
-  
+
 int b_PICAT_COMPARE_fcc(BPLONG res, BPLONG term1, BPLONG term2){
     int i;
 
@@ -234,13 +234,13 @@ int b_PICAT_COMPARE_fcc(BPLONG res, BPLONG term1, BPLONG term2){
 int b_COMPARE_fcc(res,t1,t2)
     BPLONG res,t1,t2;
 {
-    /* t1, t2: two terms to be compared; 
+    /* t1, t2: two terms to be compared;
        res = '<' if t1<t2;
        res = '>' if t1>t2;
        res = '=' if t1=t2;
     */
     int i;
-  
+
     i = bp_compare(t1, t2);
     if (i == 0) {
         ASSIGN_f_atom(res,equal_sym);
@@ -262,7 +262,7 @@ int compare(val1, val2)
 int bp_compare(BPLONG val1, BPLONG val2)
 {
     BPLONG_PTR        top;
-    BPLONG            a, b;
+    BPLONG            a, b, aa, ab;
     int               c;
     SYM_REC_PTR       sym_ptr1, sym_ptr2;
 
@@ -270,17 +270,18 @@ l_start:
     DEREF(val2);
     SWITCH_OP(val1,lcompare1,
               {if (ISREF(val2)) return BP_COMPARE_UNSIGNED_VALS(val1,val2); else return -1L;},
-            
+
               {SWITCH_OP(val2,lcompare2,
-                         {return 1;}, 
-                         {goto compare_atom_atom;}, 
-                         {return -1L;}, 
+                         {return 1;},
+                         {goto compare_atom_atom;},
+                         {return -1L;},
                          {if (IS_FLOAT_PSC(val2)) goto compare_atom_float; else if (IS_BIGINT_PSC(val2)) goto compare_atom_bigint; else return -1L;},
                          {return 1;});},
 
-              {if (!ISLIST(val2)) 
+              {if (!ISLIST(val2)){
+                      //if(b_IS_ARRAY_c(val2)) goto compare_symbol;
                       return 1;
-                  else {
+                  } else {
                       UNTAG_ADDR(val1);
                       UNTAG_ADDR(val2);
                       if (val1==val2) return 0;
@@ -292,8 +293,8 @@ l_start:
                           val2 = FOLLOW((BPLONG_PTR)val2+1);
                           goto l_start;
                       }}},
-             
-              {if (IS_FLOAT_PSC(val1)) 
+
+              {if (IS_FLOAT_PSC(val1))
                       return compare_float_unknown(val1,val2);
                   if (IS_BIGINT_PSC(val1)) goto compare_bigint_unknown;
                   SWITCH_OP(val2,lcompare3,
@@ -318,7 +319,7 @@ compare_atom_atom:
         } else
             return -1L; /* int atom */
     }  else {
-        if (ISATOM(val2)) 
+        if (ISATOM(val2))
             goto compare_symbol;
         else
             return 1; /* atom int */
@@ -353,32 +354,35 @@ compare_atom_float:
 
 compare_bigint_unknown:
     SWITCH_OP(val2,lcompare_bigint_unknown,
-              {return 1;}, 
-              {goto compare_bigint_atom;}, 
-              {return -1L;}, 
+              {return 1;},
+              {goto compare_bigint_atom;},
+              {return -1L;},
               {if (IS_FLOAT_PSC(val2)) return compare_bigint_float(val1,val2); else if (IS_BIGINT_PSC(val2)) return bp_compare_bigint_bigint(val1,val2); else return -1L;},
               {return 1;});
-   
+
 compare_symbol:
     if (val1 == val2) return 0;
     sym_ptr1 = GET_SYM_REC(val1);
     sym_ptr2 = GET_SYM_REC(val2);
     a = GET_ARITY(sym_ptr1);
     b = GET_ARITY(sym_ptr2);
-    if (a != b)
-        return BP_COMPARE_VALS(a,b);
-    c = comalpha(sym_ptr1, sym_ptr2);
-    if (c || a == 0)
-        return c;
+    if (!(b_IS_ARRAY_c(val1) || b_IS_ARRAY_c(val2))){
+        if (a != b)
+            return BP_COMPARE_VALS(a,b);
+        c = comalpha(sym_ptr1, sym_ptr2);
+        if (c || a == 0)
+            return c;
+    }
     UNTAG_ADDR(val1);
     UNTAG_ADDR(val2);
-    for (b = 1; b <= a; b++) {
-        c = bp_compare(FOLLOW(((BPLONG_PTR)val1)+b),
-                       FOLLOW(((BPLONG_PTR)val2)+b));
+    aa = (a > b) ? b : a;
+    for (ab = 1; ab <= aa; ab++) {
+        c = bp_compare(FOLLOW(((BPLONG_PTR)val1)+ab),
+                       FOLLOW(((BPLONG_PTR)val2)+ab));
         if (c)
             break;
     }
-    return c;
+    return (c == 0) ? (a-b) : c;
 }
 
 int compare_bigint_float(BPLONG val1, BPLONG val2)
@@ -406,7 +410,7 @@ int compare_float_unknown(BPLONG val1, BPLONG val2)
     } else if (IS_BIGINT(val2)){
         f2 = bp_bigint_to_double(val2);
         COMPARE_FLOAT_FLOAT(f1,f2);
-    } else 
+    } else
         return -1L;
 }
 
@@ -428,7 +432,7 @@ int c_INCREMENTARG(){
     DEREF(op1);
     DEREF(op2);
     if (!ISINT(op1)) {
-        exception = c_type_error(et_INTEGER,op1); 
+        exception = c_type_error(et_INTEGER,op1);
         return BP_ERROR;
     }
     op1 = INTVAL(op1);
@@ -437,7 +441,7 @@ int c_INCREMENTARG(){
         op2 = *top;
         PUSHTRAIL_H_ATOMIC(top,op2);
         if (!ISINT(op2)) {
-            exception = c_type_error(et_INTEGER,op2); 
+            exception = c_type_error(et_INTEGER,op2);
             return BP_ERROR;
         }
         *top = MAKEINT(INTVAL(op2)+1);
@@ -448,7 +452,7 @@ int c_INCREMENTARG(){
         op2 = *top;
         PUSHTRAIL_H_ATOMIC(top,op2);
         if (!ISINT(op2)) {
-            exception = c_type_error(et_INTEGER,op2); 
+            exception = c_type_error(et_INTEGER,op2);
             return BP_ERROR;
         }
         *top = MAKEINT(INTVAL(op2)+1);
@@ -460,13 +464,13 @@ int c_INCREMENTARG(){
 int c_DECREMENTARG(){
     register BPLONG     op1,op2;
     BPLONG_PTR top;
-  
+
     op1 = ARG(1,2);
     op2 = ARG(2,2);
-  
+
     DEREF(op1);DEREF(op2);
     if (!ISINT(op1)) {
-        exception = c_type_error(et_INTEGER,op1); 
+        exception = c_type_error(et_INTEGER,op1);
         return BP_ERROR;
     }
     op1 = INTVAL(op1);
@@ -475,10 +479,10 @@ int c_DECREMENTARG(){
         op2 = *top;
         PUSHTRAIL_H_ATOMIC(top,op2);
         if (!ISINT(op2)) {
-            exception = c_type_error(et_INTEGER,op2); 
+            exception = c_type_error(et_INTEGER,op2);
             return BP_ERROR;
         }
-        *top = MAKEINT(INTVAL(op2)-1); 
+        *top = MAKEINT(INTVAL(op2)-1);
         return BP_TRUE;
     }
     else if (ISLIST(op2) && op1 > 0 && op1 <= 2) {
@@ -503,10 +507,10 @@ int b_DESTRUCTIVE_SET_ARG_ccc(op1,op2,op3)
     BPLONG var_no = 0;
 
     DEREF(op1);DEREF(op2);DEREF(op3);
-  
+
     if (IS_SUSP_VAR(op3)) op3 = UNTAGGED_ADDR(op3);
     if (!ISINT(op1)) {
-        exception = c_type_error(et_INTEGER,op1); 
+        exception = c_type_error(et_INTEGER,op1);
         return BP_ERROR;
     }
     op1 = INTVAL(op1);
@@ -534,7 +538,7 @@ int b_DESTRUCTIVE_SET_ARG_ccc(op1,op2,op3)
     return BP_TRUE;
 }
 
-int b_CHAR_CODE_cf(ch,code)  /* the code of op1 is op2 */ 
+int b_CHAR_CODE_cf(ch,code)  /* the code of op1 is op2 */
     BPLONG ch,code;
 {
     SYM_REC_PTR       sym_ptr;
@@ -552,7 +556,7 @@ int b_CHAR_CODE_cf(ch,code)  /* the code of op1 is op2 */
             return BP_TRUE;
         } else if ((len<=4) && (utf8_nchars(name) == 1)){
             ASSIGN_f_atom(code,MAKEINT(utf8_char_to_codepoint(&name)));
-            return BP_TRUE;      
+            return BP_TRUE;
         }
         exception = c_type_error(et_CHARACTER,ch);
         return BP_ERROR;
@@ -565,12 +569,12 @@ int b_CHAR_CODE_cf(ch,code)  /* the code of op1 is op2 */
     return BP_ERROR;
 }
 
-int b_CHAR_CODE_fc(ch,code)  /* the code of op1 is op2 */ 
+int b_CHAR_CODE_fc(ch,code)  /* the code of op1 is op2 */
     BPLONG ch,code;
 {
     BPLONG_PTR top;
     char s[5], *ch_ptr;
-  
+
 
     DEREF(code); code = INTVAL(code);
 
@@ -591,7 +595,7 @@ int string2codes(str,list)
         return unify(list,nil_sym);
     }
     temp = ADDTAG(heap_top,LST);
-  
+
     FOLLOW(heap_top++) = MAKEINT(*str++);
     tail = heap_top; heap_top++;
     while (*str != '\0'){
@@ -602,7 +606,7 @@ int string2codes(str,list)
     }
     FOLLOW(tail) = nil_sym;
     return unify(list,temp);
-}  
+}
 
 int var_or_atomic(op)
     BPLONG op;
@@ -627,15 +631,15 @@ int b_BLDATOM_fc(op1,op2)
     CHAR_PTR name,s;
     BPLONG  op3,orig_op2;
     BPLONG_PTR top,ptr;
-  
+
     orig_op2 = op2;
     name = s = (char *)heap_top;
     n = 0;
-  
+
     DEREF(op2);
     while (ISLIST(op2)){
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(op2);
-        op3 = FOLLOW(ptr);  
+        op3 = FOLLOW(ptr);
         DEREF(op3);
         if (!ISINT(op3)) {
             if (ISREF(op3)){
@@ -684,7 +688,7 @@ int b_BLDNUM_fc(op1,op2)
     CHAR_PTR s,name;
     BPLONG  op3,sign,orig_op2;
     BPLONG_PTR top,ptr;
-  
+
     s = name = (char *)heap_top;
     n = 0;
     orig_op2 = op2;
@@ -699,7 +703,7 @@ int b_BLDNUM_fc(op1,op2)
     */
     while (ISLIST(op2)) {
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(op2);
-        op3 = FOLLOW(ptr);  
+        op3 = FOLLOW(ptr);
         DEREF(op3);
         if (!ISINT(op3)) {
             if (ISREF(op3)){
@@ -722,13 +726,13 @@ int b_BLDNUM_fc(op1,op2)
     if (!ISNIL(op2)){
         if (ISREF(op2)){
             exception = et_INSTANTIATION_ERROR;
-        } else 
+        } else
             exception = c_type_error(et_LIST,orig_op2);
         return BP_ERROR;
     }
     *s = '\0';
     string_in = malloc(strlen(name)+1);
-    strcpy(string_in,name); 
+    strcpy(string_in,name);
     name = string_in;
     lastc = *string_in++;
     if (lastc == '-') {
@@ -741,7 +745,7 @@ int b_BLDNUM_fc(op1,op2)
         token_t = bp_build_var();
         token_v = bp_build_var();
         res = b_NEXT_TOKEN_ff(token_t,token_v);
-        free(name); 
+        free(name);
         string_in = NULL;
         if (res == BP_ERROR){
             exception = c_syntax_error(invalid_number_format);
@@ -832,7 +836,7 @@ int c_LOAD_cfc(){
     }
     return BP_TRUE;
 }
-  
+
 int b_LOAD_cfc(op1,op2,op3)
     register BPLONG     op1,op2,op3;
 {  /* arg1: the byte code file to be loaded
@@ -873,17 +877,17 @@ int c_STATISTICS()
     BPLONG total_parea_size;
 
     fprintf(stderr,"\n");
-    fprintf(stderr,"Stack+Heap:    %10s bytes\n",format_comma_separated_int(stack_size*sizeof(BPLONG))); 
+    fprintf(stderr,"Stack+Heap:    %10s bytes\n",format_comma_separated_int(stack_size*sizeof(BPLONG)));
     /*  fprintf("Total limit:  %10ld bytes\n",stack_size_limit*sizeof(BPLONG)); */
     fprintf(stderr,"  Stack in use:%10s bytes\n",format_comma_separated_int(((BPULONG)stack_up_addr-(BPULONG)arreg)));
     fprintf(stderr,"  Heap in use: %10s bytes\n\n", format_comma_separated_int(((BPULONG)heap_top-(BPULONG)stack_low_addr)));
 
     total_parea_size = compute_total_parea_size();
-    fprintf(stderr,"Program:       %10s bytes\n", format_comma_separated_int(total_parea_size)); 
+    fprintf(stderr,"Program:       %10s bytes\n", format_comma_separated_int(total_parea_size));
     fprintf(stderr,"  In use:      %10s bytes\n", format_comma_separated_int(total_parea_size-total_free_records_size()-((BPULONG)parea_up_addr-(BPULONG)curr_fence)));
     fprintf(stderr,"  Symbols:     %10s\n\n",  format_comma_separated_int(number_of_symbols));
 
-    fprintf(stderr,"Trail:         %10s bytes\n", format_comma_separated_int(trail_size*sizeof(BPLONG))); 
+    fprintf(stderr,"Trail:         %10s bytes\n", format_comma_separated_int(trail_size*sizeof(BPLONG)));
     fprintf(stderr,"  In use:      %10s bytes\n\n", format_comma_separated_int(((BPULONG)trail_up_addr-(BPULONG)trail_top)));
 
     {
@@ -903,7 +907,7 @@ int c_STATISTICS()
             fprintf(stderr,"  Terms:    Total(%d), Hash collisions(Max=%d, Ave=%.2f)\n\n", nTerms,maxTTCollisions,aveTTCollisions);
         }
     }
-  
+
     /*
       {
       int num_of_empty_buckets, len_of_longest_chain;
@@ -913,7 +917,7 @@ int c_STATISTICS()
       (int)number_of_symbols,
       BUCKET_CHAIN,
       num_of_empty_buckets);
-      fprintf(stderr,"  Hash chain lengths: Longest(%d) Average(%.2f)\n\n",  
+      fprintf(stderr,"  Hash chain lengths: Longest(%d) Average(%.2f)\n\n",
       len_of_longest_chain,
       (float)number_of_symbols/(BUCKET_CHAIN-num_of_empty_buckets));
       }
@@ -933,7 +937,7 @@ int c_TABLE_BLOCKS(){
 
 int c_STATISTICS0()
 {
-  
+
     BPLONG total_parea_size,total_parea_used;
 
     total_parea_size = compute_total_parea_size();
@@ -1006,7 +1010,7 @@ lab_test_cdr:
     hcode_sum = bp_hashval(cdr);
 
     /* cdr is no longer tagged LST. Once here, the original list has been reversed, except for the last cons.
-       Now reverse it back while computing the hash code 
+       Now reverse it back while computing the hash code
     */
 lab_reverse_back:
     car = FOLLOW(term_ptr);
@@ -1036,14 +1040,14 @@ BPLONG bp_hashval(BPLONG op){
     BPLONG  i,arity,hcode_sum,this_hcode;
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top, term_ptr;
-  
+
     SWITCH_OP(op,hashval_lab,
               {return 0;},
               {return  (((op & HASH_BITS)>>2));},
               {
                   if (ISLIST(op)){
                       term_ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-                      if (!IS_HEAP_REFERENCE(term_ptr)){         
+                      if (!IS_HEAP_REFERENCE(term_ptr)){
                           return (FOLLOW(term_ptr-2) & HASH_BITS);
                       }
                       return bp_hashval_list(op);
@@ -1051,7 +1055,7 @@ BPLONG bp_hashval(BPLONG op){
               },
               {
                   term_ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-                  if (!IS_HEAP_REFERENCE(term_ptr)){         
+                  if (!IS_HEAP_REFERENCE(term_ptr)){
                       return (FOLLOW(term_ptr-2) & HASH_BITS);
                   }
                   sym_ptr = (SYM_REC_PTR)FOLLOW(term_ptr);
@@ -1060,7 +1064,7 @@ BPLONG bp_hashval(BPLONG op){
                   hcode_sum += bp_hashval(*(term_ptr+1));
                   for (i=2;i<=arity;i++){
                       this_hcode = bp_hashval(*(term_ptr+i));
-                      if (this_hcode != 0) hcode_sum = MurmurHash3_x86_32_uint32((UW32)this_hcode,(UW32)hcode_sum);    
+                      if (this_hcode != 0) hcode_sum = MurmurHash3_x86_32_uint32((UW32)this_hcode,(UW32)hcode_sum);
                   }
                   return (hcode_sum & HASH_BITS);
               },
@@ -1071,7 +1075,7 @@ int b_HASHVAL1_cf(op1,op2)  /* op1 a term, op2 the hash value of the main functo
     BPLONG     op1, op2;
 {
     BPLONG hashcode;
-  
+
     BP_HASH_CODE1(op1,hashcode,lab);
     ASSIGN_f_atom(op2,MAKEINT(hashcode));
     return BP_TRUE;
@@ -1084,7 +1088,7 @@ int b_HASHTABLE_GET_ccf(table,key,value)
     BPLONG res,buckets;
     BPLONG_PTR ptr,top;
     BPLONG index,size;
-  
+
     /*  write_term(key);printf("   "); write_term(table);printf("\n"); */
     DEREF(key);
     if (ISREF(key)){
@@ -1123,7 +1127,7 @@ int hashtable_contains_key(table,key)
     BPLONG res,buckets;
     BPLONG_PTR ptr,top;
     BPLONG index,size;
-  
+
     /*  write_term(key);printf("   "); write_term(table);printf("\n"); */
     DEREF(key);
     DEREF(table);
@@ -1156,7 +1160,7 @@ BPLONG bp_hashtable_get(table,key)
     BPLONG buckets;
     BPLONG_PTR ptr;
     BPLONG index,size;
-  
+
     /*  write_term(key);printf("   "); write_term(table);printf("\n"); */
     DEREF_NONVAR(table);
     ptr = (BPLONG_PTR)UNTAGGED_ADDR(table);
@@ -1168,7 +1172,7 @@ BPLONG bp_hashtable_get(table,key)
     index = bp_hashval(key) % size + 1;
     return hashtable_lookup_chain(FOLLOW(ptr+index),key);
 }
-  
+
 BPLONG hashtable_lookup_chain(chain,key)
     BPLONG chain,key;
 {
@@ -1308,7 +1312,7 @@ BPLONG make_struct_holders(sym_ptr,init_val)
 
 BPLONG make_cons_dummy(){
     BPLONG return_value;
-  
+
     return_value = ADDTAG(heap_top,LST);
     NEW_HEAP_FREE;
     NEW_HEAP_FREE;
@@ -1325,7 +1329,7 @@ BPLONG make_struct_with_args(fp,sym_ptr)
     BPLONG op;
 
     arity = GET_ARITY(sym_ptr);
-    if (arity == 0) 
+    if (arity == 0)
         return ADDTAG(insert_sym(GET_NAME(sym_ptr),GET_LENGTH(sym_ptr),0),ATM);
     else {
         return_value = ADDTAG(heap_top,STR);
@@ -1365,7 +1369,7 @@ int b_GET_UTF8_NCHARS_cf(op1,op2)
     }
     return BP_TRUE;
 }
-  
+
 int c_SHOW_NONDET_FRAME() {
     BPLONG op1,i;
     BPLONG_PTR tempreg;
@@ -1388,7 +1392,7 @@ int c_SHOW_NONDET_FRAME() {
         else
             if (((BPULONG)*(tempreg-6-i) > (BPULONG)heap_top) && ((BPULONG)*(tempreg-6-i) < (BPULONG)(tempreg-6-op1)))
                 printf(" ???\n");
-            else 
+            else
                 printf("\n");
     }
     return BP_TRUE;
@@ -1403,8 +1407,8 @@ int b_CPUTIME_f(op1)
     ASSIGN_f_atom(op1,MAKEINT(msec));
     return BP_TRUE;
 }
-  
-int membchk() 
+
+int membchk()
 {
     BPLONG op1,op2;
     BPLONG_PTR top;
@@ -1430,7 +1434,7 @@ int membchk2(x,list)
     }
     return BP_FALSE;
 }
-    
+
 
 void quit(s)
     CHAR_PTR s;
@@ -1486,12 +1490,12 @@ int cfunctor1(op1,op2,op3)
               {top1 = (BPLONG)UNTAGGED_ADDR(period_sym);
                   top2 = MAKEINT(2);
                   goto functor_compound_d_d;},
-        
+
               {sym_ptr = GET_SYM_REC(op1);
                   top1 = (BPLONG)insert_sym(GET_NAME(sym_ptr),GET_LENGTH(sym_ptr),0);
                   top2 = MAKEINT(GET_ARITY(sym_ptr));
                   goto functor_compound_d_d;},
-        
+
               {goto functor_vdd;});
 
 functor_compound_d_d:
@@ -1519,7 +1523,7 @@ functor_vdd:
     }
     if (!ISATOM(op2)) {
         exception = c_type_error(et_ATOMIC,op2);
-        return BP_ERROR;    
+        return BP_ERROR;
     }
     DEREF(op3);
     if (!ISINT(op3)) {
@@ -1556,11 +1560,11 @@ functor_vdd:
 /************* arg(N,T,A) *************/
 int c_arg(){
     BPLONG op1,op2,op3;
-  
+
     op1 = ARG(1,3);
     op2 = ARG(2,3);
     op3 = ARG(3,3);
-  
+
     return carg1(op1,op2,op3);
 }
 
@@ -1568,13 +1572,13 @@ int b_GEN_ARG_ccf(Index,Comp,Arg)
     BPLONG Index,Comp,Arg;
 {
     BPLONG res;
-  
+
     res = bp_access_one_array(Comp,Index);
     if (res == BP_ERROR) return BP_ERROR;
     ASSIGN_v_heap_term(Arg,res);
     return BP_TRUE;
 }
-    
+
 int carg1(op1,op2,op3)
     BPLONG op1,op2,op3;
 {
@@ -1590,7 +1594,7 @@ int carg1(op1,op2,op3)
     if (ISSTRUCT(op2) && op1 <= GET_SYM_ARITY(op2)){
         if (unify(*((BPLONG_PTR) UNTAGGED_ADDR(op2) + op1), op3))
             return BP_TRUE;
-        else 
+        else
             return BP_FALSE;
     }
     if (ISLIST(op2) && op1 <= 2){
@@ -1606,7 +1610,7 @@ int carg1(op1,op2,op3)
 
 int c_get_main_args(){
     BPLONG list;
-  
+
     list = ARG(1,1);
 
     return unify(list,main_args);
@@ -1615,7 +1619,7 @@ int c_get_main_args(){
 
 int c_SAVE_AR(){
     BPLONG AR;
-  
+
     AR = ARG(1,1);
     return unify(AR,ADDTAG(FOLLOW(arreg),ATM));
 }
@@ -1624,7 +1628,7 @@ int c_SAVE_AR(){
   c_WRITE_AR(){
   BPLONG AR;
   BPLONG_PTR top;
-  
+
   AR = ARG(1,1);
   DEREF(AR);
   printf("%x",UNTAGGED_ADDR(AR));
@@ -1674,7 +1678,7 @@ int b_NTH_ELM_ccf(i,l,v)
     return BP_FALSE;
 }
 
-    
+
 void myquit(overflow_type,src)
     BPLONG overflow_type;
     char *src;
@@ -1732,7 +1736,7 @@ void myquit(overflow_type,src)
             hcode += MULTIPLIER*INTVAL(op)+1;   \
         }                                       \
         hcode = (hcode & HASH_BITS);            \
-    } 
+    }
 
 /* Hashtable talored to tuples of integers */
 /* htable = '{}'(B1,...,Bn) where Bi is a bucket */
@@ -1741,7 +1745,7 @@ int c_HTABLE_HCODE(){
     BPLONG Tuple,Code,arity,hcode,i;
     BPLONG_PTR tuple_ptr;
     SYM_REC_PTR sym_ptr;
-  
+
     Tuple = ARG(1,2);
     Code = ARG(2,2);
     DEREF_NONVAR(Tuple);
@@ -1760,8 +1764,8 @@ BPLONG_PTR htable_ptr,tuple_ptr;
 {
     BPLONG hcode,tuple,i,lst;
     BPLONG_PTR ptr,another_tuple_ptr;
-    /*  
-        printf("htable_contains\n"); 
+    /*
+        printf("htable_contains\n");
         write_term(ADDTAG(htable_ptr,STR)); printf("\n");
         write_term(ADDTAG(tuple_ptr,STR)); printf("\n");
     */
@@ -1792,12 +1796,12 @@ int b_HTABLE_CONTAINS_TUPLE(Htable,Tuple)
     SYM_REC_PTR sym_ptr;
     BPLONG arity,htable_size;
     BPLONG_PTR htable_ptr,tuple_ptr;
-  
+
     DEREF_NONVAR(Htable);
     htable_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Htable);
     sym_ptr = (SYM_REC_PTR)FOLLOW(htable_ptr);
     htable_size = GET_ARITY(sym_ptr);
-  
+
     DEREF_NONVAR(Tuple);
     tuple_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Tuple);
     sym_ptr = (SYM_REC_PTR)FOLLOW(tuple_ptr);
@@ -1873,7 +1877,7 @@ int b_GET_ATTR_ccf(var,attr,value)
     ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(var);
     attrs = DV_attached(ptr);
     /*  DEREF(attrs); */
-    if (!ISSTRUCT(attrs)){ 
+    if (!ISSTRUCT(attrs)){
         return BP_FALSE;
     }
     ptr = (BPLONG_PTR)UNTAGGED_ADDR(attrs);
@@ -1924,7 +1928,7 @@ BPLONG c_update_error(type)
     return err;
 }
 
-BPLONG c_existence_error(type,term) 
+BPLONG c_existence_error(type,term)
     BPLONG type, term;
 {
     BPLONG err;
@@ -1936,8 +1940,8 @@ BPLONG c_existence_error(type,term)
     FOLLOW(heap_top++) = term;
     return err;
 }
-     
-BPLONG c_permission_error(type1,type2,term) 
+
+BPLONG c_permission_error(type1,type2,term)
     BPLONG type1,type2, term;
 {
     BPLONG err;
@@ -1951,7 +1955,7 @@ BPLONG c_permission_error(type1,type2,term)
     return err;
 }
 
-BPLONG c_representation_error(type) 
+BPLONG c_representation_error(type)
     BPLONG type;
 {
     BPLONG err;
@@ -1970,11 +1974,11 @@ BPLONG is_iso_exception(exception)
             !ISATOM(exception));
 }
 
-BPLONG c_builtin_error1(type,op1) 
+BPLONG c_builtin_error1(type,op1)
     BPLONG type,op1;
 {
     BPLONG err;
-  
+
     GLOBALIZE_VAR(op1);
     err = ADDTAG(heap_top,STR);
     FOLLOW(heap_top++) = (BPLONG)str_BUILTIN_ERROR1;
@@ -1983,11 +1987,11 @@ BPLONG c_builtin_error1(type,op1)
     return err;
 }
 
-BPLONG c_builtin_error2(type,op1,op2) 
+BPLONG c_builtin_error2(type,op1,op2)
     BPLONG type,op1,op2;
 {
     BPLONG err;
-  
+
     GLOBALIZE_VAR(op1);
     GLOBALIZE_VAR(op2);
     err = ADDTAG(heap_top,STR);
@@ -1998,11 +2002,11 @@ BPLONG c_builtin_error2(type,op1,op2)
     return err;
 }
 
-BPLONG c_builtin_error3(type,op1,op2,op3) 
+BPLONG c_builtin_error3(type,op1,op2,op3)
     BPLONG type,op1,op2,op3;
 {
     BPLONG err;
-  
+
     GLOBALIZE_VAR(op1);
     GLOBALIZE_VAR(op2);
     GLOBALIZE_VAR(op3);
@@ -2015,11 +2019,11 @@ BPLONG c_builtin_error3(type,op1,op2,op3)
     return err;
 }
 
-BPLONG c_builtin_error4(type,op1,op2,op3,op4) 
+BPLONG c_builtin_error4(type,op1,op2,op3,op4)
     BPLONG type,op1,op2,op3,op4;
 {
     BPLONG err;
-  
+
     GLOBALIZE_VAR(op1);
     GLOBALIZE_VAR(op2);
     GLOBALIZE_VAR(op3);
@@ -2034,12 +2038,12 @@ BPLONG c_builtin_error4(type,op1,op2,op3,op4)
     return err;
 }
 
-BPLONG c_type_error(type,term) 
+BPLONG c_type_error(type,term)
     BPLONG type, term;
 {
     BPLONG err;
     SYM_REC_PTR sym_ptr;
-  
+
     GLOBALIZE_VAR(term);
     err = ADDTAG(heap_top,STR);
     FOLLOW(heap_top++) = (BPLONG)str_TYPE_ERROR;
@@ -2066,7 +2070,7 @@ BPLONG c_type_error(type,term)
     }
     return err;
 }
- 
+
 BPLONG c_syntax_error(term)
     BPLONG term;
 {
@@ -2083,7 +2087,7 @@ BPLONG c_stream_struct(Index)
     BPLONG Index;
 {
     BPLONG src;
-  
+
     src = ADDTAG(heap_top,STR);
     FOLLOW(heap_top++) = (BPLONG)BP_NEW_SYM("$stream",1);
     FOLLOW(heap_top++) = MAKEINT(Index);
@@ -2095,7 +2099,7 @@ BPLONG c_error_src(str,arity)
     int arity;
 {
     BPLONG src;
-  
+
     src = ADDTAG(heap_top,STR);
     FOLLOW(heap_top++) = (BPLONG)slash_psc;
     FOLLOW(heap_top++) = ADDTAG(BP_NEW_SYM(str,0),ATM);
@@ -2128,14 +2132,14 @@ int b_PICAT_LENGTH_cf(term,len)
     BPLONG i;
     //  printf("=>PICAT_LENGTH "); write_term(term); printf("\n");
 start:
-    switch (TAG(term)) { 
-    case REF: 
+    switch (TAG(term)) {
+    case REF:
         NDEREF(term, start);
         exception = nonvariable_expected;
         return BP_ERROR;
     case ATM:
         if (ISINT(term)){
-            exception = c_type_error(no_number_expected,term);      
+            exception = c_type_error(no_number_expected,term);
             return BP_ERROR;
         }
         if (term == nil_sym || term == empty_set) {
@@ -2161,7 +2165,7 @@ start:
         }
         sym_ptr = GET_STR_SYM_REC(term);
         if (sym_ptr == bigint_psc || sym_ptr == float_psc){
-            exception = c_type_error(no_number_expected,term);      
+            exception = c_type_error(no_number_expected,term);
             return BP_ERROR;
         }
         ASSIGN_f_atom(len,MAKEINT(GET_ARITY(sym_ptr)));
@@ -2226,7 +2230,7 @@ int bp_already_sorted_int_list(BPLONG lst, BPLONG_PTR len_ptr, BPLONG_PTR arr)
     int len,asorted,dsorted;
 
     //  printf("arr = %lx heap_top=%lx local_top = %lx\n",arr,heap_top,local_top);
-    asorted = 1; dsorted = 1; 
+    asorted = 1; dsorted = 1;
     lst0 = lst;
     len = 0;
     DEREF(lst);
@@ -2286,16 +2290,16 @@ int bp_already_sorted_term_list(BPLONG lst, BPLONG_PTR len_ptr, BPLONG_PTR arr)
     DEREF(lst);
     if (ISLIST(lst)){
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        pre = FOLLOW(ptr); 
+        pre = FOLLOW(ptr);
         FOLLOW(arr) = pre;
         len++;
         lst = FOLLOW(ptr+1); DEREF(lst);
     }
     while (ISLIST(lst)){
         int res;
-    
+
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        elm = FOLLOW(ptr); 
+        elm = FOLLOW(ptr);
         res = bp_compare(pre,elm);
         if (res>0){
             asorted = 0;
@@ -2316,7 +2320,7 @@ int bp_already_sorted_term_list(BPLONG lst, BPLONG_PTR len_ptr, BPLONG_PTR arr)
         }
         return BP_ERROR;
     }
-  
+
     FOLLOW(len_ptr) = len;
     if (asorted == 1){
         return BP_ASORTED;
@@ -2353,18 +2357,18 @@ void qsort_int_array(BPLONG_PTR arr, BPLONG len) {
                 while (L < R && arr[R] > piv) R--;
                 arr[L++] = arr[R];
                 while (L < R && arr[L] <= piv) L++;
-                if (L < R) arr[R--] = arr[L]; 
+                if (L < R) arr[R--] = arr[L];
             }
-            arr[R] = piv; 
+            arr[R] = piv;
             L = R-1;
             while (L >= beg[i] && arr[L] == piv) L--;
             beg[i+1] = R+1; end[i+1] = end[i]; end[i++] = L+1;
             if (end[i]-beg[i] > end[i-1]-beg[i-1]) {
                 swap = beg[i]; beg[i] = beg[i-1]; beg[i-1] = swap;
-                swap = end[i]; end[i] = end[i-1]; end[i-1] = swap; 
+                swap = end[i]; end[i] = end[i-1]; end[i-1] = swap;
             }
         } else {
-            i--; 
+            i--;
         }
     }
 }
@@ -2382,19 +2386,19 @@ void qsort_term_array(BPLONG_PTR arr, BPLONG len) {
                 while (L < R && bp_compare(arr[R],piv) > 0) R--;
                 arr[L++] = arr[R];
                 while (L < R && bp_compare(arr[L],piv) <= 0) L++;
-                if (L < R) arr[R--] = arr[L]; 
+                if (L < R) arr[R--] = arr[L];
             }
-            arr[R] = piv; 
+            arr[R] = piv;
             L = R-1;
             while (L >= beg[i] && arr[L] == piv) L--;  /* use ==, not bp_compare, is intentional */
 
             beg[i+1] = R+1; end[i+1] = end[i]; end[i++] = L+1;
             if (end[i]-beg[i] > end[i-1]-beg[i-1]) {
                 swap = beg[i]; beg[i] = beg[i-1]; beg[i-1] = swap;
-                swap = end[i]; end[i] = end[i-1]; end[i-1] = swap; 
+                swap = end[i]; end[i] = end[i-1]; end[i-1] = swap;
             }
         } else {
-            i--; 
+            i--;
         }
     }
 }
@@ -2406,7 +2410,7 @@ BPLONG bp_reverse_list(lst)
     BPLONG_PTR top,ptr;
     BPLONG elm,rev_lst;
     rev_lst = nil_sym;
-  
+
     DEREF(lst);
     while (ISLIST(lst)){
         BPLONG tmp_lst;
@@ -2432,7 +2436,7 @@ int b_sort_int_list(lst,sorted_lst)
     BPLONG_PTR arr;
 
     arr = local_top-(local_top-heap_top)/3;  /* use 1/3 of the available area of the global stack */
-  
+
     switch (bp_already_sorted_int_list(lst,&len,arr)){
     case BP_ASORTED:
         return unify(sorted_lst,lst);
@@ -2457,10 +2461,10 @@ int c_sort_int_list(){
     return b_sort_int_list(ARG(1,2),ARG(2,2));
 }
 
-/* 
-   If the given list is sorted (upward or downward), then return the list; 
+/*
+   If the given list is sorted (upward or downward), then return the list;
    otherwise, if the given list is not too long, then use qsort;
-   otherwise fail doing nothing 
+   otherwise fail doing nothing
 */
 int c_sort_term_list(){
     BPLONG len,lst,sorted_lst;
@@ -2473,7 +2477,7 @@ int c_sort_term_list(){
     switch (bp_already_sorted_term_list(lst,&len,arr)){
     case BP_ASORTED:
         return unify(sorted_lst,lst);
-    
+
     case BP_DSORTED:
         return unify(sorted_lst,bp_reverse_list(lst));
 
@@ -2495,7 +2499,7 @@ int b_DEREF_c(T)
 {
     BPLONG_PTR ptr,top;
     BPLONG e;
-  
+
     DEREF(T);
     if (ISSTRUCT(T)){
         SYM_REC_PTR sym_ptr;
@@ -2514,7 +2518,7 @@ int b_DEREF_c(T)
             FOLLOW(top) = e;
         }
     } else if (ISLIST(T)){
-        ptr = (BPLONG_PTR)UNTAGGED_ADDR(T);    
+        ptr = (BPLONG_PTR)UNTAGGED_ADDR(T);
         e = FOLLOW(ptr); DEREF(e);
         if (IS_SUSP_VAR(e)){
             e = UNTAGGED_ADDR(e);
@@ -2545,7 +2549,7 @@ int b_IS_STRUCT_c(BPLONG term){
     SWITCH_OP_STRUCT(term,lab1,{return BP_FALSE;}, {return BP_TRUE;}, {return BP_FALSE;});
     return BP_FALSE;
 }
-  
+
 int b_IS_COMPOUND_c(BPLONG term){
     DEREF(term);
     return (ISCOMPOUND(term)) ? BP_TRUE : BP_FALSE;
@@ -2582,11 +2586,11 @@ int b_IS_STRING_c(BPLONG term){
 
 int b_IS_MAP_c(BPLONG term){
     SWITCH_OP_STRUCT(term,lab1,
-                     {return BP_FALSE;}, 
+                     {return BP_FALSE;},
                      {
                          SYM_REC_PTR sym = GET_STR_SYM_REC(term);
                          return (sym == hashtable_psc || sym == ghashtable_psc || sym == thashtable_psc) ? BP_TRUE : BP_FALSE;
-                     }, 
+                     },
                      {return BP_FALSE;});
     return BP_FALSE;
 }
@@ -2596,15 +2600,15 @@ int b_IS_ARRAY_c(BPLONG term){  /* is Picat array */
     CHAR_PTR char_ptr;
 
     SWITCH_OP_STRUCT(term,lab1,
-                     {return BP_FALSE;}, 
+                     {return BP_FALSE;},
                      {sym_ptr = (SYM_REC_PTR)GET_STR_SYM_REC(term);
                          char_ptr = GET_NAME(sym_ptr);
-                         return (GET_LENGTH(sym_ptr) == 2 && *char_ptr == '{' && *(char_ptr+1) == '}') ? BP_TRUE : BP_FALSE;}, 
+                         return (GET_LENGTH(sym_ptr) == 2 && *char_ptr == '{' && *(char_ptr+1) == '}') ? BP_TRUE : BP_FALSE;},
                      {return BP_FALSE;});
     return term == empty_set;
 }
 
-int b_IS_CHAR_c(BPLONG term){  
+int b_IS_CHAR_c(BPLONG term){
     SYM_REC_PTR sym_ptr;
     BPLONG len;
 
@@ -2619,7 +2623,7 @@ int b_IS_CHAR_c(BPLONG term){
     }
 }
 
-int b_IS_DIGIT_c(BPLONG term){  
+int b_IS_DIGIT_c(BPLONG term){
     SYM_REC_PTR sym_ptr;
     char c, *char_ptr;
     DEREF(term);
@@ -2631,7 +2635,7 @@ int b_IS_DIGIT_c(BPLONG term){
     return (c>='0' && c<='9') ? BP_TRUE : BP_FALSE;
 }
 
-int b_IS_LOWERCASE_c(BPLONG term){  
+int b_IS_LOWERCASE_c(BPLONG term){
     SYM_REC_PTR sym_ptr;
     CHAR_PTR char_ptr;
 
@@ -2643,7 +2647,7 @@ int b_IS_LOWERCASE_c(BPLONG term){
     return (*char_ptr>='a' && *char_ptr<='z') ? BP_TRUE : BP_FALSE;
 }
 
-int b_IS_UPPERCASE_c(BPLONG term){  
+int b_IS_UPPERCASE_c(BPLONG term){
     SYM_REC_PTR sym_ptr;
     CHAR_PTR char_ptr;
 
@@ -2655,9 +2659,9 @@ int b_IS_UPPERCASE_c(BPLONG term){
     return (*char_ptr>='A' && *char_ptr<='Z') ? BP_TRUE : BP_FALSE;
 }
 
-int b_IS_LIST_c(BPLONG term){  
+int b_IS_LIST_c(BPLONG term){
     SWITCH_OP_LST(term,lab1,
-                  {return BP_FALSE;}, 
+                  {return BP_FALSE;},
                   {return BP_TRUE;},
                   {return BP_FALSE;});
     return (term == nil_sym) ? BP_TRUE : BP_FALSE;
@@ -2665,7 +2669,7 @@ int b_IS_LIST_c(BPLONG term){
 
 int b_STRUCT_ARITY_cf(BPLONG term, BPLONG arity){
     SWITCH_OP_STRUCT(term,lab1,
-                     {return BP_FALSE;}, 
+                     {return BP_FALSE;},
                      {SYM_REC_PTR sym_ptr;
                          sym_ptr = (SYM_REC_PTR)GET_STR_SYM_REC(term);
                          ASSIGN_f_atom(arity,MAKEINT(GET_ARITY(sym_ptr)));
@@ -2677,7 +2681,7 @@ int b_STRUCT_ARITY_cf(BPLONG term, BPLONG arity){
 
 int b_STRUCT_NAME_cf(BPLONG term, BPLONG name){
     SWITCH_OP_STRUCT(term,lab1,
-                     {return BP_FALSE;}, 
+                     {return BP_FALSE;},
                      {SYM_REC_PTR sym_ptr;
                          sym_ptr = (SYM_REC_PTR)GET_STR_SYM_REC(term);
                          ASSIGN_f_atom(name,ADDTAG(insert_sym(GET_NAME(sym_ptr),GET_LENGTH(sym_ptr),0),ATM));
@@ -2744,33 +2748,33 @@ void Cboot_mic()
     insert_cpred("ref_equal",2,c_ref_equal);
     insert_cpred("cg_is_component",1,c_cg_is_component);
     insert_cpred("c_post_event",3,c_post_event);
-    insert_cpred("c_timer",1,c_timer); 
-    insert_cpred("c_kill_timer",1,c_kill_timer); 
-    insert_cpred("c_sleep",1,c_sleep); 
+    insert_cpred("c_timer",1,c_timer);
+    insert_cpred("c_kill_timer",1,c_kill_timer);
+    insert_cpred("c_sleep",1,c_sleep);
     /**/
-    insert_cpred("c_FORMAT_PRINT_INTEGER",3,c_FORMAT_PRINT_INTEGER); 
-    insert_cpred("c_FORMAT_PRINT_FLOAT",3,c_FORMAT_PRINT_FLOAT); 
+    insert_cpred("c_FORMAT_PRINT_INTEGER",3,c_FORMAT_PRINT_INTEGER);
+    insert_cpred("c_FORMAT_PRINT_FLOAT",3,c_FORMAT_PRINT_FLOAT);
     /**/
-    insert_cpred("c_findall_pre",1,c_findall_pre); 
-    insert_cpred("c_findall_post",1,c_findall_post); 
+    insert_cpred("c_findall_pre",1,c_findall_pre);
+    insert_cpred("c_findall_post",1,c_findall_post);
     insert_cpred("c_FINDALL_GET",2,c_FINDALL_GET);
     insert_cpred("c_FINDALL_AREA_SIZE",1,c_FINDALL_AREA_SIZE);
-    insert_cpred("c_global_set_bpp",1,c_global_set_bpp); 
-    insert_cpred("c_global_get_bpp",1,c_global_get_bpp); 
-    insert_cpred("c_confirm_copy_right",0,c_confirm_copy_right); 
-    insert_cpred("c_NEXT_PRIME",2,c_NEXT_PRIME); 
-    insert_cpred("c_GET_REDEFINE_WARNING",1,c_GET_REDEFINE_WARNING); 
-    insert_cpred("c_SET_REDEFINE_WARNING",1,c_SET_REDEFINE_WARNING); 
-    insert_cpred("c_LOAD_cfc",3,c_LOAD_cfc); 
-    insert_cpred("file_stat",2,file_stat); 
-    insert_cpred("c_file_type",2,c_file_type); 
-    insert_cpred("c_file_permission",2,c_file_permission); 
-    insert_cpred("c_directory_files",2,c_directory_list); 
-    insert_cpred("make_directory",1,c_mkdir); 
-    insert_cpred("delete_directory",1,c_rmdir); 
-    insert_cpred("delete_file",1,c_rm_file); 
-    insert_cpred("copy_file",2,c_cp_file); 
-    insert_cpred("rename_file",2,c_rename); 
+    insert_cpred("c_global_set_bpp",1,c_global_set_bpp);
+    insert_cpred("c_global_get_bpp",1,c_global_get_bpp);
+    insert_cpred("c_confirm_copy_right",0,c_confirm_copy_right);
+    insert_cpred("c_NEXT_PRIME",2,c_NEXT_PRIME);
+    insert_cpred("c_GET_REDEFINE_WARNING",1,c_GET_REDEFINE_WARNING);
+    insert_cpred("c_SET_REDEFINE_WARNING",1,c_SET_REDEFINE_WARNING);
+    insert_cpred("c_LOAD_cfc",3,c_LOAD_cfc);
+    insert_cpred("file_stat",2,file_stat);
+    insert_cpred("c_file_type",2,c_file_type);
+    insert_cpred("c_file_permission",2,c_file_permission);
+    insert_cpred("c_directory_files",2,c_directory_list);
+    insert_cpred("make_directory",1,c_mkdir);
+    insert_cpred("delete_directory",1,c_rmdir);
+    insert_cpred("delete_file",1,c_rm_file);
+    insert_cpred("copy_file",2,c_cp_file);
+    insert_cpred("rename_file",2,c_rename);
     insert_cpred("c_sort_int_list",2,c_sort_int_list);
     insert_cpred("$start_critical_region",0,c_start_critical_region);
     insert_cpred("$end_critical_region",0,c_end_critical_region);
@@ -2812,9 +2816,9 @@ UW32 MurmurHash3_x86_32_uint32( const UW32 key, UW32 seed)
     k1 *= c1;
     k1 = ROTL32(k1,15);
     k1 *= c2;
-    
+
     h1 ^= k1;
-    h1 = ROTL32(h1,13); 
+    h1 = ROTL32(h1,13);
     h1 = h1*5+0xe6546b64;
 
     h1 ^= 4;
@@ -2822,25 +2826,25 @@ UW32 MurmurHash3_x86_32_uint32( const UW32 key, UW32 seed)
     h1 = fmix(h1);
 
     return h1;
-} 
+}
 
 int c_bp_exit(){
     BPLONG code = ARG(1,1);
     DEREF(code);
     if (!ISINT(code)){
-        exception = illegal_arguments; 
-        return BP_ERROR; 
-    } 
+        exception = illegal_arguments;
+        return BP_ERROR;
+    }
     code = INTVAL(code);
     exit(code);
 }
 
-  
+
 int b_PICAT_ARG_ccf(BPLONG Index,BPLONG Comp,BPLONG Arg)
 {
     BPLONG_PTR arr_ptr;
     BPLONG res;
-  
+
     SWITCH_OP_INT(Index,
                   lab_picat_arg_1,
                   {exception = et_INSTANTIATION_ERROR;
@@ -2860,12 +2864,12 @@ int b_PICAT_ARG_ccf(BPLONG Index,BPLONG Comp,BPLONG Arg)
                                     return BP_ERROR;
                                 },
                                 {while (Index>1 && ISLIST(Comp)){
-                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp); 
+                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp);
                                         Comp = FOLLOW(arr_ptr+1);DEREF(Comp);
                                         Index--;
-                                    } 
+                                    }
                                     if (Index == 1 && ISLIST(Comp)){
-                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp); 
+                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp);
                                         res = FOLLOW(arr_ptr);
                                         ASSIGN_v_heap_term(Arg, res);
                                         return BP_TRUE;
@@ -2899,7 +2903,7 @@ int b_PICAT_ARG_ccf(BPLONG Index,BPLONG Comp,BPLONG Arg)
 
 int b_PICAT_SETARG_ccc(BPLONG Index,BPLONG Comp,BPLONG Arg){
     BPLONG_PTR arr_ptr;
-  
+
     DEREF(Arg);
     if (ISREF(Arg)){
         if ((BPLONG_PTR)Arg>heap_top){ /* globalize the variable */
@@ -2928,12 +2932,12 @@ int b_PICAT_SETARG_ccc(BPLONG Index,BPLONG Comp,BPLONG Arg){
                                     return BP_ERROR;
                                 },
                                 {while (Index>1 && ISLIST(Comp)){
-                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp); 
+                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp);
                                         Comp = FOLLOW(arr_ptr+1);DEREF(Comp);
                                         Index--;
-                                    } 
+                                    }
                                     if (Index == 1 && ISLIST(Comp)){
-                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp); 
+                                        arr_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Comp);
                                         if (!IS_HEAP_REFERENCE(arr_ptr)){
                                             exception = c_update_error(et_UPDATE);
                                             return BP_ERROR;
@@ -2977,12 +2981,12 @@ int b_INSERT_ORDERED_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
     BPLONG lst_cp;
     BPLONG_PTR tail_ptr = &lst_cp;
 
-    DEREF(lst); 
+    DEREF(lst);
     while (ISLIST(lst)){
         BPLONG_PTR list_ptr;
         BPLONG t1;
         list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        t1 = FOLLOW(list_ptr); 
+        t1 = FOLLOW(list_ptr);
         if (bp_compare(t,t1) <= 0){
             break; /* exit the while loop */
         } else {
@@ -3009,15 +3013,15 @@ int b_INSERT_ORDERED_NO_DUP_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
     BPLONG lst_cp, lst0;
     BPLONG_PTR heap_top0;
     BPLONG_PTR tail_ptr = &lst_cp;
-  
-    DEREF(lst); 
+
+    DEREF(lst);
     lst0 = lst; heap_top0 = heap_top;
     while (ISLIST(lst)){
         BPLONG_PTR list_ptr;
         BPLONG t1;
         int res;
         list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        t1 = FOLLOW(list_ptr); 
+        t1 = FOLLOW(list_ptr);
         res = bp_compare(t,t1);
         if (res < 0){
             break; /* exit the while loop */
@@ -3049,12 +3053,12 @@ int b_INSERT_ORDERED_DOWN_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
     BPLONG lst_cp;
     BPLONG_PTR tail_ptr = &lst_cp;
 
-    DEREF(lst); 
+    DEREF(lst);
     while (ISLIST(lst)){
         BPLONG_PTR list_ptr;
         BPLONG t1;
         list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        t1 = FOLLOW(list_ptr); 
+        t1 = FOLLOW(list_ptr);
         if (bp_compare(t,t1) >= 0){
             break; /* exit the while loop */
         } else {
@@ -3082,7 +3086,7 @@ int b_INSERT_ORDERED_DOWN_NO_DUP_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
     BPLONG_PTR heap_top0;
     BPLONG_PTR tail_ptr = &lst_cp;
 
-    DEREF(lst); 
+    DEREF(lst);
     lst0 = lst; heap_top0 = heap_top;
     while (ISLIST(lst)){
         BPLONG_PTR list_ptr;
@@ -3090,7 +3094,7 @@ int b_INSERT_ORDERED_DOWN_NO_DUP_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
         int res;
 
         list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        t1 = FOLLOW(list_ptr); 
+        t1 = FOLLOW(list_ptr);
         res = bp_compare(t,t1);
         if (res > 0){
             break; /* exit the while loop */
@@ -3121,17 +3125,17 @@ int b_INSERT_ORDERED_DOWN_NO_DUP_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
 int b_INSERT_STATE_LIST_ccf(BPLONG lst, BPLONG t, BPLONG ret_lst){
     BPLONG lst_cp;
     BPLONG_PTR tail_ptr = &lst_cp;
-  
+
     /*
       printf("=>insert "); write_term(lst); printf("\n");
       printf("         "); write_term(t); printf("\n");
     */
-    DEREF(lst); 
+    DEREF(lst);
     while (ISLIST(lst)){
         BPLONG_PTR list_ptr;
         BPLONG t1;
         list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        t1 = FOLLOW(list_ptr); 
+        t1 = FOLLOW(list_ptr);
         if (bp_compare(t,t1) <= 0){
             goto real_insert_elm;
         } else {
@@ -3153,5 +3157,5 @@ real_insert_elm:
     return BP_TRUE;
 }
 
-  
-  
+
+
