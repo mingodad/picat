@@ -168,7 +168,7 @@ void makeup_labels(pPLA PLA)
 	for(i = 0; i < cube.part_size[var]; i++) {
 	  ind = cube.first_part[var] + i;
 	  if (PLA->label[ind] == (char *) NULL) {
-		PLA->label[ind] = ALLOC(char, 16);
+		PLA->label[ind] = ALLOC(char, 15);
 		if (var < cube.num_binary_vars)
 		  if ((i % 2) == 0)
 			(void) sprintf(PLA->label[ind], "v%d.bar", var);

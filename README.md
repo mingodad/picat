@@ -35,14 +35,14 @@ package has the following folders and files:
  Picat/picat   --   the executable (picat.exe for Windows)
  Picat/doc     --   documentation
  Picat/exs     --   program examples
- Picat/emu     --   the C source code of the engine
+ Picat/emu     --   the C/C++ source code of the engine
  Picat/lib     --   library modules 
 
 The folder "Picat/emu" contains the C source code needed to
 make Picat's standalone executable. It also contains the C
-source code of Espresso, GLPK, and Lingeling, which are used
-by Picat. This folder also contains make files for different
-platforms.
+source code of Espresso, SAT solvers (maple and lingeling),
+which are used by Picat. This folder also contains make files
+for different platforms.
 
 The folder "Picat/lib" contains library modules. There are
 three types of library modules:
@@ -60,8 +60,8 @@ These modules are included in the executable. However,
 applications need to import them in order to access the
 functions, predicates, and constraints defined in the
 modules. No setting of the environment variable PICATPATH is
-required. This type includes: "cp.pi", "mip.pi", "os.pi",
-"planner.pi", "sat.pi", and "util.pi".
+required. This type includes: "cp.pi", "mip.pi", "nn.pi",
+"os.pi", "planner.pi", "sat.pi", "smt.pi", and "util.pi".
 
 not pre-loaded, and not pre-imported: 
 ------------------------------------
@@ -69,10 +69,14 @@ These modules, which are mainly developed by third parties,
 are not included in the executable. In order to import any
 of these modules, applications must set the environment
 variable PICATPATH to include the folder, in which the module
-resides.
+resides, or start picat with the option "-path" set.
 
 This Picat system is distributed under the Mozilla Public
 License (http://mozilla.org/MPL/2.0/). The Picat system is
 provided free of charge for any fair application, including
-commercial applications. 
+commercial applications.
+
+Please contact:
+    picat@picat-lang.org
+    picat-lang@googlegroups.com 
 

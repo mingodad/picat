@@ -1,0 +1,48 @@
+import util.
+
+main([File,NOutStr]) =>
+    NOut = to_int(NOutStr),
+    proc_file(File,NIn,NOut,Ins,Outs,Count),
+    printf("%d %d %d\n",Count,NIn,NOut),
+    foreach ({In,Out} in zip(Ins,Outs))
+        print_line(In),
+        print_line(Out)
+    end.
+main([File|_]) =>
+    NOut = 0,
+    proc_file(File,NIn,NOut,Ins,Outs,Count),
+    foreach (In in Ins)
+        print_line(In)
+    end.
+
+proc_file(File,NIn,NOut,Ins,Outs,Count) =>
+    InStream = open(File),
+    L = InStream.read_line(),
+    proc(InStream,L,NIn,NOut,Ins,Outs,0,Count),
+    close(InStream).
+
+proc(_InStream,end_of_file,_NIn,_NOut,Ins,Outs,Count0,Count) =>
+    Count = Count0,
+    Ins = [],
+    Outs = [].
+proc(InStream,Line,NIn,NOut,Ins,Outs,Count0,Count) =>
+    Tokens = split(strip(Line),","),
+    N = len(Tokens),
+    separate(Tokens,N,NOut,In,Out),
+    NIn = N-NOut,
+    Ins = [In|InsR],
+    Outs = [Out|OutsR],
+    L1 = InStream.read_line(),
+    proc(InStream,L1,NIn,NOut,InsR,OutsR,Count0+1,Count).
+
+separate(Tokens,N,N,In,Out) =>
+    In = [],
+    Out = [to_number(Token) : Token in Tokens].
+separate([Token|Tokens],N,NOut,In,Out) =>
+    In = [to_number(Token)|InR],
+    separate(Tokens,N-1,NOut,InR,Out).
+
+print_line([]) => nl.
+print_line([X|Xs]) =>
+    print(X), print(' '),
+    print_line(Xs).

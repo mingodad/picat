@@ -1,6 +1,6 @@
 /*
   Some general utilities in Picat.
-  Others have been moved to modules basic, math, sys, etc.
+  Others have been moved to the modules basic, math, sys, etc.
   by Hakan Kjellerstrand and Neng-Fa Zhou.
 */
 

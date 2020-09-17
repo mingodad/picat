@@ -23,6 +23,14 @@ printf(FD,Format,A1,A2,A3,A4,A5,A6,A7) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7)
 printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8).
 printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9).
 printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10).
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11).
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12).
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13).
+/*
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14).
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15).
+printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16) => printf(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16).
+*/
 printf(Format) => printf(stdout,Format).
 println(FD,Term) => println(FD,Term).
 println(Term) => println(Term).
@@ -47,6 +55,8 @@ read_file_lines() = read_file_lines().   % read from stdin until ^z (Windows) or
 read_file_lines(File) = read_file_lines(File).
 read_file_terms() = read_file_terms().   % read from stdin until ^z (Windows) or ^d (Unix)
 read_file_terms(File) = read_file_terms(File).
+read_file_tokens() = read_file_tokens(). % read from stdin until ^z (Windows) or ^d (Unix)
+read_file_tokens(File) = read_file_tokens(File).
 read_int() = read_int(stdin).
 read_int(FD) = read_int(FD).
 read_line() = read_line(stdin).
@@ -81,6 +91,14 @@ writef(FD,Format,A1,A2,A3,A4,A5,A6,A7) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7)
 writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8).
 writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9).
 writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10).
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11).
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12).
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13).
+/*
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14).
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15).
+writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16) => writef(FD,Format,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16).
+*/
 writef(Format) => writef(Format).
 writef(Format,A1) => writef(Format,A1).
 writeln(FD,Term) => writeln(FD,Term).

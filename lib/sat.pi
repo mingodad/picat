@@ -19,8 +19,8 @@ import common_constr.
 % all_different_except_0(Xs) => all_different_except_0(Xs).
 % all_distinct(FDVars) => all_distinct(FDVars).
 % assignment(FDVars1,FDVars2) => assignment(FDVars1,FDVars2).
-% at_most(N,X,V) => at_most(N,X,V).
 % at_least(N,X,V) => at_least(N,X,V).
+% at_most(N,X,V) => at_most(N,X,V).
 % circuit(L) => circuit(L).
 % count(V,FDVars,Rel,N) => count(V,FDVars,Rel,N).
 % cumulative(Starts,Durations,Resources,Limit) => cumulative(Starts,Durations,Resources,Limit).
@@ -38,6 +38,7 @@ import common_constr.
 % fd_min_max(FDVar,Min,Max) => fd_min_max(FDVar,Min,Max).
 % fd_next(FDVar,Elm) = fd_next(FDVar,Elm).
 % fd_prev(FDVar,Elm) = fd_prev(FDVar,Elm).
+% fd_set_false(FDVar,Elm) => fd_set_false(FDVar,Elm).
 % fd_size(FDVar) = fd_size(FDVar).
 % fd_true(FDVar,Elm) => fd_true(FDVar,Elm).
 % fd_vector_min_max(Min,Max) => fd_vector_min_max(Min,Max).
@@ -52,7 +53,7 @@ import common_constr.
 % new_fd_var() = new_fd_var().
 % notin(VarOrVars,D) => notin(VarOrVars,D).
 % nvalue(N,L) => nvalue(N,L).
-% regular(L, Q, S, M, Q0, Fs) => regular(L, Q, S, M, Q0, Fs).
+% regular(W, Q, S, M, Q0, Fs) => regular(W, Q, S, M, Q0, Fs).
 % scalar_product(A, X, Product) => scalar_product(A, X, Product).
 % serialized(Starts,Durations) => serialized(Starts,Durations).
 % solve(Options,Vars) => solve(Options,Vars)
@@ -60,6 +61,8 @@ import common_constr.
 % solve_all(Options,Vars) = solve_all(Options,Vars).
 % solve_all(Vars) = solve_all(Vars).
 % subcircuit(FDVars) => subcircuit(FDVars).
+% subcircuit_grid(A) => subcircuit_grid(A).
+% subcircuit_grid(A,K) => subcircuit_grid(A,K).
 % table_in(Vars, Tuples) => table_in(Vars, Tuples).
 % table_notin(Vars, Tuples) => table_notin(Vars, Tuples).
 
@@ -137,6 +140,17 @@ fd_disjoint(DVar1,DVar2) =>
     Source=fd_disjoint,
     (dvar_or_int(DVar1) -> handle_exception($dvar_expected(DVar2),Source);handle_exception($dvar_expected(DVar1),Source)).
 
+% fd_set_false(FDVar,Elm) => fd_set_false(FDVar,Elm).
+fd_set_false(FDVar,Elm), dvar_or_int(FDVar),integer(Elm) => 
+    bp.domain_set_false(FDVar,Elm).
+fd_set_false(FDVar,Elm) =>
+    Source=fd_set_false,
+    (integer(Elm) ->
+        handle_exception($dvar_expected(FDVar),Source)
+    ;
+        handle_exception($integer_expected(Elm),Source)
+    ).
+
 % count(V,FDVars,Rel,N) => count(V,FDVars,Rel,N).
 count(V,FDVars,Rel,N) =>
     (array(FDVars) -> to_list(FDVars)=List; List=FDVars),
@@ -166,6 +180,7 @@ cumulative(Starts,Durations,Resources,Limit) =>
     (array(Starts) -> to_list(Starts)=SList; SList=Starts),    
     (array(Durations) -> to_list(Durations)=DList; DList=Durations),    
     (array(Resources) -> to_list(Resources)=RList; RList=Resources),
+%    println($cumu(Starts,Durations,Resources,Limit)),
     bp.bp_cumulative(SList,DList,RList,Limit,sat).
     
 % diffn(RectangleList) => diffn(RectangleList).
@@ -188,11 +203,20 @@ disjunctive_tasks_aux(Tasks) =>
 % assignment(FDVars1,FDVars2) => assignment(FDVars1,FDVars2).
 assignment(FDVars1,FDVars2) =>
     bp.picat_preprocess_assignment(FDVars1,FDVars2,Vect1,Vect2,N),
-    all_different(FDVars1),
-    all_different(FDVars2),
-    foreach(I in 1..N, J in 1..N)
-        (Vect1[I] #= J) #<=> (Vect2[J] #= I)
+    M1 = new_array(N,N),                        % M1[I,J] = 1 iff FDVars1[I] = J
+    M1 :: 0..1,
+    M2 = new_array(N,N),                        % M2[I,J] = 1 iff FDVars2[I] = J
+    foreach (I in 1..N, J in 1..N)              % M2 is M1's transpose
+        M2[I,J] = M1[J,I]
+    end,
+    foreach (I in 1..N, J in 1..N)              % channel
+        M1[I,J] #<=> Vect1[I] #= J,
+        M2[I,J] #<=> Vect2[I] #= J
+    end,
+    foreach (J in 1..N)                         
+        sum([M1[I,J] : I in 1..N]) #= 1         % all_different(FDVars1),
     end.
+
 
 % solve(Vars) => solve(Vars).
 solve(Vars) => solve([],Vars).
@@ -330,109 +354,171 @@ circuit(L) =>
     handle_exception($array_or_list_expected(L),circuit).
 
 circuit_aux({V}) => V = 1.
-circuit_aux(A) =>                            % reachability encoding
+circuit_aux(A) =>                            % single-agent path finding
     N = length(A),
     A :: 1..N,
     foreach (I in 1..N)                      % not reflexive
         bp.domain_set_false(A[I],I)
     end,
-    H = new_array(N,N),                      % H[I,J] = 1 iff (I,J) an edge in the Hamilton cycle, N1 is a dummy vertex
-    init_adj_matrix_circuit(H,A,N),
+    circuit_init_adj_matrix(H,A,N,NeibVect,TNeibVect),
+    
     H :: 0..1,
     foreach (I in 1..N, J in 1..N, I !== J)  % channel
         if H[I,J] !== 0 then
-            H[I,J] #<=> (A[I] #= J)
+            H[I,J] #<=> (A[I] #= J),
+            if N > 2 then
+                #~H[I,J] #\/ #~H[J,I]
+            end
         end
     end,
-    foreach (I in 1..N)                       % all_different(A)
-        sum([H[J,I] : J in 1..N]) #= 1,       % each vertex has exactly one incoming edge
-        sum([H[I,J] : J in 1..N]) #= 1        % each vertex has exactly one outgoing edge
+    foreach (I in 1..N)                       
+        sum([H[J,I] : J in 1..N]) #= 1        % each node has exactly one incoming edge
     end,
-    % prevent sub-cycles
-    OrderM = new_array(N,N),                  % order the nodes, starting at 1, then A[1], ...
-    foreach(I in 1..N) OrderM[I,I] = 0 end,   % not reflexive
-    foreach (I in 2..N)
-        OrderM[1,I] = 1,
-        OrderM[I,1] = 0
+
+    circuit_choose_start(A,1,fd_size(A[1]),Start,1,N),
+    % ban sub-cycles
+    P = new_array(N),                         % P[I] is node I's position
+    P[Start] = 1,
+    P :: 1..N,
+    circuit_preprocess(N,P,Start,NeibVect,TNeibVect),
+    % if H[Start,I] then node I is visited after node Start; if node I is visited at time N, then (I,Start) must be in
+    foreach (I in 1..N, I !== Start)
+        H[Start,I] #=> P[I] #= 2,        % H[Start,I] -> I is the successor of Start
+        H[I,Start] #=> (P[I] #= N)       % H[I,Start] -> I is visited at time N
     end,
-    OrderM :: 0..1,
-    foreach (I in 2..N, J in 2..N, I !== J)
-        H[1,I] #=> OrderM[I,J],
-        H[I,1] #=> OrderM[J,I],
-        H[I,J] #=> OrderM[I,J],
-        OrderM[I,J]+OrderM[J,I] #= 1
-    end,
-    foreach (K in 2..N, I in 1..N, H[I,K] !== 0, J in 2..N, K !== J)  % transitive
-        H[I,K] #/\ OrderM[K,J] #=> OrderM[I,J]
+    % if edge (I,J) is in, and J's position is the successor of I's position
+    foreach (I in 1..N, I !== Start, J in 1..N, J !== Start, H[I,J] !== 0)
+        H[I,J] #=> P[J] #= P[I]+1
     end.
 
-% H is the adjacent matrix representation of a Hamilton cycle of graph A
-% initialize H[I,J] = 0 if (I,J) cannot occur in H
-% Vertex N1 (N+1) has all the incoming arcs of vertex 1
-init_adj_matrix_circuit(H,A,N) =>
-    foreach (I in 1..N, J in 1..N)                   % H is a subgraph of A
+% H is the adjacent matrix representation of a Hamilton cycle in graph A
+% set H[I,J] = 0 if (I,J) is not an edge in graph A
+circuit_init_adj_matrix(H,A,N,NeibVect,TNeibVect) =>
+    H = new_array(N,N),                        % H[I,J] = 1 iff (I,J) an edge in the Hamilton cycle
+    NeibVect = new_array(N),                   % adjacency list
+    TNeibVect = new_array(N),                  % adjacency list of the transpose graph
+    foreach (I in 1..N, J in 1..N)             % H is a subgraph of A
         if fd_true(A[I],J) then
             true
         else
             H[I,J] = 0
         end
+    end,
+    foreach (I in 1..N)
+        NeibVect[I] = [J : J in 1..N, H[I,J] !== 0],
+        TNeibVect[I] = [J : J in 1..N, H[J,I] !== 0]
     end.
-/*
-%% use a 0/1 ordering matrix
-circuit_aux(A) =>
-    N=length(A),
-    A :: 1..N,
-    M = new_array(N,N),
-    foreach(I in 1..N) M[I,I] = 0 end,          % not reflexive
-    M :: 0..1,
-    foreach(I in 1..N, J in 1..N, I !== J)      % channel
-        M[I,J] #<=> (A[I] #= J)
-    end,
-    foreach (J in 1..N)                         % all_different(A)
-        sum([M[I,J] : I in 1..N]) #= 1
-    end,
-    %
-    OrderM = new_array(N,N),                    % order the nodes, starting at 1, then A[1], ...
-    foreach(I in 1..N) OrderM[I,I] = 0 end,     % not reflexive
-    foreach (I in 2..N)
-        OrderM[1,I] = 1,
-        OrderM[I,1] = 0
-    end,
-    OrderM :: 0..1,
-    foreach (I in 2..N, J in 2..N, I !== J)
-        M[1,I] #=> OrderM[I,J],
-        M[I,1] #=> OrderM[J,I],
-        M[I,J] #=> OrderM[I,J],
-        OrderM[I,J]+OrderM[J,I] #= 1,
-        foreach (K in 2..N, K !== I, K !== J)   % transitive
-            OrderM[I,K] #/\ OrderM[K,J] #=> OrderM[I,J]
+
+% choose a node that has the smallest out-degree to start with
+circuit_choose_start(_A,CurIndex,_CurDeg,BestIndex,I,N), I > N => BestIndex = CurIndex.
+circuit_choose_start(A,CurIndex,CurDeg,BestIndex,I,N) =>
+    X = A[I],
+    Deg = fd_size(X),
+    (Deg < CurDeg ->
+        CurIndex1 = I,
+        CurDeg1 = Deg
+    ;
+        CurIndex1 = CurIndex,
+        CurDeg1 = CurDeg
+    ),
+    circuit_choose_start(A,CurIndex1,CurDeg1,BestIndex,I+1,N).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Shortest-distance heuristic: For a node, let D0 be the shortest distance to
+% it from Start. Then the node cannot be reached at times 1,..., D0, because
+% Start is visited at time 1. Likewise, let D1 be the shortest distance from
+% the node to Start. Then the node cannot be visited at times (N-D1+2)..N.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+circuit_preprocess(N,P,Start,NeibVect,TNeibVect) =>
+    (NeibVect == TNeibVect -> Undirected = 1; Undirected = 0),
+    circuit_reason_forward(Start,[Start],1,NeibVect,P,1,N,Done),
+    circuit_reason_backward(Start,[Start],1,TNeibVect,P,N+1,N,Undirected,Done),
+    if Done == 0 then    % some frontiers are too large to expand, so use the shortest-distance heuristic
+        circuit_shortest_distance0(Start,N,NeibVect,SDFromStart),
+        circuit_shortest_distance0(Start,N,TNeibVect,SDToStart),
+        foreach (I in 1..N, I !== Start)
+            foreach (T in 1..SDFromStart[I])
+                bp.domain_set_false(P[I], T)
+            end,
+            foreach (T in (N-SDToStart[I]+2)..N)
+                bp.domain_set_false(P[I], T)
+            end
         end
     end.
-*/
-/* %% this is based on MiniZinc's decomposer, not efficient for SAT
-circuit_aux(A) =>
-    N=length(A),
-    A :: 1..N,
-    all_different(A),
-    foreach(I in 1..N) A[I] #!= I end,          % not reflexive
-    %
-    OrderArr = new_array(N),                    % order the nodes, starting at 1, then A[1], ...
-    OrderArr :: 1..N,
-    OrderArr[1] = 1,                            % a circuit is a path that starts at 1 and ends at 1
-    all_different(OrderArr),
-    %
-    foreach(J in 2..N)                
-        A[1] #= J #<=> OrderArr[J] #= 2         % J is visited second
+    
+circuit_shortest_distance0(Start,N,NeibVect,DistVect) =>
+    DistVect = new_array(N),                               % DistVect[I], the shortest distance from Start to node I
+    foreach (I in 1..N)
+        DistVect[I] = N
+    end,      
+    DistVect[Start] := 0,
+    MinHeap1 = new_min_heap([[0|Start]]),
+    circuit_shortest_distance(MinHeap1,N,NeibVect,DistVect).
+
+% Dijkstra's algorithm
+circuit_shortest_distance(MinHeap,_N,_NeibVect,_DistVect), heap_is_empty(MinHeap) => true.
+circuit_shortest_distance(MinHeap,N,NeibVect,DistVect) =>
+    [Dist|Node] = heap_pop(MinHeap),
+    Dist1 = Dist+1,
+    foreach (Neib in NeibVect[Node])
+        if (DistVect[Neib] =< Dist1) then
+            true
+        else
+            heap_push(MinHeap,[Dist1|Neib]),
+            DistVect[Neib] := Dist1
+        end
     end,
-    %
-    foreach(I in 2..N)                             
-        A[I] #= 1 #<=> OrderArr[I] #= N         % I is visited last
-    end,
-    %
-    foreach(I in 2..N, J in 2..N, I !== J)
-        A[I] #= J #<=> OrderArr[J] #= OrderArr[I]+1
-    end.
-*/
+    circuit_shortest_distance(MinHeap,N,NeibVect,DistVect).
+
+%% When expanding forward, the first frontier is [Start] at time 1. After expanding Front, Font1 becomes the new frontier.
+%% Assume the agent is in a state in Front at time T. Then, it will be in a state in Front1 at time T+1.
+circuit_reason_forward(Start,Front,FrontSize,NeibVect,P,T,N,Done) =>
+    (T == N ->
+        true
+    ; FrontSize =< 512, FrontSize < N-1 ->
+        T1 is T+1,
+        circuit_expand(Start,NeibVect,Front,Front1),
+        circuit_exclude_unreachable(1,N,Front1,P,T1),
+        circuit_reason_forward(Start,Front1,len(Front1),NeibVect,P,T1,N,Done)
+    ; 
+        Done = 0
+    ).
+
+%% When expanding backward, the first frontier is [Start] at time N+1
+circuit_reason_backward(Start,Front,FrontSize,TNeibVect,P,T,N,Undirected,Done) =>
+    (T == 2 ->
+        true
+    ; FrontSize =< 512, FrontSize < N-1 ->
+        T1 is T-1,
+        circuit_expand(Start,TNeibVect,Front,Front1),
+        circuit_exclude_unreachable(1,N,Front1,P,T1),
+        FrontSize1 = len(Front1),        
+        if FrontSize1 == 2 && Undirected == 1 then    % the distance to Start is N-T1+1
+            Front1 = [X1,X2],                         % visit one at time N-T1+2 and visit the other at time T1
+            foreach (TT in N-T1+3..T1-1)
+                bp.domain_set_false(P[X1],TT),
+                bp.domain_set_false(P[X2],TT)
+            end
+        end,
+        circuit_reason_backward(Start,Front1,FrontSize1,TNeibVect,P,T1,N,Undirected,Done)
+    ;
+        Done = 0
+    ).
+
+% Expand Front to yield the next frontier Front1.
+circuit_expand(Start,NeibVect,Front,Front1) =>
+    TmpFront = [J : I in Front, J in NeibVect[I], J !== Start],
+    Front1 = sort_remove_dups(TmpFront).
+
+% for each E in 1..Max that is not included in Dom, E cannot be mapped to position Pos
+circuit_exclude_unreachable(E,Max,_Dom,_P,_Pos), E > Max => true.
+circuit_exclude_unreachable(E,Max,[E|Dom],P,Pos) =>
+    circuit_exclude_unreachable(E+1,Max,Dom,P,Pos).
+circuit_exclude_unreachable(E,Max,[Ed|Dom],P,Pos), E > Ed =>
+    circuit_exclude_unreachable(E,Max,Dom,P,Pos).
+circuit_exclude_unreachable(E,Max,Dom,P,Pos) =>
+    bp.domain_set_false(P[E],Pos),
+    circuit_exclude_unreachable(E+1,Max,Dom,P,Pos).
 
 /************************************************************************* 
 subcircuit(L):  L is a list or an array of variables X1,X2,...,Xn.
@@ -446,33 +532,45 @@ subcircuit(A),array(A) =>
 subcircuit(L) =>
     handle_exception($array_or_list_expected(L),subcircuit).
 
+%% use LFSR (left-feedback-shift-register) encoding
+subcircuit_aux(A), subcircuit_no_loop(A) =>
+    circuit_aux(A).
+subcircuit_aux({V}) => V = 1.
 subcircuit_aux(A) =>
     A.length = N,
     A :: 1..N,
     H = new_array(N,N),                         % H[I,I] = 1 means node I is not in the circuit
-    init_adj_matrix_circuit(H,A,N),
+    subcircuit_init_adj_matrix(H,A,N),
     H :: 0..1,
     foreach (I in 1..N, J in 1..N)              % channel
         if H[I,J] !== 0 then
             H[I,J] #<=> (A[I] #= J)
         end
     end,
-    foreach (J in 1..N)                         % all_different(A)
-        sum([H[I,J] : I in 1..N]) #= 1,
-        sum([H[J,I] : I in 1..N]) #= 1        
+    foreach (I in 1..N)                         % each node has exactly one incoming edge
+        sum([H[J,I] : J in 1..N]) #= 1        
     end,
     %
-    FirstIn = new_array(N),                     
-    FirstIn :: 0..1,
-    sum(FirstIn) #=< 1,                         % no node is first if the circuit is empty
+    subcircuit_choose_start(A,0,N,Start,1,N),
+    % ban sub-cycles
+    FirstIn = new_array(N),
+    (Start !== 0 ->
+        FirstIn[Start] = 1,
+        foreach (I in 1..N, I !== Start)
+            FirstIn[I] = 0
+        end
+    ;
+        FirstIn :: 0..1,
+        sum(FirstIn) #=< 1                      % no node is first if the circuit is empty
+    ),
     %
     OrderM = new_array(N,N),                    % order the nodes in the circuit, starting at I for which FirstIn[I]=1
     foreach(I in 1..N) OrderM[I,I] = 0 end,     % not reflexive
     OrderM :: 0..1,
     foreach (I in 1..N)
         FirstIn[I] #=> #~ H[I,I],
-        FirstIn[I] #=> sum([OrderM[J,I] : J in 1..N, J !== I]) #= 0,
         foreach (J in 1..N, I !== J)
+            FirstIn[I] #=> #~OrderM[J,I],
             H[I,J] #/\ #~ FirstIn[J] #=> OrderM[I,J],
             OrderM[I,J]+OrderM[J,I] #=< 1       % both could be 0
         end
@@ -481,32 +579,334 @@ subcircuit_aux(A) =>
         #~FirstIn[K] #/\ #~FirstIn[J] #/\ H[I,K] #/\ OrderM[K,J] #=> OrderM[I,J]
     end.
 
-/*
-% this is based on MiniZinc's decomposer, not efficient for SAT
-subcircuit_aux(L,A) =>
-    A.length = N,
-    L :: 1..N,
-    OrderL = new_list(N), OrderA = OrderL.to_array(),
-    OrderL :: 1..N,
-    FirstInL = new_list(N), FirstInA = FirstInL.to_array(),
-    FirstInL :: 0..1,
-    sum(FirstInL) #=< 1,  % only one can be the first, no one if the circuit is empty
-    Card :: 0..N,
-    all_different(L),
-    all_different(OrderL),
-    Card #= sum([B : I in 1..N, B #<=> (A[I] #!= I)]),  % size of the circuit
-    (Card #> 0) #<=> (sum(FirstInL) #= 1),  
-    foreach(I in 1..N)
-        FirstInA[I] #=> (A[I] #!= I) #/\ (OrderA[I] #= 1),
-        A[I] #= I #=> OrderA[I] #> Card,
-        foreach(J in 1..N, J !== I)
-            A[I] #= J #=> (OrderA[I] #= Card #=> OrderA[J] #= 1) #/\
-                          (OrderA[I] #!= Card #=> OrderA[J] #= OrderA[I]+1)
+subcircuit_no_loop(A) =>
+    N = len(A),
+    foreach (I in 1..N)
+        fd_false(A[I],I)
+    end.
+
+subcircuit_init_adj_matrix(H,A,N) =>
+    foreach (I in 1..N, J in 1..N)                   % H is a subgraph of A
+        if fd_true(A[I],J) then
+            true
+        else
+            H[I,J] = 0
         end
-    end.                         
-*/
+    end.
 
+% choose a node that is guaranteed to be in the cycle and has the smallest out-degree to start with
+subcircuit_choose_start(_A,CurIndex,_CurDeg,BestIndex,I,N), I > N => BestIndex = CurIndex.
+subcircuit_choose_start(A,CurIndex,CurDeg,BestIndex,I,N) =>
+    X = A[I],
+    Deg = fd_size(X),
+    (fd_false(X,I), Deg < CurDeg ->      % fd_false(X,I) means I cannot be a loop, and must be in the cycle
+        CurIndex1 = I,
+        CurDeg1 = Deg
+    ;
+        CurIndex1 = CurIndex,
+        CurDeg1 = CurDeg
+    ),
+    subcircuit_choose_start(A,CurIndex1,CurDeg1,BestIndex,I+1,N).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A is a two-dimensional array. All the non-zero cells of A form a Hamiltonian cycle
+% A[R,C] is filled with 0 if it's known to be not in the cycle.
+% The total number of non-zero cells is K
+%
+subcircuit_grid(A) =>
+    subcircuit_grid(A,_).
+
+subcircuit_grid({},K) => K = 0.
+subcircuit_grid(A,K) =>
+    (array(A) -> true; handle_exception($array_expected(A),subcircuit_grid)),
+    NRows = len(A),
+    foreach (R in 1..NRows)
+        (array(A[R]) -> true; handle_exception($array_expected(A[R]),subcircuit_grid))
+    end,
+    A :: 0..1,
+    NCols = len(A[1]),
+    NZeros = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 0]),
+    NCells = max(NRows*NCols-NZeros,1),
+    %
+    K :: 0..NCells,
+    sum([A[R,C] : R in 1..NRows, C in 1..NCols, A[R,C] !== 0]) #= K,
+    KGtOne #<=> (K #> 1),
+    KGtTwo #<=> (K #> 2),
+    KGtTwo #=> KGtOne,
+    %
+    H = new_array(NRows,NCols),    % H[R,C] = [{R1,C1,B1},{R2,C2,B2},...], Bi <=> (R,C) and (Ri,Ci) are connected in the circuit
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] !== 0 ->
+            Neibs = [{R1,C1,B} : (Dr,Dc) in [(-1,0),(1,0),(0,-1),(0,1)],
+                                   R1 = R+Dr, C1 = C+Dc, R1 >= 1, R1 =< NRows, C1 >= 1, C1 =< NCols, A[R1,C1] !== 0, B :: 0..1],
+            H[R,C] = Neibs
+        ;
+            H[R,C] = []
+        )
+    end,
+    foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
+        Neibs = H[R,C],
+        OutBs = [B : {_,_,B} in Neibs],
+        foreach ({_,_,B} in Neibs)
+            A[R,C] #\/ #~B
+        end,
+        LenOutBs = len(OutBs),
+        bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,OutBs,LenOutBs,1)),   % one outgoing
+        InBs = [],
+        foreach ({R1,C1,_} in Neibs, member({R,C,B}, H[R1,C1]))
+            A[R,C] #\/ #~B,
+            InBs := [B|InBs]
+        end,
+        LenInBs = len(InBs),
+        bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,InBs,LenInBs,1))      % one incoming
+    end,
+    % ban sub-cycles
+    Start = new_array(NRows,NCols),    
+    Start :: 0..1,                          % Start[R,C]=1 iff the cycle starts at (R,C)
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] == 0 ->
+            Start[R,C] = 0
+        ;
+            #~A[R,C]  #=> #~Start[R,C]
+        )
+    end,
+    StartList = [{R,C,Start[R,C]} : R in 1..NRows, C in 1..NCols, A[R,C] !== 0],        
+    HasStartedList = new_list(NCells),    % HasStarted[R,C] iff there exists (R1,C1) in {(1,1) ... (R,C)} such that Start[R1,C1]
+    HasStartedList :: 0..1,
+    constr_start(A,StartList,HasStartedList,KGtOne),
+    %
+    P = new_array(NRows,NCols),
+    NB is round(log(2,NCells)+0.5),                % number of bits needed by the log encoding
+    Max is 2**NB-1,
+    P :: 0..Max,
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] == 0 ->
+            P[R,C] = 0
+        ;
+            bp.sat_encode_dvar(P[R,C],_)           % get the log encoding
+        )
+    end,
+    foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
+        #~A[R,C] #<=> P[R,C] #= 0,
+        Start[R,C] #<=> P[R,C] #= 1,
+        Neibs = H[R,C],
+        foreach ({R1,C1,B} in Neibs)
+            once member({R,C,B1}, H[R1,C1]),
+            #~KGtTwo #\/ #~B #\/ #~B1,              % no cycle of size 2
+            entail_lfsr_succ(NB, #~Start[R1,C1], B, P[R,C], P[R1,C1])
+        end
+    end.
+
+% Start and HasStarted must follow the following pattern:
+%      Start = 0 ... 0 1 0 ... 0
+% HasStarted = 0 ... 0 1 1 ... 1
+%
+constr_start(_A,[],_HasStartedList,_KGtOne) => true.
+constr_start(A,[{R,C,StartB}|StartList],[HasStartedB|HasStartedList],KGtOne) =>
+     A[R,C] #<=> StartB,
+     A[R,C] #<=> HasStartedB,
+     constr_start(A,HasStartedB,StartList,HasStartedList,KGtOne).
+
+constr_start(_A,_HasStartedB,[],_HasStartedList,_KGtOne) => true.
+constr_start(A,PrevHasStartedB,[{R,C,StartB}|StartList],[HasStartedB|HasStartedList],KGtOne) =>
+     PrevHasStartedB #=> HasStartedB,
+     A[R,C] #/\ #~PrevHasStartedB #=> StartB,
+     StartB #=> #~PrevHasStartedB,
+     HasStartedB #/\ #~StartB #=> PrevHasStartedB,
+     StartB #=> HasStartedB,
+     (StartList == [] -> KGtOne #=> HasStartedB; true),
+     constr_start(A,HasStartedB,StartList,HasStartedList,KGtOne).
+
+% if B, then Y is the successor of X
+entail_lfsr_succ(NB,B1,B2,X,Y) =>
+    (var(X) ->
+        get_attr(X,'$bool_vars') = $log(_,VectX)
+    ;
+        VectX = new_array(NB),
+        dec_to_bin(X,1,NB,VectX)
+    ),
+    (var(Y) ->
+        get_attr(Y,'$bool_vars') = $log(_,VectY)
+    ;
+        VectY = new_array(NB),
+        dec_to_bin(Y,1,NB,VectY)
+    ),
+    entail_lfsr_succ_aux(B1,B2,VectX,VectY).
+
+dec_to_bin(_Val,I,NB,_Vect), I > NB => true.
+dec_to_bin(Val,I,NB,Vect) =>
+   Vect[I] = Val mod 2,
+   dec_to_bin(Val div 2, I+1, NB, Vect).
+
+bin_to_dec(_Vect,I,Res0,Res), I == 0 => Res = Res0.
+bin_to_dec(Vect,I,Res0,Res) =>
+    bin_to_dec(Vect, I-1, 2*Res0+Vect[I], Res).
+
+% B -> Y = succ(X)
+entail_lfsr_succ_aux(B1,B2,{X1,X2},Y) =>   % taps = {1,2}
+    Y = {Y1,Y2},
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X1,X2).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3},Y) =>   % taps = {2,3}
+    Y = {Y1,Y2,Y3},
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X2,X3).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4},Y) =>   % taps = {3,4}
+    Y = {Y1,Y2,Y3,Y4},
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X3,X4).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5},Y) =>   % taps = {3,5}
+    Y = {Y1,Y2,Y3,Y4,Y5},
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X3,X5).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6},Y) =>   % taps = {5,6}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6},
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X5,X6).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7},Y) =>   % taps = {6,7}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7},
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X6,X7).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8},Y) =>   % taps = {4,5,6,8}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8},
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X4,X5,X6,X8).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9},Y) =>   % taps = {5,9}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9},
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X5,X9).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9,X10},Y) =>   % taps = {7,10}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9,Y10},
+    entail_equiv(B1,B2,Y10,X9),
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X7,X10).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11},Y) =>   % taps = {9,11}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9,Y10,Y11},
+    entail_equiv(B1,B2,Y11,X10),
+    entail_equiv(B1,B2,Y10,X9),
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X9,X11).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12},Y) =>   % taps = {4,10,11,12}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9,Y10,Y11,Y12},
+    entail_equiv(B1,B2,Y12,X11),
+    entail_equiv(B1,B2,Y11,X10),
+    entail_equiv(B1,B2,Y10,X9),
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X4,X10,X11,X12).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12,X13},Y) =>   % taps = {8,11,12,13}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9,Y10,Y11,Y12,Y13},
+    entail_equiv(B1,B2,Y13,X12),
+    entail_equiv(B1,B2,Y12,X11),
+    entail_equiv(B1,B2,Y11,X10),
+    entail_equiv(B1,B2,Y10,X9),
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X8,X11,X12,X13).
+entail_lfsr_succ_aux(B1,B2,{X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12,X13,X14},Y) =>   % taps = {2,12,13,14}
+    Y = {Y1,Y2,Y3,Y4,Y5,Y6,Y7,Y8,Y9,Y10,Y11,Y12,Y13,Y14},
+    entail_equiv(B1,B2,Y14,X13),
+    entail_equiv(B1,B2,Y13,X12),
+    entail_equiv(B1,B2,Y12,X11),
+    entail_equiv(B1,B2,Y11,X10),
+    entail_equiv(B1,B2,Y10,X9),
+    entail_equiv(B1,B2,Y9,X8),
+    entail_equiv(B1,B2,Y8,X7),
+    entail_equiv(B1,B2,Y7,X6),
+    entail_equiv(B1,B2,Y6,X5),
+    entail_equiv(B1,B2,Y5,X4),
+    entail_equiv(B1,B2,Y4,X3),
+    entail_equiv(B1,B2,Y3,X2),
+    entail_equiv(B1,B2,Y2,X1),
+    entail_xor(B1,B2,Y1,X2,X12,X13,X14).
+
+% B => X = Y
+% i.e., (~B \/ ~X \/ Y) /\ (~B \/ X \/ ~Y)
+entail_equiv(B1,B2,X,Y) =>
+    #~B1 #\/ #~B2 #\/ #~X #\/ Y,
+    #~B1 #\/ #~B2 #\/ X #\/ #~Y.
+
+% B => Y = X1 ^ X2
+entail_xor(B1,B2,Y,X1,X2) =>
+    #~B1 #\/ #~B2 #\/ #~Y #\/ X1 #\/ X2,      % 1100 1
+    #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ X2,      % 1010 1
+    #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ #~X2,      % 1001 1
+    #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ #~X2.  % 1111 1
+
+% B => Y = X1 ^ X2 ^ X3 ^ X4
+entail_xor(B1,B2,Y,X1,X2,X3,X4) =>
+    #~B1 #\/ #~B2 #\/ #~Y #\/ X1 #\/ X2 #\/ X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ X2 #\/ X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ #~X2 #\/ X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ #~X2 #\/ X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ X2 #\/ #~X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ X2 #\/ #~X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ X1 #\/ #~X2 #\/ #~X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ #~X2 #\/ #~X3 #\/ X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ X2 #\/ X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ X2 #\/ X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ X1 #\/ #~X2 #\/ X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ #~X2 #\/ X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ X1 #\/ X2 #\/ #~X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ X2 #\/ #~X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ #~X2 #\/ #~X3 #\/ #~X4,
+    #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ #~X2 #\/ #~X3 #\/ #~X4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global_cardinality(List,Pairs) =>
     (bp.check_pairs(Pairs) -> true; handle_exception($pairs_expected(Pairs),global_cardinality)),
     N = len(List),
@@ -543,17 +943,195 @@ serialized(Starts,Durations) =>
     cumulative(Starts,Durations,Os,1).
 
 /************************************************************************* 
-    regular(L,Q,S,M,Q0,Fs)
+    regular(W,Q,S,M,Q0,Fs)
 
-  L : A sentence (an IntVar array or list)
+  W : A sentence (an IntVar array or list)
   Q : number of states
   S : input_max, inputs are from 1 to S
   M : transition matrix:  M[I,J] (I in 1..S, J in 1..Q) is a list of outgoing states for NFA (0 means an error).
   Q0: initial state
   Fs : accepting states
 ***************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Model 'regular' as a single-agent path finding problem. Initially the agent
+% is in state Q0. For each transition step, the agent consumes a token, and
+% moves to the next state. At the end, the agent must be in one of the final states.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
 regular(L, Q, S, M, Q0, Fs) =>
     regular_constr(L, Q, S, M, Q0, Fs, sat).
+*/
+regular(W, Q, S, M, Q0, Fs) =>
+    check_regular_args(Q,S,M,Q0,Fs,Matrix,FsLst), % defined in "common_constr.pi"
+    (array(W) -> WArr = W; WArr = to_array(W)),
+    N = len(WArr),
+    bp.domain(vars(W),1,S),
+    N1 = N+1,
+    A = new_array(N1,Q),                          % A[T,State] is true if the agent is in State at time T, A[1,Q0] = 1, T = 1..N+1
+    B = new_array(N,S),                           % B[T,Input] is true if the agent observed Input at time T 
+    transpose_trans_matrix(Matrix,TMatrix),       % defined in "common_constr.pi"
+    preprocess_regular_constr_sat(WArr,Q,S,Matrix,TMatrix,Q0,FsLst,A,B,N),
+
+    % initial and final states
+    A[1,Q0] = 1,
+    foreach (State in 1..Q, State !== Q0)
+        A[1,State] = 0
+    end,
+    regular_exclude_unreachable(1,Q,FsLst,N1,A),  % set A[N1,State] = 0 if State is not in FsLst
+    bp.domain(vars(A),0,1),
+    bp.domain(vars(B),0,1),
+
+    foreach (T in 2..N)
+        sum([A[T,State] : State in 1..Q]) #= 1    % at each time, the agent stays in exactly one state
+    end,
+    sum([A[N1,State] : State in FsLst]) #= 1,     % at time N, the agent is in one of the final states
+
+    % transition constraints
+    foreach (State in 1..Q, Input in 1..S)
+        Entry = Matrix[State,Input],
+        if list(Entry) then
+            foreach (T in 1..N, A[T,State] !== 0, B[T,Input] !== 0)
+                sum([#~A[T,State], #~B[T,Input] | [A[T+1,ToState] : ToState in Entry]]) #>= 1
+            end
+        elseif Entry !== 0 then
+            foreach (T in 1..N, A[T,State] !== 0, B[T,Input] !== 0)        
+                #~A[T,State] #\/ #~B[T,Input] #\/ A[T+1,Entry]
+            end
+        else
+            foreach (T in 1..N, A[T,State] !== 0, B[T,Input] !== 0)                
+                 #~A[T,State] #\/ #~B[T,Input]   % no transition is possible from State on Input
+            end
+        end
+    end,
+
+    % channel constraints
+    foreach (T in 1..N, Input in 1..S)
+        (WArr[T] #= Input) #<=> B[T,Input]        % this entails sum([B[T,Input] : Input in 1..S]) #= 1
+    end.
+
+%% set A[T,State] to 0 if the agent cannot reach State at time T.
+%% set B[T,Input] to 0 if the agent cannot consume Input at time T.
+%
+preprocess_regular_constr_sat(WArr,Q,S,Matrix,TMatrix,Q0,FsLst,A,B,N) =>
+    regular_reason_backward_sat(WArr,Q,S,FsLst,len(FsLst),TMatrix,A,B,N+1,Done),
+    regular_reason_forward_sat(WArr,Q,S,[Q0],1,Matrix,A,B,1,N,Done),
+    (Done == 0 ->
+        regular_sdist_heuristic_sat(Q,S,Matrix,TMatrix,Q0,FsLst,A,N)
+    ;
+        true
+    ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Shortest-distance heuristic: For a state, let D0 be the shortest distance to
+% it from Q0. Then the state cannot reached in times 1,..., D0. Likewise, let
+% Df be the shortest distance from the state to any final state. Then the state
+% cannot be visited in times N-Df+2..N.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+regular_sdist_heuristic_sat(Q,S,Matrix,TMatrix,Q0,FsLst,A,N) =>
+    SDFromQ0 = new_array(Q),                                  % SDFromQ0[I], the shortest distance to state I from Q0
+    foreach (I in 1..Q)
+        SDFromQ0[I] = N
+    end,      
+    SDFromQ0[Q0] := 0,
+    MinHeap1 = new_min_heap([[0|Q0]]),
+    fa_shortest_distance(MinHeap1,S,Matrix,SDFromQ0),         % defined in "common_constr.pi"
+    %      
+    SDFromF = new_array(Q),                                   % SDFromF[I], the shortest distance to I from any state in FsLst
+    foreach (I in 1..Q)
+        SDFromF[I] = N
+    end,      
+    foreach (F in FsLst)
+        SDFromF[F] := 0
+    end,
+    MinHeap2 = new_min_heap([[0|FState] : FState in FsLst]),
+    fa_shortest_distance(MinHeap2,S,TMatrix,SDFromF),
+    %
+    foreach (State in 1..Q)
+        foreach (T in 2..SDFromQ0[State])
+            A[T,State] = 0
+        end,
+        foreach (T in (N-SDFromF[State]+2)..N)
+            A[T,State] = 0
+        end
+    end.
+    %
+
+% Dijkstra's algorithm
+fa_shortest_distance(MinHeap,_S,_Matrix,_DistVect), heap_is_empty(MinHeap) => true.
+fa_shortest_distance(MinHeap,S,Matrix,DistVect) =>
+    [Dist|State] = heap_pop(MinHeap),
+    Dist1 = Dist+1,
+    foreach (Input in 1..S)
+        Entry = Matrix[State,Input],
+        if list(Entry) then
+            foreach (NextState in Entry)
+                if (DistVect[NextState] =< Dist1) then
+                    true
+                else
+                    heap_push(MinHeap,[Dist1|NextState]),
+                    DistVect[NextState] := Dist1
+                end
+            end
+       elseif Entry !== 0 then
+            if (DistVect[Entry] =< Dist1) then
+                true
+            else
+                heap_push(MinHeap,[Dist1|Entry]),
+                DistVect[Entry] := Dist1
+            end
+        end
+    end,
+    fa_shortest_distance(MinHeap,S,Matrix,DistVect).
+
+%% When expanding forward, the first frontier is [Q0]. After expanding Front, Font1 becomes the new frontier.
+%% Assume the agent is in a state in Front at time T. Then, it will be in a state in Front1 and consume a symbol
+%% in Syms at time T+1.
+regular_reason_forward_sat(WArr,Q,S,Front,FrontSize,Matrix,A,B,T,N,Done) =>
+    (T == N ->
+        true
+    ; FrontSize == Q ->
+        true
+    ; FrontSize >= 512 ->
+        Done = 0
+    ;
+        T1 = T+1,
+        Wi = WArr[T],
+        bp.fd_domain(Wi,Inputs),        
+        regular_expand(Inputs,Matrix,Front,Front1,Syms),      % defined in "common_constr.pi"
+        regular_exclude_unreachable(1,Q,Front1,T1,A),
+        regular_exclude_unreachable(1,S,Syms,T,B),
+        regular_reason_forward_sat(WArr,Q,S,Front1,len(Front1),Matrix,A,B,T1,N,Done)
+    ).
+
+%% When expanding backward, the first frontier is FsLst at time N
+regular_reason_backward_sat(WArr,Q,S,Front,FrontSize,TMatrix,A,B,T,Done) =>
+    (T == 2 ->
+        true
+    ; FrontSize == Q ->
+        true
+    ; FrontSize >= 512 ->
+        Done = 0
+    ;
+        T1 is T-1,
+        Wi = WArr[T1],
+        bp.fd_domain(Wi,Inputs),        
+        regular_expand(Inputs,TMatrix,Front,Front1,Syms),    
+        regular_exclude_unreachable(1,Q,Front1,T1,A),
+        regular_exclude_unreachable(1,S,Syms,T1,B),
+        regular_reason_backward_sat(WArr,Q,S,Front1,len(Front1),TMatrix,A,B,T1,Done)
+    ).
+
+% set Arr[T,Val] = 0 for each Val in 1..Max that is not included in Dom
+regular_exclude_unreachable(Val,Max,_Dom,_T,_Arr), Val > Max => true.
+regular_exclude_unreachable(Val,Max,[Val|Dom],T,Arr) =>
+    regular_exclude_unreachable(Val+1,Max,Dom,T,Arr).
+regular_exclude_unreachable(Val,Max,[E|Dom],T,Arr), Val > E =>
+    regular_exclude_unreachable(Val,Max,Dom,T,Arr).
+regular_exclude_unreachable(Val,Max,Dom,T,Arr) =>
+    Arr[T,Val] = 0,
+    regular_exclude_unreachable(Val+1,Max,Dom,T,Arr).
+
+
 %%
 %% lex_le(L1,L2): collection L1 is lexicographically less than or equal to L2
 %%

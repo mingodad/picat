@@ -1,7 +1,7 @@
 import sat.
 
 main =>
-    queens(8).
+    queens(100).
 
 queens(N) =>
     Qs = new_array(N,N),

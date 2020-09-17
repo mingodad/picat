@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : sapi.h
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2018
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,7 @@
 #define SP_TYPE_VARIABLE BP_TYPE_VARIABLE
 #define SP_TYPE_INTEGER BP_TYPE_INTEGER
 #define SP_TYPE_FLOAT BP_TYPE_FLOAT
-#define SP_TYPE_ATOM BP_TYPE_ATOM 
+#define SP_TYPE_ATOM BP_TYPE_ATOM
 #define SP_TYPE_COMPOUND BP_TYPE_COMPOUND
 
 int SP_errno;

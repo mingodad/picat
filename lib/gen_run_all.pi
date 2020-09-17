@@ -1,9 +1,0 @@
-import os.
-
-main =>
-    Files = listdir("."),
-	foreach (File in Files, append(MainFileStr,".pi",File))
-	    printf("echo solving %s\n",MainFileStr),
-		printf("picat.exe %s > tmp.out\n",MainFileStr),
-		printf("diff tmp.out %s.out\n",MainFileStr)
-	end.

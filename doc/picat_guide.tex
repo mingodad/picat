@@ -28,7 +28,7 @@
 \vspace*{4cm}
 \begin{center}
 {\Huge\bf A User's Guide to Picat} \\
-{\large\bf Version 2.3} \\
+{\large\bf Version 2.8} \\
 
 
 
@@ -36,9 +36,9 @@
 
 {\large\bf Neng-Fa Zhou and Jonathan Fruhman} \\
 \vspace*{1cm}
-{\bf Copyright \copyright picat-lang.org, 2013-2018.} \\
+{\bf Copyright \copyright picat-lang.org, 2013-2020.} \\
 %{\bf Under construction}
-{\bf Last updated Feb. 1, 2018} \\
+{\bf Last updated January 10, 2020} \\
 \end{center}
 \thispagestyle{empty}
 \clearpage
@@ -50,9 +50,9 @@
 \input{preface.tex}
 
 \section*{Acknowledgements}
-The initial design of Picat was published in December 2012, and the first alpha version was released in May 2013.  The following people have contributed to the project by reviewing the ideas, the design, the implementation, and/or the documentation: Roman Bart\'{a}k, Nikhil Barthwal, Mike Bionchik, Lei Chen, Veronica Dahl, Claudio Cesar de S\'{a}, Agostino Dovier, Sergii Dymchenko, Julio Di Egidio, Christian Theil Have, H{\aa}kan Kjellerstrand,  Annie Liu, Nuno Lopes, Richard O'Keefe, Lorenz Schiffmann, Paul Tarau, and Jan Wielemaker.  Special thanks to H{\aa}kan Kjellerstrand, who has been programming in Picat and blogging about Picat since May 2013. The system wouldn't have matured so quickly without H{\aa}kan's hundreds of programs. The \url{picat-lang.org} web page was designed by Bo Yuan (Bobby) Zhou. The Picat project was supported in part by the NSF under grant numbers CCF1018006 and CCF1618046.
+The initial design of Picat was published in December 2012, and the first alpha version was released in May 2013.  Many people have contributed to the project by reviewing the ideas, the design, the implementation, and/or the documentation, including Roman Bart\'{a}k, Nikhil Barthwal, Mike Bionchik, Lei Chen, Veronica Dahl, Claudio Cesar de S\'{a}, Agostino Dovier, Sergii Dymchenko, Julio Di Egidio, Christian Theil Have, H{\aa}kan Kjellerstrand,  Annie Liu, Nuno Lopes, Marcio Minicz, Richard O'Keefe, Lorenz Schiffmann, Paul Tarau, and Jan Wielemaker.  Special thanks to H{\aa}kan Kjellerstrand, who has been programming in Picat and blogging about Picat since May 2013. The system wouldn't have matured so quickly without H{\aa}kan's hundreds of programs. The \url{picat-lang.org} web page was designed by Bo Yuan (Bobby) Zhou. The Picat project was supported in part by the NSF under grant numbers CCF1018006 and CCF1618046.
 
-The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Lingeling} by Armin Biere; \ignore{\texttt{MiniSAT} by Niklas Sorensson; \texttt{GLPK} by Andrew Makhorin; }\texttt{Espresso} (by Berkeley). In addition, Picat also provides interfaces to \texttt{GLPK} by Andrew Makhorin and \texttt{Gurobi} by Gurobi Optimization, Inc.
+The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Lingeling} by Armin Biere; \texttt{Maple SAT} by Jia Hui Liang, which is based on \texttt{MiniSAT} by Niklas Sorensson; \texttt{Espresso} (by Berkeley); \texttt{FANN} by Steffen Nissen. In addition, Picat also provides interfaces to \texttt{Gurobi} by Gurobi Optimization, Inc, \texttt{CBC} by John Forrest, \texttt{GLPK} by Andrew Makhorin, and \texttt{Z3} by Microsoft.
 
 \tableofcontents
 
@@ -75,6 +75,7 @@ The Picat implementation is based on the B-Prolog engine. It uses the following 
 %\input{thread.tex}
 %\input{process.tex}
 \input{constraints.tex}
+\input{neuralnets.tex}
 %\input{sockets.tex}
 %\input{cinterface.tex}
 \input{os.tex}
@@ -93,6 +94,9 @@ The Picat implementation is based on the B-Prolog engine. It uses the following 
 \begin{adjustwidth}{-2cm}{-1cm}
 \input{builtin.tex}
 \end{adjustwidth}
+%\cleardoublepage
+\clearpage
+\phantomsection
 \addcontentsline{toc}{chapter}{Index}
 \printindex
 \end{document}

@@ -1,0 +1,125 @@
+import nn.
+
+main =>
+    println("Loading network"),
+    Ann = nn_load("digits.net"),
+
+    nn_print(Ann),
+
+    Num_outputs = 10,
+    format_testing_file(Num_outputs),
+
+    println("Testing network"),
+    nn_test2(Ann),
+    
+    println("\nCleaning up."),
+    nn_destroy_all.
+
+
+
+format_testing_file(Num_outputs) =>
+    Num_examples = 10000,
+    Input_images = open("t10k-images-idx3-ubyte"),
+    Input_tags = open("t10k-labels-idx1-ubyte"),
+    Output = open("digits.test", write),
+    
+    % Discard irrelevant information at the beginning of the MNIST files.
+    foreach(I in 1..16) _ = read_byte(Input_images) end, 
+    foreach(I in 1..8) _ = read_byte(Input_tags) end,
+
+    println(Output, Num_examples),
+    println(Output, 784),
+    println(Output, Num_outputs),
+    println(Output, " "),
+
+    foreach(I in 1..Num_examples)
+        foreach(_J in 1..784)
+            Byte := read_byte(Input_images),
+            print(Output, (Byte / 255)), 
+            print(Output, " ")
+        end, 
+        println(Output, " "),
+        Byte := read_byte(Input_tags),
+        if Num_outputs == 1 then
+            println(Output, Byte)
+        else
+            output_byte(Output,Byte)
+        end,
+        nl(Output)
+    end,
+
+    close(Input_images),
+    close(Input_tags),
+    close(Output).
+
+output_byte(Output,0) =>
+    println(Output, '1 -1 -1 -1 -1 -1 -1 -1 -1 -1').
+output_byte(Output,1) =>
+    println(Output, '-1 1 -1 -1 -1 -1 -1 -1 -1 -1').
+output_byte(Output,2) =>    
+    println(Output, '-1 -1 1 -1 -1 -1 -1 -1 -1 -1').
+output_byte(Output,3) =>        
+    println(Output, '-1 -1 -1 1 -1 -1 -1 -1 -1 -1').
+output_byte(Output,4) =>        
+    println(Output, '-1 -1 -1 -1 1 -1 -1 -1 -1 -1').
+output_byte(Output,5) =>        
+    println(Output, '-1 -1 -1 -1 -1 1 -1 -1 -1 -1').
+output_byte(Output,6) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 1 -1 -1 -1').
+output_byte(Output,7) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 1 -1 -1').
+output_byte(Output,8) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 -1 1 -1').
+output_byte(Output,9) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 -1 -1 1').
+
+nn_test1(Ann) =>
+    Size = nn_train_data_size("digits.test"),
+    foreach(I in 1..Size)
+        (In,Out) = nn_train_data_get("digits.test", I),
+        Res = nn_run(Ann, In, $[scaleIn(1), scaleOut(-1), resetMSE]),
+        if Res[1] == Out[1] then 
+            println("Correct result")
+        else
+            printf("Incorrect prediction: %f, actual digit: %f %n", Res[1], Out[1])
+        end
+    end.
+
+
+
+nn_test2(Ann) =>
+    Size = nn_train_data_size("digits.test"),
+    Total = 0,
+    writeln($size(Size)),
+    foreach(I in 1..Size)
+        (In,Out) = nn_train_data_get("digits.test", I),
+        Res = nn_run(Ann, In, [resetMSE]),
+        Prediction = index_of_max(Res),
+        Correct_answer = index_of_max(Out),
+        if Prediction == Correct_answer then 
+            println("Correct result"),
+            Total := Total + 1
+        %else
+        %    printf("\rIncorrect prediction: %f, actual digit: %f %n", Prediction, Correct_answer)
+        end,
+        printf("\rCorrect: %d/%d",Total,I)
+        %printf("%d:\n%w\n%w\n",I,Res,Out),
+    end.
+
+
+index_of_max(Array) = Index =>
+    Max = -100000000,
+    Index = -1,
+    foreach(I in 1..len(Array))
+        if Array[I] > Max then
+            Max := Array[I],
+            Index := I
+        end
+    end.
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+import nn.
+
+main =>
+    main(["Train.txt"]).
+    
+main([File]) =>
+    Ann = new_nn([57,2,1]),
+    nn_train(Ann,File,$[derror(0.0001),maxep(2000),report(10),scale(-1,1,-1,1)]),
+    nn_set_activation_function_hidden(Ann,sigmoid),
+    nn_save(Ann, "spam.net"),
+    nn_destroy_all,
+    println("Done").

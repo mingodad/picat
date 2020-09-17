@@ -1,6 +1,0 @@
-main =>
-    Lines = read_file_lines("solve_all"),
-    foreach (Line in Lines, append(_,".opb",Line))
-        printf("echo %s\n",Line),
-        printf("timeout 10 picat /cygdrive/c/BProlog/Picat/pb %s > %s.out\n",Line,Line)
-    end.

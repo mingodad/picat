@@ -1,0 +1,51 @@
+import nn.
+import util.
+
+main =>
+	NN = nn_load("author_classify.net"),
+	println("Enter the name of the file to test"),
+	Filename = read_line(stdin),
+	Matrix = new_array(27, 27),
+	generate_probabilities(Filename, Matrix),
+	Flattened_matrix_list = array_matrix_to_list(Matrix),
+	Flattened_matrix_array = to_array(Flattened_matrix_list),
+	nn_print(NN),
+	Out = nn_run(NN, Flattened_matrix_array),  %
+	print("Chesterton: "), println(Out[1]),
+	print("Melville: "), println(Out[2]).
+
+
+generate_probabilities(Filename, Matrix) =>
+	Reader = open(Filename, read),
+	foreach(I in 1..27, J in 1..27) 
+		Matrix[I, J] = 0 
+	end, 
+	Prev_char = ' ',  
+	Char = read_char(Reader),
+	while(Char != end_of_file)
+		if ascii_alpha(Char) && ascii_alpha(Prev_char) then
+			Matrix[ord(Prev_char) - ord('a') + 1, ord(Char)- ord('a') + 1] := Matrix[ord(Prev_char) - ord('a') + 1, ord(Char) - ord('a') + 1] + 1
+		elseif ascii_alpha(Char) && Prev_char == ' ' then
+			Matrix[27, ord(Char) - ord('a') + 1] := Matrix[27, ord(Char) - ord('a') + 1] + 1
+		elseif Char == ' ' && ascii_alpha(Prev_char) then
+			Matrix[ord(Prev_char) - ord('a') + 1, 27] := Matrix[ord(Prev_char) - ord('a') + 1, 27] + 1
+		elseif Char == ' ' && Prev_char == ' ' then
+			Matrix[27, 27] := Matrix[27, 27] + 1
+		else 
+			println("Error: It seems that the file hasn't been preprocessed")
+		end,
+		Prev_char := Char,
+		Char := read_char(Reader)
+	end,
+	foreach(Row in 1..27)
+		Total = 0,
+		foreach(Column in 1..27)
+			Total := Total + Matrix[Row, Column]
+		end,
+		foreach(Column in 1..27)
+			if Total != 0 then
+				Matrix[Row, Column] := Matrix[Row, Column] / Total
+			end
+		end
+	end,
+	close(Reader).

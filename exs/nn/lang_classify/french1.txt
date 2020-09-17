@@ -1,0 +1,538 @@
+﻿En France, la commune est une collectivité territoriale1, consistant en un territoire administré par une municipalité, formée par un conseil municipal, le maire ainsi que, le cas échéant, un ou plusieurs adjoints. Elle constitue l'échelon de base des divisions administratives du territoire français. Les communes sont régies par le titre XII de la Constitution de 1958 et la deuxième partie du code général des collectivités territoriales. Les trois plus importantes communes, Paris, Lyon et Marseille, ont un statut particulier visé par la loi du 2 mars 1982, dite « loi PLM »2 : elles ont notamment été découpées en arrondissements dits municipaux, mais l'essentiel des pouvoirs a été laissé aux municipalités centrales.
+
+La commune conduit des politiques publiques dans le cadre de l'exercice des compétences déterminées par la loi (notamment l'état civil, la gestion des écoles maternelles et élémentaires, la voirie municipale, la fourniture du service de l'eau) ainsi que toutes celles qu'elle juge nécessaire pour l'intérêt général, en vertu de la clause de compétence générale (par exemple la garde d'enfants via les crèches municipales, des services de bibliothèques et médiathèques, les piscines municipales, etc.). Leurs compétences sont aujourd'hui largement partagées avec les intercommunalités, notamment les établissements publics de coopération intercommunale tels que les communautés de commune, communautés d'agglomérations et métropoles. Ces groupements de communes conduisent un nombre croissant de politiques et interrogent l'avenir des communes elles-mêmes en tant que collectivités autonomes.
+
+Historiquement, la commune française est l'héritière de la paroisse de l'Ancien Régime ou de la « communauté » (circonscription fiscale qui portait aussi le nom de « paroisse fiscale », dans les villes à deux ou plusieurs clochers, ou de « collecte »). Au xxie siècle, la commune peut correspondre à une pluralité d'espaces humains : espace rural avec un centre (bourg ou village), ville isolée ou partie d'agglomération multicommunale3, notamment.
+
+Sa superficie et sa population peuvent ainsi varier considérablement. Paris est la commune la plus peuplée avec 2 206 488 habitants au recensement de 2015, tandis que la commune habitée la moins peuplée, Rochefourchat, a un seul habitant. 30 098 communes, soit 85,0 % d'entre elles, possèdent moins de 2 000 habitants, et représentent 23,2 % des habitants du pays4.
+
+D'après la direction générale des collectivités locales (DGCL), au 1er janvier 2018, la France comptait 35 357 communes dont 35 228 en France métropolitaine (Corse comprise) et 129 dans les départements et régions d'outre-mer (Mayotte comprise)4. Leur nombre est en constante diminution depuis 2014 (36 681 cette année-là) du fait de l'accroissement du nombre de fusions de communes. De plus, il convient d'ajouter au nombre total de communes 83 autres, situées dans les deux collectivités d'outre-mer de Saint-Pierre-et-Miquelon (deux communes)5 et de Polynésie française (quarante-huit communes)6, ainsi qu'en Nouvelle-Calédonie (trente-trois communes)7.
+
+
+Sommaire
+1	Historique
+1.1	Sous l’Ancien Régime
+1.2	Révolution française
+1.3	Après la Révolution
+1.4	Noms des communes
+2	Géographie et morphologie
+3	Rôle et administration
+3.1	Dispositions constitutionnelles, législatives et réglementaires concernant les communes
+3.2	Les élus municipaux
+3.3	Le budget des communes
+3.4	Les missions et compétences des communes
+3.5	Administration municipale
+3.6	Les relations externes des communes
+4	Statistiques
+4.1	Nombre actuel de communes
+4.2	Situation dans les collectivités d'outre-mer
+4.3	Cas particuliers
+4.4	Population
+4.5	Superficie
+5	Intercommunalité
+5.1	Évolution historique
+5.2	Structures sans compétences fiscales
+5.3	Structures avec compétence fiscale
+6	Fusion de communes
+7	Divers
+7.1	Extrêmes géographiques
+7.2	Nom
+7.3	Habitants
+7.4	Communes insulaires
+7.5	Communes avec enclaves
+7.6	Communes et énergie
+8	Notes et références
+9	Voir aussi
+9.1	Bibliographie
+9.2	Articles connexes
+9.3	Liens externes
+Historique
+Article détaillé : Les grandes dates des collectivités locales.
+Le décret de l'Assemblée nationale du 12 novembre 1789 disposait « qu'il y aura une municipalité dans chaque ville, bourg, paroisse ou communauté de campagne ». La loi du 14 décembre 1789 proclamait :
+
+« Les municipalités actuellement subsistantes en chaque ville, bourg, paroisse ou communauté, sous le titre d'hôtel de ville, mairies, échevinats, consulats, et généralement sous quelque titre et qualification que ce soit, sont supprimées et abolies, et cependant les officiers municipaux actuellement en service, continueront leurs fonctions jusqu'à ce qu'ils aient été remplacés. »
+
+Ainsi furent créées les communes françaises telles qu'elles existent encore aujourd'hui.
+
+Sous l’Ancien Régime
+Communautés, seigneuries et paroisses
+Avant la Révolution il existait plusieurs circonscriptions administratives de base dont les ressorts ne correspondaient pas toujours.
+
+La paroisse ecclésiastique concernait le domaine religieux. Elle servait de base à l'administration du culte et à la levée de la dîme. Regroupant une communauté de fidèles autour d'un curé, d'une église et d'un cimetière, elle était investie d'une forte identité symbolique. Mais il existait deux autres entités territoriales de base.
+
+D'une part la seigneurie, circonscription judiciaire et fiscale pour les impôts seigneuriaux comme le champart. D'autre part la communauté, ou paroisse fiscale, ou collecte, ou taillable. Elle avait été créée à la fin du Moyen Âge pour la levée de l'impôt royal, la taille. Dans certaines provinces, ses limites avaient été calquées sur celles de la paroisse, mais dans d'autres, c'était les seigneuries qui avaient servi de référence (en particulier dans le Midi, où le mouvement communal amorcé au xiie siècle avait créé des institutions municipales dans le cadre de la seigneurie). Les communautés étaient souvent administrées par des représentants de la population élus ou cooptés annuellement (consuls, échevins, jurats, etc.) et parfois par des conseils.
+
+Au xviie siècle, la monarchie absolutiste avait progressivement uniformisé les institutions municipales (consulat) tout en les privant de la plupart de leurs prérogatives, pour n'en faire que les relais de la perception des impôts royaux.
+
+Les territoires des seigneuries relevant de seigneurs laïcs étaient soumises à de nombreuses mutations (ventes, divisions, démembrements, regroupements), alors que les communautés et les paroisses étaient beaucoup plus stables. Ainsi à la veille de la Révolution française, il était fréquent que les trois découpages ne correspondent pas : plusieurs paroisses dans une communauté, plusieurs communautés dans une paroisse, de nombreux chevauchements, des enclaves parfois très éloignées de leur chef-lieu. Ainsi, de nombreuses villes ne constituaient qu'une paroisse fiscale mais se divisaient en plusieurs paroisses ecclésiastiques. Au moment où la Révolution éclata, selon les dépouillements opérés dans de nombreuses archives départementales par Antoine Follain, le nombre de paroisses religieuses était proche du nombre de communes tandis que le nombre de paroisses fiscales excédait largement le nombre de clochers (paroissiaux) dans les campagnes. Le Rouergue comptait environ 700 communautés8 et 635 paroisses en 17889.
+
+Le cas des villes
+Article détaillé : Commune (Moyen Âge).
+Sous l'Ancien Régime et depuis le Moyen Âge, les villes tenaient leurs statuts d’autonomie du roi, du comte ou du duc local. Ainsi la ville de Toulouse tenait sa charte des comtes de Toulouse. Les villes étaient constituées de plusieurs paroisses (plusieurs centaines pour Paris) et étaient généralement entourées de remparts. Elles ont obtenu leur émancipation du pouvoir féodal vers les xiie et xiiie siècles. Elles se sont alors dotées de structures municipales et d'une administration ce qui leur a donné une ressemblance avec les communes instituées par la Révolution. Il y avait toutefois deux différences : la municipalité n’était pas élue démocratiquement et était généralement dirigée de manière ploutocratique par de riches familles bourgeoises qui ont été ensuite anoblies. Il convient donc de parler d’oligarchie plutôt que de démocratie communale.
+
+Les chartes communales n'étaient pas homogènes, chaque ville ayant la sienne et son organisation.
+
+Dans le nord de la France, les villes étaient généralement administrées par des échevins (du francique skapin, terme germanique désignant un juge) alors qu'au sud elles étaient administrées par des consuls (titre repris de l’Antiquité romaine). Bordeaux était gouvernée par des jurats (étymologiquement des « jurés ») et Toulouse par des capitouls (membres du chapitre). Il n’y avait pas de maire au sens actuel. Tous les échevins ou tous les capitouls étaient égaux et décidaient de manière collégiale. Toutefois, sur certains sujets, un échevin ou un consul prenait le pas et devenait une sorte de maire sans avoir l'autorité et les pouvoirs exécutifs d'un maire actuel. Ils étaient appelés « prévôt des marchands » à Paris et à Lyon, maire à Marseille, Bordeaux, Rouen, Orléans, Bayonne et dans beaucoup de villes. À Lille on parlait du mayeur, du premier capitoul à Toulouse, du viguier à Montpellier, du premier consul dans nombre de villes du sud, d'ammeister (francisé en Ammestre) à Strasbourg, du maître échevin à Metz, du maire royal à Nancy, du prévôt à Valenciennes, du vicomte-mayeur (ou maïeur) à Dijon et Dole et du Vierg à Autun.
+
+Révolution française
+Le soir du 14 juillet 1789, après la prise de la Bastille, le prévôt des marchands de Paris, Jacques de Flesselles était tué sur les marches de l’Hôtel de Ville.
+
+Après cet événement une « Commune de Paris » fut immédiatement mise en place pour remplacer l’ancienne organisation de Paris datant du Moyen Âge. Pour protéger la ville de toute manœuvre contre-révolutionnaire on créa une garde municipale. Plusieurs autres villes suivirent rapidement cet exemple comme de nombreuses communautés.
+
+Le 11 novembre 1789, l'Assemblée nationale constituante décrète qu'« il y aura une municipalité dans chaque ville, bourg, paroisse ou communauté de campagne »10. Puis elle décrète : « 1° que chaque département sera divisé en districts ; 2° que chaque département ne sera pas nécessairement divisé en neufs districts, conformément au plan du comité ; 3° que chaque département sera nécessairement divisé dans un nombre ternaire [de districts] ; 4° que le nombre des districts ne sera pas nécessairement le même pour tous les départements ; 4° que le nombre des districts pour chaque département sera fixé par l'Assemblée nationale [constituante], après avoir entendu les députés de chaque province, suivant la convenance et le besoin de chaque département »11.
+
+Le 14 décembre 1789, la Constituante votait une loi créant les municipalités ou communes désignées comme la plus petite division administrative en France et c’est ainsi qu'était officialisé le mouvement d'autonomie communale révolutionnaire.
+
+La décision de l’Assemblée nationale était révolutionnaire car, en plus de transformer les chartes des cités et des bourgades, elle érigea en communes presque toutes les anciennes communautés ou paroisses. Certains révolutionnaires, imprégnés d’idées cartésiennes et de la philosophie des Lumières, souhaitaient rompre avec le passé et bâtir une société nouvelle où chacun serait égal et où la raison primerait sur la tradition et le passé. Aussi prévirent-ils des divisions administratives identiques dans tout le pays. Le territoire fut divisé en départements, districts, cantons et communes. Toutes ces communes eurent le même statut, avec un conseil municipal élu par les habitants et un maire. Une maison commune, la mairie, devait être construite pour accueillir les réunions du conseil et l’administration municipale. Des membres de l’Assemblée nationale étaient opposés à une telle fragmentation du pays, mais la proposition de Mirabeau l’emporta : une commune pour chaque communauté ou paroisse. Localement, les habitants pouvaient choisir entre les deux ressorts préexistant. Dans l'ancien Rouergue devenu département de l'Aveyron, la majorité des communes sont issues des communautés plutôt que des paroisses, car c'était le cadre administratif du cadastre et du prélèvement des impôts. Dans l'ouest normand, dans le nord et dans plusieurs départements de l'est, les paroisses fiscales obtinrent bien souvent l'érection en municipalité. Résultat: en 1790, le nombre des municipalités créées y est en moyenne de plus de 800 par département (jusqu'à 1036 dans la Seine-Inférieure). Ailleurs, les paroisses ecclésiastiques servirent de modèle aux nouvelles municipalités plutôt que les paroisses fiscales, jugées trop émiettées.
+
+Le 20 septembre 1792, le registre des naissances, des mariages et des décès tenu par le curé de la paroisse passa sous la responsabilité d'un officier public élu. Un mariage civil était institué et célébré dans les mairies ; la cérémonie n’était pas très différente de celle célébrée à l’église, la phrase « Au nom de la loi, je vous déclare unis par les liens du mariage » remplaçait celle du prêtre (« Au nom de Dieu, je vous déclare unis par les liens du mariage »). Les prêtres durent remettre à la mairie leurs registres des baptêmes, des mariages et des sépultures (BMS) qui furent remplacés par des registres des naissances, mariages et décès (NMD) entre les mains des préposés municipaux. Ce recul de prérogatives de l’Église n'était pas bien accepté partout et, dans l’ouest et au centre du pays, des prêtres furent relativement réfractaires.
+
+Le terme « commune », au sens de l’administration territoriale actuelle, fut imposé par le décret de la Convention nationale du 10 brumaire an II (31 octobre 1793) : « La Convention nationale, sur la proposition d’un membre, décrète que toutes les dénominations de ville, bourg ou village sont supprimées et que celle de commune leur est substituée ».
+
+Sous le Directoire, il existait des « municipalités de canton » et, dans les grandes villes, trois administrations municipales ou plus. Napoléon Bonaparte stabilisa les structures administratives, notamment en réussissant à faire accepter la loi du 28 pluviôse an VIII. Les membres du conseil municipal furent alors élus au suffrage censitaire. Le maire fut nommé par le pouvoir central pour les communes les plus peuplées et par le préfet pour les autres.
+
+Après la Révolution
+Des changements importants eurent lieu en 1831, avec un retour au principe d’élection du conseil, et en 1837, avec la reconnaissance de la capacité légale. La fondamentale loi municipale du 5 avril 1884 prévoit que le conseil serait élu au suffrage universel direct, qu'il siègerait à la mairie et serait présidé par le maire désigné en son sein. C'était la fin de constantes modifications de statut opérées par les différents régimes en place depuis la Révolution française, mais surtout le début de l'autonomie promise par les républicains sous l'Empire.
+
+Noms des communes
+Le 16 octobre 1793, la convention nationale décréta que les communes qui avaient changé de nom depuis 1789, feraient connaître au comité de division la nouvelle dénomination qu'elles avaient adoptée. Elle invita les communes à s'occuper incessamment de changer les noms qui pouvaient rappeler les souvenirs de la royauté, de la féodalité et de la superstition12.
+
+La même assemblée décréta, le 31 octobre 1793, que les dénominations de ville, bourg, village, seraient supprimées et remplacées par le nom de commune. Plus tard, un arrêté consulaire du 9 fructidor an IX ordonna qu'à l'avenir il ne serait plus donné aux communes d'autres noms que ceux portés au tableau de la division de la France en justices de paix12.
+
+En 1845, l'administration générale des postes prenait encore en compte le fait que plusieurs localités avaient deux noms, pour celles qui en avaient un en français et un autre en allemand (standard ou dialectal selon les cas). Ce fait concernait à l'époque les départements de la Meurthe, de la Moselle, du Bas-Rhin et du Haut-Rhin13.
+
+Géographie et morphologie
+Constituée au départ autour de villages centrés sur leur paroisse et de centres urbains commerciaux importants, les communes françaises peuvent correspondre aujourd'hui à une grande diversité de réalité territoriale. Quelques idéaux-types[Quoi ?] peuvent cependant être dégagés. Une commune peut ainsi correspondre :
+
+soit à un espace rural, avec un centre (bourg ou village) et des écarts (tout lieu habité distinct, c'est-à-dire les « hameaux » et les habitations dispersées) ;
+soit à une ville isolée ;
+soit à une partie d'agglomération multicommunale3 ; à cet égard, les communes urbaines d'aujourd'hui correspondent rarement à la réalité territoriale de leur agglomération, bien plus étendues du fait de l'urbanisation des xixe et xxe siècles. Quelques exceptions existent cependant, comme la commune de Cherbourg-en-Cotentin.
+Rôle et administration
+Articles détaillés : Maire, Conseil municipal et Élection municipale française.
+Dispositions constitutionnelles, législatives et réglementaires concernant les communes
+Les communes françaises existent depuis la Révolution. Elles constituent une des collectivités territoriales dont l'existence est garantie par la Constitution du 4 octobre 1958 insituant la Ve République et représentent le premier niveau d'administration territoriale. Leur nom est fixé par l'État et tout changement procède d'un décret en Conseil d'État14. Les compétences des communes sont essentiellement régies par les parties législative et réglementaire du Code général des collectivités territoriales (CGCT)15, notamment dans sa deuxième partie.
+
+Malgré les disparités de population et de superficie entre les communes, toutes ont la même structure administrative et les mêmes compétences légales (à l’exception de Paris, Lyon et Marseille, régies par la loi PLM). Les communes d'Alsace et de Moselle ont des spécificités juridiques héritées de la période 1871-1919, lorsque l’Alsace-Moselle était allemande. Les communes des départements de la petite couronne parisienne ont également des règles particulières, notamment en ce qui concerne la police administrative.
+
+Les élus municipaux
+Une commune est administrée par un conseil municipal dont les membres sont élus au suffrage universel direct pour six ans. Les conseillers des communes de moins de 1 000 habitants sont élus au scrutin plurinominal majoritaire à deux tours avec possibilité de créer une liste qui pourra subir un panachage. Les conseillers des communes de plus de 1 000 habitants sont élus via un scrutin de liste proportionnel bloqué à deux tours avec prime majoritaire de 50 %.
+
+Le conseil élit en son sein un maire chargé de préparer et d’appliquer les décisions du conseil, et qui dispose de compétences propres. Le maire est assisté d'un ou de plusieurs adjoints, qui peuvent recevoir des délégations.
+
+Le nombre de conseillers municipaux est fonction de la population de la commune, le minimum étant de 716. Les séances du conseil sont publiques mais seuls les élus peuvent s’exprimer.
+
+Il y a en France environ 500 000 conseillers municipaux (maires inclus). Ils exercent également les fonctions de grands électeurs élisant les sénateurs.
+
+Le budget des communes
+Une commune étant une collectivité territoriale, elle est une personne morale de droit public et dispose ainsi d’un budget propre.
+
+Les recettes
+Elles sont constituées pour l’essentiel :
+
+des transferts de l’État (dotation globale de fonctionnement notamment) ;
+des impôts locaux : taxes foncières (portant sur les propriétés bâties et non-bâties), d’habitation et contribution économique territoriale (cotisation foncière des entreprises ou CFE et cotisation sur la valeur ajoutée des entreprises ou CVAE, acquittées par les entreprises et artisans-commerçants).
+Les dépenses
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Les missions et compétences des communes
+Les communes gèrent l’administration locale (gestion de l'eau, des permis de construire, etc.). En tant que représentant de l’État dans la commune, le maire a la charge des actes d’état civil (naissance, mariage, divorce, décès). De plus il dispose d’un pouvoir de police administrative et, en vertu de son statut d'officier de police judiciaire, d'un pouvoir de police judiciaire, exercé par le biais de la police municipale. Exception est faite de Paris où la compétence relève du préfet de police, sous l’autorité du gouvernement.
+
+Les décisions des conseils municipaux et des maires peuvent être contestées devant le tribunal administratif.
+
+Les trois communes les plus peuplées, Paris, Marseille et Lyon sont divisées en arrondissements municipaux (qui sont distincts des arrondissements départementaux, une autre division administrative française) mais ces derniers présentent des compétences réduites et ne disposent pas de budget propre, par exemple.
+
+Administration municipale
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Absentéisme: selon le baromètre Sofaxis, le taux d'absentéisme augmenterait chaque année en France dans les collectivités locales. Entre 2007 et 2014, la progression est de 19 %, l'accident du travail affichant une progression de 49 % depuis 2007. Augmente également la durée moyenne des arrêts. En 2014, le coût moyen des absences est estimé à 1961 euros par employé17.
+Les relations externes des communes
+avec les autres niveaux de collectivité
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+avec l'Etat et ses services
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Statistiques
+Nombre actuel de communes
+Article détaillé : Nombre de communes en France.
+
+Carte de la France Métropolitaine découpée en communes (agrandir).
+Au 1er janvier 2019, la France compte 34 970 communes dont 34 841 en France métropolitaine et 129 dans les DOM-ROM.
+
+Situation dans les collectivités d'outre-mer
+Depuis l'entrée en vigueur de la loi no 2007-223 du 21 février 2007 portant dispositions statutaires et institutionnelles relatives à l'outre-mer, une collectivité territoriale unique a été substituée, sur le territoire de l'île de Saint-Barthélemy et des îlots qui en dépendent, à la commune de Saint-Barthélemy ainsi qu'au département et à la région d'outre-mer de la Guadeloupe. Il en est de même sur le territoire de la partie française de l'île de Saint-Martin et des îlots qui en dépendent, où une collectivité territoriale unique a été substituée à la commune de Saint-Martin ainsi qu'au département et à la région d'outre-mer de la Guadeloupe. Saint-Barthélemy18 et Saint-Martin19 continuent néanmoins d'être comptés, dans les statistiques, comme deux communes.
+
+Deux collectivités d'outre-mer ne sont pas divisées en communes mais ont des divisions qui sont traitées statistiquement à un niveau équivalent : Wallis-et-Futuna avec trois circonscriptions20 et les Terres australes et antarctiques françaises (TAAF) avec cinq districts21.
+
+Quant à l'île de Clipperton, elle constitue également une unité statistique22 mais il s'agit d'une propriété du domaine public de l'État qui n'est pas réellement une commune, ni même une collectivité territoriale23.
+
+Cas particuliers
+Article détaillé : Villages français détruits durant la Première Guerre mondiale.
+Il existe neuf communes dites « mortes pour la France »24, dont 6 sans habitant, et dont le maire est nommé par le préfet de département.
+
+Il existe, en outre, des communes associées et des communes déléguées qui ont des maires délégués.
+
+Les rattachements aux départements évoluent également. Ainsi :
+
+la commune de Han-devant-Pierrepont était jusqu’en 1997 rattachée au département de la Meuse ; elle fait désormais partie de celui de Meurthe-et-Moselle25 ;
+la commune de Locunolé était jusqu'en 1857 rattachée au département du Morbihan ; elle fait désormais partie de celui du Finistère.
+Population
+Les données de population sont les « populations légales des communes en vigueur au 1er janvier 2018 », données issues du recensement 2015 et selon la géographie en vigueur au 1er janvier 2017 (35 287 communes en métropole + 129 dans les DOM-ROM), publiées par l'Insee le 30 décembre 201726.
+
+Répartition
+Article connexe : Liste des communes de France les plus peuplées.
+En 2018, la population médiane des communes de France métropolitaine est de 450 habitants26.
+
+À titre de comparaison, la population médiane des communes belges est de 11 265 habitants, des communes italiennes de 2 343 habitants et d'Espagne de 5 505 habitants[réf. nécessaire]).
+
+Répartition des communes métropolitaines par nombre d'habitants au 1er janvier 201826
+Nombre d'habitants	Nombre de communes	Nombre cumulé
+de communes	Pourcentage cumulé
+de communes
+0 à 99	3 354	3 354	9,5 %
+100 à 499	15 410	18 764	53,0 %
+500 à 999	6 784	25 548	73,5 %
+1 000 à 1 999	4 550	30 098	85,0 %
+2 000 à 2 999	1 689	31 787	89,8 %
+3 000 à 3 999	900	32 687	92,3 %
+4 000 à 4 999	565	33 252	93,9 %
+5 000 à 9 999	1 174	34 426	97,2 %
+10 000 à 19 999	528	34 954	98,7 %
+20 000 à 29 999	192	35 146	99,2 %
+30 000 à 99 999	228	35 374	99,9 %
+plus de 100 000	42	35 416	100,0 %
+La commune de France métropolitaine la plus peuplée est Paris (2 206 488 habitants)26.
+
+En 2012, la commune la plus densément peuplée est Levallois-Perret (Hauts-de-Seine, 26 827 hab/km2. L'unité urbaine (c’est-à-dire une commune comportant une zone de plus de 2 000 habitants où aucune habitation n’est séparée de la plus proche de plus de 200 mètres) la moins densément peuplée est Saintes-Maries-de-la-Mer (Bouches-du-Rhône, 6,7 hab/km2).
+
+En 2018, (données du recensement de 2015), 19 communes ont 6 habitants ou moins, dont six communes totalement dévastées après la bataille de Verdun en 1916. Villages français détruits durant la Première Guerre mondiale, ils ne furent jamais reconstruits et ne comptent aucun habitant. Chacune de ces communes qualifiés de communes « mortes pour la France », est administrée par un conseil municipal de trois membres nommés par le préfet de la Meuse.
+
+Liste des 19 communes les moins peuplées en 201826
+Rang	Région	Département	Commune	Population (2015)
+1	Grand Est	Meuse	Beaumont-en-Verdunois	0
+2	Grand Est	Meuse	Bezonvaux	0
+3	Grand Est	Meuse	Cumières-le-Mort-Homme	0
+4	Grand Est	Meuse	Fleury-devant-Douaumont	0
+5	Grand Est	Meuse	Haumont-près-Samogneux	0
+6	Grand Est	Meuse	Louvemont-Côte-du-Poivre	0
+7	Auvergne-Rhône-Alpes	Drôme	Rochefourchat	1
+8	Grand Est	Meurthe-et-Moselle	Leménil-Mitry	3
+9	Provence-Alpes-Côte d'Azur	Alpes-de-Haute-Provence	Majastres	3
+10	Occitanie	Haute-Garonne	Caubous	4
+11	Occitanie	Aude	Caunette-sur-Lauquet	4
+12	Occitanie	Haute-Garonne	Trébons-de-Luchon	4
+13	Hauts-de-France	Somme	Épécamps	5
+14	Occitanie	Aude	Fontanès-de-Sault	5
+15	Grand Est	Meuse	Ornes	5
+16	Occitanie	Hautes-Pyrénées	Ourdon	5
+17	Auvergne-Rhône-Alpes	Drôme	La Bâtie-des-Fonds	6
+18	Hauts-de-France	Somme	Méréaucourt	6
+19	Bourgogne-Franche-Comté	Doubs	Urtière	6
+Évolution
+Rang	Commune	Population en 200927
+(en vigueur en 2012)	Population en 201428
+(en vigueur en 2017)	Croissance annuelle
+(2009 à 2014)
+1	Paris	2 234 105	2 220 445	-0,1 %
+2	Marseille	850 602	858 120	0,2 %
+3	Lyon	479 803	506 615	1,1 %
+4	Toulouse	440 204	466 297	1,2 %
+5	Nice	340 735	343 895	0,2 %
+6	Nantes	282 047	298 029	1,1 %
+7	Strasbourg	271 708	276 170	0,3 %
+8	Montpellier	255 080	275 318	1,5 %
+9	Bordeaux	236 725	246 586	0,8 %
+10	Lille	226 827	233 897	0,6 %
+Superficie
+Article détaillé : Liste de communes françaises par superficie.
+La taille moyenne d’une commune de France métropolitaine est de 14,88 km2. La taille médiane des communes de France métropolitaine n’est que de 10,73 km2, à cause du nombre élevé de communes de faible superficie (là encore, la France fait figure d’exception en Europe : en Allemagne, la taille médiane des communes de la plupart des Länder est supérieure à 15 km2, en Italie elle est de 22 km2, en Espagne 35 km2, en Belgique 40 km2). Dans les départements d’outre-mer, les communes sont généralement plus grandes qu’en France métropolitaine et peuvent regrouper des villages relativement distants.
+
+En France métropolitaine, la répartition des communes est la suivante :
+
+Répartition du nombre de communes en fonction de leur superficie
+Superficie (en hectares)	Pourcentage de communes
+0 à 499	15 %
+500 à 999	31 %
+1 000 à 1 499	20 %
+1 500 à 1 999	12 %
+2 000 à 2 499	7 %
+2 500 à 2 999	5 %
+3 000 à 5 499	8 %
+5 500 et plus	2 %
+La commune la plus étendue est Maripasoula (Guyane avec 18 360 km2. Sur le territoire métropolitain, Arles (758,93 km2) (dans les Bouches-du-Rhône) et Val-Cenis (408,5 km2) (en Savoie) sont les deux communes les plus étendues. La plus petite commune est Castelmoron-d'Albret (Gironde) avec 0,0376 km2. Vaudherland (Val-d'Oise) avec 0,09 km2, est la deuxième plus petite commune de France.
+
+Intercommunalité
+Articles détaillés : Intercommunalité en France et Établissement public de coopération intercommunale.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Évolution historique
+Le terme « intercommunalité » désigne différentes formes de coopération entre les communes. Ce type de coopération est apparu dès le xixe siècle avec la loi du 22 mars 1890 qui régit les associations intercommunales. De très nombreux syndicats de communes ont été créés pendant toute la durée du xxe siècle, notamment afin de gérer des activités à une échelle plus large que celle de la commune. C'est ainsi que, dès les années 1920, la banlieue parisienne s'est dotée de grandes structures telles que le Syndicat des communes de la banlieue pour l’électricité (devenu le Syndicat intercommunal de la périphérie de Paris pour l'électricité et les réseaux de communication (SIPPEREC) en 1924), chargé d'assurer la distribution de l'électricité dans ces communes, ou le Syndicat des eaux d'Île-de-France en 1923, qui produit et distribue, en gestion déléguée, l'eau potable aux habitants.
+
+Toutefois, le gouvernement a noté, à la fin des années 1960, que la France était le pays d'Europe qui comptait le plus grand nombre de communes, dont l’immense majorité avait moins de 2 000 habitants, le nombre de petites communes croissant d'ailleurs avec l'exode rural. C’est pourquoi le gouvernement a décidé de réduire le nombre de communes par un mécanisme de fusion. Instauré lors de la loi du 16 juillet 1971, dite « loi Marcellin »29, ce mécanisme devait donner naissance à une commune nouvelle et unique regroupant les communes fusionnées ou bien il conférait aux communes fusionnées les statuts de, respectivement, chef-lieu ou commune associée. Dans la dynamique de cette loi, il avait été envisagé environ 3 500 fusions regroupant 10 000 communes mais, en 2009, le nombre de communes effectivement fusionnées n'était que 1 100 :
+
+Nombre de communes fusionnées30
+Années	Nombre
+de fusions
+prononcées	Nombre de communes
+supprimées par fusion (A)	Nombre de
+dé-fusions	Nombre de communes
+créées par dé-fusions (B)	Communes réellement
+supprimées (A-B)
+1971-1995	912	1 308	151	211	1 097
+1996-1999	16	19	11	11	8
+2000-2009	15	16	18	21	-5
+Total 1971-2009	943	1 343	180	243	1 100
+Les petites communes préfèrent en effet conserver leurs prérogatives quitte à les confier à des établissements publics de coopération intercommunale, à des sociétés d’économie mixte ou à des associations.
+
+Selon les dispositions de la loi du 16 juillet 1971 dite loi Marcellin ce qui est sa faiblesse, les communes qui acceptent de prendre le statut de commune associé en contribuant à fusionner leur territoire bénéficient d'une priorité et reçoivent une majoration des subventions obtenues de 50 %.
+
+Néanmoins sont créés à partir de 1966, et de manière ressentie comme autoritaire, les communautés urbaines et les districts. Ces structures restent peu nombreuses, et ces structures intercommunales intégrées ne sont que moins de 250 en 1992, année où est créée, par la loi du 6 février 1992 relative à l’administration territoriale de la République, la communauté de communes31.
+
+Le développement de l’intercommunalité a été relancé par la Loi relative au renforcement et à la simplification de la coopération intercommunale du 12 juillet 1999, dite « loi Chevènement »32. Désormais, les principales structures intercommunales sont les communautés urbaines, communautés d’agglomération et communautés de communes, financées par une fiscalité propre.
+
+Cette loi a connu un grand succès, et de très nombreuses communautés de communes ou communautés d'agglomération ont depuis été créées.
+
+Dans ce cadre, la loi no 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales33 se fixe comme objectif d'achever et de rationaliser la carte intercommunale afin de parvenir à une couverture intégrale du territoire par des intercommunalités à fiscalité propre avant le 1er juin 2013. Elle crée également de nouvelles structures intercommunales, la métropole et le pôle métropolitain, tout en incitant à nouveau au regroupement de communes, par la création des communes nouvelles34.
+
+Il y a deux sortes de structures intercommunales.
+
+Structures sans compétences fiscales
+Elles correspondent à la forme d’intercommunalité la moins contraignante. Les syndicats de communes en sont la forme la plus connue. Les communes s’associent et contribuent financièrement au syndicat mais ce dernier ne peut lever ses propres taxes. Les communes peuvent le quitter à n’importe quel moment. Les syndicats peuvent être mis en place pour un sujet précis ou traiter différents problèmes. Ces structures sans pouvoir fiscal n’ont pas été touchées par la loi Chevènement et voient leur intérêt diminuer.
+
+Structures avec compétence fiscale
+Ce sont ces structures qui ont été créées ou modifiées par la loi Chevènement. Elles sont au nombre de quatre :
+
+la communauté de communes, pour les communes rurales ;
+la communauté d'agglomération, pour les ensemble de plus de 50 000 habitants35 ;
+la communauté urbaine, pour les ensembles de plus 450 000 habitants35, la loi du 16 décembre 2010 ayant abaissé le seuil de création des communautés urbaines des 500 000 habitants fixés par la loi Chevènement à 450 000 habitants ;
+et la métropole, créée par la loi no 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales33, qui constitue la forme la plus intégrée des intercommunalités françaises, réservée aux ensembles de plus de 500 000 habitants.
+Ces quatre structures disposent de différents niveaux de compétences fiscales. Les métropoles, les communautés urbaines et les communautés d’agglomération ont plus de pouvoir en matière fiscale, elles disposaient, jusqu'en 2010, de la taxe professionnelle qui doit être au même niveau dans toutes les communes membres. Comme un syndicat intercommunal, elles gèrent le traitement des ordures ménagères et les transports mais elles s’occupent aussi du développement économique, des projets d’urbanisme et de la protection de l’environnement. Les communautés de communes ont moins de compétences et laissent beaucoup plus d’autonomie aux communes. la loi ne prévoit pas de territoire d'une communauté, en sorte qu'il existe des communautés de deux ou trois communes seulement. Pour encourager la création de communautés de communes l’État leur alloue des subventions dont le montant dépend du niveau de population. Plus il y aura de communes unies et plus les subventions seront importantes. Cet encouragement est déterminant dans le choix que font les communes de s’unir.
+
+La loi Chevènement est un succès car la grande majorité des communes françaises ont rejoint la nouvelle structure intercommunale, chaque commune conservant selon la loi sa structure municipale. Au 1er janvier 2007 on comptait 2 573 communautés de communes en France métropolitaine (y compris cinq syndicats d’agglomérations nouvelles). Cela représente 33 327 communes (91,1 % du total métropolitain) et plus de 52 millions d’habitants (86,7 % de la population française métropolitaine).
+
+Toutefois en zone rurale de nombreuses communes n’ont rejoint une communauté que dans le but de bénéficier des subventions de l’État. Souvent, ce sont de simples syndicats intercommunaux qui ont été transformés en communautés de communes. Celles-ci se limitent alors aux deux attributions minimum prévues par la loi et aux activités de la structure précédente, ce qui bien sûr est contraire à l’objectif initial.
+
+Dans les zones urbaines les nouvelles structures intercommunales sont beaucoup plus vivantes. Le plus souvent leurs créateurs avaient dès le départ la volonté de s’unir et de travailler ensemble. Malgré tout, de vieilles haines ne manquent pas de ressurgir ici ou là. Il n’est pas rare de voir une communauté urbaine incomplète car telle ou telle commune a refusé d’y adhérer, quitte à créer une communauté parallèle ; ainsi, la ville de Marseille est partagée en quatre districts intercommunaux. Dans plusieurs endroits, les communes les plus riches se sont regroupées entre elles et n’ont pas accepté l’adhésion des communes plus pauvres pour ne pas avoir à les financer. D’autre part, il faut bien admettre que de nombreuses communautés restent fragiles. Il y a souvent des tensions entre communes, les villes centrales sont souvent suspectées de vouloir dominer ou même absorber les communes limitrophes, sans oublier, bien sûr, les querelles entre partis politiques.
+
+Toulouse et Paris sont deux bons exemples de cette situation :
+
+Toulouse n'a longtemps formé avec ses banlieues qu’une simple communauté d’agglomération, qui ne s'est transformée en Communauté urbaine du Grand Toulouse qu'en janvier 2009, alors que c’est une des plus grandes villes de France qui aurait dû être dotée d'une communauté urbaine depuis longtemps. Celle-ci, bien qu’elle apporte beaucoup plus de subventions, a été refusée par les communes environnantes car elles avaient peur de perdre trop de pouvoir.
+De la même façon, Paris ne fait partie d’aucune structure intercommunale à fiscalité propre jusqu'à la création de la Métropole du Grand Paris le 1er janvier 2016. Les communes de la banlieue de Paris craignant l’avènement d’un « Grand Paris » ont longtemps préféré créer plusieurs entités intercommunales excluant systématiquement la capitale, et celle-ci ne souhaitait pas réellement s'allier structurellement avec certaines communes limitrophes. Dans le cadre du débat complexe autour du Grand Paris initié par le président Sarkozy, le syndicat mixte Paris Métropole a été créé en février 2009, qui regroupe, en janvier 2016 plus de 200 collectivités franciliennes.
+Le principal défaut des structures intercommunales est qu’elles ne sont pas dirigées par des représentants directement élus. Ce sont les élus des communes qui siègent au conseil intercommunal. La nécessité de concilier les points de vue de chacune des communes membres prend donc le pas sur l'efficacité de la prise de décision (de manière analogue aux institutions européennes) et crée en définitive une carence à la fois de bonne administration et de démocratie. Depuis plusieurs années a lieu un débat sur l'intérêt de voir élire les membres des conseils des communautés au suffrage universel direct lors des élections municipales, ce qui aboutirait toutefois nécessairement à une baisse du poids politique des maires et des communes par rapport à celui des intercommunalités et de leurs présidents.
+
+La loi no 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales33 a réformé le mécanisme, et, à partir des élections municipales de 2014, les conseillers communautaires des communes de plus de 3 500 habitants seront élus au suffrage universel direct, dans le cadre des élections municipales. Les représentants des communes de plus petite taille (c'est-à-dire environ 90 % de l'ensemble des communes) resteront élus en leur sein par les conseils municipaux36.
+
+Fusion de communes
+2017-fr.wp-orange-source.svg
+Cette section ne cite pas suffisamment ses sources (juin 2009). 
+Articles détaillés : Fusion de communes en France, Liste de communes fusionnées en France, Commune associée et Commune nouvelle.
+Depuis la loi Marcellin de 1971, des voix[évasif] s'élèvent pour réclamer une diminution autoritaire du nombre des communes. Le président de la Cour des comptes a lui-même émis un avis dans ce sens[réf. nécessaire]. Mais jusqu’à présent les conservatismes locaux restent les plus forts[réf. nécessaire]. Le parlement français n’a jamais fait aucune proposition de loi obligeant les communes à fusionner. La loi Marcellin du 16 juillet 1971 offrait une assistance et une aide financière pour inciter les communes à se regrouper librement. Quoiqu'elle ait amené des discussions entre élus locaux et provoqué un débat utile, cette loi n'aboutit qu'à réduire le nombre des communes d'un peu plus de 1000 d'entre elles qui acceptèrent de se dissoudre dans une entité plus grande, compte tenu des annulations d'associations survenues ultérieurement. Sont créées par la loi des communes associées comportant un maire délégué.
+
+Les partisans du regroupement des communes font remarquer que les villes françaises ont un faible poids en regard de leurs sœurs européennes. Selon ces mêmes partisans leurs limites, définies il y a 200 ans, ne seraient plus représentatives de la réalité. Par exemple, la ville de Lyon intra-muros est une commune de faible superficie qui ne comptait que 484 344 habitants en 2010. Elle se classe loin derrière de nombreuses villes européennes alors que la population de son agglomération comptait 2 142 732 habitants en 2009. À ce titre, elle fait partie des plus grandes villes d’Europe et se situe à un niveau comparable à celui de Munich. Par comparaison, la population de la commune (Gemeinde) de Munich était de 1 300 000 habitants[Quand ?] soit presque trois fois celle de la commune de Lyon et sa superficie est de 310 km2 soit 6,5 fois plus que celle de Lyon (48 km2).
+
+De nombreux maires[réf. nécessaire] de villes regrettent aussi que leurs attributions soient insuffisantes quand ils se trouvent confrontés à leurs homologues européens[évasif]. En effet ils ne dirigent le plus souvent que le cœur historique de l’agglomération qu’ils représentent. Un exemple de cette situation est la ville de Paris. L’agglomération parisienne avec ses 12 223 100 habitants en 2010, est la plus grande de l'Union européenne devant Londres (8 586 000[Quand ?]) et Rhin-Rhur (7 304 000[Quand ?]), mais la population de Paris intra-muros n’était que de 2 243 833 habitants en 2010, soit moins que la ville de Rome (2 550 000[Quand ?]) qui pourtant ne forme qu’une agglomération de 3,8 millions d’habitants37.
+
+À l’autre bout de la chaîne, de nombreuses communes éloignées ont été pratiquement vidées de leur population par l’exode rural. Elles sont maintenant dans l’incapacité de financer les services de base tels que l’adduction de l’eau courante, le ramassage des ordures ménagères ou l’entretien des chaussées.
+
+La loi no 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales33 se fixe pour objectif d'achever et de rationaliser la carte intercommunale, en créant des structures adaptées pour les très grands ensembles urbains, les métropoles, et en organisant l'intégration de toutes les communes dans des intercommunalités, voire en facilitant leur regroupement au sein des communes nouvelles.
+
+La loi no 2015-292 du 16 mars 2015 relative à l'amélioration du régime de la commune nouvelle, pour des communes fortes et vivantes38 doit faciliter la création de communes nouvelles en instaurant un pacte financier qui garantit pendant trois ans le niveau des dotations de l’État aux communes fusionnant en 2015 ou 2016. Cela a entraîné un mouvement inédit de fusions, faisant diminuer de plus de 1000 le nombre de communes entre 2014 et 20174.
+
+Depuis la loi Marcellin de 1971, qui avait l'objectif de réduire le nombre des communes, les ministres de l'Intérieur ont mis en place et encouragé le développement de nouvelles structures intercommunales exerçant un nombre croissant de compétences, en laissant subsister la commune qui progressivement se viderait de ses attributions et tendrait en milieu rural à devenir une « coquille vide ». Ils ont ainsi créé un niveau supplémentaire d'administration et de gestion entre la commune et le département, avec un coût total de fonctionnement plus élevé qu'auparavant. Ce que Raymond Marcellin, qui avait écarté une formule de regroupement, voulait éviter.
+
+Divers
+Extrêmes géographiques
+Altitude la plus haute :
+
+les communes françaises possédant l’altitude maximale la plus haute sont deux communes de Haute-Savoie, Chamonix-Mont-Blanc et Saint-Gervais-les-Bains (via une enclave entre Chamonix et l'Italie), qui culminent au sommet du mont Blanc à 4 809 m qui se trouve sur la limite des deux communes. Cela est dit en prenant en compte la position française sur la frontière franco-italienne dans la région. Pour l'Italie le mont Blanc est frontalier et l'enclave de Saint-Gervais-les-Bains est en Italie ;
+la commune dont les zones habitées sont les plus élevées est Saint-Véran (Hautes-Alpes), dont le territoire s’étend entre 1 756 et 3 175 m d’altitude ; le village est étagé de 1 950 m à 2 040 m. Depuis l'engloutissement du village dans le lac du Chevril et sa reconstruction plus haut, Tignes, situé à 2 100 m peut aussi être considérée comme la plus haute commune de France.
+Altitude la plus basse : la commune française la plus basse est Quimper (Finistère) dont une partie du territoire est située au-dessous du niveau de la mer, jusqu’à -5 m39.
+
+À vol d'oiseau, la commune française la plus éloignée de Paris est l’Île des Pins (en Nouvelle-Calédonie, à 16 806 km de la capitale40. Sur le territoire métropolitain, il s’agit de Bonifacio, située à 986 km41.
+
+La commune la plus au nord est Bray-Dunes, Nord.
+
+Les communes les plus à l’ouest sont :
+
+sur le territoire continental : Plouarzel (Finistère) ;
+en France métropolitaine : Ouessant (Finistère) ;
+sur la totalité du territoire : Rimatara (Polynésie française).
+Les communes les plus à l’est sont :
+
+sur le territoire continental : Lauterbourg (Bas-Rhin) ;
+en France métropolitaine : Aléria (Haute-Corse) ;
+sur la totalité du territoire : Maré (Nouvelle-Calédonie).
+Les communes les plus au sud sont :
+
+sur le territoire continental : Lamanère (Pyrénées-Orientales) ;
+en France métropolitaine : Bonifacio (Corse-du-Sud) ;
+sur la totalité du territoire : Rapa (Archipel des Australes en Polynésie française).
+Nom
+
+Panneau routier indiquant la sortie de l'agglomération de la commune d’Y.
+La nomenclature officielle des collectivités locales, et notamment des communes de France, fait l'objet du Code officiel géographique (COG).
+
+Les communes françaises possédant le nom le plus long sont Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson (Marne, 45 signes), et Beaujeu-Saint-Vallier-Pierrejux-et-Quitteur (Haute-Saône, 43 signes) et possèdent toutes les deux 38 lettres. Si l'on ne prend que les noms formés d'un seul tenant, les communes aux noms les plus longs sont Niederschaeffolsheim et Mittelschaeffolsheim avec 20 lettres (les deux sont situées dans le Bas-Rhin). La commune française avec le nom le plus court est Y (Somme). Quinze communes possèdent un nom de deux lettres (Ay, Bû, By, Eu, Fa, Gy, Oô, Oz, Py, Ri, Ry, Sy, Ur, Us et Uz).
+
+La première commune par ordre alphabétique est Aast (Pyrénées-Atlantiques). La dernière commune par ordre alphabétique est Zuytpeene (Nord).
+
+Il existe 3 927 communes qui commencent par « Saint » (10,7 % des communes françaises), y compris Le Saint. Le « Saint » le plus courant est Saint-Martin (222 communes), suivi de Saint-Jean (170 communes) et Saint-Pierre (155 communes). 471 autres communes possèdent le terme « Saint » à l’intérieur de leur nom. Seulement quatre préfectures (dont une d'outre-mer) commencent par « Saint » : Saint-Brieuc, Saint-Étienne, Saint-Lô, Saint-Denis.
+
+Il existe 334 communes qui commencent par « Sainte » (0,9 % des communes françaises), y compris Saintes42. La sainte la plus courante est Sainte-Marie (40 communes, y compris Saintes-Maries-de-la-Mer), suivie de Sainte-Colombe (27 communes) et Sainte-Croix (25 communes). 62 autres communes possèdent le terme « Sainte » à l'intérieur de leur nom.
+
+Les noms des communes (les toponymes) ont des étymologies très diverses : préceltiques, celtiques, gallo-romanes, germaniques, scandinaves (en Normandie) ou plus généralement romanes (voir toponymie française). Bien que la plupart aient subi un phénomène de romanisation ou de francisation, certains conservent cependant l'aspect graphique, voire phonétique, de leur langue d'origine, par exemple :
+
+allemand : Mittelhausbergen (Bas-Rhin (1 680 habitants) ;
+basque : Ainhoa (Pyrénées-Atlantiques (599 habitants) ;
+breton : Kermoroc'h (Côtes-d'Armor 324 habitants) ;
+catalan : Banyuls-dels-Aspres (Pyrénées-Orientales (1 007 habitants) ;
+comorien : M'tsangamouji (Mayotte (5 382 habitants) ;
+néerlandais : Steenvoorde (Nord (4 024 habitants) ;
+langues amérindiennes : Kourou (Guyane (19 107 habitants) ;
+langues austronésiennes : Kouaoua (Nouvelle-Calédonie (1 524 habitants) ;
+langues polynésiennes : Hitiaa O Te Ra (Polynésie française (8 286 habitants) ;
+occitan : Belcastel (Aveyron (251 habitants).
+La plupart des communes corses portent un nom officiel italianisé à l’époque des dominations génoises et pisanes. Par exemple : San-Gavino-di-Carbini (Corse-du-Sud), en corse San Gavinu di Càrbini ; Porto-Vecchio (Corse-du-Sud, 10 326 habitants), en corse Portivechju ; exceptions notoires : Saint-Florent, L'Île-Rousse, Sartène.
+
+Communes jumelles : certaines communes sont voisines avec leurs (presque) homonymes séparées par les vicissitudes de l'histoire :
+
+Avricourt (Moselle) et Avricourt (Meurthe-et-Moselle) ;
+Bisten (Moselle) et Bisten (Sarre) ;
+Boussac (Creuse) et Boussac-Bourg, toutes les deux en Creuse ;
+Château-Chinon (Ville) et Château-Chinon (Campagne), dans la Nièvre ;
+Comines (Nord) et Comines (Belgique) ;
+Gognies-Chaussée (Nord) et Gœgnies-Chaussée (Belgique) ;
+Goumois (Doubs) et Goumois (Suisse);
+Grosbliederstroff (Moselle) et Kleinblittersdorf (Allemagne) ;
+Leers (Nord) et Leers-Nord (Belgique) ;
+Les Moëres (Nord) et Les Moëres (Belgique) ;
+Mondorff (Moselle) et Mondorf-les-Bains (Luxembourg);
+Le Pont-de-Beauvoisin (Isère) et Le Pont-de-Beauvoisin (Savoie) ;
+Roquestéron-Grasse et Roquesteron toutes les deux dans les Alpes-Maritimes ;
+Saint-Étienne-de-Fursac et Saint-Pierre-de-Fursac, localement appelées conjointement Fursac, en Creuse ;
+Saint-Gingolph (Haute-Savoie) et Saint-Gingolph (Suisse) ;
+Saint-Pierre-d'Entremont (Savoie) et Saint-Pierre-d'Entremont (Isère) ;
+Saint-Santin (Aveyron) et Saint-Santin-de-Maurs (Cantal) ;
+Scheibenhard (Bas-Rhin) et Scheibenhardt (Allemagne) ;
+Seyssel (Ain) et Seyssel (Haute-Savoie) ;
+Thièvres (Somme) et Thièvres (Pas-de-Calais) ;
+Warneton (Nord) et Warneton (Belgique) ;
+Wervicq-Sud (Nord) et Wervicq (Belgique).
+Habitants
+Article détaillé : Gentilés de France.
+Le gentilé est le nom donné aux habitants d’une commune.
+
+Communes insulaires
+Article détaillé : Liste des communes insulaires françaises.
+Des communes couvrent entièrement une ou plusieurs îles situées en mer, on peut citer les îles suivantes :
+
+l'île d'Aix est située au sein de la commune Île-d'Aix ;
+l'île d'Arz est située au sein de la commune Île-d'Arz ;
+l'île de Batz constitue la commune Île-de-Batz ;
+Belle-Île-en-Mer couvre quatre communes : Bangor, Locmaria, Le Palais et Sauzon ;
+l'île de Bréhat est située au sein de la commune Île-de-Bréhat ;
+la Corse couvre 360 communes ;
+l'île de Groix constitue la commune Groix ;
+la Guadeloupe couvre 32 communes ;
+l'île de Hoëdic est une île constituant la commune de Hœdic ;
+l'île de Houat est une île constituant la commune de Île-d'Houat ;
+la Martinique couvre 34 communes ;
+Mayotte couvre 17 communes ;
+l'île aux Moines constitue la commune Île-aux-Moines ;
+l'île Molène constitue avec les îles voisines la commune Île-Molène ;
+l'île de Noirmoutier couvre quatre communes : Barbâtre, L’Épine, La Guérinière et Noirmoutier-en-l'Île ;
+l'archipel de la Nouvelle-Calédonie couvre 33 communes ;
+l'île d'Oléron couvre 8 communes ;
+l'île d'Ouessant constitue avec les îlots adjacents la commune Ouessant ;
+les cinq archipels de la Polynésie française couvrent 48 communes ;
+l'île de Ré couvre 10 communes ;
+La Réunion couvre 24 communes ;
+Saint-Pierre et Miquelon couvrent deux communes : Miquelon-Langlade et Saint-Pierre ;
+l'île de Sein constitue avec les îlots adjacents la commune Île-de-Sein ;
+l'île d'Yeu est une île constituant la commune L'Île-d'Yeu.
+Il existe également des communes situées sur des îles fluviales, comme L'Île-Saint-Denis ou Béhuard.
+
+L'association des îles du Ponant regroupe les îles sans liaison physique fixe avec le continent. Par contre :
+
+l'archipel de Chausey au sein des îles du Ponant est situé dans la commune non insulaire de Granville ;
+l'archipel des Glénan au sein des îles du Ponant est situé dans la commune non insulaire de Fouesnant.
+Communes avec enclaves
+Article détaillé : Liste d'enclaves et d'exclaves intérieures de la France.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Communes et énergie
+Les communes, à travers l'aménagement du territoire, l'éclairage public, et leurs incitations à mieux construire, se déplacer et consommer ont un rôle important en matière de gestion et économie de l'énergie. En France, dans les années 2000, les bâtiments que les communes doivent entretenir, chauffer, éclairer etc. représentent 75 % de la consommation d’énergie des communes (21 milliards de kWh en 2005). L’éclairage public et la signalisation viennent juste derrière. 4 % (en moyenne) du budget de fonctionnement des communes sont des dépenses en gaz, fioul et électricité.
+
+En 200543, 1,5 milliard d’euros ont été dépensés pour éclairer (éclairage public principalement), chauffer et alimenter les matériels électriques du patrimoine communal, c'est 26 % de plus qu'en 2000, alors que l’accroissement des consommations s’élevait à 7,3 %.
+
+L'éclairage public et les véhicules des collectivités (dont intercommunalités, départements et régions) ont nécessité environ 50 €/an par habitant. En 2009, le parc bâti devant être entretenu par les collectivités était de plus de 280 millions de m²44, avec une forte prépondérance des bâtiments scolaires au sein de ce patrimoine. Ces derniers comptent pour 149,2 millions de m² (53 % du parc des collectivités), alors que les équipements de sports, loisirs et culture comptent pour 16 % et ceux de l’action sociale pour 13 %44. Les locaux (bureaux, salles de mairies, etc.) même des collectivités ne comptent que pour 10 %44. Par contre en termes de consommation d'énergie par mètre carré, ce sont les équipements sportifs, culturels et de loisirs (308 kWh/m2, soit 28 %) et les maisons de retraite (242 kWh/m2, soit 22 % du total des dépenses énergétique des collectivités) qui consomment le plus, devant les bâtiments scolaires (145 kWh/m2, 13 %), les bureaux des collectivités (193 kWh/m2, 17 %) et l'action sociale (227 kWh/m2, 20 %)44. Les communes jouent en outre un rôle d'exemple pour les habitants.
+
+Elles doivent décliner à leur échelle au Facteur 4 (réduction par 4 des émissions de gaz à effet de serre avant 2050) et à l'objectif intermédiaire de la loi Grenelle I du « 3 fois 20 » :
+
+- 20 % d'émissions de CO2 (rapport à 1990 et avant 2020) ;
+20 % d’économies d’énergie ;
+20 % d’énergies renouvelables.
+Notes et références
+↑ Constitution du 4 octobre 1958, article 72, alinéa 1er : « Les collectivités territoriales de la République sont les communes, les départements, les régions, les collectivités à statut particulier et les collectivités d'outre-mer régies par l'article 74 [de la Constitution]. Toute autre collectivité territoriale est créée par la loi, le cas échéant en lieu et place d'une ou de plusieurs collectivités mentionnées au présent alinéa. »
+↑ Voir sur lagazettedescommunes.com [archive].
+↑ a et b Cf. définition d'une ville sur le site de l'INSEE [archive]
+↑ a b et c « Bilan statistique des EPCI à fiscalité propre au 1er janvier 2018 » [archive], sur https://www.collectivites-locales.gouv.fr/ [archive], 2018 (consulté le 25 mars 2018), p. 2.
+↑ [1] [archive] (consulté le 10 janvier 2014).
+↑ [2] [archive] (consulté le 10 janvier 2014).
+↑ [3] [archive] (consulté le 10 janvier 2014).
+↑ Marc Vaissière, De Roèrgue a Avairon, éditions del Monsénher, 2005, p. 12.
+↑ Jean-Yves Bou, Pour un atlas du diocèse de Rodez et du diocèse de Vabres à la fin du xviiie siècle, série d'articles parus dans le Bulletin du cercle généalogique du Rouergue entre 1999 et 2004, montrant l'inadéquation entre anciennes paroisses et communes actuelles issues des communautés d'Ancien régime.
+↑ Décret du 12 novembre 1789 (municipalité) [archive], dans Archives parlementaires de 1787 à 1860, première série : 1787-1799, tome X : du 12 novembre au 24 décembre 1789, p. 7 (consulté le 10 janvier 2014).
+↑ (fr) Décret du 12 novembre 1789 (districts) [archive], op. cit., p. 7 (consulté le 10 janvier 2014)
+↑ a et b Chastellux, Le territoire du département de la Moselle : histoire et statistique, Metz, 1860
+↑ Administration générale des postes, Dictionnaire des postes aux lettres, contenant les noms des villes, communes et principaux lieux habités de la France, Paris, Imprimerie Royale, 1845. « Dans quelques départements de l'est de la France où la langue allemande est usitée, plusieurs lieux sont connus sous les deux noms allemand et français. Ces doubles noms ont été indiqués dans le Dictionnaire au moyen de renvois ».
+↑ l’article L 2111-1 du Code général des collectivités territoriales [archive]
+↑ Le CGCT a remplacé l’ancien Code des communes. Il a été promulgué en deux temps :
+la loi du 21 février 1996 pour la partie législative ;
+par le décret no 2000-318 du 7 avril 2000 pour la partie réglementaire.
+Le code a été, depuis, modifié à de nombreuses reprises.
+↑ Le nombre des conseillers municipaux est fixé par l’article L 2121-2 du Code général des collectivités territoriales [archive]
+↑ « Comment lutter contre l'absentéisme dans les mairies » [archive], lefigaro.fr, 15 mai 2016.
+↑ [4] [archive] (consulté le 10 janvier 2014).
+↑ [5] [archive] (consulté le 10 janvier 2014).
+↑ [6] [archive] (consulté le 10 janvier 2014)
+↑ [7] [archive] (consulté le 14 janvier 2014)
+↑ Voir sur insee.fr [archive] (consulté le 10 janvier 2014).
+↑ Voir sur clipperton.fr. [archive]
+↑ Bezonvaux, Beaumont-en-Verdunois, Cumières-le-Mort-Homme, Douaumont, Fleury-devant-Douaumont, Haumont-près-Samogneux, Louvemont-Côte-du-Poivre, Ornes et Vaux-devant-Damloup.
+↑ Décret no 96-709 du 7 août 1996 portant modification des limites territoriales de départements, d'arrondissements et de cantons [archive], JORF no 187 du 11 août 1996, p. 12238, NOR INTA9600199D.
+↑ a b c d et e « Populations légales des communes en vigueur au 1er janvier 2018 » [archive] [xls], sur le site de l'Insee, 30 décembre 2017 (consulté le 31 janvier 2018).
+↑ Insee - Populations légales 2009 [archive]
+↑ Insee - Populations légales 2014 [archive]
+↑ Loi n° 71-588 sur les fusions et regroupements de communes [archive] du 16 juillet 1971
+↑ « Étude d'impact du projet de loi de réforme des collectivités territoriales » [archive] [PDF], sur legifrance.gouv.fr, 2010 (consulté le 16 janvier 2011), p. 46
+↑ « Qu'est ce que l'intercommunalité ? » [archive], sur adcf.asso.fr, 31 décembre 2008 (consulté le 1er avril 2010)
+↑ Loi relative au renforcement et à la simplification de la coopération intercommunale n° 99-586 [archive] du 12 juillet 1999
+↑ a b c et d Loi n° 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales [archive]
+↑ Michel Verpeaux, « La réforme des collectivités territoriales : la fin — provisoire — du parcours », Revue Lamy des collectivités territoriales, no 64,‎ janvier 2011, p. 52-57 (ISSN 1770-1775)
+↑ a et b Art. L. 5216-1 du Code général des collectivités territoriales [archive].
+↑ Article L 5211-6 du Code général des collectivités territoriales, dans sa rédaction issue de la loi no 2010-1563 du 16 décembre 2010 de réforme des collectivités territoriales [archive].
+↑ (en) « Demographia world urban area »(Archive • Wikiwix • Archive.is • Google • Que faire ?) (consulté le 26 mars 2013), sur le site demographia.com - consulté le 22 octobre 2012
+↑ Loi n° 2015-292 du 16 mars 2015 relative à l'amélioration du régime de la commune nouvelle, pour des communes fortes et vivantes [archive]
+↑ Répertoire géographique des communes, publié par l'Institut national de l'information géographique et forestière, [lire en ligne [archive]].
+↑ « Calculer une orthodromie » [archive], sur le site aero-training.fr (consulté le 26 août 2015).
+↑ « Orthodromie entre "Paris" et "Bonifacio" » [archive], sur le site lion1906 de Lionel Delvarre (consulté en 1erdécembre 2014).
+↑ Le nom de Saintes vient du peuple gaulois des Santons, et n'a rien à voir avec la religion.
+↑ Enquête Énergie et patrimoine communal de l'ADEME/EdF GdF.
+↑ a b c et d Source étude du Centre d’Études et de Recherches Économiques sur l’Énergie (CEREN), repris par le Rapport : Chantier collectivité territoriales [archive] (PDF, 73 p), finalisé 22 juillet 2010.
+Erreur de référence : La balise <ref> nommée « insee cog » définie dans <references> n’est pas utilisée dans le texte précédent.
+
+Voir aussi
+Bibliographie
+Maud Bazoche, Commune ou ville intercommunale ? De Condorcet à Nicolas Sarkozy 1793 - 2009, éditions L'Harmattan, février 2010.
+Maud Bazoche, « De la commune à l'intercommunalité en France métropolitaine. L'état des lieux - Printemps 2013 », éditions L'Harmattan, juillet 2013.
+Valère Staraselski, Une histoire française, éditions du cherche midi, 2006 (ISBN 978-2-7491-0811-7) et Monsieur le député, éditions Le cherche midi, 2002 (ISBN 2-74910-003-8).
+Jean-Pierre Muret et Pascal Nicolle, Comprendre la vie municipale [archive], Victoire éditions, février 2014.
+Jean-Baptiste Grison, Les très petites communes en France, héritage sans avenir ou modèle original ?, Clermont-Ferrand, Presses universitaires Blaise-Pascal, 2012.
+Marie-Christine Steckel-Assouère, (dir.), Regards croisés sur les mutations de l'intercommunalité, Éditions L'Harmattan, coll. « GRALE », avril 2014, 484 p. (ISBN 978-2-343-03033-3).
+Articles connexes
+Section de commune
+Élection municipale française
+Finances locales en France
+Biens communaux
+Espace urbain • Aire urbaine (France) • Unité urbaine
+Intercommunalité
+Ville nouvelle • Politique des villes nouvelles françaises • syndicat d'agglomération nouvelle
+Liens externes
+Le  [archive]Code officiel géographique - édition 2018 sur le site de l'Insee
+Les comptes des communes de 2000 à 2013 [archive] sur le portail de l’État au service des collectivités
+Loi du 14 décembre 1789 relative à l’organisation des communes du royaume de France

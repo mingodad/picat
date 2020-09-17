@@ -1,0 +1,69 @@
+main =>
+    Files = ["processed_chesterton1.txt", "processed_chesterton2.txt", "processed_chesterton3.txt",
+              "processed_melville1.txt", "processed_melville2.txt", "processed_melville3.txt"],
+    Writer = open("transition_probabilities.data", write),
+    print(Writer, len(Files)),
+    print(Writer, " "),
+    print(Writer, 27 * 27),     % the number of inputs to the NN
+    print(Writer, " "),
+    print(Writer, 2),        % the number of outputs from the NN
+    println(Writer, " "),
+    foreach (Filename in Files)
+        once append("processed_", Author, [_,_,_,_,_], Filename),
+        Matrix = new_array(27, 27),
+        generate_probabilities(Filename, Matrix),
+        foreach(Row in 1..27, Column in 1..27)
+            print(Writer, Matrix[Row, Column]),
+            print(Writer, " ")
+        end,
+        println(Writer, " "),
+        if Author == "chesterton" then
+            println(Writer, "1 0") 
+        elseif Author == "melville" then
+            println(Writer, "0 1")  
+        else
+            printf("Error %s\n",Author)
+        end,
+        println(Writer, " ")
+    end,
+    close(Writer).
+
+generate_probabilities(Filename, Matrix) =>
+    Reader = open(Filename, read),
+    foreach(I in 1..27, J in 1..27) 
+        Matrix[I, J] = 0 
+    end, 
+    Prev_char = ' ',  
+    Char = read_char(Reader),
+    while(Char != end_of_file)
+        if ascii_alpha(Char) && ascii_alpha(Prev_char) then
+            Matrix[ord(Prev_char) - ord('a') + 1, ord(Char)- ord('a') + 1] := Matrix[ord(Prev_char) - ord('a') + 1, ord(Char) - ord('a') + 1] + 1
+        elseif ascii_alpha(Char) && Prev_char == ' ' then
+            Matrix[27, ord(Char) - ord('a') + 1] := Matrix[27, ord(Char) - ord('a') + 1] + 1
+        elseif Char == ' ' && ascii_alpha(Prev_char) then
+            Matrix[ord(Prev_char) - ord('a') + 1, 27] := Matrix[ord(Prev_char) - ord('a') + 1, 27] + 1
+        elseif Char == ' ' && Prev_char == ' ' then
+            Matrix[27, 27] := Matrix[27, 27] + 1
+        else 
+            println("Error: It seems that the file hasn't been preprocessed")
+        end,
+        Prev_char := Char,
+        Char := read_char(Reader)
+    end,
+    foreach(Row in 1..27)
+        Total = 0,
+        foreach(Column in 1..27)
+            Total := Total + Matrix[Row, Column]
+        end,
+        foreach(Column in 1..27)
+            if Total != 0 then
+                Matrix[Row, Column] := Matrix[Row, Column] / Total
+            end
+        end
+    end,
+    close(Reader).
+    
+
+
+
+

@@ -111,18 +111,18 @@ The \texttt{math} module provides the following trigonometric functions.
 \begin{itemize}
 \item \texttt{sin($X$) = $Val$}\index{\texttt{sin/1}}: This function returns the sine of $X$, where $X$ is given in radians.
 \item \texttt{cos($X$) = $Val$}\index{\texttt{cos/1}}: This function returns the cosine of $X$, where $X$ is given in radians.
-\item \texttt{tan($X$) = $Val$}\index{\texttt{tan/1}}: This function returns the tangent of $X$, where $X$ is given in radians.  If the tangent is undefined, such as at \texttt{pi / 2}\index{\texttt{pi}}, then this function throws an error.
+\item \texttt{tan($X$) = $Val$}\index{\texttt{tan/1}}: This function returns the tangent of $X$, where $X$ is given in radians.  If the tangent is undefined, such as at \texttt{pi / 2}, then this function throws an error.
 \item \texttt{sec($X$) = $Val$}\index{\texttt{sec/1}}: This function returns the secant of $X$, where $X$ is given in radians.  If \texttt{cos($X$)} is $0$, then this function throws an error.
 \item \texttt{csc($X$) = $Val$}\index{\texttt{csc/1}}: This function returns the cosecant of $X$, where $X$ is given in radians.  If \texttt{sin($X$)} is $0$, then this function throws an error.
 \item \texttt{cot($X$) = $Val$}\index{\texttt{cot/1}}: This function returns the cotangent of $X$, where $X$ is given in radians.  If \texttt{tan($X$)} is $0$, then this function throws an error.
-\item \texttt{asin($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc sine of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}\index{\texttt{pi}}, \texttt{pi / 2}\index{\texttt{pi}}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
-\item \texttt{acos($X$) = $Val$}\index{\texttt{acos/1}}: This function returns the arc cosine of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}\index{\texttt{pi}}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
-\item \texttt{atan($X$) = $Val$}\index{\texttt{atan/1}}: This function returns the arc tangent of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}\index{\texttt{pi}}, \texttt{pi / 2}\index{\texttt{pi}}].
-\item \texttt{atan2($X$, $Y$) = $Val$}\index{\texttt{atan2/2}}: This function returns the arc tangent of $Y$ / $X$, in radians.  $X$ and $Y$ are coordinates.  The returned value is in the range [\texttt{-pi}\index{\texttt{pi}}, \texttt{pi}\index{\texttt{pi}}].  
+\item \texttt{asin($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc sine of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
+\item \texttt{acos($X$) = $Val$}\index{\texttt{acos/1}}: This function returns the arc cosine of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
+\item \texttt{atan($X$) = $Val$}\index{\texttt{atan/1}}: This function returns the arc tangent of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].
+\item \texttt{atan2($X$, $Y$) = $Val$}\index{\texttt{atan2/2}}: This function returns the arc tangent of $Y$ / $X$, in radians.  $X$ and $Y$ are coordinates.  The returned value is in the range [\texttt{-pi}, \texttt{pi}].  
 \ignore{Note that, if both $X$ and $Y$ are $0$, then this function throws an error.}
-\item \texttt{asec($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc secant of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}\index{\texttt{pi}}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
-\item \texttt{acsc($X$) = $Val$}\index{\texttt{acsc/1}}: This function returns the arc cosecant of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}\index{\texttt{pi}}, \texttt{pi / 2}\index{\texttt{pi}}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
-\item \texttt{acot($X$) = $Val$}\index{\texttt{acot/1}}: This function returns the arc cotangent of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}\index{\texttt{pi}}, \texttt{pi / 2}\index{\texttt{pi}}].
+\item \texttt{asec($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc secant of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
+\item \texttt{acsc($X$) = $Val$}\index{\texttt{acsc/1}}: This function returns the arc cosecant of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
+\item \texttt{acot($X$) = $Val$}\index{\texttt{acot/1}}: This function returns the arc cotangent of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].
 \end{itemize}
 
 \subsection*{Example}

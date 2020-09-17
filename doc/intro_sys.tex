@@ -24,9 +24,9 @@ where $OSPrompt$ is the OS prompt. After the interpreter is started, it responds
 In general, the \texttt{picat} command takes the following form:
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
-\> \texttt{picat $Options$ $PicatMainFileName$ $A_1$ $A_2$ $\ldots$ $A_n$}
+\> \texttt{picat $Opts$ $PicatMainFileName$ $A_1$ $A_2$ $\ldots$ $A_n$}
 \end{tabbing}
-where $PicatMainFileName$ can have the extension \texttt{.pi} and can contain a path of directories, and $Options$ is a sequence of options of the following:
+where $PicatMainFileName$ can have the extension \texttt{.pi} and can contain a path of directories, and $Opts$ is a sequence of options of the following:
 \begin{itemize}
 \item \texttt{-g $InitGoal$}: This option makes Picat execute a specified initial query $InitGoal$ rather than the default \texttt{main} predicate.
 
@@ -189,7 +189,7 @@ a
 b
 c
 \end{verbatim}
-The\/ `{\texttt \$}' sign is the prompt of the OS. It is assumed that the environment variable \texttt{PATH} has been set to contain the directory of the executable \texttt{picat} (\texttt{picat.exe} for Windows), and the environment variable \texttt{PICATPATH} has been set to contain the directory of the \texttt{welcome.pi} file or the file is in the current working directory.
+The\/ '{\texttt \$}' sign is the prompt of the OS. It is assumed that the environment variable \texttt{PATH} has been set to contain the directory of the executable \texttt{picat} (\texttt{picat.exe} for Windows), and the environment variable \texttt{PICATPATH} has been set to contain the directory of the \texttt{welcome.pi} file or the file is in the current working directory.
 
 \subsection{Creating Standalone Executables}
 It is possible to create a script that can be run as a standalone executable.\index{standalone} For example, consider the following script \texttt{welcome.exe} for Linux:

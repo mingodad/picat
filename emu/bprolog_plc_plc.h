@@ -13,24 +13,24 @@ extern "C" {
  * Method:    call
  * Signature: (Ljava/lang/String;[Ljava/lang/Object;)Z
  */
-JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_call
-  (JNIEnv *, jobject, jstring, jobjectArray);
+    JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_call
+    (JNIEnv *, jobject, jstring, jobjectArray);
 
 /*
  * Class:     bprolog_plc_Plc
  * Method:    exec
  * Signature: (Ljava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_exec
-  (JNIEnv *, jclass, jstring);
+    JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_exec
+    (JNIEnv *, jclass, jstring);
 
 /*
  * Class:     bprolog_plc_Plc
  * Method:    startPlc
  * Signature: ([Ljava/lang/String;[Ljava/lang/Object;)V
  */
-JNIEXPORT void JNICALL Java_bprolog_plc_Plc_startPlc
-  (JNIEnv *, jclass, jobjectArray, jobjectArray);
+    JNIEXPORT void JNICALL Java_bprolog_plc_Plc_startPlc
+    (JNIEnv *, jclass, jobjectArray, jobjectArray);
 
 #ifdef __cplusplus
 }

@@ -11,7 +11,7 @@
 
 }
 \chapter{\label{chapter:exception}Exceptions}
-An \emph{exception}\index{exception} is an event that occurs during the execution of a program.  An exception\index{exception} requires a special treatment. In Picat, an exception\index{exception} is just a term. A built-in exception\index{exception} is a structure\index{structure}, where the name denotes the \emph{type} of the exception\index{exception}, and the arguments provide other information about the exception\index{exception}, such as the \emph{source}, which is the goal or function that raised the exception\index{exception}. 
+An \emph{exception}\index{exception} is an event that occurs during the execution of a program.  An exception\index{exception} requires a special treatment. In Picat, an exception\index{exception} is just a term. A built-in exception\index{exception} is a structure\index{structure}, where the name denotes the \emph{type} of the exception\index{exception}, and the arguments provide other information about the exception\index{exception}, such as the \emph{source}, which is the goal or function that raised the exception\index{exception}.
 
 \section{Built-in Exceptions}
 Picat throws many types of exceptions. The following are some of the built-in exceptions\index{exception}:\footnote{In the current implementation, exceptions thrown by B-Prolog are not compliant with the documentation.}
@@ -33,7 +33,7 @@ Picat throws many types of exceptions. The following are some of the built-in ex
 \end{itemize}
 
 \section{Throwing Exceptions}
-The built-in predicate \texttt{throw $Exception$}\index{\texttt{throw}}  throws $Exception$. After an exception\index{exception} is thrown, the system searches for a handler\index{handler} for the exception\index{exception}. If none is found, then the system displays the exception\index{exception} and aborts the execution of the current query. It also prints the backtrace of the stack if it is in debug mode. For example, for the function call \texttt{open("abc.txt")}\index{\texttt{open/1}}, the following message will be displayed if there is no file that is named \texttt{"abc.txt"}.
+The built-in predicate \texttt{throw($Exception$)}\index{\texttt{throw/1}}  throws $Exception$. After an exception\index{exception} is thrown, the system searches for a handler\index{handler} for the exception\index{exception}. If none is found, then the system displays the exception\index{exception} and aborts the execution of the current query. It also prints the backtrace of the stack if it is in debug mode. For example, for the function call \texttt{open("abc.txt")}\index{\texttt{open/1}}, the following message will be displayed if there is no file that is named \texttt{"abc.txt"}.
 \begin{verbatim}
     *** error(existence_error(source_sink,abc.txt),open)
 \end{verbatim}

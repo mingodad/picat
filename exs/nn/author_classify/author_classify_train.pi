@@ -1,0 +1,8 @@
+import nn.
+
+main =>
+    NN = new_nn([729,729,729,729,729,2]),
+    nn_train(NN,"transition_probabilities.data", $[derror(0.01),maxep(1000),report(10)]),
+    nn_save(NN, "author_classify.net"),
+    nn_destroy_all,
+    println("Done").

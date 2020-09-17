@@ -11,7 +11,9 @@
 
 }
 \chapter{\label{ch:constraints}Constraints}
-Picat provides three solver modules, including \texttt{cp}, \texttt{sat}, and \texttt{mip}, for modeling and solving constraint\index{constraint} satisfaction and optimization problems (CSPs).  All three of these modules implement the same set of constraints on integer-domain variables. The \texttt{mip} module also supports real-domain variables. In order to use a solver, users must first import the module. In order to make the symbols defined in a module available to the top level of the interpreter, users can use the built-in {\tt load} to load the module or any module that imports the module. As the three modules have the same interface, this chapter describes the three modules together. Figure \ref{tab:cons_ops} shows the constraint\index{constraint} operators that are provided by Picat. Unless it is explicitly specified otherwise, the built-ins that are described in this chapter appear in all three modules. In the built-ins that are presented in this chapter, an integer-domain variable can also be an integer, unless it is explicitly specified to only be a variable.
+Picat provides four solver modules, including \texttt{cp}, \texttt{sat}, \texttt{smt}, and \texttt{mip}, for modeling and solving constraint\index{constraint} satisfaction and optimization problems (CSPs).  All four of these modules implement the same set of constraints on integer-domain variables. The \texttt{mip} module also supports real-domain variables. In order to use a solver, users must first import the module. In order to make the symbols defined in a module available to the top level of the interpreter, users can use the built-in {\tt load} to load the module or any module that imports the module. The \texttt{sat} module is only supported on Linux, MacOS, and Cygwin. The \texttt{mip} module requires Cbc (\url{ https://github.com/coin-or/Cbc}), Gurobi (\url{http://www.gurobi.com/}), or GLPK (\url{https://www.gnu.org/software/glpk/}). The \texttt{smt} module requires Z3 (\url{https://github.com/Z3Prover/z3/}) or CVC4 (\url{https://cvc4.github.io/}).
+
+As the four modules have the same interface, this chapter describes the four modules together. Figure \ref{tab:cons_ops} shows the constraint\index{constraint} operators that are provided by Picat. Unless it is explicitly specified otherwise, the built-ins that are described in this chapter appear in all four modules. In the built-ins that are presented in this chapter, an integer-domain variable can also be an integer, unless it is explicitly specified to only be a variable.
 
 \begin{table}[ht]
 \caption{\label{tab:cons_ops}Constraint operators in Picat}
@@ -51,7 +53,7 @@ A constraint program normally poses a problem in three steps: (1) generate varia
 \caption{\label{fig:nqueens} A program for N-queens.}
 \end{figure}
 
-This program in Figure \ref{fig:nqueens} imports the \texttt{cp} module in order to solve the $N$-queens problem. The same program runs with the SAT solver if \texttt{sat} is imported, or runs with the LP/MIP solver if \texttt{mip} is imported. The predicate \texttt{Qs :: 1..N} declares the domains of the variables. The operator \verb+#!=+ is used for inequality constraints. In arithmetic constraints, expressions are treated as terms, and it is unnecessary to enclose them with dollar-signs. The predicate \texttt{solve(Qs)}\index{\texttt{solve/1}} calls the solver in order to solve the array of variables \texttt{Qs}. For \texttt{cp}, \texttt{solve([ff],Qs)}\index{\texttt{solve/2}}, which always selects a variable that has the smallest domain (the so-called \emph{first-fail principle}\index{first-fail principle}), can be more efficient than \texttt{solve(Qs)}\index{\texttt{solve/1}}.
+This program in Figure \ref{fig:nqueens} imports the \texttt{cp} module in order to solve the $N$-queens problem. The same program runs with the SAT solver if \texttt{sat} is imported, runs with the SMT solver if \texttt{smt} is imported, and runs with the LP/MIP solver if \texttt{mip} is imported. The predicate \texttt{Qs :: 1..N} declares the domains of the variables. The operator \verb+#!=+ is used for inequality constraints. In arithmetic constraints, expressions are treated as terms, and it is unnecessary to enclose them with dollar-signs. The predicate \texttt{solve(Qs)}\index{\texttt{solve/1}} calls the solver in order to solve the array of variables \texttt{Qs}. For \texttt{cp}, \texttt{solve([ff],Qs)}\index{\texttt{solve/2}}, which always selects a variable that has the smallest domain (the so-called \emph{first-fail principle}\index{first-fail principle}), can be more efficient than \texttt{solve(Qs)}\index{\texttt{solve/1}}.
 
 
 \section{Domain Variables}
@@ -83,11 +85,11 @@ The following built-ins are provided for domain variables.
 \item \texttt{fd\_set\_false($FDVar$, $Elm$)}\index{\texttt{fd\_set\_false/2}}: This predicate excludes the element $Elm$ from the domain of $FDVar$. If this operation results in a hole in the domain, then the domain changes from an interval representation into a bit-vector representation, no matter how big the domain is. This built-in is only provided by {\tt cp}.
 \item \texttt{fd\_size($FDVar$) = $Size$}\index{\texttt{fd\_size/1}}: This function returns the size of the domain of $FDVar$,  where $FDVar$ is an integer-domain variable.
 \item \texttt{fd\_true($FDVar$, $Elm$)}\index{\texttt{fd\_true/2}}: This predicate is true if the integer $Elm$ is an element in the domain of $FDVar$.
-\item \texttt{new\_dvar() = $FDVar$}\index{\texttt{new\_dvar/0}}: This function creates a new domain variable with the default domain, which has the bounds \texttt{-72057594037927935..72057594037927935} on 64-bit computers and \texttt{-268435455..268435455} on 32-bit computers.
+\item \texttt{new\_dvar() = $FDVar$}\index{\texttt{new\_dvar/0}}: This function creates a new domain variable with the default domain, which has the bounds \texttt{-72057594037927935..72057594037927935} on 64-bit computers and \texttt{-268435455..268435455} on 32-bit computers.\footnote{Note that incorrect results may be caused by overflows or underflows.}
 \end{itemize}
 
 \section{Table constraints}
-A \emph{table constraint}\index{table constraint}, or an \emph{extensional constraint}\index{extensional constraint}, over a tuple of variables specifies a set of tuples that are allowed (called \emph{positive}) or disallowed (called \emph{negative}) for the variables. A positive constraint takes the form \texttt{table\_in($DVars$,$R$)}\index{\texttt{table\_in/2}}, where $DVars$ is either a tuple of variables $\{X_1,\ldots,X_n\}$ or a list of tuples of variables, and $R$ is a list of tuples of integers in which each tuple takes the form $\{a_1,\ldots,a_n\}$.  A negative constraint takes the form \texttt{table\_notin($DVars$,$R$)}\index{\texttt{table\_notin/2}}.
+A \emph{table constraint}\index{table constraint}, or an \emph{extensional constraint}\index{extensional constraint}, over a tuple of variables specifies a set of tuples that are allowed (called \emph{positive}) or disallowed (called \emph{negative}) for the variables. A positive constraint takes the form \texttt{table\_in($DVars$,$R$)}\index{\texttt{table\_in/2}}, where $DVars$ is either a tuple of variables $\{X_1,\ldots,X_n\}$ or a list of tuples of variables, and $R$ is a list of tuples in which each tuple takes the form $\{a_1,\ldots,a_n\}$, where $a_i$ is an integer or the \textit{don't-care} symbol $*$\index{don't-care symbol}.  A negative constraint takes the form \texttt{table\_notin($DVars$,$R$)}\index{\texttt{table\_notin/2}}.
 
 \subsection*{Example}
 The following example solves a toy crossword puzzle. One variable is used for each cell in the grid, so each slot corresponds to a tuple of variables. Each word is represented as a tuple of integers, and each slot takes on a set of words of the same length as the slot. Recall that the function \texttt{ord($Char$)}\index{\texttt{ord/1}} returns the code of $Char$, and that the function \texttt{chr($Code$)}\index{\texttt{chr/1}} returns the character of $Code$.
@@ -248,11 +250,11 @@ Picat provides the following global constraints.
 
 \item \texttt{diffn($RectangleList$)}\index{\texttt{diffn/1}}: This constraint ensures that no two rectangles in $RectangleList$ overlap with each other. A rectangle in an $n$-dimensional space is represented by a list of $2\times n$ elements \texttt{[$X_1$, $X_2$, $\ldots$, $X_n$, $S_1$, $S_2$, $\ldots$, $S_n$]}, where \texttt{$X_i$} is the starting coordinate of the edge in the $i$th dimension, and \texttt{$S_i$} is the size of the edge.
 
-\item \texttt{disjunctive\_tasks($Tasks$)}\index{\texttt{disjunctive\_tasks/1}}: $Tasks$ is a list of terms.  Each term has the form \\ \texttt{disj\_tasks($S_1$,$D_1$,$S_2$,$D_2$)}, where \texttt{$S_1$} and \texttt{$S_2$} are two integer-domain variables, and \texttt{$D_1$} and \texttt{$D_2$} are two positive integers. This constraint is equivalent to posting the disjunctive constraint $S_1$+$D_1$ \verb+#=<+ $S_2$ \verb+#\/+ $S_2$+$D_2$ \verb+#=<+ $S_1$ for each term \texttt{disj\_tasks($S_1$,$D_1$,$S_2$,$D_2$)} in $Tasks$; however the constraint may be more efficient, because it converts the disjunctive tasks into global constraints. 
+\item \texttt{disjunctive\_tasks($Tasks$)}\index{\texttt{disjunctive\_tasks/1}}: $Tasks$ is a list of terms.  Each term has the form \\ \texttt{disj\_tasks($S_1$,$D_1$,$S_2$,$D_2$)}, where \texttt{$S_1$} and \texttt{$S_2$} are two integer-domain variables, and \texttt{$D_1$} and \texttt{$D_2$} are two positive integers. This constraint is equivalent to posting the disjunctive constraint $S_1$+$D_1$ \verb+#=<+ $S_2$ \verb+#\/+ $S_2$+$D_2$ \verb+#=<+ $S_1$ for each term in $Tasks$; however the constraint may be more efficient, because it converts the disjunctive tasks into global constraints. 
 
 \item \texttt{element($I$, $List$, $V$)}\index{\texttt{element/3}}: This constraint is true if the $I$th element of $List$ is $V$, where $I$ and $V$ are integer-domain variables, and $List$ is a list of integer-domain variables.
 
-\item \texttt{exactly($N$,$L$,$V$)}:\index{\texttt{exactly/3}}: This constraint succeeds if there are exactly $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
+\item \texttt{exactly($N$, $L$, $V$)}\index{\texttt{exactly/3}}: This constraint succeeds if there are exactly $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
 
 \item \texttt{global\_cardinality($List$, $Pairs$)}\index{\texttt{global\_cardinality/2}}: Let $List$ be a list of integer-domain variables \texttt{[$X_1$, $\ldots$, $X_d$]}, and $Pairs$ be a list of pairs \texttt{[$K_1$-$V_1$, $\ldots$, $K_n$-$V_n$]}, where each key \texttt{$K_i$} is a unique integer, and each \texttt{$V_i$} is an integer-domain variable. The constraint is true if every element of $List$ is equal to some key, and, for each pair \texttt{$K_i$-$V_i$}, exactly \texttt{$V_i$} elements of $List$ are equal to \texttt{$K_i$}. This constraint can be defined as follows:
 \begin{verbatim}
@@ -286,24 +288,28 @@ Picat provides the following global constraints.
 
 \item \texttt{subcircuit($FDVars$)}\index{\texttt{subcircuit/1}}: This constraint is the same as \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}, except that not all of the vertices are required to be in the circuit. If the $i$th element of $FDVars$ is $i$, then the vertex $i$ is not part of the circuit. 
 
+\item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}}: This constraint ensures that the grid graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph. This constraint is only available in the \texttt{sat} module.
+
+\item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}}: This constraint is the same as \texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$. This constraint is only available in the \texttt{sat} module.
+
 \end{itemize}
 
 \section{Solver Invocation}
 \begin{itemize}
-\item \texttt{solve($Options$, $Vars$)}\index{\texttt{solve/2}}: This predicate calls the imported solver to label the variables $Vars$ with values, where $Options$ is a list of options for the solver. The options will be detailed below. This predicate can backtrack in order to find multiple solutions. The \texttt{cp} module allows \textit{incremental labeling} of variables, and some variables that occur in constraints but are not passed to \texttt{solve} may remain uninstantiated after a call to \texttt{solve}. The user is responsible for having all the variables that need to be instantiated passed to \texttt{solve}. In constrast, the \texttt{sat} and \texttt{mip} modules do not support incremental labeling of variables.
+\item \texttt{solve($Opts$, $Vars$)}\index{\texttt{solve/2}}: This predicate calls the imported solver to label the variables $Vars$ with values, where $Opts$ is a list of options for the solver. The options will be detailed below. This predicate can backtrack in order to find multiple solutions. The \texttt{cp} module allows \textit{incremental labeling} of variables, and some variables that occur in constraints but are not passed to \texttt{solve} may remain uninstantiated after a call to \texttt{solve}. The user is responsible for having all the variables that need to be instantiated passed to \texttt{solve}. In constrast, the \texttt{sat} and \texttt{mip} modules do not support incremental labeling of variables.
 
 \item\texttt{solve($Vars$)}\index{\texttt{solve/1}}: This predicate is the same as \texttt{solve([], $Vars$)}\index{\texttt{solve/2}}. 
 \item \texttt{indomain($Var$)}\index{\texttt{indomain/1}}: This predicate is only accepted by \texttt{cp}. It is the same as \texttt{solve([], [$Var$])}\index{\texttt{solve/2}}.
-\item \texttt{solve\_all($Options$, $Vars$) = $Solutions$}\index{\texttt{solve\_all/2}}: This function returns all the solutions that satisfy the constraints.
+\item \texttt{solve\_all($Opts$, $Vars$) = $Solutions$}\index{\texttt{solve\_all/2}}: This function returns all the solutions that satisfy the constraints.
 \item \texttt{solve\_all($Vars$) = $Solutions$}\index{\texttt{solve\_all/1}}: This function is the same as \texttt{solve\_all([],$Vars$)}.
-\item \texttt{solve\_suspended($Options$)}\index{\texttt{solve\_suspended/1}}: After \texttt{solve($Vars$)} has successfully labeled $Vars$, some constraints may remain suspended and not completely checked because not all of the decision variables are included in $Vars$. The \texttt{solve\_suspended($Options$)} predicate labels all remaining variables in the suspended constraints. This predicate is only provided by the \texttt{cp} module. 
+\item \texttt{solve\_suspended($Opts$)}\index{\texttt{solve\_suspended/1}}: After \texttt{solve($Vars$)} has successfully labeled $Vars$, some constraints may remain suspended and not completely checked because not all of the decision variables are included in $Vars$. The \texttt{solve\_suspended($Opts$)} predicate labels all remaining variables in the suspended constraints. This predicate is only provided by the \texttt{cp} module. 
 \item \texttt{solve\_suspended}\index{\texttt{solve\_suspended/0}}: This predicate is the same as \texttt{solve\_suspended([])}.
 \item \texttt{indomain\_down($Var$)}\index{\texttt{indomain\_down/1}}: This predicate is the same as \texttt{solve([down], [$Var$])}\index{\texttt{solve/2}}. It is only accepted by \texttt{cp}. 
 \end{itemize}
 
 
 \subsection{Common Solving Options}
-The following options are accepted by all three of the solvers.\footnote{Note that the preceding dollar sign indicates that it is followed by a term, not a function call.}
+The following options are accepted by all four of the solvers.\footnote{Note that the preceding dollar sign indicates that it is followed by a term, not a function call.}
 \begin{itemize}
 \item \texttt{\$min($Var$)}: Minimize the variable $Var$.
 \item \texttt{\$max($Exp$)}: Maximize the variable $Var$.
@@ -342,12 +348,18 @@ The \texttt{cp} module also accepts the following options:
 \item \texttt{split}: Use binary search to find an optimal answer (default).
 \item \texttt{\$nvars$(NVars)$}: The number of variables in the CNF code is $NVars$.
 \item \texttt{\$ncls$(NCls)$}: The number of clauses in the CNF code is $NCls$.
-\item \texttt{\$threads($N$)}: Use $N$ threads to solve the generated CNF code. In the current implementation, the parallel version of lingeling, \texttt{plingeling}, will be used if this option is given.\index{parallel}\index{threads}
-\item \texttt{threads}: The same as \texttt{\$threads(8)}.
+%\item \texttt{\$threads($N$)}: Use $N$ threads to solve the generated CNF code. In the current implementation, the parallel version of lingeling, \texttt{plingeling}, will be used if this option is given.\index{parallel}\index{threads}
+%\item \texttt{threads}: The same as \texttt{\$threads(8)}.
 \end{itemize}
 
 \subsection{Solving Options for \texttt{mip}}
 \begin{itemize}
+\item \texttt{cbc}: \index{\texttt{cbc}}Instruct Picat to use the Cbc MIP solver. Picat uses the following command to call the Cbc solver:
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{cbc $TmpFile$ solve -solu $SolFile$ }
+\end{tabbing}
+where $SolFile$ is a file for the solution, and $TmpFile$ is a file that stores the CPLEX-format constraints. Picat throws \texttt{existence\_error} if the command \texttt{cbc} is not available.
 \item \texttt{dump}: Dump the constraints in CPLEX format to \texttt{stdout}.
 \item \texttt{dump($File$)}: Dump the CPLEX format to $File$.
 \item \texttt{glpk}: \index{\texttt{glpk}}Instruct Picat to use the GLPK MIP solver. Picat uses the following command to call the GLPK solver:
@@ -362,9 +374,24 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \texttt{gurobi\_cl ResultFile=$SolFile$ $TmpFile$}
 \end{tabbing}
 where $SolFile$ is a file for the solution, and $TmpFile$ is a file that stores the CPLEX-format constraints. Picat throws \texttt{existence\_error} if the command \texttt{gurobi\_cl} is not available.
-% \item \texttt{sol($File$)}: Instruct the mip solver to save the solution into $File$ rather than the default file '\_\_tmp.sol'.
-\item \texttt{tmp($File$)}: Dump the CPLEX format to $File$ rather than the default file '\_\_tmp.lp', before calling the mip solver. The name $File$  must be a string or an atom that has the extension name '.lp'. When this file name is specified, the mip solver will save the solution into a file name that has the same main name as $File$ but the extension name '.sol'.
+% \item \texttt{sol($File$)}: Instruct the mip solver to save the solution into $File$ rather than the default file ``\_\_tmp.sol''.
+\item \texttt{tmp($File$)}: Dump the CPLEX format to $File$ rather than the default file ``\_\_tmp.lp'', before calling the mip solver. The name $File$  must be a string or an atom that has the extension name ``.lp''. When this file name is specified, the mip solver will save the solution into a file name that has the same main name as $File$ but the extension name ``.sol''.
 % \item \texttt{\$format(clp)}: dumps the constraints in B-Prolog format to \texttt{stdout}.
+\end{itemize}
+
+\subsection{Solving Options for \texttt{smt}}
+\begin{itemize}
+\item \texttt{cvc4}: \index{\texttt{cvc3}}Instruct Picat to use the CVC4 SMT solver. Picat uses the following command to call the CVC4 solver:
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{cvc4 $TmpFile$ $>$ $SolFile$ }
+\end{tabbing}
+where $TmpFile$ is a file that stores the SMT-LIB2-format constraints, and $SolFile$ is a solution file. Picat throws \texttt{existence\_error} if the command \texttt{cvc4} is not available in the path.
+\item \texttt{dump}: Dump the constraints in SMT-LIB2 format to \texttt{stdout}.
+\item \texttt{dump($File$)}: Dump the SMT-LIB2 format to $File$.
+\item \texttt{logic($Logic$)}: Instruct the SMT solver to use $Logic$ in the solving, where $Logic$ must be an atom or a string, and the specified logic must be available in the SMT solver. The default logic for Z3 is ``LIA'', and the default logic for CVC4 is ``NIA''.
+\item \texttt{tmp($File$)}: Dump the SMT-LIB2 format to $File$ rather than the default file ``\_\_tmp.smt2'', before calling the smt solver. The name $File$  must be a string or an atom that has the extension name ``.smt2''. When this file name is specified, the smt solver will save the solution into a file name that has the same main name as $File$ but the extension name ``.sol''.
+\item \texttt{z3}: \index{\texttt{z3}}Instruct Picat to use the z3 SMT solver. When no SMT solver is specified, Picat first searches for the command \texttt{z3}, and when \texttt{z3} cannot be found it continues to search for the command \texttt{cvc4}.
 \end{itemize}
 \ignore{
 \end{document}

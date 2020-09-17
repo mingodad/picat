@@ -1,0 +1,3 @@
+cp /cygdrive/c/Picat/emu/*.c .
+cp /cygdrive/c/Picat/emu/*.h .
+rm bp_bc.h bp_regex.c cadical_picat.c ctest.c fzn_picat_cp_bc.h fzn_picat_mip_bc.h fzn_picat_sat_bc.h glucose_interface.h pb_picat_bc.h Makefile.fzn_picat_sat.linux64

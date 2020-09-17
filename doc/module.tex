@@ -18,7 +18,7 @@ In Picat, source files must have the extension name \texttt{".pi"}.  A module is
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \texttt{module $Name$}\index{\texttt{module}}.
 \end{tabbing}
-where $Name$ must be the same as the main file name\index{file name}. A file that does not begin with a module declaration is assumed to belong to the default \emph{global} module\index{global module}. The following names are reserved for system modules and should not be used to name user's modules: \texttt{bp}, \texttt{basic}, \texttt{cp}, \texttt{glb},  \texttt{io}, \texttt{math}, \texttt{mip}, \texttt{planner}, \texttt{ordset}, \texttt{sat}, \texttt{sys},  \texttt{os}, and \texttt{util}.
+where $Name$ must be the same as the main file name\index{file name}. A file that does not begin with a module declaration is assumed to belong to the default \emph{global} module\index{global module}. The following names are reserved for system modules and should not be used to name user modules: \texttt{basic}, \texttt{bp}, \texttt{cp}, \texttt{glb},  \texttt{io}, \texttt{math}, \texttt{mip}, \texttt{nn}, \texttt{ordset}, \texttt{os}, \texttt{planner}, \texttt{sat}, \texttt{smt}, \texttt{sys},  and \texttt{util}.
 
 In order to use symbols that are defined in another module, users must explicitly import them with an import declaration in the form:
 \begin{tabbing}

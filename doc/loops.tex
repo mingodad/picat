@@ -328,7 +328,7 @@ p([E|T], MinIn, MinOut, MaxIn, MaxOut) =>
     Max1 = max(MaxIn, E),
     p(T, Min1, MinOut, Max1, MaxOut).
 \end{verbatim}
-Notice that there are multiple accumulators\index{accumulator}: \texttt{MinIn} and \texttt{MaxIn}.  Since the \texttt{min\_max} predicate returns two values, the accumulators each have an ``in" variable (\texttt{MinIn} and \texttt{Maxin}) and an ``out" variable (\texttt{MinOut} and \texttt{MaxOut}).   If the first parameter of predicate \texttt{p} is an empty list, then \texttt{MinOut} is set to the value of \texttt{MinIn}, and \texttt{MaxOut} is set to the value of \texttt{MaxIn}.
+Notice that there are multiple accumulators\index{accumulator}: \texttt{MinIn} and \texttt{MaxIn}.  Since the \texttt{min\_max} predicate returns two values, the accumulators each have an \textit{in} variable (\texttt{MinIn} and \texttt{Maxin}) and an \textit{out} variable (\texttt{MinOut} and \texttt{MaxOut}).   If the first parameter of predicate \texttt{p} is an empty list, then \texttt{MinOut} is set to the value of \texttt{MinIn}, and \texttt{MaxOut} is set to the value of \texttt{MaxIn}.
 
 Foreach\index{foreach loop} and do-while loops\index{do-while loop} are compiled in a similar manner to while loops\index{while loop}.
 

@@ -1,4 +1,4 @@
-char *inst_name[]={
+char *inst_name[] = {
     "noop",
     "noop1",
     "allocate_det_b",

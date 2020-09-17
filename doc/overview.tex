@@ -32,7 +32,7 @@ Picat is a dynamically-typed language, in which type checking occurs at runtime.
 
 A primitive value\index{primitive value} can be an integer\index{integer}, a real number\index{number}, or an atom\index{atom}. A character can be represented as a single-character atom\index{atom}.  An atom\index{atom} name is an identifier that begins with a lower-case letter or a single-quoted sequence of characters. 
 
-A compound value\index{compound value} can be a \emph{list}\index{list} in the form \texttt{[$t_1$,$\ldots$,$t_{n}$]} or a \emph{structure}\index{structure} in the form \texttt{\$$s$($t_1$,$\ldots$,$t_{n}$)} where $s$ stands for a structure\index{structure} name, $n$ is called the \emph{arity}\index{arity} of the structure\index{structure}, and each $t_i$ ($1\le i \le n$) is a \emph{term}\index{term} which is a variable or a value. The preceding dollar symbol is used to distinguish a structure\index{structure} from a function\index{function} call. Strings\index{string}, arrays\index{array}, and maps\index{map} are special compound values\index{compound value}. A \emph{string}\index{string} is a list\index{list} of single-character atoms\index{atom}. An \emph{array}\index{array} takes the form \texttt{\{$t_1$,$\ldots$,$t_{n}$\}}, which is a special structure\index{structure} with the name \texttt{'\{\}'}. A \emph{map}\index{map} is a hash-table represented as a structure\index{structure} that contains a set of key-value pairs.
+A compound value\index{compound value} can be a \emph{list}\index{list} in the form \texttt{[$t_1$,$\ldots$,$t_{n}$]} or a \emph{structure}\index{structure} in the form \texttt{\$$s$($t_1$,$\ldots$,$t_{n}$)} where $s$ stands for a structure\index{structure} name, $n$ is called the \emph{arity}\index{arity} of the structure\index{structure}, and each $t_i$ ($1\le i \le n$) is a \emph{term}\index{term} which is a variable or a value. The preceding dollar symbol is used to distinguish a structure\index{structure} from a function\index{function} call. \emph{Strings}\index{string}, \emph{arrays}\index{array}, \emph{maps}\index{map}, \emph{sets}\index{set}, and \emph{heaps}\index{heap} are special compound values\index{compound value}. A \emph{string}\index{string} is a list\index{list} of single-character atoms\index{atom}. An \emph{array}\index{array} takes the form \texttt{\{$t_1$,$\ldots$,$t_{n}$\}}, which is a special structure\index{structure} with the name \texttt{'\{\}'}. A \emph{map}\index{map} is a hash-table represented as a structure\index{structure} that contains a set of key-value pairs. A \emph{set}\index{set} is a special map where only keys are used.  A \emph{heap}\index{heap} is a complete binary tree represented as an array. A heap can be a \emph{min-heap}\index{min-heap} or a \emph{max-heap}\index{max-heap}.
 
 The function \texttt{new\_struct($Name,IntOrList$)}\index{\texttt{new\_struct/2}} returns a structure\index{structure}. The function \texttt{new\_map($S$)}\index{\texttt{new\_map/1}} returns a map\index{map} that initially contains the pairs in list $S$, where each pair has the form $Key\ =\ Val$. The function \texttt{new\_set($S$)}\index{\texttt{new\_set/1}} returns a \emph{map set} that initially contains the elements in list $S$. A \emph{map-set} \index{map-set} is a map in which every key is mapped to the atom \texttt{not\_a\_value}. The function \texttt{new\_array($I_1,I_2,\ldots,I_{n}$)}\index{\texttt{new\_array}} returns an n-dimensional array\index{array}, where each $I_i$ is an integer expression specifying the size of a dimension. An n-dimensional array\index{array} is a one-dimensional array\index{array} where the arguments are (n-1)-dimensional arrays\index{array}. 
 
@@ -83,7 +83,7 @@ X = [1,2,3,4,5]
 
 Picat allows function\index{function} calls in arguments. For this reason, it requires structures\index{structure} to be preceded with a dollar symbol in order for them to be treated as data. Without the dollar symbol, the command \texttt{S=point(1.0,2.0)} would call the function \texttt{point(1.0,2.0)} and bind \texttt{S} to its return value. In order to ensure safe interpretation of meta-terms in higher-order calls\index{higher-order call}, Picat forbids the creation of terms\index{term} that contain structures\index{structure} with the name \texttt{'.'}, index notations, array comprehensions, list comprehensions, and loops.
 
-For each type, Picat provides a set of built-in functions\index{function} and predicates\index{predicate}. The index notation \texttt{$X$[$I$]}, where $X$ references a compound value\index{compound value} and $I$ is an integer expression, is a special function that returns a single component of $X$. The index of the first element of a list\index{list} or a structure\index{structure} is 1. In order to facilitate type checking at compile time, Picat does not overload arithmetic operators for other purposes, and requires an index expression to be an integer\index{integer}.
+For each type, Picat provides a set of built-in functions\index{function} and predicates\index{predicate}. The index notation \texttt{$X$[$I$]}, where $X$ references a compound value\index{compound value} and $I$ is an integer expression or a range in the form $l..u$, is a special function that returns a single component (when $I$ is an integer) or a list of components (when $I$ is a range) of $X$. The index of the first element of a list\index{list} or a structure\index{structure} is 1. In order to facilitate type checking at compile time, Picat does not overload arithmetic operators for other purposes, and requires an index expression to be an integer\index{integer} or an integer range.
 
 A list comprehension\index{list comprehension}, which takes the following form, is a special functional notation for creating lists:
 \begin{tabbing}
@@ -151,7 +151,7 @@ One = 1
 Picat> M = new_set(), put(M,one), has_key(M,one).
 \end{verbatim}
 
-Picat also allows OOP notations for accessing attributes and for calling predicates\index{predicate} and functions\index{function}. The notation \texttt{$A_1.f(A_2,\ldots,A_k)$} is the same as \texttt{$f(A_1,A_2,\ldots,A_k)$}, unless $A_1$ is an atom, in which case $A_1$ must be a module qualifier for $f$.  The notation $A.Attr$, where $Attr$ is not in the form $f(\ldots)$, is the same as the function call \texttt{get$(A,Attr)$}\index{\texttt{get/2}}. A structure\index{structure} is assumed to have two attributes called \texttt{name}\index{\texttt{name/1}} and \texttt{length}\index{\texttt{length/1}}.
+Picat also allows OOP notations for calling predicates\index{predicate} and functions\index{function}. The notation \texttt{$A_1.f(A_2,\ldots,A_k)$} is the same as \texttt{$f(A_1,A_2,\ldots,A_k)$}, unless $A_1$ is an atom, in which case $A_1$ must be a module qualifier for $f$.  The notation $A.f$, where $f$ is an atom, is the same as the call \texttt{$A.f()$}. 
 
 \subsection*{Example}
 \begin{verbatim}
@@ -161,7 +161,7 @@ X = ['1','0','1']
 Picat> X = 5.to_binary_string().length
 X = 3
 
-Picat> X.put(one,1), One = X.one
+Picat> X.put(one,1), One = X.get(one)
 One = 1
 
 Picat> X = math.pi
@@ -206,7 +206,7 @@ fib(N,F) =>
         throw $error(wrong_argument,fib,N)
     end.
 \end{verbatim}
-An \texttt{if} statement\index{if statement} takes the form \texttt{if $Cond$ then $Goal_1$ else $Goal_2$ end}.\footnote{Picat also accepts Prolog-style if-then-else in the form \texttt{(If->Then;Else)} and mandates the presence of the else-part.} The \texttt{then} part can contain one or more \texttt{elseif} clauses. The \texttt{else} part can be omitted. In that case the else part is assumed to be \texttt{else true}. The built-in \texttt{throw $E$}\index{\texttt{throw}} throws term\index{term} $E$ as an exception\index{exception}.
+An \texttt{if} statement\index{if statement} takes the form \texttt{if $Cond$ then $Goal_1$ else $Goal_2$ end}.\footnote{Picat also accepts Prolog-style if-then-else in the form \texttt{(If->Then;Else)} and mandates the presence of the else-part.} The \texttt{then} part can contain one or more \texttt{elseif} clauses. The \texttt{else} part can be omitted. In that case the else part is assumed to be \texttt{else true}. The built-in \texttt{throw $E$}\index{\texttt{throw/1}} throws term\index{term} $E$ as an exception\index{exception}.
 
 \subsection*{Example}
 \begin{verbatim}
@@ -270,7 +270,7 @@ qsort([])=[].
 qsort([H|T]) =
     qsort([E : E in T, E=<H])++[H]++qsort([E : E in T, E>H]).
 \end{verbatim}
-Function facts\index{function fact} are automatically indexed on all of the input arguments, and hence no index declaration\index{index declaration} is necessary. Note that while a predicate\index{predicate} call with no argument does not need parentheses, a function\index{function} call with no argument must be followed with parentheses, unless the function\index{function} is module-quantified, as in \texttt{math.pi}\index{\texttt{pi}}.
+Function facts\index{function fact} are automatically indexed on all of the input arguments, and hence no index declaration\index{index declaration} is necessary. Note that while a predicate\index{predicate} call with no argument does not need parentheses, a function\index{function} call with no argument must be followed with parentheses, unless the function\index{function} is module-quantified, as in \texttt{math.pi}.
 
 The \texttt{fib} function can also be defined as follows:
 \begin{verbatim}
@@ -493,7 +493,7 @@ The Picat module system is static, meaning that the binding of normal calls to t
 \end{enumerate}
 
 \section{\label{section:Constraints}Constraints}
-Picat can be used as a modeling and solving language for constraint\index{constraint} satisfaction and optimization problems.  A constraint\index{constraint} program normally poses a problem in three steps: (1) generate variables; (2) generate constraints\index{constraint} over the variables; and (3) call \texttt{solve}\index{\texttt{solve/1}}\index{\texttt{solve/2}} to find a valuation for the variables that satisfies the constraints\index{constraint}, and possibly optimizes an objective function. Picat provides three solver modules, including \texttt{cp}, \texttt{sat}, and \texttt{mip}.
+Picat can be used as a modeling and solving language for constraint\index{constraint} satisfaction and optimization problems.  A constraint\index{constraint} program normally poses a problem in three steps: (1) generate variables; (2) generate constraints\index{constraint} over the variables; and (3) call \texttt{solve}\index{\texttt{solve/1}}\index{\texttt{solve/2}} to find a valuation for the variables that satisfies the constraints\index{constraint}, and possibly optimizes an objective function. Picat provides four solver modules, including \texttt{cp}, \texttt{sat}, \texttt{smt}, and \texttt{mip}.
 
 \subsection*{Example}
 \begin{verbatim}
@@ -537,21 +537,20 @@ sudoku =>
 
 instance(N,A) =>
     N=9,
-    A={{5,3,_,_,7,_,_,_,_},
-       {6,_,_,1,9,5,_,_,_},
-       {_,9,8,_,_,_,_,6,_},
-       {8,_,_,_,6,_,_,_,3},
-       {4,_,_,8,_,3,_,_,1},
-       {7,_,_,_,2,_,_,_,6},
-       {_,_,_,_,_,_,_,_,_},
-       {_,_,_,_,_,_,_,_,_},
-       {_,_,_,_,_,_,_,_,_},
-       {_,_,_,_,_,_,_,_,_}}.
+    A = {{2,_,_,6,7,_,_,_,_},
+         {_,_,6,_,_,_,2,_,1},
+         {4,_,_,_,_,_,8,_,_},
+         {5,_,_,_,_,9,3,_,_},
+         {_,3,_,_,_,_,_,5,_},
+         {_,_,2,8,_,_,_,_,7},
+         {_,_,1,_,_,_,_,_,4},
+         {7,_,8,_,_,_,6,_,_},
+         {_,_,_,_,5,3,_,_,8}}.
 \end{verbatim}
 Recall that variables that occur within a loop, and do not occur before the loop in the outer scope\index{scope}, are local\index{local variable} to each iteration of the loop. For example, in the third \texttt{foreach}\index{foreach loop} statement of the \texttt{sudoku} predicate, the variables \texttt{Row}, \texttt{Col}, and \texttt{Square} are local\index{local variable}, and each iteration of the loop has its own values for these variables.
 
 \section{Exceptions}
-An exception\index{exception} is an event that occurs during the execution of a program that requires a special treatment. In Picat, an exception\index{exception} is just a term\index{term}. Example exceptions\index{exception} thrown by the system include \texttt{divide\_by\_zero}, \texttt{file\_not\_found}, \texttt{number\_expected}, \texttt{interrupt}\index{interrupt}, and \texttt{out\_of\_range}. The exception\index{exception} \texttt{interrupt(keyboard)}\index{interrupt} is raised when \texttt{ctrl-c} is typed during a program's execution. The built-in predicate \texttt{throw $Exception$}\index{\texttt{throw}} throws $Exception$. 
+An exception\index{exception} is an event that occurs during the execution of a program that requires a special treatment. In Picat, an exception\index{exception} is just a term\index{term}. Example exceptions\index{exception} thrown by the system include \texttt{divide\_by\_zero}, \texttt{file\_not\_found}, \texttt{number\_expected}, \texttt{interrupt}\index{interrupt}, and \texttt{out\_of\_range}. The exception\index{exception} \texttt{interrupt(keyboard)}\index{interrupt} is raised when \texttt{ctrl-c} is typed during a program's execution. The built-in predicate \texttt{throw $Exception$}\index{\texttt{throw/1}} throws $Exception$. 
 
 All exceptions, including those raised by built-ins and interruptions, can be caught by catchers. A catcher is a call in the form: {\tt catch($Goal$,$Exception$,$Handler$)} which is equivalent to $Goal$, except when an exception is raised during the execution of $Goal$ that unifies $Exception$. When such an exception is raised, all of the bindings that have been performed on variables in $Goal$ will be undone, and $Handler$ will be executed to handle the exception. 
 \index{\texttt{catch/3}}
@@ -561,7 +560,7 @@ The call \texttt{call\_cleanup($Goal$,$Cleanup$)} is equivalent to {\tt call($Ca
 
 
 \section{Higher-Order Calls}
-A predicate\index{predicate} or function\index{function} is said to be \emph{higher-order}\index{higher-order call} if it takes calls as arguments. The built-ins \texttt{call}\index{\texttt{call}}, \texttt{apply}\index{\texttt{apply}}, and \texttt{find\_all}\index{\texttt{find\_all}} are higher-order\index{higher-order call}. The predicate \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{call}}, where $S$ is an atom\index{atom} or a structure\index{structure}, calls the predicate named by $S$ with the arguments that are specified in $S$ together with extra arguments $Arg_1$,$\ldots$,$Arg_n$. The function \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{apply}} is similar to \texttt{call}\index{\texttt{call}}, except that \texttt{apply}\index{\texttt{apply}} returns a value. The function \texttt{findall($Template$,$S$)}\index{\texttt{findall/2}} returns a list\index{list} of all possible solutions of \texttt{call($S$)}\index{\texttt{call}} in the form of $Template$. Other higher-order predicates include \texttt{call\_cleanup/2}\index{\texttt{call\_cleanup/2}}, \texttt{catch/3}\index{\texttt{catch/3}}, \texttt{count\_all}\index{\texttt{count\_all/2}}, \texttt{freeze/2}\index{\texttt{freeze/2}}, \texttt{not/1}\index{\texttt{not/1}}, \texttt{maxof/2-3}\index{\texttt{maxof/2}}\index{\texttt{maxof/3}}, \texttt{maxof\_inc/2-3}\index{\texttt{maxof\_inc/2}}\index{\texttt{maxof\_inc/3}}, \texttt{minof/2-3}\index{\texttt{minof/2}}\index{\texttt{minof/3}}, \texttt{minof\_inc/2-3}\index{\texttt{minof\_inc/2}}\index{\texttt{minof\_inc/3}}, \texttt{once/1}\index{\texttt{once/1}},  \texttt{time/1}\index{\texttt{time/1}}, \texttt{time\_out/3}\index{\texttt{time\_out/3}} and \texttt{time2/1}\index{\texttt{time/1}}. All of these higher-order predicates are defined in the {\tt basic} module, except for \texttt{time/1}, \texttt{time2/1}, and \texttt{time\_out/3}, which are defined in the {\tt sys} module. Higher-order calls cannot contain assignments or loops.
+A predicate\index{predicate} or function\index{function} is said to be \emph{higher-order}\index{higher-order call} if it takes calls as arguments. The built-ins \texttt{call}\index{\texttt{call}}, \texttt{apply}\index{\texttt{apply}}, and \texttt{find\_all}\index{\texttt{find\_all/2}} are higher-order\index{higher-order call}. The predicate \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{call}}, where $S$ is an atom\index{atom} or a structure\index{structure}, calls the predicate named by $S$ with the arguments that are specified in $S$ together with extra arguments $Arg_1$,$\ldots$,$Arg_n$. The function \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{apply}} is similar to \texttt{call}\index{\texttt{call}}, except that \texttt{apply}\index{\texttt{apply}} returns a value. The function \texttt{findall($Template$,$S$)}\index{\texttt{findall/2}} returns a list\index{list} of all possible solutions of \texttt{call($S$)}\index{\texttt{call}} in the form of $Template$. Other higher-order predicates include \texttt{call\_cleanup/2}\index{\texttt{call\_cleanup/2}}, \texttt{catch/3}\index{\texttt{catch/3}}, \texttt{count\_all}\index{\texttt{count\_all/2}}, \texttt{freeze/2}\index{\texttt{freeze/2}}, \texttt{not/1}\index{\texttt{not/1}}, \texttt{maxof/2-3}\index{\texttt{maxof/2}}\index{\texttt{maxof/3}}, \texttt{maxof\_inc/2-3}\index{\texttt{maxof\_inc/2}}\index{\texttt{maxof\_inc/3}}, \texttt{minof/2-3}\index{\texttt{minof/2}}\index{\texttt{minof/3}}, \texttt{minof\_inc/2-3}\index{\texttt{minof\_inc/2}}\index{\texttt{minof\_inc/3}}, \texttt{once/1}\index{\texttt{once/1}},  \texttt{time/1}\index{\texttt{time/1}}, \texttt{time\_out/3}\index{\texttt{time\_out/3}} and \texttt{time2/1}\index{\texttt{time/1}}. All of these higher-order predicates are defined in the {\tt basic} module, except for \texttt{time/1}, \texttt{time2/1}, and \texttt{time\_out/3}, which are defined in the {\tt sys} module. Higher-order calls cannot contain assignments or loops.
 
 \subsection*{Example}
 \begin{verbatim}
@@ -584,7 +583,7 @@ add(X,Y)=Z => Z=X+Y.
 \end{verbatim}
 }
 
-Among the higher-order built-ins, \texttt{findall}\index{\texttt{findall}} is special in that it forms a name scope like a loop. Local variables that occur in a \texttt{findall} call are not visible to subsequent calls in the body or query.
+Among the higher-order built-ins, \texttt{findall}\index{\texttt{findall/2}} is special in that it forms a name scope like a loop. Local variables that occur in a \texttt{findall} call are not visible to subsequent calls in the body or query.
 
 The meta-call \texttt{apply}\index{\texttt{apply}} never returns a partially evaluated function\index{function}. If the number of arguments does not match the required number, then it throws an exception\index{exception}.
 

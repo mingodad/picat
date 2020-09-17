@@ -59,6 +59,8 @@ The following functions convert Picat terms to C. If a Picat term does not have 
 
 \item \texttt{(char *) picat\_get\_struct\_name(TERM t)}: Return a pointer to the string that is the name of structure \texttt{t}. The term \texttt{t} must be a structure; otherwise, \texttt{exception} is set to \texttt{structure\_expected}, and \texttt{NULL} is returned. 
 
+\item \texttt{(char *) picat\_get\_struct\_name(TERM t)}: Return a pointer to the string that is the name of structure \texttt{t}. The term \texttt{t} must be a structure; otherwise, \texttt{exception} is set to \texttt{structure\_expected}, and \texttt{NULL} is returned. 
+
 \item \texttt{int picat\_get\_struct\_arity(TERM t)}: Return the arity of term \texttt{t}.  The term \texttt{t} must be a structure; otherwise, \texttt{exception} is set to \texttt{structure\_expected} and 0 is returned.
 \end{itemize}
 
@@ -144,7 +146,7 @@ p(){
   /* code for the rules */
   if (!picat_is_atom(a1)) 
       return PICAT_FALSE;
-  name_ptr = picat_get_name(a1);
+  name_ptr = picat_get_atom_name(a1);
   switch (*name_ptr){
   case 'a': 
     return (picat_unify(a1, a) ? 

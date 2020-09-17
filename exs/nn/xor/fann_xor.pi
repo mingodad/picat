@@ -1,0 +1,46 @@
+% test the low-level FANN library
+
+main =>
+	Num_input = 2,
+	Num_output = 1,
+	Num_layers = 3,
+	Num_neurons_hidden = 3,
+	Desired_error = 0.0,
+	Max_epochs = 1000,
+	Epochs_between_reports = 10,
+
+	bp.pi_fann_create_standard({Num_input, Num_neurons_hidden, Num_output}, Ann),
+	bp.pi_fann_read_train_from_file("xor.data", Data),
+	bp.pi_fann_save_train(Data,"xor_temp.data", Tmp0),
+
+	bp.pi_fann_set_activation_steepness_hidden(Ann,1),
+	bp.pi_fann_set_activation_steepness_output(Ann,1),
+
+	bp.pi_fann_set_activation_function_hidden(Ann, 'FANN_SIGMOID_SYMMETRIC'),
+	bp.pi_fann_set_activation_function_output(Ann, 'FANN_SIGMOID_SYMMETRIC'),
+
+	bp.pi_fann_set_train_stop_function(Ann, 'FANN_STOPFUNC_BIT'),
+	bp.pi_fann_set_bit_fail_limit(Ann, 0.01),
+
+	bp.pi_fann_set_training_algorithm(Ann, 'FANN_TRAIN_RPROP'),
+
+	bp.pi_fann_init_weights(Ann, Data),
+
+	bp.pi_fann_train_on_data(Ann, Data, Max_epochs, Epochs_between_reports, Desired_error),
+
+
+	bp.pi_fann_length_train_data(Data,L),
+	foreach(I in 0..(L-1))
+		bp.pi_get_data_in_out(Data,I,In,Out),
+		bp.pi_fann_run(Ann, In, Res),
+		printf("XOR test (%f, %f) -> %f, should be %f, difference=%f\n", In[1], In[2], Res[1], Out[1], (Res[1] - Out[1])),
+
+	end,
+
+
+	bp.pi_fann_save(Ann, "xor_float_me.net", Tmp),
+
+	bp.pi_fann_destroy_train(Data),
+	bp.pi_fann_destroy(Ann),
+
+	println("done").

@@ -1,0 +1,65 @@
+main =>
+    Num_alphabet = 26,
+    Num_langs = 3,
+    
+    Examples = [("english1.txt",e),
+             ("english2.txt",e),
+             ("english3.txt",e),
+             ("french1.txt",f),
+             ("french2.txt",f),
+             ("french3.txt",f),
+             ("spanish1.txt",s),
+             ("spanish2.txt",s),
+             ("spanish3.txt",s)],
+    Num_examples = len(Examples),
+    Writer = open("frequencies.data", write),
+    print(Writer, Num_examples),
+    print(Writer, " "),
+    print(Writer, Num_alphabet),
+    print(Writer, " "),
+    print(Writer, Num_langs),
+    println(Writer, " "),
+    foreach((Filename,Lang) in Examples)
+        Frequencies = new_array(26),
+        generate_frequencies(Filename, Frequencies),
+        foreach(E in Frequencies)
+            print(Writer, E),
+            print(Writer, " ")
+        end,
+        println(Writer, " "),
+        if Lang == "e" then
+            println(Writer, "1 0 0") 
+        elseif Lang == "f" then
+            println(Writer, "0 1 0") 
+        else
+            println(Writer, "0 0 1")
+        end
+    end,
+    close(Writer).
+
+% Fills array "Frequencies" with the frequencies of each of the 
+% 26 letters of the  Latin alphabet. Lowercase and uppercase 
+% letters are counted together, e.g., 'a' and 'A' are treated in
+% the same way.
+generate_frequencies(Filename, Frequencies) =>
+    Infile = open(Filename),
+    Letter_count = new_array(26),
+    foreach(E in Letter_count)
+        E = 0
+    end,
+    Num_chars = 0,
+    Char = read_char(Infile),
+    while(Char != end_of_file)
+        if (ascii_alpha(Char)) then
+            Char := to_lowercase(Char),
+            Letter_count[ord(Char) - ord('a') + 1] := Letter_count[ord(Char) - ord('a') + 1] + 1,
+            Num_chars := Num_chars + 1
+        end,
+        Char := read_char(Infile)
+    end,
+    foreach(I in 1..26)
+        Frequencies[I] = Letter_count[I]/Num_chars
+    end,
+    close(Infile).
+
+

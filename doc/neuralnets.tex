@@ -1,0 +1,200 @@
+\ignore{
+\documentstyle[11pt]{report}
+\textwidth 13.7cm
+\textheight 21.5cm
+\newcommand{\myimp}{\verb+ :- +}
+\newcommand{\ignore}[1]{}
+\def\definitionname{Definition}
+
+\makeindex
+\begin{document}
+}
+
+\chapter{\label{chapter:nn}The \texttt{nn} (Neural Networks) Module}
+
+The \texttt{nn} module provides a high-level interface between Picat and the FANN\footnote{\url{http://leenissen.dk/fann/wp/}} neural networks library, which implements feedforward neural networks.\footnote{The Picat-FANN interface was implemented by Sanders Hernandez.}\index{neural network}\index{feedforward neural network}  A \emph{feedforward neural network} consists of \emph{neurons} organized in layers from an input layer to an output layer, possibly with a number of hidden layers. A feedforward network represents a function from input to output. Neurons in a layer (except for the input layer) are connected to neurons in the previous layer. The connections have weights.  The neurons in the input layer receive the input. The information is propagated forward through the layers until it reaches the output layer, where the output is returned. The information that a neuron receives is determined by the connected predecessor neurons, the weights of the connections, and an \emph{activation function}.\index{activation function} The connection weights of a neural network are normally adjusted through training on a given set of input-output pairs, called \emph{training data}. Once a neural network is trained, it can be used to predict the output for a given input.
+
+The following gives an example program which creates a neural network for the \texttt{xor} function,  and trains it on a set of data stored in a file:
+\begin{verbatim}
+import nn.
+
+main =>
+    NN = new_nn({2,3,1}),
+    nn_train(NN,"xor.data"),
+    nn_save(NN,"xor.net"),
+    nn_destroy_all.
+\end{verbatim}
+The function \texttt{new\_nn(\{2,3,1\})} returns a neural network with three layers, where the input layer has 2 neurons, the hidden layer has 3 neurons, and the output layer has 1 neuron. The program does not specify any activation functions used between layers, entailing that the default activation function, which is \texttt{sym\_sigmoid}, will be used. The predicate \texttt{nn\_train(NN,"xor.data")} trains the neural network with the training data stored in the file \texttt{"xor.data"}. The user is able to specify an algorithm to be used in the training and several parameters that affect the behavior of the algorithm, such as the maximum number of iterations (called \textit{epochs}), the learning rate, and the error function. This example does not specify a training algorithm or any of the training parameters, entailing that the default algorithm, which is \texttt{rprop}, is used with the default setting. The predicate \texttt{nn\_save} saves the trained neural network into a file named \texttt{"xor.net"}. The predicate \texttt{nn\_destroy\_all} clears the neural network and the internal data structures used during training.
+
+The text file \texttt{"xor.data"} contains the following training data:
+\begin{verbatim}
+4 2 1
+-1 -1
+-1
+-1 1
+1
+1 -1
+1
+1 1
+-1
+\end{verbatim}
+The three integers in the first line state, respectively, that the number of input-output pairs is 4, the number of input values is 2, and the number of output values is 1. The remaining lines give the input-output pairs. 
+
+The following program performs the same task as the above program, except that it trains the neural network with internal data:
+\begin{verbatim}
+import nn.
+
+main =>
+    NN = new_nn({2,3,1}),
+    nn_train(NN,[({-1,-1}, -1), 
+                 ({-1,1}, 1), 
+                 ({1,-1}, 1), 
+                 ({1,1}, -1)]),
+    nn_save(NN,"xor.net"),
+    nn_destroy_all.
+\end{verbatim}
+The predicate \texttt{nn\_train} is overloaded. When the second argument is a file name, Picat reads training data from the file. Otherwise, Picat expects a collection (a list or an array) of input-output pairs.
+
+The following example program illustrates how to use a trained network:
+\begin{verbatim}
+import nn.
+
+main =>
+    NN = nn_load("xor.net"),
+    printf("xor(-1,1) = %w\n",nn_run(NN,{-1,1})),
+    nn_destroy_all.
+\end{verbatim}
+The function \texttt{nn\_load} loads a neural network. The function \texttt{nn\_run} uses the network to predict the output for an input.
+
+\section{Create, Print, and Destroy Neural Networks}
+\begin{itemize}
+\item \texttt{new\_nn($Layers$) = $NN$}\index{\texttt{new\_nn/1}}: This function creates a fully-connected neural network of the structure $Layers$, which is a collection of positive integers indicating the number of neurons in each layer.
+
+\item \texttt{new\_standard\_nn($Layers$) = $NN$}\index{\texttt{new\_standard\_nn/1}}: This function is the same as \texttt{new\_nn($Layers$)}.
+
+\item \texttt{new\_sparse\_nn($Layers$,$Rate$) = $NN$}\index{\texttt{new\_sparse\_nn/2}}: This function creates a sparse neural network that has the structure $Layers$ and the connection rate $Rate$. The connection rate determines the sparseness of the network, with 1 indicating that the network is fully connected, and 0 indicating that the network is not connected at all.
+
+\item \texttt{new\_sparse\_nn($Layers$) = $NN$}\index{\texttt{new\_sparse\_nn/1}}: This function is the same as \texttt{new\_sparse\_nn($Layers$, 0.5)}.
+
+\item \texttt{nn\_print($NN$)}\index{\texttt{nn\_print/1}}: This predicate prints the attributes of the neural network $NN$, including the connections, the weights, the activation functions, and some other parameters.
+
+\item \texttt{nn\_destroy($NN$)}\index{\texttt{nn\_destroy/1}}: This predicate destroys the neural network $NN$.
+
+\item \texttt{nn\_destroy\_all}\index{\texttt{nn\_destroy\_all/0}}: This predicate destroys all the neural networks and the internal data structures.
+\end{itemize}
+
+\section{Activation Functions}
+An activation function for a neuron determines how information is propagated to it from its predecessor neurons. When a new neural network is created, it uses the default activation function \texttt{sym\_sigmoid} for all of its non-input neurons. The following predicates can be utilized to set activation functions.
+
+\begin{itemize}
+\item \texttt{nn\_set\_activation\_function\_layer($NN$,$Func$,$Layer$)}\index{\texttt{nn\_set\_activation\_.../3}}: This predicate sets the activation function to $Func$ for all the neurons in layer $Layer$ in the neural network $NN$. Let the number of layers in $NN$ be $n$. Since the first layer is numbered 1, $Layer$ must satisfy $2\ \le\ Layer\ \le n$. The following activation functions are available:
+\begin{itemize}
+\item \texttt{linear}
+\item \texttt{threshold}
+\item \texttt{sym\_threshold}: symmetric threshold.
+\item \texttt{sigmoid}
+\item \texttt{step\_sigmoid}: stepped sigmoid
+\item \texttt{sym\_sigmoid}: symmetric sigmoid
+\item \texttt{elliot}: an alternative for sigmoid
+\item \texttt{sym\_elliot}: symmetric elliot
+\item \texttt{gaussian}
+\item \texttt{sym\_gaussian}: symmetric Gaussian
+\item \texttt{linear\_piece}
+\item \texttt{sym\_linear\_piece}: symmetric linear piece
+\item \texttt{sin}
+\item \texttt{sym\_sin}: symmetric sin
+\item \texttt{cos}
+\item \texttt{sym\_cos}: symmetric cos
+\end{itemize}
+The detault activation function is \texttt{sym\_sigmoid}. Each of these functions has a corresponding name in FANN. Please refer to the FANN documentation for a more detailed description of these functions.
+
+\item \texttt{nn\_set\_activation\_function\_hidden($NN$,$Func$)}\index{\texttt{nn\_set\_activation\_.../2}}: This predicate sets the activation function to $Func$ for all of the hidden layers in the neural network $NN$.
+
+\item \texttt{nn\_set\_activation\_function\_output($NN$,$Func$)}\index{\texttt{nn\_set\_activation\_.../2}}: This predicate sets the activation function to $Func$ for the output layer in the neural network $NN$.
+
+\item \texttt{nn\_set\_activation\_steepness\_layer($NN$,$Steepness$,$Layer$)}\index{\texttt{nn\_set\_activation\_.../3}}: This predicate sets the activation steepness for all of the neurons in $Layer$, where $-1\ \le\ Steepness\ \le 1$ and $2 \le Layer\ \le n$ ($n$ is the number of layers in $NN$).  A high steepness value means a more aggressive training. The default steepness is 0.5.
+
+\item \texttt{nn\_set\_activation\_steepness\_hidden($NN$,$Steepness$)}\index{\texttt{nn\_set\_activation\_.../2}}: This predicate sets the activation steepness to $Steepness$ for all of the hidden layers in the neural network $NN$.
+
+\item \texttt{nn\_set\_activation\_steepness\_output($NN$,$Steepness$)}\index{\texttt{nn\_set\_activation\_.../2}}: This predicate sets the activation steepness to $Steepness$ for the output layer in the neural network $NN$.
+\end{itemize}
+
+\section{Training Data}
+A training dataset can be supplied to FANN either through a text file or a Picat collection. A training dataset file must have the following format:
+
+\begin{verbatim}
+num_train_data num_input num_output
+input_data separated by space
+output_data separated by space
+.
+.
+.
+input_data separated by space
+output_data separated by space
+\end{verbatim}
+A training dataset stored in a Picat collection must be either a list or an array of input-output pairs. An input-output pair has the form \texttt{($Input$,$Output$)}, where $Input$ is an array of numbers or a single number, and so is $Output$.
+
+\begin{itemize}
+\item \texttt{nn\_train\_data\_size($Data$) = $Size$}\index{\texttt{nn\_train\_data\_size/1}}: This function returns the number of input-output pairs in the dataset $Data$, which is either a file name or a Picat collection.
+
+\item \texttt{nn\_train\_data\_get($Data$,$I$) = $Pair$}\index{\texttt{nn\_train\_data\_get/2}}: This function returns the $I$th pair in the dataset $Data$. Notice that while this function takes linear time when $Data$ is a list, it takes constant time when $Data$ is a file name or an array.\footnote{The data is loaded into an internal array when the dataset is accessed the first time.}
+
+\item \texttt{nn\_train\_data\_load($File$) = $Data$}\index{\texttt{nn\_train\_data\_load/1}}: This function loads a dataset stored in $File$ into a Picat array, and returns the array.
+
+\item \texttt{nn\_train\_data\_save($Data$,$File$)}\index{\texttt{nn\_train\_data\_save/2}}: This predicate saves a dataset in a Picat collection $Data$ into a file named $File$.
+\end{itemize}
+
+\section{Train Neural Networks}
+\begin{itemize}
+\item \texttt{nn\_train($NN$,$Data$,$Opts$)}\index{\texttt{nn\_train/3}}: This predicate trains the neural network $NN$ using the dataset $Data$ under the control of training options $Opts$. The following training options are supported:
+\begin{itemize}
+\item \texttt{maxep($X$)}: $X$ is the maximum number of epochs for training.
+\item \texttt{report($X$)}:	reporting every $X$ number of epochs. 
+\item \texttt{derror($X$)}:	$X$ is the desired error in training.
+\item \texttt{train\_func($X$)}: $X$ is the training algorithm to be used, which is one of the following: \texttt{batch}, \texttt{inc}, \texttt{qprop} (quick prop), \texttt{rprop}, and \texttt{sprop} (sarprop).
+\item \texttt{lrate($X$)}: $X$ is the learning rate.
+\item \texttt{momentum($X$)}: $X$ is the learning momentum.
+\item \texttt{error\_func($X$)}: $X$ is the error function to be used, which is either \texttt{linear} or \texttt{tanh}.
+\item \texttt{stop\_func($X$)}:	$X$ is the stop function to be used, which is either \texttt{bit} or \texttt{mse}.
+\item \texttt{bfl($X$)}:  $X$ is the bit fail limit.
+\item \texttt{qp\_decay($X$)}:	 $X$ is the \texttt{qprop} decay.
+\item \texttt{qp\_mu($X$)} : $X$ is \texttt{qprop}  mu factor.
+\item \texttt{rp\_increase($X$)}:	$X$ is the \texttt{rprop} increase factor.
+\item \texttt{rp\_decrease($X$)}: $X$ is the \texttt{rprop} decrease factor.
+\item \texttt{rp\_deltamin($X$)}: $X$ is the \texttt{rprop} delta min.
+\item \texttt{rp\_deltamax($X$)}: $X$ is the \texttt{rprop} delta max.
+\item \texttt{rp\_deltazero($X$)}: $X$ is the \texttt{rprop} delta zero.
+\item \texttt{sp\_weight($X$)}:	$X$ is the \texttt{sarprop} weight decay.
+\item \texttt{sp\_thresh($X$)}: $X$ is the \texttt{sarprop} step error threshold factor.
+\item \texttt{sp\_shift($X$)}: $X$ is the \texttt{sarprop} step error shift.
+\item \texttt{sp\_temp($X$)}: $X$ is the \texttt{sarprop} temperature.
+\item \texttt{scale($InMin$,$InMax$,$OutMin$,$OutMax$)}: use training data scaling.
+\item \texttt{inscale($InMin$,$InMax$)}:  use input data scaling.
+\item \texttt{outscale($OutMin$,$OutMax$)}: use output data scaling.
+\end{itemize}
+
+\item \texttt{nn\_train($NN$,$Data$)}\index{\texttt{nn\_train/2}}: This predicate is the same as \texttt{nn\_train($NN$,$Data$,[])}.
+\end{itemize}
+
+\section{Save and Load Neural Networks}
+\begin{itemize}
+\item \texttt{nn\_save($NN$,$File$)}\index{\texttt{nn\_save/2}}: This predicate saves the neural network $NN$ to a file named $File$.
+
+\item \texttt{nn\_load($File$) = $NN$}\index{\texttt{nn\_load/1}}: This function creates a neural network from a FANN neural network file named $File$.
+\end{itemize}
+
+\section{Run Neural Networks}
+\begin{itemize}
+\item \texttt{nn\_run($NN$,$Input$,$Opts$) = $Output$}\index{\texttt{nn\_run/3}}: This function predicts the output of a given input using the trained neural network $NN$, where $Input$ is an array of numbers or a single number, and $Opts$ is a list of testing options. The supported testing options include:
+\begin{itemize}
+\item \texttt{scaleIn($X$)}: $X$ indicates whether or not the input is scaled, with -1 meaning descale, 1 meaning scale, and 0 meaning nothing.
+\item \texttt{scaleOut($X$)}: $X$ indicates whether or not the output is scaled,  with -1 meaning descale, 1 meaning scale, and 0 meaning nothing.	
+\item \texttt{resetMSE}: resets the current mean squared error of the network.
+\end{itemize}
+
+\item \texttt{nn\_run($NN$,$Input$) = $Output$}\index{\texttt{nn\_run/2}}: This function is the same as \texttt{nn\_run($NN$,$Input$,[])}.
+\end{itemize}
+
+\ignore{
+\end{document}
+}

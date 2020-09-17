@@ -1,0 +1,11 @@
+import nn.
+
+main =>
+    NN = nn_load("scaling.net"),
+    L = nn_train_data_size("scaling.data"),
+    foreach(I in 1..L)
+        (In, Out) = nn_train_data_get("scaling.data",I),
+        Res = nn_run(NN,In,[$scaleIn(1),$scaleOut(-1),resetMSE]),
+        printf("Result %w original %w error %f%n",Res, Out, abs(Res[1] - Out[1])),
+    end,
+    nn_destroy_all.

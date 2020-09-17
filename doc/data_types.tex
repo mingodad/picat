@@ -10,11 +10,11 @@
 \begin{document}
 }
 \chapter{\label{chapter:datatypes}Data Types, Operators, and Built-ins}
-Picat is a dynamically-typed language, in which type checking occurs at runtime. A variable gets a type once it is bound to a value. In Picat, variables and values are terms. A value can be \emph{primitive}\index{primitive value} or \emph{compound}\index{compound value}. A primitive value\index{primitive value} can be an \emph{integer}\index{integer}, a \emph{real number}\index{number}, or an \emph{atom}\index{atom}. A compound value\index{compound value} can be a \emph{list}\index{list} or a \emph{structure}\index{structure}. Strings\index{string}, arrays\index{array}, and maps\index{map} are special compound values\index{compound value}. This chapter describes the data types and the built-ins for each data type that are provided by the \texttt{basic} module. 
+Picat is a dynamically-typed language, in which type checking occurs at runtime. A variable gets a type once it is bound to a value. In Picat, variables and values are terms. A value can be \emph{primitive}\index{primitive value} or \emph{compound}\index{compound value}. A primitive value\index{primitive value} can be an \emph{integer}\index{integer}, a \emph{real number}\index{number}, or an \emph{atom}\index{atom}. A compound value\index{compound value} can be a \emph{list}\index{list} or a \emph{structure}\index{structure}. \emph{Strings}\index{string}, \emph{arrays}\index{array}, \emph{maps}\index{map}, \emph{sets}\index{set}, and \emph{heaps}\index{heap} are special compound values\index{compound value}. This chapter describes the data types and the built-ins for each data type that are provided by the \texttt{basic} module. 
 
-Many of the built-ins are given as operators. Table \ref{tab:ops} shows all of the operators that are provided by Picat. Unless the table specifies otherwise, the operators are left-associative.  The as-pattern operator (\verb+@+) and the operators for composing goals, including \texttt{not}\index{\texttt{not}}, \texttt{once}\index{\texttt{once}}, conjunction (\verb+,+ and \verb+&&+), and disjunction (\verb+;+ and \verb+||+), will be described in Chapter \ref{chapter:predicates} on Predicates and Functions.  The constraint operators (the ones that begin with \verb+#+) will be described in Chapter \ref{ch:constraints} on Constraints. In Picat, no new operators can be defined, and none of the existing operators can be redefined.
+Many of the built-ins are given as operators. Table \ref{tab:ops} shows all of the operators that are provided by Picat. Unless the table specifies otherwise, the operators are left-associative.  The as-pattern operator (\verb+@+) and the operators for composing goals, including \texttt{not}\index{\texttt{not/1}}, \texttt{once}\index{\texttt{once/1}}, conjunction (\verb+,+ and \verb+&&+), and disjunction (\verb+;+ and \verb+||+), will be described in Chapter \ref{chapter:predicates} on Predicates and Functions.  The constraint operators (the ones that begin with \verb+#+) will be described in Chapter \ref{ch:constraints} on Constraints. In Picat, no new operators can be defined, and none of the existing operators can be redefined.
 
-The dot operator (\verb+.+) is used in OOP notations for accessing attributes and for calling predicates and functions. It is also used to qualify calls with a module name. The notation \texttt{$A_1.f(A_2,\ldots,A_k)$} is the same as \texttt{$f(A_1,A_2,\ldots,A_k)$}, unless $A_1$ is an atom, in which case $A_1$ must be a module qualifier for $f$.  If an atom\index{atom} needs to be passed as the first argument to a function or a predicate, then this notation cannot be used. The notation $A.Attr$, where $Attr$ does not have the form \texttt{f($\ldots$)}, is the same as the function call \texttt{get$(A,Attr)$}\index{\texttt{get/2}}. For example, the expression \texttt{$S$.name}\index{\texttt{name/1}} returns the name, and the expression \texttt{$S$.arity}\index{\texttt{arity/1}} returns the arity\index{arity} of $S$ if $S$ is a structure\index{structure}.   Note that the dot operator is left-associative.  For example, the expression \texttt{X.f().g()} is the same as \texttt{g(f(X))}.
+The dot operator (\verb+.+) is used in OOP notations for calling predicates and functions. It is also used to qualify calls with a module name. The notation \texttt{$A_1.f(A_2,\ldots,A_k)$} is the same as \texttt{$f(A_1,A_2,\ldots,A_k)$}, unless $A_1$ is an atom, in which case $A_1$ must be a module qualifier for $f$.  If an atom\index{atom} needs to be passed as the first argument to a function or a predicate, then this notation cannot be used. The notation $A.Attr$, where $Attr$ does not have the form \texttt{f($\ldots$)}, is the same as the function call \texttt{get$(A,Attr)$}\index{\texttt{get/2}}. For example, the expression \texttt{$S$.name}\index{\texttt{name/1}} returns the name, and the expression \texttt{$S$.arity}\index{\texttt{arity/1}} returns the arity\index{arity} of $S$ if $S$ is a structure\index{structure}.   Note that the dot operator is left-associative.  For example, the expression \texttt{X.f().g()} is the same as \texttt{g(f(X))}.
 
 \begin{table}
 \caption{\label{tab:ops}Operators in Picat}
@@ -24,6 +24,7 @@ The dot operator (\verb+.+) is used in OOP notations for accessing attributes an
 The following functions are provided for all terms:
 \begin{itemize}
 \item \texttt{copy\_term($Term_1$) = $Term_2$}\index{\texttt{copy\_term/1}}: This function copies $Term_1$ into $Term_2$.  If $Term_1$ is an attributed variable\index{attributed variable}, then $Term_2$ will not contain any of the attributes.
+\item \texttt{copy\_term\_shallow($Term_1$) = $Term_2$}\index{\texttt{copy\_term\_shallow/1}}: This function copies the skeleton of $Term_1$ into $Term_2$. If $Term_1$ is a variable or an atomic value, then it returns a complete copy of $Term_1$, the same as \texttt{copy\_term($Term_1$)}; if $Term_1$ is a list, then it returns a cons \texttt{[$H$$|$$T$]} where both the car $H$ and the cdr $T$ are free variables; otherwise, it is the same as \texttt{new\_struct(name($Term_1$),arity($Term_1$))}.
 \item \texttt{hash\_code($Term$) = $Code$}\index{\texttt{hash\_code/1}}: This function returns the hash code of $Term$. If $Term$ is a variable, then the returned hash code is always 0.
 \item \texttt{to\_codes($Term$) = $Codes$}\index{\texttt{to\_codes/1}}: This function returns a list of character codes of $Term$.
 \item \texttt{to\_fstring($Format$, $Args\ldots$)}\index{\texttt{to\_fstring}}: This function converts the arguments in the $Args\ldots$ parameter into a string, according to the format string $Format$, and returns the string. The number of arguments in $Args\ldots$ cannot exceed 10. Format characters are described in Chapter \ref{chapter:io}.
@@ -68,6 +69,11 @@ No atom\index{atom} name can last more than one line.   An atom\index{atom} name
 
 The following built-ins are provided for atoms\index{atom}:
 \begin{itemize}
+\item \texttt{ascii\_alpha($Term$)}\index{\texttt{ascii\_alpha/1}}: This predicate is true if $Term$ is an atom and the atom is made of one letter.
+\item \texttt{ascii\_alpha\_digit($Term$)}\index{\texttt{ascii\_alpha\_digit/1}}: This predicate is true if $Term$ is an atom and the atom is made of one letter or one digit.
+\item \texttt{ascii\_digit($Term$)}\index{\texttt{ascii\_digit/1}}: This predicate is true if $Term$ is an atom and the atom is made of one digit.
+\item \texttt{ascii\_lowercase($Term$)}\index{\texttt{ascii\_lowercase/1}}: This predicate is true if $Term$ is an atom and the atom is made of one lowercase letter.
+\item \texttt{ascii\_uppercase($Term$)}\index{\texttt{ascii\_uppercase/1}}: This predicate is true if $Term$ is an atom and the atom is made of one uppercase letter.
 \item \texttt{atom($Term$)}\index{\texttt{atom/1}}: This predicate is true if $Term$ is an atom\index{atom}.
 \item \texttt{atom\_chars($Atm$) = $String$}\index{\texttt{atom\_chars/1}}: This function returns string\index{string} that contains the characters of the atom\index{atom} $Atm$. It throws an error if $Atm$ is not an atom\index{atom}.
 \item \texttt{atom\_codes($Atm$) = $List$}\index{\texttt{atom\_codes/1}}: This function returns the list\index{list} of codes of the characters of the atom\index{atom} $Atm$. It throws an error if $Atm$ is not an atom\index{atom}. 
@@ -132,6 +138,7 @@ In addition to the numeric operators, the \texttt{basic} module also provides th
 
 \begin{itemize}
 \item \texttt{between($From$, $To$, $X$)}\index{\texttt{between/3}} (nondet): If $X$ is bound to an integer, then this predicate determines whether $X$ is between $From$ and $To$.  Otherwise, if $X$ is unbound, then this predicate nondeterministically selects $X$ from the integers that are between $From$ and $To$. It is the same as \texttt{member($X$, $From$..$To$)}\index{\texttt{member/2}}.
+\item \texttt{bigint($Term$)}\index{\texttt{bigint/1}}: This predicate is true if $Term$ is a big integer.
 \item \texttt{float($Term$)}\index{\texttt{float/1}}: This predicate is true if $Term$ is a real number\index{number}.
 \item \texttt{int($Term$)}\index{\texttt{int/1}}: This predicate is true if $Term$ is an integer.
 \item \texttt{integer($Term$)}\index{\texttt{integer/1}}: The same as \texttt{int($Term$)}.
@@ -140,7 +147,7 @@ In addition to the numeric operators, the \texttt{basic} module also provides th
 \item \texttt{min($X$, $Y$) = $Val$}\index{\texttt{min/2}}: This function returns the minimum of $X$ and $Y$, where $X$ and $Y$ are terms.
 \item \texttt{minint\_small() = $Int$}\index{\texttt{minint\_small/0}}: This function returns the minimum integer that is represented in one word. All integers that are smaller than this integer are represented as \textit{big integers}.
 \item \texttt{number($Term$)}\index{\texttt{number/1}}: This predicate is true if $Term$ is a number\index{number}.
-\item \texttt{number\_chars($Num$) = $String$}\index{\texttt{number\_chars/1}}: This function returns a list\index{list} of characters of $Num$. This function is the same as \texttt{to\_fstring("\%d",$Num$)}\index{\texttt{to\_fstring/2}} if $Num$ is an integer\index{integer}, and the same as \texttt{to\_fstring("\%f",$Num$)}\index{\texttt{to\_fstring/2}} if $Num$ is a real number\index{number}.
+\item \texttt{number\_chars($Num$) = $String$}\index{\texttt{number\_chars/1}}: This function returns a list\index{list} of characters of $Num$. This function is the same as \texttt{to\_fstring("\%d",$Num$)}\index{\texttt{to\_fstring}} if $Num$ is an integer\index{integer}, and the same as \texttt{to\_fstring("\%f",$Num$)}\index{\texttt{to\_fstring}} if $Num$ is a real number\index{number}.
 \item \texttt{number\_codes($Num$) = $List$}\index{\texttt{number\_codes/1}}: This function returns a list\index{list} of codes of the characters of $Num$. It is the same as \texttt{number\_chars($Num$).to\_codes()}\index{\texttt{number\_chars/1}}\index{\texttt{to\_codes/1}}.
 \item \texttt{real($Term$)}\index{\texttt{real/1}}: This predicate is the same as \texttt{float($Term$)}\index{\texttt{float/1}}.
 \item \texttt{to\_binary\_string($Int$) = $String$}\index{\texttt{to\_binary\_string/1}}: This function returns the binary representation of the integer\index{integer} $Int$ as a string\index{string}.
@@ -156,10 +163,10 @@ In addition to the numeric operators, the \texttt{basic} module also provides th
 The \texttt{math} module provides more numeric functions.  See Appendix \ref{chapter:math}.
 
 \section{Compound Terms}
-A compound term\index{compound value} can be a \emph{list}\index{list} or a \emph{structure}\index{structure}. Components of compound terms\index{compound value} can be accessed with subscripts. Let $X$ be a variable that references a compound value\index{compound value}, and let $I$ be an integer expression that represents a subscript. The index notation \texttt{$X$[$I$]} is a special function that returns the $I$th component of $X$, counting from the beginning. Subscripts begin at $1$, meaning that $X$[$1$] is the first component of $X$. An index notation can take multiple subscripts. For example, the expression \texttt{X[1,2]} is the same as \texttt{T[2]}, where \texttt{T} is a temporary variable that references the component that is returned by \texttt{X[1]}. The predicate \texttt{compound($Term$)}\index{\texttt{compound/1}} is true if $Term$ is a compound term\index{compound value}.
+A compound term\index{compound value} can be a \emph{list}\index{list} or a \emph{structure}\index{structure}. Components of compound terms\index{compound value} can be accessed with subscripts. Let $X$ be a variable that references a compound value\index{compound value}, and let $I$ be an integer expression that represents a subscript. The index notation \texttt{$X$[$I$]} is a special function that returns the $I$th component of $X$ if $I$ is an integer or a list of components if $I$ is a range in the form of $l..u$, counting from the beginning. Subscripts begin at $1$, meaning that $X$[$1$] is the first component of $X$. An index notation can take multiple subscripts. For example, the expression \texttt{X[1,2]} is the same as \texttt{T[2]}, where \texttt{T} is a temporary variable that references the component that is returned by \texttt{X[1]}. The predicate \texttt{compound($Term$)}\index{\texttt{compound/1}} is true if $Term$ is a compound term\index{compound value}.
 
 \subsection{\label{subsec:lists}Lists}
-A list\index{list} takes the form \texttt{[$t_1$,$\ldots$,$t_{n}$]}, where each $t_i$ ($1\le i \le n$) is a term. Let $L$ be a list\index{list}. The expression \texttt{$L$.length}\index{\texttt{length/1}}, which is the same as the functions \texttt{get($L$,length)}\index{\texttt{get/2}} and \texttt{length($L$)}\index{\texttt{length/1}}, returns the length of $L$. Note that a list is represented internally as a singly-linked list.  Also note that the length of a list is not stored in memory; instead, it is recomputed each time that the attribute \texttt{length} is accessed.
+A list\index{list} takes the form \texttt{[$t_1$,$\ldots$,$t_{n}$]}, where each $t_i$ ($1\le i \le n$) is a term. Let $L$ be a list\index{list}. The expression \texttt{$L$.length}\index{\texttt{length/1}}, which is the same as the functions \texttt{get($L$,length)}\index{\texttt{get/2}} and \texttt{length($L$)}\index{\texttt{length/1}}, returns the length of $L$. Note that a list is represented internally as a singly-linked list.  Also note that the length of a list is not stored in memory; instead, it is recomputed each time that the function \texttt{length} is called.
 
 The symbol \verb+'|'+ is not an operator, but a separator that separates the first element (so-called \emph{car}\index{car}) from the rest of the list\index{list} (so-called \emph{cdr}\index{cdr}). The \emph{cons}\index{cons} notation {\tt [$H$\verb+|+$T$]} can occur in a pattern or in an expression. When it occurs in a pattern, it matches any list\index{list} in which $H$ matches the car\index{car} and $T$ matches the cdr\index{cdr}. When it occurs in an expression, it builds a list\index{list} from $H$ and $T$. The notation {\tt [$A_1$,$A_2$,$\ldots$,$A_n$\verb+|+$T$]} is a shorthand for {\tt [$A_1$\verb+|+[$A_2$\verb+|+$\ldots$[$A_n$\verb+|+$T$]$\ldots$]}. So \texttt{[a,b,c]} is the same as \texttt{[a|[b|[c|[]]]]}.
 
@@ -241,7 +248,7 @@ aa \= aaa \= aaa \= aaa \=aaa \= aaa \= aaa \= aaa \kill
 \> \texttt{sort\_down($List$,$KeyIndex$).remove\_dups()}
 \end{tabbing}
 
-\item \texttt{slice($List$,$From$,$To$) = $SList$}\index{\texttt{slice/3}}: This function returns the sliced list of $List$ from index $From$ through index $To$. $From$ must not be less than 1. 
+\item \texttt{slice($List$,$From$,$To$) = $SList$}\index{\texttt{slice/3}}: This function returns the sliced list of $List$ from index $From$ through index $To$. $From$ must not be less than 1. It is the same as the index notation $List$[$From$..$To$].
 
 \item \texttt{slice($List$,$From$) = $SList$}\index{\texttt{slice/2}}: This function is the same as the following.
 \begin{tabbing}
@@ -265,7 +272,7 @@ A {\emph string}\index{string} is represented as a list\index{list} of single-ch
 \end{itemize}
 
 \subsection{Structures}
-A structure\index{structure} takes the form \texttt{\$$s$($t_1$,$\ldots$,$t_{n}$)}, where $s$ is an atom, and $n$ is called the \emph{arity}\index{arity} of the structure\index{structure}. The dollar symbol is used to distinguish a structure\index{structure} from a function call. The \emph{functor}\index{functor} of a structure\index{structure} comprises the name and the arity\index{arity} of the structure\index{structure}. A structure\index{structure} has two attributes: \texttt{name}\index{\texttt{name/1}} and \texttt{arity}\index{\texttt{arity/1}}. The attribute \texttt{arity}\index{\texttt{arity/1}} is also named \texttt{length}\index{\texttt{length/1}}. 
+A structure\index{structure} takes the form \texttt{\$$s$($t_1$,$\ldots$,$t_{n}$)}, where $s$ is an atom, and $n$ is called the \emph{arity}\index{arity} of the structure\index{structure}. The dollar symbol is used to distinguish a structure\index{structure} from a function call. The \emph{functor}\index{functor} of a structure\index{structure} comprises the name and the arity\index{arity} of the structure\index{structure}. 
 
 The following types of structures\index{structure} can never denote functions, meaning that they do not need to be preceded by a \$ symbol.
 \begin{tabbing}
@@ -292,13 +299,15 @@ The compiler will report a syntax error when it encounters any of these expressi
 The following built-ins are provided for structures\index{structure}:
 \begin{itemize}
 \item \texttt{arity($Struct$) = $Arity$}\index{\texttt{arity/1}}: This function returns the arity of $Struct$, which must be a structure.
+\item \texttt{len($Struct$) = $Arity$}\index{\texttt{len/1}}: This function is the same as \texttt{arity($Struct$)}.
+\item \texttt{name($Struct$) = $Name$}\index{\texttt{name/1}}: This function returns the name of $Struct$.
 \item \texttt{new\_struct($Name$, $IntOrList$) = $Struct$}\index{\texttt{new\_struct/2}}: This function creates a structure\index{structure} that has the name $Name$.  If $IntOrList$ is an integer, $N$, then the structure\index{structure} has $N$ free variable\index{free variable} arguments.  Otherwise, if $IntOrList$ is a list\index{list}, then the structure\index{structure} contains the elements in the list\index{list}.  
 \item \texttt{struct($Term$)}\index{\texttt{struct/1}}: This predicate is true if $Term$ is a structure\index{structure}.
 \item \texttt{to\_list($Struct$) = $List$}\index{\texttt{to\_list/1}}: This function returns a list\index{list} of the components of the structure\index{structure} $Struct$.
 \end{itemize}
 
 \subsection{\label{subsec:arrays}Arrays}
-An \emph{array}\index{array} takes the form \texttt{\{$t_1$,$\ldots$,$t_{n}$\}}, which is a special structure\index{structure} with the name \texttt{'\{\}'} and arity\index{arity} $n$. Note that, unlike a list, an array always has its length stored in memory, so the function \texttt{length($Array$)} always takes constant time. Also note that Picat supports constant-time access of array elements, so the index notation \texttt{A[I]} takes constant time. 
+An \emph{array}\index{array} takes the form \texttt{\{$t_1$,$\ldots$,$t_{n}$\}}, which is a special structure\index{structure} with the name \texttt{'\{\}'} and arity\index{arity} $n$. Note that, unlike a list, an array always has its length stored in memory, so the function \texttt{length($Array$)} always takes constant time. Also note that Picat supports constant-time access of array elements, so the index notation \texttt{A[I]} takes constant time when $I$ is an integer. 
 
 In addition to the built-ins for structures\index{structure}, the following built-ins are provided for arrays\index{array}:
 \begin{itemize}
@@ -346,7 +355,7 @@ A \emph{map}\index{map} is a hash-table that is represented as a structure\index
 \item \texttt{map($Term$)}\index{\texttt{map/1}}: This predicate is true if $Term$ is a map\index{map}. 
 \item \texttt{map\_to\_list($Map$) = $PairsList$}\index{\texttt{map\_to\_list/1}}: This function returns a list\index{list} of \texttt{$Key$$=$$Val$} pairs that constitute $Map$. 
 \item \texttt{new\_map($IntOrPairsList$) = $Map$}\index{\texttt{new\_map/1}}: This function creates a map\index{map} with an initial capacity or an initial list of pairs.
-\item \texttt{new\_map($N$,$PairsList$) = $Map$}\index{\texttt{new\_map/2}}: This function creates a map\index{map} with the initial capacity $N$, the initial list of pairs $PairsList$, where each pair has the form \texttt{$Key$$=$$Val$}.
+\item \texttt{new\_map($N$, $PairsList$) = $Map$}\index{\texttt{new\_map/2}}: This function creates a map\index{map} with the initial capacity $N$, the initial list of pairs $PairsList$, where each pair has the form \texttt{$Key$$=$$Val$}.
 \item \texttt{put($Map$, $Key$, $Val$)}\index{\texttt{put/3}}: This predicate attaches the key-value pair \texttt{$Key$$=$$Val$} to \texttt{$Map$}, where \texttt{$Key$} is a non-variable term, and \texttt{$Val$} is any term. 
 \item \texttt{put($Map$, $Key$)}\index{\texttt{put/2}}: This predicate is the same as \texttt{put($Map$, $Key$, not\_a\_value)}.
 \item \texttt{values($Map$) = $List$}\index{\texttt{values/1}}: This function returns the list\index{list} of values of the pairs in $Map$.
@@ -360,6 +369,29 @@ A set\index{set} is a map where every key is associated with the atom \texttt{no
 \item \texttt{new\_set($IntOrKeysList$) = $Set$}\index{\texttt{new\_set/1}}: This function creates a set with an initial capacity or an initial list of keys.
 \item \texttt{new\_set($N$,$KeysList$) = $Set$}\index{\texttt{new\_set/2}}: This function creates a set with the initial capacity $N$ and the initial list of keys $KeysList$.
 \end{itemize}
+
+\subsection{Heaps}
+A heap\index{heap}\footnote{Note that a heap, as a data structure, is different from the heap area, in which data, including heap maps, are stored.} is a complete binary tree represented as an array. A heap can be a \emph{min-heap}\index{min-heap} or a \emph{max-heap}\index{max-heap}. In a min-heap, the value at the root of each subtree is the minimum among all the values in the subtree. In a max-heap, the value at the root of each subtree is the maximum among all the values in the subtree.
+\begin{itemize}
+\item \texttt{heap\_is\_empty($Heap$)}\index{\texttt{heap\_is\_empty/1}}: This predicate is true if $Heap$ is empty.
+\item \texttt{heap\_pop($Heap$) = $Elm$}\index{\texttt{heap\_pop/1}}: This function removes the root element from the heap, and returns the element. As the function updates the heap, it is not pure. The update will be undone when execution backtracks over the call.
+\item \texttt{heap\_push($Heap$, $Elm$)}\index{\texttt{heap\_push/2}}: This predicate pushes $Elm$ into $Heap$ in a way that maintains the heap property. The update to $Heap$ will be undone when execution backtracks over the call.
+\item \texttt{heap\_size($Heap$) = $Size$}\index{\texttt{heap\_size/1}}: This function returns the size of $Heap$.
+\item \texttt{heap\_to\_list($Heap$) = $List$}\index{\texttt{heap\_to\_list/1}}: This function returns a list of the elements in $Heap$.
+\item \texttt{heap\_top($Heap$) = $Elm$}\index{\texttt{heap\_top/1}}: This function returns the element at the root of the heap. If $Heap$ is a min-heap, then the element is guaranteed to be the minimum, and if $Heap$ is a max-heap, then the element is guaranteed to be the maximum.
+\item \texttt{new\_max\_heap($IntOrList$) = $Heap$}\index{\texttt{new\_max\_heap/1}}: This function creates a max-heap.  If $IntOrList$ is an integer, then it indicates the capacity.  Otherwise, if $IntOrList$ is a list, then the max-heap contains the elements in the list in an order that maintains the heap property.
+\item \texttt{new\_min\_heap($IntOrList$) = $Heap$}\index{\texttt{new\_min\_heap/1}}: This function creates a min-heap.  If $IntOrList$ is an integer, then it indicates the capacity.  Otherwise, if $IntOrList$ is a list, then the min-heap contains the elements in the list in an order that maintains the heap property.
+\end{itemize}
+
+\subsection*{Example}
+\begin{verbatim}
+main =>
+    L = [1,3,2,4,5,3,6],
+    H = new_min_heap(L),
+    N = H.heap_size(),
+    S = [H.heap_pop() : _ in 1..N],
+    println(S).
+\end{verbatim}
 
 \section{\label{sec:unification}Equality Testing, Unification, and Term Comparison}
 The equality test \texttt{$T_1$ == $T_2$} \index{{\verb+==/2+}} is true if term $T_1$ and term $T_2$ are identical. Two variables are identical if they are aliases. Two primitive values\index{primitive value} are identical if they have the same type and the same internal representation. Two lists\index{list} are identical if the cars\index{car} are identical and the cdrs\index{cdr} are identical. Two structures\index{structure} are identical if their functors\index{functor} are the same and their components are pairwise identical. The inequality test \texttt{$T_1$ !== $T_2$} is the same as \texttt{not $T_1$ == $T_2$}.  Note that two terms can be identical even if they are stored in different memory locations.  Also note that it takes linear time in the worst case to test whether two terms are identical, unlike in C-family languages, in which the equality test operator \texttt{==} only compares addresses.
@@ -418,7 +450,7 @@ Variables are ordered by their addresses. Note that the ordering of variables ma
 \section{Expressions}
 Expressions are made from variables, values, operators, and function calls. Expressions differ from terms in the following ways: 
 \begin{itemize}
-\item An expression can contain dot notations, such as \texttt{math.pi}\index{\texttt{pi}}.
+\item An expression can contain dot notations, such as \texttt{math.pi}.
 \item An expression can contain index notations, such as \texttt{X[I]}.
 \item An expression can contain ranges, such as \texttt{1..2..100}.
 \item An expression can contain list comprehensions, such as \texttt{[X : X in 1..100]}.
@@ -436,24 +468,24 @@ A predicate\index{predicate} or function\index{function} is said to be \emph{hig
 \begin{itemize}
 \item \texttt{apply($S$, $Arg_1$, $\ldots$, $Arg_n$) = $Val$}\index{\texttt{apply}}:   $S$ is an atom or a structure.  This function calls the function that is named by $S$ with the arguments that are specified in $S$, together with extra arguments $Arg_1$, \ldots, $Arg_n$.  This function returns the value that $S$ returns.
 \item \texttt{call($S$, $Arg_1$, $\ldots$, $Arg_n$)}\index{\texttt{call}}:  $S$ is an atom or a structure.  This predicate calls the predicate that is named by $S$ with the arguments that are specified in $S$, together with extra arguments $Arg_1$, \ldots, $Arg_n$.
-\item \texttt{call\_cleanup($Call$,$Cleanup$)}\index{\texttt{call\_cleanup/2}}: This predicate is the same as \texttt{call($Call$)}, except that \texttt{$Cleanup$} is called when \texttt{$Call$} succeeds determinately (i.e., with no remaining choice point), when \texttt{$Call$} fails, or when \texttt{$Call$} raises an exception.
-\item \texttt{catch($Call$, $Exception$, $Handler$)}\index{\texttt{catch/3}}: This predicate is the same as $Call$, except when an exception that matches $Exception$ is raised during the execution of $Call$. When such an exception is raised, all of the bindings that have been performed on variables in \texttt{$Call$} will be undone, and \texttt{$Handler$} will be executed to handle the exception. 
-\item \texttt{findall($Template$,$Call$) = $Answers$}\index{\texttt{findall/2}}: This function returns a list of all possible instances of \texttt{call($Call$)} that are true in the form of $Template$. Note that $Template$ is assumed to be a term without function calls, and that $Call$ is assumed to be a predicate call whose arguments can contain function calls. Also note that, like a loop, \texttt{findall} forms a name scope. For example, in \texttt{findall(f(X),p(X,g(Y)))}, \texttt{f(X)} is a term even though it is not preceded with \verb+$+; \texttt{g(Y)} is a function call; the variables \texttt{X} and \texttt{Y} are assumed to be local to \texttt{findall} if they do not occur before in the outer scope.
-\item \texttt{find\_all($Template$,$Call$) = $Answers$}\index{\texttt{find\_all/2}}: This function is the same as the above function.
+\item \texttt{call\_cleanup($Call$, $Cleanup$)}\index{\texttt{call\_cleanup/2}}: This predicate is the same as \texttt{call($Call$)}, except that \texttt{$Cleanup$} is called when \texttt{$Call$} succeeds determinately (i.e., with no remaining choice point), when \texttt{$Call$} fails, or when \texttt{$Call$} raises an exception.
+\item \texttt{catch($Call$, $Exception$, $Handler$)}\index{\texttt{catch/3}}: This predicate is the same as $Call$, except when an exception that matches $Exception$ is raised during the execution of $Call$. When such an exception is raised, all of the bindings that have been performed on variables in \texttt{$Call$} will be undone, and \texttt{$Handler$} will be executed to handle the exception.
 \item \texttt{count\_all($Call$) = $Count$}\index{\texttt{count\_all/2}}: This function returns the number of all possible instances of \texttt{call($Call$)} that are true. For example, \texttt{count\_all(member(X,[1,2,3]))} returns 3.
+\item \texttt{findall($Template$, $Call$) = $Answers$}\index{\texttt{findall/2}}: This function returns a list of all possible instances of \texttt{call($Call$)} that are true in the form of $Template$. Note that $Template$ is assumed to be a term without function calls, and that $Call$ is assumed to be a predicate call whose arguments can contain function calls. Also note that, like a loop, \texttt{findall} forms a name scope. For example, in \texttt{findall(f(X),p(X,g(Y)))}, \texttt{f(X)} is a term even though it is not preceded with \verb+$+; \texttt{g(Y)} is a function call; the variables \texttt{X} and \texttt{Y} are assumed to be local to \texttt{findall} if they do not occur before in the outer scope.
+\item \texttt{find\_all($Template$, $Call$) = $Answers$}\index{\texttt{find\_all/2}}: This function is the same as the above function.
 \item \texttt{freeze($X$, $Call$)}\index{\texttt{freeze/2}}: This predicate delays the evaluation of $Call$ until $X$ becomes a non-variable term.
 \item \texttt{map($FuncOrList$, $ListOrFunc$) = $ResList$}\index{\texttt{map/2}}: This function applies a given function to every element of a given list and returns a list of the results. One of the arguments is a function, and the other is a list. The order of the arguments is not important. 
 \item \texttt{map($Func$, $List1$, $List2$) = $ResList$}\index{\texttt{map/3}}: Let $List1$ be \texttt{[$A_1$,$\ldots$,$A_n$]} and $List2$ be \texttt{[$B_1$,$\ldots$,$B_n$]}. This function applies the function $Func$ to every pair of elements $(A_i,B_i)$ by calling \texttt{apply($Func$,$A_i$,$B_i$)}, and returns a list of the results.
-\item \texttt{maxof($Call$,$Objective$)}\index{\texttt{maxof/2}}: This predicate finds a satisfiable instance of $Call$, such that $Objective$ has the maximum value. Here, $Call$ is used as a generator, and $Objective$ is an expression to be maximized. For every satisfiable instance of $Call$, $Objective$ must be a ground expression. For \texttt{maxof}, search is restarted with a new bound each time that a better answer is found.
-\item \texttt{maxof($Call$,$Objective$,$ReportCall$)}\index{\texttt{maxof/3}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
-\item \texttt{maxof\_inc($Call$,$Objective$)}\index{\texttt{maxof\_inc/2}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that search continues rather than being restarted each time that a better solution is found.
-\item \texttt{maxof\_inc($Call$,$Objective$,$ReportCall$)}\index{\texttt{maxof\_inc/3}}: This is the same as the previous predicate, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
-\item \texttt{minof($Call$,$Objective$)}\index{\texttt{minof/2}}: This predicate finds a satisfiable instance of $Call$, such that $Objective$ has the minimum value. 
-\item \texttt{minof($Call$,$Objective$,$ReportCall$)}\index{\texttt{minof/3}}: This is the same as \texttt{minof($Call$,$Objective$)}, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
-\item \texttt{minof\_inc($Call$,$Objective$)}\index{\texttt{minof\_inc/2}}: This predicate is the same as \texttt{minof($Call$,$Objective$)}, except that search continues rather than being restarted each time that a better solution is found.
-\item \texttt{minof\_inc($Call$,$Objective$,$ReportCall$)}\index{\texttt{minof\_inc/3}}: This predicate is the same as the previous one, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
+\item \texttt{maxof($Call$, $Objective$)}\index{\texttt{maxof/2}}: This predicate finds a satisfiable instance of $Call$, such that $Objective$ has the maximum value. Here, $Call$ is used as a generator, and $Objective$ is an expression to be maximized. For every satisfiable instance of $Call$, $Objective$ must be a ground expression. For \texttt{maxof}, search is restarted with a new bound each time that a better answer is found.
+\item \texttt{maxof($Call$, $Objective$, $ReportCall$)}\index{\texttt{maxof/3}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
+\item \texttt{maxof\_inc($Call$, $Objective$)}\index{\texttt{maxof\_inc/2}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that search continues rather than being restarted each time that a better solution is found.
+\item \texttt{maxof\_inc($Call$, $Objective$, $ReportCall$)}\index{\texttt{maxof\_inc/3}}: This is the same as the previous predicate, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
+\item \texttt{minof($Call$, $Objective$)}\index{\texttt{minof/2}}: This predicate finds a satisfiable instance of $Call$, such that $Objective$ has the minimum value. 
+\item \texttt{minof($Call$, $Objective$, $ReportCall$)}\index{\texttt{minof/3}}: This is the same as \texttt{minof($Call$,$Objective$)}, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
+\item \texttt{minof\_inc($Call$, $Objective$)}\index{\texttt{minof\_inc/2}}: This predicate is the same as \texttt{minof($Call$,$Objective$)}, except that search continues rather than being restarted each time that a better solution is found.
+\item \texttt{minof\_inc($Call$, $Objective$, $ReportCall$)}\index{\texttt{minof\_inc/3}}: This predicate is the same as the previous one, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
 \item \texttt{reduce($Func$, $List$) = $Res$}\index{\texttt{reduce/2}}: If $List$ is a list that contains only one element, this function returns the element. If $List$ contains at least two elements, then the first two elements $A_1$ and $A_2$ are replaced with \texttt{apply($Func$,$A_1$,$A_2$)}. This step is repeatedly applied to the list until the list contains a single element, which is the final value to be returned. The order of the arguments is not important, meaning that the first argument can be a list and the second one can be a function.
-\item \texttt{reduce($Func$,$List$,$InitVal$) = $Res$}\index{\texttt{reduce/3}}: This function is the same as\\
+\item \texttt{reduce($Func$, $List$, $InitVal$) = $Res$}\index{\texttt{reduce/3}}: This function is the same as\\
  \texttt{reduce($Func$,[$InitVal$$|$$List$])}.
 \end{itemize}
 
@@ -464,9 +496,12 @@ A predicate\index{predicate} or function\index{function} is said to be \emph{hig
 \item \texttt{and\_to\_list($Conj$) = $List$}\index{\texttt{and\_to\_list/1}}: This function converts $Conj$ in the form \texttt{($a_1$,$\ldots$,$a_n$)} into a list in the form \texttt{[$a_1$,$\ldots$,$a_n$]}.
 \item \texttt{compare\_terms($Term_1$, $Term_2$) = $Res$}\index{\texttt{compare\_terms/2}}:  This function compares $Term_1$ and $Term_2$.  If $Term_1 < Term_2$, then this function returns $-1$.  If $Term_1 == Term_2$, then this function returns $0$.  Otherwise, $Term_1 > Term_2$, and this function returns $1$.
 \item \texttt{different\_terms($Term_1$, $Term_2$)}\index{\texttt{different\_terms/2}}: This constraint ensures that $Term_1$ and $Term_2$ are different. This constraint is suspended when the arguments are not sufficiently instantiated\index{instantiated variable}.
-\item \texttt{get\_global\_map() = $Map$}\index{\texttt{get\_global\_map/0}}: This function returns the global map\index{map}, which is shared by all threads.
-\item \texttt{get\_heap\_map() = $Map$}\index{\texttt{get\_heap\_map/0}}: This function returns the current thread's heap map\index{map}.  Each thread has its own heap map\index{map}. 
-\item \texttt{get\_table\_map() = $Map$}\index{\texttt{get\_table\_map/0}}: This function returns the current thread's table map\index{map}.  Each thread has its own table map\index{map}. The table map is stored in the table area and both keys and values are hash-consed (i.e., common sub-terms are shared).
+\item \texttt{get\_global\_map() = $Map$}\index{\texttt{get\_global\_map/0}}: This function returns the global map\index{map}.
+\item \texttt{get\_global\_map($ID$) = $Map$}\index{\texttt{get\_global\_map/1}}: This function returns the global map with the identifier $ID$, which must be a ground term.
+\item \texttt{get\_heap\_map() = $Map$}\index{\texttt{get\_heap\_map/0}}: This function returns the default heap map\index{map}.
+\item \texttt{get\_heap\_map($ID$) = $Map$}\index{\texttt{get\_heap\_map/1}}: This function returns the heap map with the identifier $ID$, which must be ground term.  
+\item \texttt{get\_table\_map() = $Map$}\index{\texttt{get\_table\_map/0}}: This function returns the default table map. The table map is stored in the table area and both keys and values are hash-consed (i.e., common sub-terms are shared).
+\item \texttt{get\_table\_map($ID$) = $Map$}\index{\texttt{get\_table\_map/1}}: This function returns the table map with the identifier $ID$, which must be a ground term. 
 \item \texttt{ground($Term$)}\index{\texttt{ground/1}}: This predicate is true if $Term$ is ground\index{ground}.  A \emph{ground}\index{ground} term does not contain any variables.
 \item \texttt{list\_to\_and($List$) = $Conj$}\index{\texttt{list\_to\_and/1}}: This function converts $List$ in the form \texttt{[$a_1$,$\ldots$,$a_n$]} into a term in the form \texttt{($a_1$,$\ldots$,$a_n$)}.
 \item \texttt{number\_vars($Term$, $N_0$) = $N_1$}\index{\texttt{number\_vars/2}}: This function numbers the variables in $Term$ by using the integers starting from $N_0$.  $N_1$ is the next integer that is available after $Term$ is numbered.  Different variables receive different numberings, and the occurrences of the same variable all receive the same numbering.

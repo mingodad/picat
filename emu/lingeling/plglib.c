@@ -4,7 +4,7 @@
 #include "lglib.h"
 
 #include <assert.h>
-#if !defined(CYGWIN) && !defined(ANDROID)
+#ifndef CYGWIN
 #include <execinfo.h>
 #endif
 #include <ctype.h>

@@ -86,72 +86,72 @@ extern "C" {
  * Method:    post_mouse_event_to_bprolog
  * Signature: (IIIIII)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1mouse_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1mouse_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_window_event_to_bprolog
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1window_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1window_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_focus_event_to_bprolog
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1focus_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1focus_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_key_event_to_bprolog
  * Signature: (IIICI)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1key_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint, jint, jchar, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1key_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint, jint, jchar, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_component_event_to_bprolog
  * Signature: (IIIIII)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1component_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1component_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_action_event_to_bprolog
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1action_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1action_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_text_event_to_bprolog
  * Signature: (ILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1text_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jstring);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1text_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jstring);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_item_event_to_bprolog
  * Signature: (III)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1item_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1item_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint, jint);
 
 /*
  * Class:     bprolog_cg_CgEvent
  * Method:    post_adjustment_event_to_bprolog
  * Signature: (III)V
  */
-JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1adjustment_1event_1to_1bprolog
-  (JNIEnv *, jclass, jint, jint, jint);
+    JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1adjustment_1event_1to_1bprolog
+    (JNIEnv *, jclass, jint, jint, jint);
 
 #ifdef __cplusplus
 }

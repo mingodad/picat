@@ -1,6 +1,0 @@
-main =>
-    Lines = read_file_lines("all_csp"),
-    foreach(Line in Lines)
-        once append(MainFileStr,".csp",Line),
-        printf("java -cp my_sugar.jar jp.kobe_u.sugar.SugarMain -encode %s.csp %s.cnf %s.tmp\n",MainFileStr,MainFileStr,MainFileStr)
-    end.

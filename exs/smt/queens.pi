@@ -1,0 +1,17 @@
+import smt.
+
+main => top.
+
+top =>
+    queens(50).
+
+queens(N) =>
+    Qs=new_array(N),
+    Qs :: 1..N,
+    foreach (I in 1..N-1, J in I+1..N)
+        Qs[I] #!= Qs[J],
+        Qs[I]-Qs[J] #!= J-I,
+        Qs[J]-Qs[I] #!= J-I	
+    end,
+    solve([ff],Qs),
+    writeln(Qs).

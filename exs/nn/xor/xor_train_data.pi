@@ -1,0 +1,13 @@
+import nn.
+
+main =>
+    NN = new_nn({2,3,1}),
+	Data = [({-1,-1}, -1),
+		    ({-1,1}, 1),
+			({1,-1}, 1),
+			({1,1}, -1)],
+    nn_train(NN,Data,$[maxep(500000), report(1000), derror(0.0), bfl(0.1), train_func(rprop), stop_func(stop_bit)]),
+	nn_save(NN,"xor.net"),
+	nn_print(NN),
+    nn_destroy_all.
+    

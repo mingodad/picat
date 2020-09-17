@@ -2,7 +2,7 @@
 #ifdef SAT
 /********************************************************************
  *   File   : espresso_bp.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2018
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
  *   Purpose: Interface with Espresso for Picat
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -20,7 +20,7 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA);
 void retrieve_pla_cubes(BPLONG_PTR ptrBNs, pPLA PLA, BPLONG Cls, BPLONG ClsR);
 void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA);
 
-/************************************************************************************************** 
+/**************************************************************************************************
    call_espresso(BNs,InFlag,Vals,Cls,ClsR):
 
    BNs      : A vector of Boolean variable numbers, v(BN0,BN1,...,BN(n-1)), where BNi is ignored if f.
@@ -40,18 +40,18 @@ int c_call_espresso()
 {
     pPLA PLA;
     BPLONG n;
-    BPLONG BNVect,Vals,InFlag,Cls,ClsR;
+    BPLONG BNVect, Vals, InFlag, Cls, ClsR;
     BPLONG_PTR ptrBNVect;
 
     SYM_REC_PTR sym_ptr;
 
     prep_espresso();
 
-    BNVect = ARG(1,5); DEREF_NONVAR(BNVect);
-    Vals = ARG(2,5); DEREF_NONVAR(Vals);
-    InFlag = ARG(3,5); DEREF_NONVAR(InFlag);
-    Cls = ARG(4,5);
-    ClsR = ARG(5,5);
+    BNVect = ARG(1, 5); DEREF_NONVAR(BNVect);
+    Vals = ARG(2, 5); DEREF_NONVAR(Vals);
+    InFlag = ARG(3, 5); DEREF_NONVAR(InFlag);
+    Cls = ARG(4, 5);
+    ClsR = ARG(5, 5);
 
     ptrBNVect = (BPLONG_PTR)UNTAGGED_ADDR(BNVect);
     sym_ptr = (SYM_REC_PTR)FOLLOW(ptrBNVect);
@@ -60,13 +60,13 @@ int c_call_espresso()
 
     //  write_term(Vals);
 
-    setup_PLA(Vals,INTVAL(InFlag),PLA);
+    setup_PLA(Vals, INTVAL(InFlag), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);
 
     run_espresso(PLA);
 
     /* Output the solution */
-    retrieve_pla_cubes(ptrBNVect,PLA,Cls,ClsR);
+    retrieve_pla_cubes(ptrBNVect, PLA, Cls, ClsR);
     //  EXECUTE(fprint_pla(stdout, PLA, F_type), WRITE_TIME, PLA->F, cost);
 
     stop_espresso(PLA);
@@ -74,16 +74,16 @@ int c_call_espresso()
 }
 
 /* initialize global variables used in espresso */
-void prep_espresso(){
+void prep_espresso() {
 #ifdef RANDOM
     srandom(314973);
 #endif
-    debug = 0;                      /* default -d: no debugging info */
-    verbose_debug = FALSE;          /* default -v: not verbose */
-    print_solution = FALSE;         /* default -x: print the solution (!) */
-    summary = FALSE;                /* default -s: no summary */
-    trace = FALSE;                  /* default -t: no trace information */
-    remove_essential = TRUE;        /* default -e: */
+    debug = 0;  /* default -d: no debugging info */
+    verbose_debug = FALSE;  /* default -v: not verbose */
+    print_solution = FALSE;  /* default -x: print the solution (!) */
+    summary = FALSE;  /* default -s: no summary */
+    trace = FALSE;  /* default -t: no trace information */
+    remove_essential = TRUE;  /* default -e: */
     force_irredundant = TRUE;
     unwrap_onset = TRUE;
     single_expand = FALSE;
@@ -96,15 +96,15 @@ void prep_espresso(){
     echo_unknown_commands = TRUE;
 }
 
-void run_espresso(pPLA PLA){
+void run_espresso(pPLA PLA) {
     pcover F, Fold, Dold;
     bool error, exact_cover;
     cost_t cost;
 
-    exact_cover = FALSE;        /* for -qm option, the default */
+    exact_cover = FALSE;  /* for -qm option, the default */
     Fold = sf_save(PLA->F);
     PLA->F = espresso(PLA->F, PLA->D, PLA->R);
-    EXECUTE(error=verify(PLA->F,Fold,PLA->D), VERIFY_TIME, PLA->F, cost);
+    EXECUTE(error = verify(PLA->F, Fold, PLA->D), VERIFY_TIME, PLA->F, cost);
     if (error) {
         print_solution = FALSE;
         PLA->F = Fold;
@@ -117,18 +117,18 @@ void run_espresso(pPLA PLA){
     }
 }
 
-void stop_espresso(pPLA PLA){
+void stop_espresso(pPLA PLA) {
     /* Crash and burn if there was a verify error */
 
     /* cleanup all used memory */
     free_PLA(PLA);
     FREE(cube.part_size);
-    setdown_cube();             /* free the cube/cdata structure data */
-    sf_cleanup();               /* free unused set structures */
-    sm_cleanup();               /* sparse matrix cleanup */
+    setdown_cube();  /* free the cube/cdata structure data */
+    sf_cleanup();  /* free unused set structures */
+    sm_cleanup();  /* sparse matrix cleanup */
 }
 
-pPLA init_PLA(int n){
+pPLA init_PLA(int n) {
     pPLA PLA;
 
     PLA = new_PLA();
@@ -148,15 +148,16 @@ pPLA init_PLA(int n){
         PLA->D = new_cover(10);
         PLA->R = new_cover(10);
     }
-  
+
     return PLA;
 }
 
-/* 
-   Add each domain value as a cube into PLA. Since CNF is needed, 
-   the output of an in-value is 0, and the output of an out-value is 1.
+/*
+  Add each domain value as a cube into PLA. Since CNF is needed, 
+  the output of an in-value is 0, and the output of an out-value is 1.
+  Vals must be a sorted list with no duplicates.
 */
-void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
+void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA) {
     int needs_dcset, needs_offset;
     register int var, i;
     pcube cf, cr, cd;
@@ -168,7 +169,7 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
 
     //  printf("read_cubes n=%d 2^n=%d\n",cube.num_binary_vars,2<<(cube.num_binary_vars));
 
-    for (val = 0; val < 1<<(cube.num_binary_vars); val++){  /* NOTE: cube is a global variable defined in espresso.h */
+    for (val = 0; val < 1 << (cube.num_binary_vars); val++) {  /* NOTE: cube is a global variable defined in espresso.h */
         if (PLA->F == NULL) {
             PLA->F = new_cover(10);
             PLA->D = new_cover(10);
@@ -177,10 +178,10 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
         savef = FALSE, saved = FALSE, saver = FALSE;
         cf = cube.temp[0], cr = cube.temp[1], cd = cube.temp[2];
         set_clear(cf, cube.size);
-        
+
         tmp_val = val;
-        for(var = 0; var < cube.num_binary_vars; var++){
-            if (tmp_val%2 == 1){
+        for(var = 0; var < cube.num_binary_vars; var++) {
+            if (tmp_val%2 == 1) {
                 set_insert(cf, var*2+1);
             } else {
                 set_insert(cf, var*2);
@@ -194,16 +195,16 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
 
         i = cube.first_part[var];
 
-        if (ISLIST(Vals)){
+        if (ISLIST(Vals)) {
             BPLONG_PTR lst_ptr;
             BPLONG elm;
 
             lst_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Vals);
             elm = FOLLOW(lst_ptr);
             DEREF_NONVAR(elm);
-            if (ISINT(elm)){
+            if (ISINT(elm)) {
                 elm = INTVAL(elm);
-                if (val == elm){
+                if (val == elm) {
                     val_is_in = InFlag;
                     Vals = FOLLOW(lst_ptr+1); DEREF_NONVAR(Vals);
                 } else {
@@ -211,17 +212,17 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
                 }
             } else {  /* elm must be an interval l..u */
                 BPLONG_PTR interv_ptr;
-                BPLONG lb,ub;
+                BPLONG lb, ub;
 
                 interv_ptr = (BPLONG_PTR)UNTAGGED_ADDR(elm);
                 lb = FOLLOW(interv_ptr+1); DEREF_NONVAR(lb); lb = INTVAL(lb);
                 ub = FOLLOW(interv_ptr+2); DEREF_NONVAR(ub); ub = INTVAL(ub);
-                if (val >= lb && val <= ub){
+                if (val >= lb && val <= ub) {
                     val_is_in = InFlag;
                 } else {
-                    val_is_in = 1-InFlag;                 
+                    val_is_in = 1-InFlag;
                 }
-                if (val == ub){
+                if (val == ub) {
                     Vals = FOLLOW(lst_ptr+1); DEREF_NONVAR(Vals);
                 }
             }
@@ -230,16 +231,16 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA){
         }
 
         //      printf("val=%d flag=%d\n",val,val_is_in);
-        if (val_is_in){
-            if (PLA->pla_type & R_type){
+        if (val_is_in) {
+            if (PLA->pla_type & R_type) {
                 set_insert(cr, i); saver = TRUE;
             }
         } else {
-            if (PLA->pla_type & F_type){
+            if (PLA->pla_type & F_type) {
                 set_insert(cf, i); savef = TRUE;
             }
         }
-        
+
         if (savef) PLA->F = sf_addset(PLA->F, cf);
         if (saved) PLA->D = sf_addset(PLA->D, cd);
         if (saver) PLA->R = sf_addset(PLA->R, cr);
@@ -253,7 +254,7 @@ BPLONG retrieve_pla_cube(BPLONG_PTR ptrBNVect, register pset c)
 {
     register int i, var;
     BPLONG_PTR tail_ptr, heap_top0;
-    BPLONG lst,elm;
+    BPLONG lst, elm;
 
     heap_top0 = heap_top;
     tail_ptr = &lst;
@@ -262,49 +263,49 @@ BPLONG retrieve_pla_cube(BPLONG_PTR ptrBNVect, register pset c)
         int lit = GETINPUT(c, var);
         elm = FOLLOW(ptrBNVect+var+1);
         DEREF_NONVAR(elm);
-        if (ISINT(elm)) {             
-            if (lit == 1 || lit == 2){  /* 3 means don't care */
+        if (ISINT(elm)) {
+            if (lit == 1 || lit == 2) {  /* 3 means don't care */
                 if (lit == 2) {
                     elm = INTVAL(elm);
                     elm = MAKEINT(-elm);
                 }
-                FOLLOW(tail_ptr) = ADDTAG(heap_top,LST);
+                FOLLOW(tail_ptr) = ADDTAG(heap_top, LST);
                 FOLLOW(heap_top++) = elm;
                 tail_ptr = heap_top++;
             }
-        } else {                      /* elm can be 'f' or 't' */
-            if ((lit == 1 && elm == t_atom) || (lit == 2 && elm == f_atom)){
+        } else {  /* elm can be 'f' or 't' */
+            if ((lit == 1 && elm == t_atom) || (lit == 2 && elm == f_atom)) {
                 heap_top = heap_top0;
-                return BP_TRUE;           /* this clause is already true because the literal is true */
-            }                             /* else this literal is false, and need not be added */
-        }                             
+                return BP_TRUE;  /* this clause is already true because the literal is true */
+            }  /* else this literal is false, and need not be added */
+        }
     }
     FOLLOW(tail_ptr) = nil_sym;
     return lst;
 }
 
-void retrieve_pla_cubes(BPLONG_PTR ptrBNVect, pPLA PLA, BPLONG Cls, BPLONG ClsR){
+void retrieve_pla_cubes(BPLONG_PTR ptrBNVect, pPLA PLA, BPLONG Cls, BPLONG ClsR) {
     int num;
     register pcube last, p;
     BPLONG_PTR tail_ptr;
     BPLONG lst;
-  
+
     tail_ptr = &lst;
     foreach_set(PLA->F, last, p) {
         BPLONG cell = retrieve_pla_cube(ptrBNVect, p);
         if (cell != BP_TRUE) {  /* if cell = BP_TRUE, then the clause is already true */
-            FOLLOW(tail_ptr) = ADDTAG(heap_top,LST);
+            FOLLOW(tail_ptr) = ADDTAG(heap_top, LST);
             FOLLOW(heap_top++) = cell;
             tail_ptr = heap_top++;
             LOCAL_OVERFLOW_CHECK("espresso");
         }
     }
-    if (tail_ptr == &lst){ /* empty, false */
-        unify(Cls,ClsR);
+    if (tail_ptr == &lst) {  /* empty, false */
+        unify(Cls, ClsR);
     } else {
         FOLLOW(tail_ptr) = (BPLONG)tail_ptr;
-        unify(ClsR,(BPLONG)tail_ptr);
-        unify(Cls,lst);
+        unify(ClsR, (BPLONG)tail_ptr);
+        unify(Cls, lst);
     }
 }
 
@@ -317,21 +318,21 @@ void retrieve_pla_cubes(BPLONG_PTR ptrBNVect, pPLA PLA, BPLONG Cls, BPLONG ClsR)
   Rel     : 0 (eq), 1 (ge), and 2 (neq)
   BNVect : The numbers of the Boolean variables Vs.
 */
-int c_call_espresso_pb(){
+int c_call_espresso_pb() {
     pPLA PLA;
     BPLONG n;
-    BPLONG Coes,Rel,Const,BNVect,Cls,ClsR;
+    BPLONG Coes, Rel, Const, BNVect, Cls, ClsR;
     BPLONG_PTR ptrBNVect;
     SYM_REC_PTR sym_ptr;
 
     prep_espresso();
-  
-    Coes = ARG(1,6); DEREF_NONVAR(Coes);
-    Rel = ARG(2,6); DEREF_NONVAR(Rel);
-    Const = ARG(3,6); DEREF_NONVAR(Const);
-    BNVect = ARG(4,6); DEREF_NONVAR(BNVect);
-    Cls = ARG(5,6);
-    ClsR = ARG(6,6);
+
+    Coes = ARG(1, 6); DEREF_NONVAR(Coes);
+    Rel = ARG(2, 6); DEREF_NONVAR(Rel);
+    Const = ARG(3, 6); DEREF_NONVAR(Const);
+    BNVect = ARG(4, 6); DEREF_NONVAR(BNVect);
+    Cls = ARG(5, 6);
+    ClsR = ARG(6, 6);
 
     ptrBNVect = (BPLONG_PTR)UNTAGGED_ADDR(BNVect);
     sym_ptr = (SYM_REC_PTR)FOLLOW(ptrBNVect);
@@ -339,14 +340,14 @@ int c_call_espresso_pb(){
     PLA = init_PLA(n);
 
     //  printf("=>espresso_pb n = %d ",n); write_term(Coes); write_term(BNVect);printf("\n");
-  
-    setup_PLA_pb(Coes,INTVAL(Rel),INTVAL(Const),PLA);
+
+    setup_PLA_pb(Coes, INTVAL(Rel), INTVAL(Const), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);
 
     run_espresso(PLA);
 
     /* Output the solution */
-    retrieve_pla_cubes(ptrBNVect,PLA,Cls,ClsR);
+    retrieve_pla_cubes(ptrBNVect, PLA, Cls, ClsR);
     //  printf("<=element "); write_term(Cls); printf("\n");
     //  EXECUTE(fprint_pla(stdout, PLA, F_type), WRITE_TIME, PLA->F, cost);
 
@@ -354,12 +355,12 @@ int c_call_espresso_pb(){
     return BP_TRUE;
 }
 
-/* 
-   Let Coes = [A1,A2,...,An]. For each value in 0..2**n-1, get the valuation for V1,V2,...,Vn.
-   If the constraint sum(Ai*Vi) Rel Const is true, then the cube is 0; 
-   otherwise, the cube is 1 (Note it's turned upside down because CNF is computed, not DNF).
+/*
+  Let Coes = [A1,A2,...,An]. For each value in 0..2**n-1, get the valuation for V1,V2,...,Vn.
+  If the constraint sum(Ai*Vi) Rel Const is true, then the cube is 0; 
+  otherwise, the cube is 1 (Note it's turned upside down because CNF is computed, not DNF).
 */
-void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
+void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA) {
     int needs_dcset, needs_offset;
     int var, i, arg_i, pb_val;
     pcube cf, cr, cd;
@@ -370,11 +371,11 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
 
     needs_dcset = 1;
     needs_offset = 1;
-  
+
     //  printf("read_cubes n=%d 2^n=%d\n",cube.num_binary_vars,2<<(cube.num_binary_vars));
     arg_i = 0;
     coes_ptr = local_top;
-    while (ISLIST(Coes)){
+    while (ISLIST(Coes)) {
         BPLONG_PTR ptrCoes = (BPLONG_PTR)UNTAGGED_ADDR(Coes);
         BPLONG elm = FOLLOW(ptrCoes); DEREF_NONVAR(elm);
         FOLLOW(coes_ptr-arg_i) = INTVAL(elm);
@@ -382,7 +383,7 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
         arg_i++;
     }
 
-    for (val = 0; val < 1<<(cube.num_binary_vars); val++){  /* NOTE: cube is a global variable defined in espresso.h */
+    for (val = 0; val < 1 << (cube.num_binary_vars); val++) {  /* NOTE: cube is a global variable defined in espresso.h */
         if (PLA->F == NULL) {
             PLA->F = new_cover(10);
             PLA->D = new_cover(10);
@@ -392,10 +393,10 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
         savef = FALSE, saved = FALSE, saver = FALSE;
         cf = cube.temp[0], cr = cube.temp[1], cd = cube.temp[2];
         set_clear(cf, cube.size);
-        
+
         tmp_val = val;
-        for(var = 0; var < cube.num_binary_vars; var++){
-            if (tmp_val%2 == 1){
+        for(var = 0; var < cube.num_binary_vars; var++) {
+            if (tmp_val%2 == 1) {
                 set_insert(cf, var*2+1);
                 pb_val += FOLLOW(coes_ptr-arg_i);
             } else {
@@ -410,8 +411,8 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
         //      printf("cube.first_part[var]=%d cube.last_part[var]=%d\n",cube.first_part[var], cube.last_part[var]);
 
         val_is_in = 0;
-        switch (pb_rel){
-        case 0:   // eq
+        switch (pb_rel) {
+        case 0:  // eq
             if (pb_val == pb_const) val_is_in = 1;
             break;
         case 1:  // ge
@@ -424,16 +425,16 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
 
         i = cube.first_part[var];
         //      printf("val=%d flag=%d\n",val,val_is_in);
-        if (val_is_in){
-            if (PLA->pla_type & R_type){
+        if (val_is_in) {
+            if (PLA->pla_type & R_type) {
                 set_insert(cr, i); saver = TRUE;
             }
         } else {
-            if (PLA->pla_type & F_type){
+            if (PLA->pla_type & F_type) {
                 set_insert(cf, i); savef = TRUE;
             }
         }
-        
+
         if (savef) PLA->F = sf_addset(PLA->F, cf);
         if (saved) PLA->D = sf_addset(PLA->D, cd);
         if (saver) PLA->R = sf_addset(PLA->R, cr);
@@ -443,35 +444,35 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA){
     after_setup_pla(needs_dcset, needs_offset, PLA);
 }
 #else
-int c_call_espresso(){
-    BPLONG er  = ADDTAG(BP_NEW_SYM("sat_not_supported",0),ATM);
+int c_call_espresso() {
+    BPLONG er = ADDTAG(BP_NEW_SYM("sat_not_supported", 0), ATM);
 
     printf("SAT not supported for MVC. Use the cygwin version.\n");
-    exception = er;
+    bp_exception = er;
     return BP_ERROR;
 }
 
-int c_call_espresso_pb(){
-    BPLONG er  = ADDTAG(BP_NEW_SYM("sat_not_supported",0),ATM);
+int c_call_espresso_pb() {
+    BPLONG er = ADDTAG(BP_NEW_SYM("sat_not_supported", 0), ATM);
 
     printf("SAT not supported for MVC. Use the cygwin version.\n");
-    exception = er;
+    bp_exception = er;
     return BP_ERROR;
 }
 
-int c_call_espresso_table(){
-    BPLONG er  = ADDTAG(BP_NEW_SYM("sat_not_supported",0),ATM);
+int c_call_espresso_table() {
+    BPLONG er = ADDTAG(BP_NEW_SYM("sat_not_supported", 0), ATM);
 
     printf("SAT not supported for MVC. Use the cygwin version.\n");
-    exception = er;
+    bp_exception = er;
     return BP_ERROR;
 }
-  
-int c_call_espresso_element(){
-    BPLONG er  = ADDTAG(BP_NEW_SYM("sat_not_supported",0),ATM);
+
+int c_call_espresso_element() {
+    BPLONG er = ADDTAG(BP_NEW_SYM("sat_not_supported", 0), ATM);
 
     printf("SAT not supported for MVC. Use the cygwin version.\n");
-    exception = er;
+    bp_exception = er;
     return BP_ERROR;
 }
 #endif

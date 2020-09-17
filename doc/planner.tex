@@ -10,7 +10,7 @@
 \begin{document}
 }
 \chapter{\label{chapter:planner}The \texttt{planner} Module}
-The \texttt{planner} module provides several predicates for solving planning problems. Given an initial state, a final state, and a set of possible actions, a planning problem is to find a plan that transforms the initial state to the final state. In order to use the \texttt{planner} module to solve a planning problem, users have to provide the condition for the final states and the state transition diagram through the following global predicates:
+The \texttt{planner} module provides several predicates for solving planning problems. Given an initial state, a final state, and a set of possible actions, a planning problem is to find a plan that transforms the initial state to the final state. In order to use the \texttt{planner} module to solve a planning problem, users have to provide the condition for the final states and the state transition diagram through the following global predicates:\index{planning}\index{planner}
 \begin{itemize}
 \item \texttt{final($S$)}\index{\texttt{final/1}}: This predicate succeeds if $S$ is a final state.
 \item \texttt{final($S$,$Plan$,$Cost$)}\index{\texttt{final/3}}: A final state can be reached from $S$ by the action sequence in $Plan$ with $Cost$. If this predicate is not given, then the system assumes the following definition:

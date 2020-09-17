@@ -1,0 +1,9 @@
+import nn.
+
+main =>
+    NN = new_nn({3,5,1}),
+    nn_set_activation_function_layer(NN,sigmoid,2),
+    nn_set_activation_function_output(NN,linear),
+    nn_train(NN, "scaling.data", $[train_func(rprop), derror(0.0001), maxep(5000), report(1000), scale(-1,1,-1,1)]),
+    nn_save(NN,"scaling.net"),
+    nn_destroy_all.

@@ -1,0 +1,20 @@
+import nn, util.
+
+main =>
+    TestFile = "TestX.csv",
+    main([TestFile]).
+
+main([TestFile]) =>
+    Ann = nn_load("spam.net"),
+    InStream = open(TestFile),
+    L = InStream.read_line(),
+    read_and_predict(Ann,InStream,L,1).
+    
+read_and_predict(_Ann,InStream,end_of_file,_LineNum) => close(InStream).
+read_and_predict(Ann,InStream,Line,LineNum) =>
+    Input = {to_number(Token) : Token in split(strip(Line),",")},
+    Output = nn_run(Ann, Input,$[resetMSE, scaleIn(1), scaleOut(1)]),
+    printf("%d: %w\n",LineNum,Output),
+    NLine = InStream.read_line(),
+    read_and_predict(Ann,InStream,NLine,LineNum+1).
+    

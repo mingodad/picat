@@ -1,0 +1,811 @@
+module smt_aux.
+
+smt_solve(Options,Vars) =>
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic),
+    (Cmd = $solve(Solver,_TmpFile,_Fmt), Solver !== dump ->
+        check_smt_solver(Solver)
+    ;
+        true
+    ),
+    (Obj = $min(ObjVar) ->
+        Sense = 0
+    ;Obj = $max(ObjVar) ->
+        Sense = 1
+    ;
+        Sense = 0, ObjVar = 0
+    ),
+%    printf("%%solving using smt %w\n",Solver),
+    (var(Logic) ->
+        (Solver == z3 ->
+            Logic = "LIA"
+        ;
+            Logic = "NIA"
+        )
+    ;
+         true
+    ),
+    smt_solve_aux(Cmd,ReportPred,Logic,Obj,Vars).
+
+%%
+check_smt_solver(z3) =>
+    (check_command("z3") ->
+        true
+    ;
+        handle_exception($existence_error(z3),solve)
+    ).
+check_smt_solver(cvc4) =>
+    (check_command("cvc4") ->
+        true
+    ;
+        handle_exception($existence_error(cvc4),solve)
+    ).
+/*
+check_smt_solver(Solver) =>
+    (check_command("cvc4") ->
+        Solver = cvc4
+    ; check_command("z3") ->
+        Solver = z3
+    ;
+        handle_exception($existence_error(smt_solver),solve)
+    ).
+*/
+check_smt_solver(Solver) =>
+    (check_command("z3") ->
+        Solver = z3
+    ; check_command("cvc4") ->
+        Solver = cvc4
+    ;
+        handle_exception($existence_error(smt_solver),solve)
+    ).
+
+private
+check_command(Command) =>
+    bp.c_OS_TYPE_f(OS),
+    (OS == unix ->
+        Command1 = Command
+    ;
+        Command1 = Command ++ ".exe"
+    ),
+    bp.picat_getenv("PATH",PathStr),
+    (OS == windows ->
+        bp.picat_split_string(PathStr,";",Dirs),
+        Separator = '\\'
+    ;
+        bp.picat_split_string(PathStr,":",Dirs),
+        Separator = '/'        
+    ),
+    member(Dir,Dirs),
+    FullPath = Dir ++ [Separator|Command1],
+    bp.b_ACCESS_ccf(FullPath,0,Res),
+    Res == 0.   % 0 means that the command exists
+    
+proc_smt_solve_options([],_Cmd,Obj,ReportPred,_Logic) =>
+    (var(Obj) -> Obj = 0; true),
+    (var(ReportPred) -> ReportPred = true; true).
+proc_smt_solve_options([z3|Options],Cmd,Obj,ReportPred,Logic) =>
+    Cmd = $solve(Solver,_TmpFile,_Fmt),
+    (var(Solver) -> Solver = z3; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([cvc4|Options],Cmd,Obj,ReportPred,Logic) =>
+    Cmd = $solve(Solver,_TmpFile,_Fmt),
+    (var(Solver) -> Solver = cvc4; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([dump(File)|Options],Cmd,Obj,ReportPred,Logic) =>
+    Cmd = $solve(Type,TmpFile,_Fmt),
+    (Type = dump -> true; true),
+    (TmpFile = File -> true; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([dump|Options],Cmd,Obj,ReportPred,Logic) =>
+    Cmd = $solve(Type,_,_Fmt),
+    (Type = dump -> true; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([logic(Logic0)|Options],Cmd,Obj,ReportPred,Logic) =>
+    (var(Logic) ->
+        (atom(Logic0) ->
+            Logic = to_string(Logic0)
+        ;string(Logic0) ->
+            Logic = Logic0
+        ;
+            handle_exception($invalid_logic(Logic0),smt)
+        )
+    ;
+        true
+    ),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([Obj0|Options],Cmd,Obj,ReportPred,Logic), Obj0 = $min(ObjExp) =>
+    (dvar(ObjExp) -> ObjVar = ObjExp; bp.fd_new_domain(ObjVar), bp.'$='(ObjVar,ObjExp)),
+    (var(Obj) -> Obj = $min(ObjVar); handle_exception($multiple_objectives(Obj,Obj0),solve)),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([Obj0|Options],Cmd,Obj,ReportPred,Logic), Obj0 = $max(ObjExp) =>
+    (dvar(ObjExp) -> ObjVar = ObjExp; bp.fd_new_domain(ObjVar), bp.'$='(ObjVar,ObjExp)),
+    (var(Obj) -> Obj = $max(ObjVar); handle_exception($multiple_objectives(Obj,Obj0),solve)),    
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([tmp(File)|Options],Cmd,Obj,ReportPred,Logic) =>
+    Cmd = $solve(_,TmpFile,_Fmt),
+    (TmpFile = File -> true; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([report(Pred)|Options],Cmd,Obj,ReportPred,Logic) =>
+    (ReportPred = Pred -> true; true),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([Option|Options],Cmd,Obj,ReportPred,Logic) =>
+    bp.picat_warning($unsupported_option(Option),smt),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+
+/*
+smt_solve_aux(Solver,Report,Logic,Obj,Vars) ?=>
+    println($smt_solve_aux(Solver,Report,Logic,Obj,Vars)),fail.
+*/
+smt_solve_aux(solve(Solver,TmpFile,_Fmt),_Report,Logic,_Obj,Vars), Solver == dump =>
+    bp.retrieve_smt_constr_store(Constrs),
+    AllVars = vars([Vars|Constrs]),
+    smt_number_vars(AllVars,1),
+    (var(TmpFile) -> TmpStream = stdout; TmpStream = open(TmpFile,write)),
+    not not smt_dump(TmpStream,Logic,AllVars,Constrs),
+    close(TmpStream).
+smt_solve_aux(solve(Solver,TmpFile,_Fmt),Report,Logic,Obj,Vars) =>   % Solver = z3 or cvc4
+    smt_check_file(TmpFile,"__tmp.smt2",TmpFileStr),
+    (append(MainName,".smt2",TmpFileStr) -> true; handle_exception($extension_name_expected(".smt2"),solve)),
+    SolFileStr = MainName ++ ".sol",
+    bp.abolish(smt_last_solution,1),
+    (Obj = $min(ObjVar) ->
+        smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,Vars)
+    ; Obj = $max(ObjVar) ->
+        smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,Vars)    
+    ;
+        VarsArr = to_array(Vars),
+        smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[])
+    ).
+
+%%%
+smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,_Table) ?=>
+    once smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars),
+    bp.assert($smt_last_solution(VarsArr)).
+smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,Table),
+    bp.retract($smt_last_solution(Tuple)),
+    true
+=>
+    bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
+    smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[Tuple|Table]).
+    
+%%%
+% binary search:
+%%%
+smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,Vars) =>
+    bp.domain_min_max(ObjVar,ObjMin,ObjMax),
+    bp.global_del(smt_current_best_answer,1),
+    bp.abolish(smt_current_best_bound,1),
+    smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,[ObjVar|Vars]).
+    
+smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,Vars), ObjMin =< ObjMax ?=>
+    MidVal is (ObjMin + ObjMax) div 2,
+    bp.'$>='(MidVal,ObjVar),
+    once smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars),
+    call(Report),
+    bp.assert($smt_current_best_bound(ObjVar)),
+    bp.global_set(smt_current_best_answer,1,Vars),
+    fail.
+smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,_ObjMax,Vars),
+    bp.retract($smt_current_best_bound(MidVal))
+=>    
+    NewObjMax is MidVal-1,
+    smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,NewObjMax,Vars). % keep going down
+smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,Vars), ObjMin < ObjMax =>
+    MidVal is (ObjMin + ObjMax) div 2,
+    NewObjMin is MidVal+1,                            % no answer was found in Min..MidVal, so search the (MidVal+1)..Max
+    smt_solve_minimize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,NewObjMin,ObjMax,Vars).
+smt_solve_minimize(_Solver,_TmpFileStr,_SolFileStr,_Report,_Logic,_ObjVar,_ObjMin,_ObjMax,Vars) =>
+    bp.global_get(smt_current_best_answer,1,Vars),
+    bp.global_del(smt_current_best_answer,1).
+
+%%%
+% binary search:
+%%%
+smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,Vars) =>
+    bp.domain_min_max(ObjVar,ObjMin,ObjMax),
+    bp.global_del(smt_current_best_answer,1),
+    bp.abolish(smt_current_best_bound,1),
+    smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,[ObjVar|Vars]).
+    
+smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,Vars), ObjMin =< ObjMax ?=>
+    MidVal is (ObjMin + ObjMax) div 2,
+    bp.'$>='(ObjVar,MidVal),
+    once smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars),
+    call(Report),
+    bp.assert($smt_current_best_bound(ObjVar)),
+    bp.global_set(smt_current_best_answer,1,Vars),
+    fail.
+smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,_ObjMin,ObjMax,Vars),
+    bp.retract($smt_current_best_bound(MidVal))
+=>    
+    NewObjMin is MidVal+1,
+    smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,NewObjMin,ObjMax,Vars). % keep going up
+smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,ObjMax,Vars), ObjMin < ObjMax =>
+    MidVal is (ObjMin + ObjMax) div 2,
+    NewObjMax is MidVal-1,                            % no answer was found in MidVal..ObjMax, so search (ObjMin..MidVal-1)
+    smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,ObjMin,NewObjMax,Vars).
+smt_solve_maximize(_Solver,_TmpFileStr,_SolFileStr,_Report,_Logic,_ObjVar,_ObjMin,_ObjMax,Vars) =>
+    bp.global_get(smt_current_best_answer,1,Vars),
+    bp.global_del(smt_current_best_answer,1).
+
+%%%
+smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars) =>
+    bp.retrieve_smt_constr_store(Constrs),
+    AllVars = vars([Vars|Constrs]),
+    smt_number_vars(AllVars,1),
+    TmpStream = open(TmpFileStr,write),
+    not not smt_dump(TmpStream,Logic,AllVars,Constrs),
+    close(TmpStream),
+    (bp.b_ACCESS_ccf(SolFileStr,0,0) -> bp.delete_file(SolFileStr); true),
+    Command = to_string(Solver) ++ " " ++ TmpFileStr ++ " > " ++ SolFileStr,
+    _ = command(Command),
+    bp.b_ACCESS_ccf(SolFileStr,0,0),
+    smt_retrieve_res(SolFileStr,AllVars).
+%    (bp.test_constrs(Constrs) -> true; println('FAILED')).
+
+%%
+smt_check_file(File,DefaultFileStr,FileStr), var(File) => FileStr = DefaultFileStr.
+smt_check_file(File,_DefaultFileStr,FileStr), atom(File) => FileStr = to_string(File).
+smt_check_file(File,_DefaultFileStr,FileStr), string(File) => FileStr = File.
+smt_check_file(File,_DefaultFileStr,_FileStr) => handle_exception($file_name_expected(File),solve).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+smt_dump(OStream,Logic,Vars,Constrs) =>
+    (atom(Logic) -> Logic1 = to_string(Logic); Logic1 = Logic),
+    printf(OStream,"(set-logic %s)\n",Logic1),
+    println(OStream,"(set-option :produce-models true)"),
+    smt_dump_vars(OStream,Vars),
+    smt_dump_constrs(OStream,Constrs),
+    println(OStream,"(check-sat)"),
+    foreach (Var in Vars)
+        No = get_attr(Var,var_num),
+        printf(OStream,"(get-value (X%ld))\n",No)
+    end.
+
+smt_dump_vars(_OStream,[]) => true.
+smt_dump_vars(OStream,[V|Vs]), dvar(V) =>
+    smt_dump_var(OStream,V),
+    smt_dump_vars(OStream,Vs).
+smt_dump_vars(OStream,[V|Vs]), var(V) =>
+    smt_new_dvar(OStream,V),
+    smt_dump_var(OStream,V),    
+    smt_dump_vars(OStream,Vs).
+smt_dump_vars(OStream,[_V|Vs]) =>
+    smt_dump_vars(OStream,Vs).    
+
+smt_dump_var(OStream,V) =>
+    bp.domain_min_max(V,LB,UB),
+    No = get_attr(V,var_num),
+    printf(OStream,"(declare-const X%ld Int)\n",No),
+    smt_dump_bin_constr(OStream,ge,V,LB),
+    smt_dump_bin_constr(OStream,ge,UB,V),    
+    (bp.dvar_bv(V) ->
+        foreach (E in (LB+1)..(UB-1))
+            (bp.b_DM_TRUE_cc(V,E) ->
+                true
+            ;
+                smt_dump_neq_constr(OStream,V,E)
+            )
+        end
+    ;
+        true
+    ).
+    
+smt_dump_constrs(_OStream,[]) => true.
+smt_dump_constrs(OStream,['$=>'(X,B),reif_imp_constr(reif,B,Rel,Const,Terms)|Constrs]),
+    Rel !== neq,
+    dvar_or_int(X),
+    var(B)
+=>
+    smt_dump_constr(OStream,$reif_imp_constr(imp,X,Rel,Const,Terms)),
+    smt_dump_constrs(OStream,Constrs).
+smt_dump_constrs(OStream,[Constr|Constrs]) =>
+    smt_dump_constr(OStream,Constr),
+    smt_dump_constrs(OStream,Constrs).
+
+smt_dump_constr(OStream,reif_in_constr(B,X,L)) =>
+    smt_dump_reif_in_constr(OStream,B,X,L).
+smt_dump_constr(OStream,reif_notin_constr(B,X,L)) =>
+    smt_dump_reif_notin_constr(OStream,B,X,L).
+smt_dump_constr(OStream,arith_constr(Rel,Const,Terms)) =>
+     smt_dump_arith_constr(OStream,Rel,Const,Terms).
+smt_dump_constr(OStream,'$alldifferent'(L)) =>
+    (L == []->
+         true
+    ;
+        smt_dump_alldifferent_constr(OStream,L)
+    ).
+smt_dump_constr(OStream,'$max_constr'(X,Y,T)) =>
+    smt_dump_maxlist_constr(OStream,[X,Y],T).
+smt_dump_constr(OStream,'$min_constr'(X,Y,T)) =>
+    smt_dump_minlist_constr(OStream,[X,Y],T).
+smt_dump_constr(OStream,'$max_constr'(L,T)) =>
+    smt_dump_maxlist_constr(OStream,L,T).
+smt_dump_constr(OStream,'$min_constr'(L,T)) =>
+    smt_dump_minlist_constr(OStream,L,T).
+smt_dump_constr(OStream,'$abs_constr'(X,T)) =>
+    print(OStream,"(assert (= (abs "),
+    smt_dump_operand(OStream,X),
+    print(OStream,") "),
+    smt_dump_operand(OStream,T),    
+    println(OStream,"))").
+smt_dump_constr(OStream,'$mod_constr'(X,Y,_Q,R)) =>
+    print(OStream,"(assert (= (mod "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),
+    smt_dump_operand(OStream,Y),    
+    print(OStream,") "),
+    smt_dump_operand(OStream,R),    
+    println(OStream,"))").
+smt_dump_constr(OStream,'$div_constr'(X,Y,Q,_R)) =>  % Y is known to be positive
+    print(OStream,"(assert (= (div "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),
+    smt_dump_operand(OStream,Y),    
+    print(OStream,") "),
+    smt_dump_operand(OStream,Q),    
+    println(OStream,"))").
+smt_dump_constr(OStream,reif_imp_constr(reif,B,Rel,Const,Terms)), integer(B) =>
+    (B == 1 ->
+        smt_dump_arith_constr(OStream,Rel,Const,Terms)
+    ;
+        bp.sat_negate_arith_constr(Rel,Const,Terms,NRel,NConst,NTerms),
+        smt_dump_arith_constr(OStream,NRel,NConst,NTerms)
+    ).
+smt_dump_constr(OStream,reif_imp_constr(imp,B,Rel,Const,Terms)), integer(B) =>
+    (B == 1 ->
+        smt_dump_arith_constr(OStream,Rel,Const,Terms)
+    ;
+        true
+    ).
+smt_dump_constr(OStream,reif_imp_constr(ReifImp,B,Rel,Const,Terms)) =>
+    smt_dump_reif_imp_constr(OStream,ReifImp,B,Rel,Const,Terms).
+smt_dump_constr(OStream,'$<=>'(X,Y)) => 
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_bin_constr(OStream,eq,NX,NY).
+smt_dump_constr(OStream,'$=>'(X,Y)) =>     
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_bin_constr(OStream,ge,NY,NX).
+smt_dump_constr(OStream,'$\\/'(X,Y)) =>     
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    Const = -1, Terms = [(1,NX),(1,NY)],
+    smt_dump_arith_constr(OStream,ge,Const,Terms).
+smt_dump_constr(OStream,'$/\\'(X,Y)) =>     
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    (var(NX)->
+          smt_dump_bin_constr(OStream,eq,NX,1)
+     ;
+         NX == 1
+    ),
+    (var(NY)->
+          smt_dump_bin_constr(OStream,eq,NY,1)
+     ;
+         NY == 1
+    ).
+smt_dump_constr(OStream,'$\\'(X,Y)) =>     
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_neq_constr(OStream,NY,NX).    
+smt_dump_constr(OStream,'$\\'(X)) =>
+    smt_dump_bool_exp(OStream,X,NX),
+    (var(NX)->
+         smt_dump_bin_constr(OStream,eq,NX,0)
+     ;
+         NX == 0
+    ).
+smt_dump_constr(OStream,'$if_constr'(B,X,Y,T)) =>
+    print(OStream,"(assert (= "),
+    smt_dump_operand(OStream,T),
+    print(OStream," (ite (= "),
+    smt_dump_operand(OStream,B),
+    print(OStream," 1) "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),    
+    smt_dump_operand(OStream,Y),
+    println(OStream,"))) ").
+smt_dump_constr(OStream,'$mul_constr'(X,Y,Z)) =>
+    print(OStream,"(assert (= "),
+    smt_dump_operand(OStream,Z),
+    print(OStream," (* "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),
+    smt_dump_operand(OStream,Y),
+    println(OStream,")))").
+smt_dump_constr(OStream,'$table_in'(VarsTuple,Tuples)) =>
+    smt_dump_table_in_constr(OStream,VarsTuple,Tuples).
+smt_dump_constr(OStream,'$table_notin'(VarsTuple,Tuples)) =>
+    smt_dump_table_notin_constr(OStream,VarsTuple,Tuples).
+smt_dump_constr(_OStream,Constr) =>
+    handle_exception(unknown_constraint,Constr).
+
+smt_dump_arith_constr(OStream,Rel,Const,Terms),
+    Terms = [_|_]
+=>
+    print(OStream,"(assert ("),
+    (Rel == neq -> print(OStream,"not ("), Rel1 = eq; Rel1 = Rel),
+    smt_dump_rel(OStream,Rel1),
+    print(OStream," "),            
+    smt_dump_terms(OStream,Terms),
+    print(OStream," "),                
+    MConst is -Const,
+    smt_dump_operand(OStream,MConst),
+    (Rel == neq -> print(OStream,")"); true),    
+    println(OStream,"))").
+smt_dump_arith_constr(OStream,Rel,Const,[]) =>
+    smt_dump_arith_constr(OStream,Rel,Const,[(0,0)]).
+
+smt_dump_bool_exp(_OStream,X,NX), integer(X) =>
+    (X >= 0, X =< 1 ->
+        NX = X
+    ;
+        handle_exception($invalid_bool_constant(X),smt)
+    ).
+smt_dump_bool_exp(_OStream,X,NX),var(X) =>
+    NX = X.
+smt_dump_bool_exp(OStream,'$<=>'(X,Y),B) =>
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_reif_imp_constr(OStream,reif,B,eq,0,[(1,NX),(-1,NY)]).
+smt_dump_bool_exp(OStream,'$=>'(X,Y),B) => 
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_reif_imp_constr(OStream,reif,B,ge,0,[(1,NY),(-1,NX)]).
+smt_dump_bool_exp(OStream,'$/\\'(X,Y),B) => 
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_minlist_constr(OStream,[NX,NY],B).
+smt_dump_bool_exp(OStream,'$\\/'(X,Y),B) => 
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_maxlist_constr(OStream,[NX,NY],B).
+smt_dump_bool_exp(OStream,'$\\'(X,Y),B) => 
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX),
+    smt_dump_bool_exp(OStream,Y,NY),
+    smt_dump_reif_imp_constr(OStream,reif,B,neq,0,[(1,NX),(-1,NY)]).
+smt_dump_bool_exp(OStream,'$\\'(X),B) => 
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_bool_exp(OStream,X,NX,),
+    smt_dump_reif_imp_constr(OStream,reif,B,eq,0,[(1,NX)]).
+
+% B <=> (X :: L)
+smt_dump_reif_in_constr(OStream,B,X,L) =>
+    smt_dump_reif_in_constr_aux(OStream,X,L,Bs),
+    smt_dump_maxlist_constr(OStream,Bs,B).
+
+smt_dump_reif_in_constr_aux(_OStream,_X,[],Bs) =>
+    Bs = [].
+smt_dump_reif_in_constr_aux(OStream,X,[E|L],Bs) =>
+    smt_new_dvar(OStream,Be,0,1),
+    ME is -E,
+    Bs = [Be|BsR],
+    smt_dump_reif_imp_constr(OStream,reif,Be,eq,ME,[(1,X)]),
+    smt_dump_reif_in_constr_aux(OStream,X,L,BsR).
+
+% B <=> (X notin L)
+smt_dump_reif_notin_constr(OStream,B,X,L) =>
+    smt_dump_reif_notin_constr_aux(OStream,X,L,Bs),
+    smt_dump_minlist_constr(OStream,Bs,B).
+
+smt_dump_reif_notin_constr_aux(_OStream,_X,[],Bs) =>
+    Bs = [].
+smt_dump_reif_notin_constr_aux(OStream,X,[E|L],Bs) =>
+    smt_new_dvar(OStream,Be,0,1),
+    ME is -E,
+    Bs = [Be|BsR],
+    smt_dump_reif_imp_constr(OStream,reif,Be,neq,ME,[(1,X)]),
+    smt_dump_reif_notin_constr_aux(OStream,X,L,BsR).
+
+% min(Vs) = T
+smt_dump_minlist_constr(OStream,[V],T) =>
+    smt_dump_bin_constr(OStream,eq,V,T).
+smt_dump_minlist_constr(OStream,Vs,T) =>
+    smt_dump_foreach_constr(OStream,ge,Vs,T),
+    smt_dump_member_constr(OStream,Vs,T).
+
+% max(Vs) = T
+smt_dump_maxlist_constr(OStream,[V],T) =>
+    smt_dump_bin_constr(OStream,eq,V,T).
+smt_dump_maxlist_constr(OStream,Vs,T) =>
+    smt_dump_foreach_constr(OStream,le,Vs,T),
+    smt_dump_member_constr(OStream,Vs,T).
+
+% foreach V in Vs: (Rel V T)
+smt_dump_foreach_constr(_OStream,_Rel,[],_T) => true.
+smt_dump_foreach_constr(OStream,Rel,[V|Vs],T) =>
+    smt_dump_bin_constr(OStream,Rel,V,T),
+    smt_dump_foreach_constr(OStream,Rel,Vs,T).
+
+% let Vs = [V1,V2,...,Vn]. T = V1 or T = V2 or ... or T = Vn
+smt_dump_member_constr(OStream,Vs,T) =>
+    print(OStream,"(assert (or "),
+    foreach (V in Vs)
+        print(OStream,"(= "),
+        smt_dump_operand(OStream,T),
+        print(OStream," "),        
+        smt_dump_operand(OStream,V),
+        print(OStream,") ")
+    end,
+    print(OStream,"))").
+
+%%%
+smt_dump_reif_imp_constr(OStream,RefImp,B,gt,Const,Terms) =>   % Terms+Const>0
+    Const1 is Const-1,
+    smt_dump_reif_imp_constr(OStream,RefImp,B,ge,Const1,Terms).
+smt_dump_reif_imp_constr(OStream,ReifImp,B,Rel,Const,Terms) =>      % B => Const+Terms Rel 0
+    print(OStream,"(assert ("),
+    smt_dump_rel(OStream,ReifImp),    
+    print(OStream,"(= "),
+    smt_dump_operand(OStream,B),    
+    print(OStream," 1) "),
+    print(OStream," ("),
+    (Rel == neq -> print(OStream,"not ("), Rel1 = eq; Rel1 = Rel),
+    smt_dump_rel(OStream,Rel1),
+    print(OStream," "),            
+    smt_dump_terms(OStream,Terms),
+    print(OStream," "),                
+    MConst is -Const,
+    smt_dump_operand(OStream,MConst),
+    (Rel == neq -> print(OStream,")"); true),    
+    println(OStream,")))").
+
+% X != Y
+smt_dump_neq_constr(OStream,X,Y) =>
+    print(OStream,"(assert (not (= "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),
+    smt_dump_operand(OStream,Y),    
+    println(OStream,")))").
+
+% X Rel Y
+smt_dump_bin_constr(OStream,Rel,X,Y) =>
+    print(OStream,"(assert ("),
+    smt_dump_rel(OStream,Rel),
+    print(OStream," "),
+    smt_dump_operand(OStream,X),
+    print(OStream," "),
+    smt_dump_operand(OStream,Y),    
+    println(OStream,"))").
+
+smt_dump_terms(OStream,[]) =>
+    smt_dump_terms(OStream,[(0,0)]).
+smt_dump_terms(OStream,[(Coe,X)]) =>
+    (Coe == 1 ->
+        smt_dump_operand(OStream,X)
+    ; Coe == -1 ->
+        print(OStream," (- "),
+        smt_dump_operand(OStream,X),
+        print(OStream,")")
+    ;
+        print(OStream," (* "),
+        smt_dump_operand(OStream,Coe),
+        print(OStream," "),
+        smt_dump_operand(OStream,X),    
+        print(OStream,")")
+    ).
+smt_dump_terms(OStream,Terms) =>
+    print(OStream,"(+"),
+    smt_dump_terms_aux(OStream,Terms).
+
+smt_dump_terms_aux(OStream,[]) => 
+    print(OStream,")").
+smt_dump_terms_aux(OStream,[(1,X)|Terms]) =>
+    print(OStream," "),
+    smt_dump_operand(OStream,X),
+    smt_dump_terms_aux(OStream,Terms).
+smt_dump_terms_aux(OStream,[(-1,X)|Terms]) =>
+    print(OStream," (- "),
+    smt_dump_operand(OStream,X),
+    print(OStream,")"),    
+    smt_dump_terms_aux(OStream,Terms).
+smt_dump_terms_aux(OStream,[(Coe,X)|Terms]) =>
+    print(OStream," (* "),
+    smt_dump_operand(OStream,Coe),
+    print(OStream," "),
+    smt_dump_operand(OStream,X),    
+    print(OStream,")"),    
+    smt_dump_terms_aux(OStream,Terms).
+    
+smt_dump_operand(OStream,V), integer(V) =>
+    (V >= 0 ->
+        print(OStream,V)
+    ;
+        print(OStream,"(- "),
+        print(OStream,-V),
+        print(OStream,")")
+    ).
+smt_dump_operand(OStream,V) =>
+    N = get_attr(V,var_num),
+    printf(OStream,"X%ld",N).
+
+%% VarsTuple in Tuples
+% Let VarsTuple = {V1,V2,...,Vn}, Tuples = [{A11,A12,...,A1n},...,{Am1,Am2,...,Amn}].
+% Introduce a variable Bij, Bij <=> Vj = Aij, for i = 1..m, j = 1..n
+% Introduce a variable Bi, Bi => Bi1+Bi2+...+Bin = n, for i = 1..m
+% The table constraint is encoded as B1+B2+...+Bm = 1
+%
+smt_dump_table_in_constr(OStream,VarsTuple,Tuples) =>
+    N = len(VarsTuple),
+    smt_dump_table_in_constr_aux(OStream,VarsTuple,Tuples,N,[]).
+
+smt_dump_table_in_constr_aux(OStream,_VarsTuple,[],_N,BTerms) =>
+    smt_dump_arith_constr(OStream,eq,-1,BTerms).   %% B1+B2+...+Bn = 1, exactly  one tuple is the same as VarsTuple
+smt_dump_table_in_constr_aux(OStream,VarsTuple,[Tuple|Tuples],N,BTerms) =>
+    smt_new_dvar(OStream,B,0,1),
+    smt_dump_entails_eq_tuple_constr(OStream,VarsTuple,Tuple,1,N,[],B),
+    smt_dump_table_in_constr_aux(OStream,VarsTuple,Tuples,N,[(1,B)|BTerms]).
+
+% B => Bi1+Bi2+..+Bin = n
+smt_dump_entails_eq_tuple_constr(OStream,_VarsTuple,_Tuple,I,N,BijTerms,B), I > N =>
+    MN is -N,
+    smt_dump_arith_constr(OStream,ge,0,[(MN,B)|BijTerms]).   %% (B => Bi1+Bi2+...+Bin = n) is encoded as Bi1+Bi2+...+Bin >= n*B. 
+smt_dump_entails_eq_tuple_constr(OStream,VarsTuple,Tuple,I,N,BijTerms,B) =>
+    V = VarsTuple[I],
+    A = Tuple[I],
+    (A == '*' ->
+        BijTerms1 = [(1,1)|BijTerms]
+    ;
+        smt_reif_v_eq_c_lookup(Bij,V,A,Flag),
+        (Flag == 1 ->       % Flag = 1 means that B <=> (V = A) has been posted already
+            true
+        ;
+            smt_new_dvar(OStream,Bij,0,1),
+            Const is -A,
+            smt_dump_reif_imp_constr(OStream,reif,Bij,eq,Const,[(1,V)])    
+        ),
+        BijTerms1 = [(1,Bij)|BijTerms]
+    ),
+    I1 is I+1,
+    smt_dump_entails_eq_tuple_constr(OStream,VarsTuple,Tuple,I1,N,BijTerms1,B).
+
+
+%% VarsTuple notin Tuples
+% Let VarsTuple = {V1,V2,...,Vn}, Tuples = [{A11,A12,...,A1n},...,{Am1,Am2,...,Amn}].
+% Introduce a variable Bij, Bij <=> Vj = Aij, for i = 1..m, j = 1..n
+% The notin table constraint is encoded as Bi1+Bi2+...+Bin < n for i in 1..m
+%
+smt_dump_table_notin_constr(OStream,VarsTuple,Tuples) =>
+    N = len(VarsTuple),
+    smt_dump_table_notin_constr_aux(OStream,VarsTuple,Tuples,N).
+
+smt_dump_table_notin_constr_aux(_OStream,_VarsTuple,[],_N) => true.
+smt_dump_table_notin_constr_aux(OStream,VarsTuple,[Tuple|Tuples],N) =>
+    smt_dump_notin_tuple_constr(OStream,VarsTuple,Tuple,1,N,[]),
+    smt_dump_table_notin_constr_aux(OStream,VarsTuple,Tuples,N).
+    
+smt_dump_notin_tuple_constr(OStream,_VarsTuple,_Tuple,I,N,BijTerms), I > N =>
+    N1 is N-1,
+    smt_dump_arith_constr(OStream,ge,N1,BijTerms).   %% B1+B2+...+Bn < n, at least one value in the tuple is different
+smt_dump_notin_tuple_constr(OStream,VarsTuple,Tuple,I,N,BijTerms) =>
+    V = VarsTuple[I],
+    A = Tuple[I],
+    (A == '*' ->
+        BijTerms1 = [(-1,1)|BijTerms]
+    ;
+        smt_reif_v_eq_c_lookup(Bij,V,A,Flag),
+        (Flag == 1 ->       % Flag = 1 means that B <=> (V = A) has been posted already
+            true
+        ;
+            smt_new_dvar(OStream,Bij,0,1),
+            Const is -A,
+            smt_dump_reif_imp_constr(OStream,reif,Bij,eq,Const,[(1,V)])
+        ),
+        BijTerms1 = [(-1,Bij)|BijTerms]
+    ),
+    I1 is I+1,
+    smt_dump_notin_tuple_constr(OStream,VarsTuple,Tuple,I1,N,BijTerms1).
+
+smt_dump_rel(OStream,imp) =>
+    print(OStream,"=>").  
+smt_dump_rel(OStream,reif) =>
+    print(OStream,"=").  
+smt_dump_rel(OStream,ge) =>
+    print(OStream,">=").  
+smt_dump_rel(OStream,gt) =>
+    print(OStream,">").  
+smt_dump_rel(OStream,lt) =>
+    print(OStream,"<").  
+smt_dump_rel(OStream,le) =>
+    print(OStream,"<=").  
+smt_dump_rel(OStream,eq) =>
+    print(OStream,"=").  
+
+smt_new_dvar(OStream,V) =>
+    smt_new_dvar(OStream,V,minint_small(),maxint_small()).
+
+smt_new_dvar(OStream,V,LB,UB) =>
+    bp.domain(V,LB,UB),
+    M = get_heap_map(),
+    N0 = M.get(next_var_num),
+    put_attr(V,var_num,N0),
+    M.put(next_var_num,N0+1),
+    smt_dump_var(OStream,V).
+    
+%%
+smt_dump_alldifferent_constr(_OStream,[]) => true.
+smt_dump_alldifferent_constr(OStream,[X|Xs]) => 
+    smt_dump_outof_constr(OStream,X,Xs),
+    smt_dump_alldifferent_constr(OStream,Xs).
+
+smt_dump_outof_constr(_OStream,_X,[]) => true.
+smt_dump_outof_constr(OStream,X,[Y|Ys]) =>
+    smt_dump_arith_constr(OStream,neq,0,[(1,X),(-1,Y)]),
+    smt_dump_outof_constr(OStream,X,Ys).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+smt_retrieve_res(SolFile,Vars) =>
+    IStream = open(SolFile),
+    StateLine = read_line(IStream),
+    (StateLine = [s,a,t|_] -> true; close(IStream),fail),
+    Line = read_line(IStream),    
+    HTab = new_map(),
+    catch(smt_read_result(IStream,Line,HTab),Exception,(writeln(Exception),close(IStream),handle_exception($format_error(solution),smt))),
+    close(IStream),
+    smt_bind_vars(Vars,HTab).
+
+% smt_read_result(_,Line,_) ?=> writeln($smt_read_result(_,Line,_)),fail.
+smt_read_result(_,end_of_file,_) => true.
+smt_read_result(IStream,['(','(','X'|L],HTab) => 
+    once(append(NumToken,[' '|L1],L)),
+    once(append(ValToken,[')'|_],L1)),
+    VNum = to_integer(NumToken),
+    s_exp_to_number(ValToken,Val),
+    HTab.put(VNum,Val),
+    Line = read_line(IStream),
+    smt_read_result(IStream,Line,HTab).
+smt_read_result(IStream,_,HTab) =>
+    Line = read_line(IStream),
+    smt_read_result(IStream,Line,HTab).
+
+% s_exp_to_number(L,Val) ?=> writeln((L,Val)),fail.
+s_exp_to_number(['(','-'|L],Val) =>
+    Val = -to_number(L).
+s_exp_to_number(L,Val) =>
+    Val = to_number(L).
+
+smt_bind_vars([],_HTab) => true.
+smt_bind_vars([Var|Vars],HTab),var(Var) =>
+    Num = get_attr(Var,var_num),
+    Var = HTab.get(Num),
+    smt_bind_vars(Vars,HTab).
+smt_bind_vars([Var|Vars],HTab),number(Var) =>
+    smt_bind_vars(Vars,HTab).    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% utilities
+smt_number_vars([],No) =>
+    M = get_heap_map(),
+    M.put(next_var_num,No).
+smt_number_vars([V|Vs],No) =>
+    put_attr(V,var_num,No),
+    smt_number_vars(Vs,No+1).
+
+%%%
+% B <=> (V = Val): do not add the constraint to the store
+smt_reif_v_eq_c_lookup(B,V,Val,Flag), var(V) =>
+    (bp.get_attr(V,'$reif_eq_tab',HTab) ->
+         true
+     ;
+         bp.new_hashtable(HTab),
+         bp.put_attr_no_hook(V,'$reif_eq_tab',HTab)
+    ),
+    (bp.hashtable_get(HTab,Val,B1) ->
+         B = B1,
+         Flag = 1
+     ;
+         bp.domain(B,0,1), 
+         bp.hashtable_put(HTab,Val,B)
+    ).
+smt_reif_v_eq_c_lookup(B,V,Val,Flag) =>
+    Flag = 1,
+    (V == Val -> B = 1; B = 0).
+

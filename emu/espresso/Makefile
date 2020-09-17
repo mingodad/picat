@@ -3,7 +3,7 @@ cvrm.o cvrmisc.o cvrout.o dominate.o equiv.o essen.o essentiality.o exact.o espr
 gasp.o gimpel.o globals.o hack.o indep.o irred.o map.o matrix.o mincov.o opo.o \
 pair.o part.o primes.o prtime.o reduce.o rows.o set.o setc.o sharp.o sigma.o signature.o \
 signature_exact.o sminterf.o solution.o sparse.o unate.o util_signature.o verify.o espresso.o
-	gcc -c *.o 
+	gcc -c -O3 *.o 
 black_white.o: black_white.c espresso.h port.h utility.h sparse.h mincov.h signature.h
 	gcc -c -O3 black_white.c
 canonical.o: canonical.c espresso.h port.h utility.h sparse.h mincov.h signature.h

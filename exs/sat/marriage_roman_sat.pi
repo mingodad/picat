@@ -13,7 +13,7 @@
 
 import sat.
 
-main =>  % read facts from stdin
+main =>  
     test2.
 
 asp(Facts) ?=>
@@ -72,8 +72,8 @@ asp(Facts) ?=>
         foreach(W in 1..N)
 	    Mselpref[M] = SelWP,
             Wselpref[W] = SelMP,
-            Table =[(A,B) : A in fd_min(SelWP)..fd_max(SelWP), B in fd_min(SelMP)..fd_max(SelMP), (A<Mpref[M,W],B=<Wpref[W,M],fd_true(SelWP,A),fd_true(SelMP,B))],
-            table_notin((SelWP,SelMP),Table)
+            Table =[{A,B} : A in fd_min(SelWP)..fd_max(SelWP), B in fd_min(SelMP)..fd_max(SelMP), (A<Mpref[M,W],B=<Wpref[W,M],fd_true(SelWP,A),fd_true(SelMP,B))],
+            table_notin({SelWP,SelMP},Table)
 	end
     end,
 

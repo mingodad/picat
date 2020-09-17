@@ -1,0 +1,83 @@
+% Program to use an artificial neural network to recognize the handwritten digits 0-9.
+% Requires the MNIST trainig set, available at http://yann.lecun.com/exdb/mnist/.
+% Specifically, it needs the following 2 files: "train-images-idx3-ubyte.gz" and "train-labels-idx1-ubyte.gz".
+% After downloading the files from the web page, run (on Linux or Cygwin) "gunzip <name-of-file>.gz" to unzip each .gz file.
+% Then this program can create "digits.train", which will be in the proper FANN format, and which it can then use to train a NN.
+
+import nn.
+import os.
+
+main =>
+    Num_examples = 60000,
+    Num_outputs = 10,
+
+    if (not exists("digits.train")) then
+        format_training_file(Num_examples, Num_outputs),
+    end,
+
+    time(train(Num_outputs)).
+
+format_training_file(Num_examples, Num_outputs) =>
+    Input_images = open("train-images-idx3-ubyte"),
+    Input_tags = open("train-labels-idx1-ubyte"),
+    Output = open("digits.train", write),
+
+    % Discard irrelevant information at the beginning of the MNIST files.
+    foreach(I in 1..16) _ = read_byte(Input_images) end, 
+    foreach(I in 1..8) _ = read_byte(Input_tags) end,
+
+    println(Output, Num_examples),
+    println(Output, 784),
+    println(Output, Num_outputs),
+    println(Output, " "),
+
+    foreach(I in 1..Num_examples)
+        println($example(I)),
+        foreach(J in 1..784)
+            Byte := read_byte(Input_images),
+            print(Output, (Byte /255)), 
+            print(Output, " ")
+        end, 
+        println(Output, " "),
+        Byte := read_byte(Input_tags),
+        output_mnist_byte(Output,Byte),
+
+        nl(Output)
+    end,
+
+    close(Input_images),
+    close(Input_tags),
+    close(Output).
+
+output_mnist_byte(Output,0) =>
+    println(Output, '1 -1 -1 -1 -1 -1 -1 -1 -1 -1').
+output_mnist_byte(Output,1) =>
+    println(Output, '-1 1 -1 -1 -1 -1 -1 -1 -1 -1').
+output_mnist_byte(Output,2) =>    
+    println(Output, '-1 -1 1 -1 -1 -1 -1 -1 -1 -1').
+output_mnist_byte(Output,3) =>        
+    println(Output, '-1 -1 -1 1 -1 -1 -1 -1 -1 -1').
+output_mnist_byte(Output,4) =>        
+    println(Output, '-1 -1 -1 -1 1 -1 -1 -1 -1 -1').
+output_mnist_byte(Output,5) =>        
+    println(Output, '-1 -1 -1 -1 -1 1 -1 -1 -1 -1').
+output_mnist_byte(Output,6) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 1 -1 -1 -1').
+output_mnist_byte(Output,7) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 1 -1 -1').
+output_mnist_byte(Output,8) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 -1 1 -1').
+output_mnist_byte(Output,9) =>        
+    println(Output, '-1 -1 -1 -1 -1 -1 -1 -1 -1 1').
+        
+train(Num_outputs) =>
+    Ann = new_nn([784,300,Num_outputs]),
+    nn_set_activation_function_hidden(Ann,sigmoid),
+    nn_set_activation_function_output(Ann,sym_linear_piece),
+    Opts = $[train_func(train_rprop), maxep(1000), report(10), derror(0.01), error_func(error_tanh)],
+    
+    nn_train(Ann, "digits.train", Opts),
+    nn_save(Ann, "digits.net"),
+    nn_destroy_all().
+
+

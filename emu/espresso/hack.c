@@ -416,7 +416,7 @@ void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_siz
 	p3 = p1->symbolic_label;
 	for(i = 0; i < (1 << p1->symbolic_list_length); i++) {
 	    if (p3 == NIL(symbolic_label_t)) {
-		PLA->label[base+i] = ALLOC(char, 16);
+		PLA->label[base+i] = ALLOC(char, 10);
 		(void) sprintf(PLA->label[base+i], "X%d", i);
 	    } else {
 		PLA->label[base+i] = p3->label;

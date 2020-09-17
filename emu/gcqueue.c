@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : gcQueue.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2018
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
  *   Purpose: Queue class and other utilities used by the GC
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -22,34 +22,34 @@ BPLONG_PTR global_mask_ptr = NULL;
 BPLONG global_mask_size;
 
 /************* Queue of terms to be rescued *******************/
-BPLONG gcQueueSize=1024;
+BPLONG gcQueueSize = 1024;
 GcQueueCell *gcQueue;
 BPLONG gcQueueFront, gcQueueRear, gcQueueCount;
 
-void gcQueueConstruct(){
+void gcQueueConstruct() {
     gcQueue = (GcQueueCell *)malloc(gcQueueSize*sizeof(GcQueueCell));
-    if (gcQueue==NULL) myquit(OUT_OF_MEMORY,"gc");
+    if (gcQueue == NULL) myquit(OUT_OF_MEMORY, "gc");
 }
 
-void gcQueueExpand(){
+void gcQueueExpand() {
     BPLONG i_old = gcQueueFront;
     BPLONG i = 0;
     GcQueueCell *q;
     BPLONG newGcQueueSize;
 
-  
+
     /*  printf("expand  %d\n",gcQueueSize*2); */
     newGcQueueSize = 2*gcQueueSize;
     q = (GcQueueCell *)malloc(newGcQueueSize*sizeof(GcQueueCell));
-    if (q==NULL){
+    if (q == NULL) {
         newGcQueueSize = gcQueueSize+100000L;
         q = (GcQueueCell *)malloc(newGcQueueSize*sizeof(GcQueueCell));
-        if (q==NULL){
-            fprintf(stderr,"queue size=%d\n",(int)gcQueueSize);
-            myquit(OUT_OF_MEMORY,"gc");
+        if (q == NULL) {
+            fprintf(stderr, "queue size=%d\n", (int)gcQueueSize);
+            myquit(OUT_OF_MEMORY, "gc");
         }
     }
-    while (i<gcQueueCount){  /* copy the elements */
+    while (i < gcQueueCount) {  /* copy the elements */
         q[i].addr = gcQueue[i_old].addr;
         q[i].term = gcQueue[i_old].term;
         i++;
@@ -61,7 +61,7 @@ void gcQueueExpand(){
     gcQueueRear = gcQueueFront+gcQueueSize-1;
     gcQueueSize = newGcQueueSize;
 }
-  
+
 /*
   gcQueueAdd(addr,term)
   BPLONG_PTR addr;
@@ -79,14 +79,14 @@ void gcQueueExpand(){
   }
 */
 
-BPLONG_PTR gcQueueCopy(){
+BPLONG_PTR gcQueueCopy() {
     BPLONG_PTR ptr;
     int i;
 
-    if (gcQueueCount==0) return NULL;
+    if (gcQueueCount == 0) return NULL;
     ptr = (BPLONG_PTR)malloc(gcQueueCount*sizeof(BPLONG));
-    if (ptr==NULL) myquit(OUT_OF_MEMORY,"gc");
-    for (i=0;i<gcQueueCount;i++){
+    if (ptr == NULL) myquit(OUT_OF_MEMORY, "gc");
+    for (i = 0; i < gcQueueCount; i++) {
         FOLLOW(ptr+i) = (BPLONG)gcQueue[i].addr;
     }
     return ptr;
@@ -94,11 +94,11 @@ BPLONG_PTR gcQueueCopy(){
 
 /***********************************************/
 /* dynamic array primitives */
-void gcInitDynamicArray(){
-    if (gcDynamicArray==NULL){
+void gcInitDynamicArray() {
+    if (gcDynamicArray == NULL) {
         gcDynamicArraySize = InitDynamicArraySize;
         gcDynamicArray = (BPLONG_PTR)malloc(gcDynamicArraySize*sizeof(BPLONG));
-        if (gcDynamicArray == NULL) myquit(OUT_OF_MEMORY,"gc");
+        if (gcDynamicArray == NULL) myquit(OUT_OF_MEMORY, "gc");
     }
     gcDynamicArrayCount = 0;
 }
@@ -114,21 +114,21 @@ void gcInitDynamicArray(){
   gcDynamicArrayCount++;
   }
 */
-void gcExpandDynamicArray(){
+void gcExpandDynamicArray() {
     BPLONG_PTR oldGcDynamicArray = gcDynamicArray;
     int i;
 
     gcDynamicArray = (BPLONG_PTR)malloc(gcDynamicArraySize*2*sizeof(BPLONG));
-    if (gcDynamicArray == NULL) myquit(OUT_OF_MEMORY,"gc");
-    for (i=0;i<gcDynamicArraySize;i++){
+    if (gcDynamicArray == NULL) myquit(OUT_OF_MEMORY, "gc");
+    for (i = 0; i < gcDynamicArraySize; i++) {
         FOLLOW(gcDynamicArray+i) = FOLLOW(oldGcDynamicArray+i);
     }
-    gcDynamicArraySize=gcDynamicArraySize*2;
+    gcDynamicArraySize = gcDynamicArraySize*2;
     free(oldGcDynamicArray);
 }
 
-void gcDisposeDynamicArray(){
-    if (gcDynamicArray!=NULL){
+void gcDisposeDynamicArray() {
+    if (gcDynamicArray != NULL) {
         free(gcDynamicArray);
         gcDynamicArray = NULL;
     }
@@ -141,21 +141,21 @@ int allocateMaskArea(size)
     int i;
 
 start:
-    if (global_mask_ptr==NULL){
+    if (global_mask_ptr == NULL) {
         global_mask_ptr = (BPLONG_PTR)malloc(size*sizeof(BPLONG));
-        if (global_mask_ptr==NULL) return BP_ERROR;
+        if (global_mask_ptr == NULL) return BP_ERROR;
         global_mask_size = size;
-    } else if (size>global_mask_size){
+    } else if (size > global_mask_size) {
         free(global_mask_ptr);
         global_mask_ptr = NULL;
         goto start;
-    } 
+    }
 
-    for (i=0;i<size;i++){
-        FOLLOW(global_mask_ptr+i)=0;
+    for (i = 0; i < size; i++) {
+        FOLLOW(global_mask_ptr+i) = 0;
     }
     return BP_TRUE;
-}  
+}
 
 /*****************************************************
 set the corresponding mask bits of the cells at 
@@ -165,26 +165,26 @@ addr, addr+1,...,addr+size-1 to be 1
    -------------------
 *****************************************************/
 
-void gcSetMask(addr,size,base)
-    BPLONG_PTR addr,base;
+void gcSetMask(addr, size, base)
+    BPLONG_PTR addr, base;
 BPLONG size;
 {
     int i;
 
-    for (i = 0; i< size; i++){
-        GCSetMaskBit(addr+i,base);
+    for (i = 0; i < size; i++) {
+        GCSetMaskBit(addr+i, base);
     }
 }
 
 
-int gcIsMarked(addr,base)
-    BPLONG_PTR addr,base;
+int gcIsMarked(addr, base)
+    BPLONG_PTR addr, base;
 {
 
     BPULONG offset = ((BPULONG)addr-(BPULONG)base)/sizeof(BPLONG);
-    BPLONG_PTR word_ptr = global_mask_ptr+offset/NBITS_IN_LONG; 
+    BPLONG_PTR word_ptr = global_mask_ptr+offset/NBITS_IN_LONG;
     BPULONG word = FOLLOW(word_ptr);
     BPLONG bitPosition = offset % NBITS_IN_LONG;
-    BPULONG mask = (0x1L << bitPosition);
+    BPULONG mask = ((BPULONG)0x1 << bitPosition);
     if ((mask & word) == mask) return 1; else return 0;
 }

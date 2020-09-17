@@ -9,6 +9,7 @@ cl_facts_table(Facts,IndexInfo) => cl_facts_table(Facts,IndexInfo).
 command(String) = command(String).
 compile(File) => compile(File).
 compile_bp(File) => compile_bp(File).
+compile_files_to_c(Fs,CFile) => compile_files_to_c(Fs,CFile).
 debug => debug.
 exit => halt.
 garbage_collect => garbage_collect.

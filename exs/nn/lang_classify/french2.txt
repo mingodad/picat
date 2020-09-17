@@ -1,0 +1,314 @@
+﻿Élections municipales en France
+(Redirigé depuis Élection municipale française)
+Sauter à la navigationSauter à la recherche
+En France, les élections municipales permettent d'élire les membres du conseil municipal de chaque commune. Ceux-ci sont appelés conseillers municipaux. Ils élisent en leur sein le maire, qui préside le conseil municipal, ainsi que les adjoints au maire. Le mandat des conseillers municipaux, du maire et de ses adjoints est de six ans1.
+
+Les grands électeurs du Sénat sont déterminés à 95 % par les élections municipales.
+
+
+Sommaire
+1	Caractéristiques
+1.1	Les modes de scrutin
+1.1.1	Communes de moins de 1 000 habitants
+1.1.2	Communes de 1 000 habitants et plus
+1.1.3	Régimes particuliers de Paris, Marseille et Lyon
+1.1.4	Intercommunalités
+1.2	Élection du conseil municipal et des maires
+1.2.1	Nombre et élection des conseillers municipaux
+1.2.2	Élection du maire et des adjoints
+1.2.3	Électeurs
+1.2.3.1	La participation des ressortissants de l'Union européenne
+1.2.4	Candidats
+1.2.5	Dispositions financières
+1.2.6	Publication des résultats
+1.2.7	Contentieux
+1.2.8	Participation
+2	Histoire
+2.1	Les scrutins
+2.2	Les femmes lors des élections municipales françaises
+2.2.1	La stagnation (1947-1965)
+2.2.2	Une progression timide (1971-1995)
+2.2.3	La féminisation à marche forcée (2001-2014)
+3	Notes et références
+4	Voir aussi
+4.1	Liens externes
+4.2	Bibliographie
+Caractéristiques
+Article détaillé : Histoire des modes d'élection des maires.
+Les modes de scrutin
+Le mode de scrutin est très différent selon la taille de la commune. La réforme introduite par la loi no 2013-403 du 17 mai 2013 s'applique à partir du renouvellement général des conseils municipaux de 2014 ; le mode de scrutin est donc :
+
+un scrutin majoritaire plurinominal avec panachage pour les communes de moins de 1 000 habitants,
+un scrutin proportionnel de liste avec prime majoritaire, pour les communes plus importantes.
+Antérieurement à la réforme de 2013, le scrutin proportionnel de liste ne concernait que les communes de plus de 3 500 habitants2. La réforme a notamment pour objet d'imposer le respect des règles de parité entre homme et femmes dans les 6 659 communes dont la population était comprise, en 2013, entre 1 000 et 3 500 habitants : « alors que les femmes représentent 48,5 % des conseillers municipaux dans les communes de 3 500 habitants et plus à l’heure actuelle, elles ne sont que 32,5 % dans les communes de moins de 3 500 habitants. Avec le nouveau seuil, ce sont environ 10 000 femmes supplémentaires qui feront leur entrée dans les instances communales, au moins dans les assemblées délibérantes »3.
+
+Communes de moins de 1 000 habitants
+L'élection des conseillers municipaux se déroule au scrutin majoritaire plurinominal4 à deux tours, avec panachage :
+
+au premier tour, des candidats sont élus s'ils ont obtenu la majorité absolue des suffrages exprimés et le vote d'au moins le quart des électeurs inscrits ;
+au second tour, la majorité relative suffit. Si plusieurs candidats obtiennent le même nombre de suffrages, l'élection est acquise au plus âgé lorsque tous ne peuvent être élus compte tenu du nombre de sièges à pourvoir5.
+Depuis la réforme du 17 mai 2013, une déclaration de candidature en préfecture ou sous-préfecture est obligatoire6. Les candidatures isolées et les listes incomplètes sont autorisées7, et on ne peut plus être élu si l'on n'a pas préalablement fait acte de candidature8. Les suffrages sont comptabilisés individuellement, et le panachage est autorisé : les électeurs ont le droit de ne pas respecter les listes de candidats, en votant pour des candidats issus de listes différentes.
+
+Communes de 1 000 habitants et plus
+Dans les communes de 1 000 habitants et plus, l'élection des conseillers municipaux se déroule selon un scrutin de liste à deux tours avec représentation proportionnelle : les candidats se présentent en listes complètes. Lors du vote, on ne peut faire ni adjonction, ni suppression, ni modification de l'ordre de présentation des listes9.
+
+La loi no 82-974 du 19 novembre 198210 a remplacé l'ancien scrutin majoritaire plurinominal dans les communes de 3 500 habitants et plus par l'actuel mode de scrutin, « qui additionne une prime majoritaire et une répartition proportionnelle des sièges »3
+
+La loi no 2000-493 du 6 juin 2000 tendant à favoriser l'égal accès des femmes et des hommes aux mandats électoraux et fonctions électives, imposait des règles de parité homme/femme aux élections municipales des communes de plus de 3 500 habitants. Ces règles se sont appliquées pour la première fois aux élections de 2001 et ont été renforcées pour les élections de 200811.
+
+Depuis la loi du 17 mai 2013 relative à l'élection des conseillers départementaux, des conseillers municipaux et des conseillers communautaires, et modifiant le calendrier électoral, ces règles s'appliquent dès les 1000 habitants12.
+
+L'élection peut se limiter à un seul tour en cas de majorité absolue, ou donner lieu à un second tour, auquel cas :
+
+les listes qui ont obtenu au moins 10 % des suffrages exprimés peuvent s'y maintenir ;
+les candidats d'une liste qui a obtenu plus de 5 %, sans pouvoir se maintenir en tant que tels, peuvent rejoindre une autre liste13, ce qui peut amener à modifier l'ordre de présentation des candidats.
+Les élections municipales des communes de plus de 1 000 habitants constituent un scrutin majoritaire avec une dose proportionnelle : on attribue d'abord la moitié (arrondie si nécessaire à l'entier supérieur) des sièges à pourvoir à la liste qui a le plus de voix ; les autres sièges sont répartis entre toutes les listes présentes au dernier tour ayant eu plus de 5 % des suffrages exprimés (y compris la liste majoritaire) à la représentation proportionnelle à la plus forte moyenne14.
+
+Ainsi, ce système a permis en 2008 aux électeurs toulousains, qui ont voté au premier tour à 42,6 % pour la liste Moudenc, à 39,0 % pour la liste Cohen et à 18,4 % pour d'autres listes et au second tour à 50,42 % pour la liste Cohen et à 49,58 % pour la liste Moudenc d'être représentés par une majorité claire à 75,4 % par la liste Cohen et d'une opposition à 24,6 % par la liste Moudenc15. Ce même mode de scrutin permet aux Palois, à l'issue d'un second tour triangulaire, de donner 35 sièges (71 %) pour 14 316 électeurs (39 %) ; 9 sièges (18 %) seulement pour 13 974 électeurs (38 %), et 5 sièges (10 %) pour 7 713 électeurs (20 %)16.
+
+Régimes particuliers de Paris, Marseille et Lyon
+Articles détaillés : Loi relative à l'organisation administrative de Paris, Marseille, Lyon et Arrondissement municipal (France).
+Dans les trois villes de France les plus peuplées, l'élection se fait par secteur électoral, en suivant les mêmes règles que pour les communes de plus de 1 000 habitants. Ces secteurs correspondent, à Paris et à Lyon, aux arrondissements. À Marseille chacun des 8 secteurs regroupe deux arrondissements. Des conseillers d'arrondissement sont également élus.
+
+Intercommunalités
+Article détaillé : Élection des conseillers communautaires.
+À compter des élections municipales de 2014, les délégués d'une commune au sein du conseil des communautés de communes, des syndicats d'agglomération nouvelle, des communautés d'agglomération, des communautés urbaines et des métropoles sont élus lors des élections municipales.
+
+Chaque commune est représentée au conseil communautaire par un nombre de représentants tenant compte de sa population, élus comme suit :
+
+commune de moins de 1 000 habitants : les représentants de la commune au conseil communautaire sont les membres du conseil municipal désignés dans l'ordre du tableau (maire, puis adjoints, puis conseillers municipaux)17 ;
+commune de plus de 1 000 habitants : les conseillers communautaires sont élus en même temps que les conseillers municipaux. Sur un seul et même bulletin doivent figurer la liste des candidats au conseil municipal et celle des candidats au conseil communautaire (scrutin fléché)18. Les représentants des communes dans les EPCI sans fiscalité propre (syndicat intercommunal à vocation unique, syndicat intercommunal à vocations multiples, syndicat mixte) continuent d'être élus par chacun des conseils municipaux concernés, comme c'était le cas avant 2014 pour toutes les intercommunalités.
+Élection du conseil municipal et des maires
+Nombre et élection des conseillers municipaux
+Le nombre de sièges à pourvoir au conseil municipal est fonction du nombre d'habitants. Ce nombre est fixé par la loi19, de 7 sièges pour les communes de moins de 100 habitants à 69 sièges pour celles de plus de 300 000 habitants.
+
+Le nombre de conseillers municipaux varie selon la taille de la commune : le décret du 27 janvier 1977 déterminait ce nombre en fonction des tranches de population de la commune, de 9 membres pour les plus petites communes jusqu'à 49 pour les villes de plus de 300 000 habitants20.
+
+La loi de novembre 1982, qui s'inscrit dans un train de réformes s'étant conclu par la loi PLM sur les cas spécifiques des trois plus grandes villes de France, a modifié la composition des conseils municipaux, en conservant les mêmes tranches de population, de 9 membres jusqu'à 4921. La loi du 17 mai 2013 a depuis abaissé de 9 à 7 le nombre de conseillers municipaux des plus petites communes comprenant moins de 100 habitants22,23 :
+
+Nombres de conseillers municipaux par tranche démographique 
+(à compter des municipales de 2014)
+Nombre d'habitants	< 100	< 500	< 1 500	< 2 500	< 3 500	< 5 000	< 10 000	< 20 000	< 30 000	< 40 000
+Nombre de conseillers	7	11	15	19	23	27	29	33	35	39
+Nombre d'habitants	< 50 000	< 60 000	< 80 000	< 100 000	< 150 000	< 200 000	< 250 000	< 300 000	≥ 300 000	
+Nombre de conseillers	43	45	49	53	55	59	61	65	69	
+À Paris, Lyon et Marseille, le nombre de conseillers municipaux, qu'il ne faut pas confondre avec les conseillers d'arrondissement ou de secteur plus nombreux mais aux pouvoirs limités, est déterminé par la Loi PLM24 :
+
+Nombres de conseillers municipaux dans les trois grandes villes à arrondissements
+Ville	Lyon25	Marseille26	Paris27
+Nombre de conseillers municipaux	73 conseillers municipaux	101 conseillers municipaux	163 conseillers de Paris
+Les conseillers municipaux sont élus au suffrage universel direct pour un mandat de six ans, renouvelable. Le scrutin a lieu en suivant les procédures électorales françaises. Au second tour, en cas d'égalité de suffrages entre les listes arrivées en tête, les sièges sont attribués à la liste dont les candidats ont la moyenne d'âge la plus élevée (art. L162 du Code électoral)28.
+
+Élection du maire et des adjoints
+Article détaillé : Maire.
+Le maire est élu par les conseillers municipaux en leur sein29. Le maire possède un mandat propre : il peut démissionner librement, et être remplacé en cas de décès, ou de révocation de ses fonctions de maire par décision judiciaire, sans provoquer de nouvelles élections municipales.
+
+Lors du renouvellement général des conseils municipaux, la première réunion se tient de plein droit au plus tôt le vendredi et au plus tard le dimanche suivant le tour de scrutin à l'issue duquel le conseil a été élu au complet30. Le conseil municipal, présidé par le doyen d'âge31, procède alors à l'élection du maire et des adjoints.
+
+Le maire est élu à la majorité absolue des suffrages exprimés aux deux premiers tours, et à la majorité relative au troisième. Toutefois, si le nombre de voix des conseillers municipaux est le même pour deux candidats, c'est le plus âgé qui l'emporte32.
+
+Le conseil municipal fixe ensuite par délibération le nombre des adjoints, qui ne peut dépasser 30 % de l'effectif du conseil33, et procède à leur élection, selon les mêmes règles.
+
+Toutefois, depuis les élections municipales de 2008, les maires-adjoints des communes de plus de 3 500 habitants sont élus au scrutin de liste à la majorité absolue, sans panachage ni vote préférentiel, et dans le respect du principe de la parité34. Ce régime s'applique, à compter des élections municipales de 2014, aux communes de 1 000 habitants et plus, afin de favoriser l'égalité entre hommes et femmes35.
+
+Électeurs
+Article détaillé : Droit de vote en France.
+Le scrutin municipal est ouvert à tous les électeurs français ainsi qu'aux membres de l'Union européenne résidant dans la commune ou y payant des impôts36, c'est-à-dire à toute personne :
+
+ayant 18 ans révolus, soit au plus tard la veille du scrutin à minuit ;
+de nationalité française ou citoyenne d'un des pays membres de l'Union européenne ;
+qui jouit de ses droits civils et politiques ;
+inscrite sur les listes électorales.
+Un électeur vote forcément pour les candidats de la circonscription municipale, c'est-à-dire dans la commune (ou dans l'arrondissement, dans le cas de Paris, Lyon, et Marseille) dans laquelle il est inscrit.
+
+La participation des ressortissants de l'Union européenne
+Article détaillé : Droit de vote des étrangers en France.
+C'est lors des élections municipales de 2001 que, pour la première fois, les citoyens des pays de l'Union européenne ont pu à la fois élire les conseillers municipaux et être éligibles à ces postes. Cette disposition était contenue dans l'article 8B du Traité de Maastricht.
+
+Cependant, les droits de ces citoyens sont limités en application de l'article 88-3 de la Constitution du 4 octobre 1958, puisqu'ils ne peuvent prétendre au poste de maire, ni d'adjoint37.
+
+Pour pouvoir s'inscrire sur une liste complémentaire dans leur commune, les ressortissants européens doivent :
+
+être âgés de 18 ans ou plus au jour de la clôture de révision des listes ;
+jouir de leurs droits civiques à la fois en France et dans leur pays d'origine ;
+avoir leur domicile réel dans une commune française, ou prouver qu'ils y résident de manière continue et effective depuis au moins six mois, ou qu'ils y payent des impôts locaux.
+Candidats
+Article détaillé : Procédures électorales françaises.
+Peuvent se présenter aux élections municipales françaises les personnes :
+
+âgées de 18 ans ou plus au 1er janvier de l'année de l'élection ;
+de nationalité française ou ressortissant d'un État membre de l'Union européenne ;
+inscrites sur la liste électorale de la commune ou y payant des impôts locaux38.
+Cependant, dans toute commune de plus de 500 habitants, le nombre des conseillers ne résidant pas dans la commune au moment de l'élection ne peut dépasser le quart des membres du conseil et, pour les petites communes, 4 pour les communes de moins de 100 habitants, et 5 pour celles dont la population est comprise entre 100 et 500 habitants39 (voir Code électoral).
+
+À compter des élections municipales de 2014, la déclaration de candidature est obligatoire dans toutes les communes et il est interdit de se présenter dans plusieurs communes40.
+
+De nombreuses dispositions du code électoral établissent des inéligibilités et des incompatibilités, destinées à assurer à la fois la liberté de conscience des électeurs et l'indépendance des élus. C'est ainsi, par exemple, que ne peuvent être candidats certains fonctionnaires dans les communes concernées par l'exercice de leur fonction (préfets, juges, policiers, officiers de l'armée, agents de la commune...)41, et, à compter des élections de 2014, certains cadres de l'EPCI à fiscalité propre auquel adhère la commune42.
+
+Dispositions financières
+Le coût de l'organisation des élections est assumé par l'État et les communes, où sont situées les bureaux de vote.
+
+Les frais de propagande (coût du papier, l'impression et distribution des bulletins de vote, affiches et circulaires, ainsi que les frais d'affichage) sont, eux, payés par les candidats, et restent à leur charge dans les communes de moins de 1000 habitants43.
+
+Dans les communes de plus de 1000 habitants, ces frais de propagande sont remboursés par l'État aux candidats ayant obtenu au moins 5 % des suffrages exprimés à l'un des deux tours de scrutin et dont le matériel électoral respecte les dispositions réglementaires44.
+
+Ils sont remboursés par l'État aux listes ayant obtenu au moins 5 % des suffrages exprimés à l'un des deux tours, dans les communes de 2 500 habitants et plus45,23.
+
+Dans les communes de plus de 2500 habitants, l'envoi à domicile des électeurs des documents de propagande électorale et la distribution dans les bureaux de vote des bulletins de vote imprimés par les listes candidates sont assurés par les commissions de propagande instituées dans chaque commune concernée. Dans les communes de taille inférieure, les listes qui souhaitent adresser aux électeurs une circulaire et/ou un bulletin de vote assurent leur distribution par leurs propres moyens et doivent déposer les bulletins de vote qu'ils ont fait imprimer auprès du maire au plus tard à midi la veille du scrutin46 ou dans les bureaux de vote le jour de l'élection47.
+
+Dans les communes de 9000 habitants et plus, les listes sont également tenues d'établir un compte de campagne. Cela implique que ces listes doivent :
+
+déclarer un mandataire financier lors de leur déclaration de candidature ;
+établir un compte de campagne qui devra, si le candidat obtient au moins 1 % des suffrages exprimés, être déposé à la commission nationale des comptes de campagne et des financements politiques (CNCCFP) au plus tard avant 18 heures le dixième vendredi suivant le premier tour de scrutin (soit le vendredi 30 mai 2014 pour les élections municipales de 2014).
+Les listes ayant obtenu au moins 5 % des suffrages exprimés au premier tour de scrutin dans ces communes seront remboursées 47,5 % du montant des dépenses électorales arrêté par la CNCCFP, dans la limite du plafond de dépenses défini à l'article L. 52-11 du Code électoral [archive]48,49.
+
+Ces dispositions réduisent de fait la possibilité de se présenter pour les candidats « fantaisistes », peu implantés localement ou ne disposant pas des ressources d'un parti organisé.
+
+Publication des résultats
+Les résultats des élections municipales sont publiés sur le site du ministère de l'Intérieur50. Pour les villes de plus de 3 500 habitants, puis, à compter de 2014, les communes de plus de 1 000 habitants (scrutin de liste), toutes les listes sont citées car celles-ci sont déposées en préfecture préalablement au scrutin. Pour les communes de taille inférieure (scrutin plurinominal majoritaire), seuls les gagnants sont cités, sans précision sur leur liste d'origine ou sur le taux de panachage.
+
+Contentieux
+Tout électeur et tout éligible peut contester le résultat des élections municipales, de l'élection du maire et de ses adjoints, des représentants de la commune à un établissement public de coopération intercommunale (EPCI) devant le tribunal administratif51, soit par mention au procès-verbal, soit par réclamation écrite dans un délai de 5 jours suivant la date de l'élection52.
+
+Le préfet a le même pouvoir, mais doit former son recours dans les 15 jours52 de l'élection.
+
+Participation
+Les élections municipales font partie des scrutins français dont le taux de participation reste assez élevé. Celui-ci connaît néanmoins une baisse significative depuis plusieurs décennies : alors qu'on enregistre 25,2 % de non-votants au premier tour des élections municipales de 1959, l'abstention atteint 35,5 % au premier tour des élections municipales de 200853 avant de s'établir à 36,45 % six ans plus tard54.
+
+Histoire
+La loi du 5 avril 1884 est considérée comme l'acte fondateur de la démocratie municipale en France, instituant un régime juridique uniforme pour toutes les communes (à l'exception de la ville de Paris). Elle affirme l'élection des membres du conseil municipal (les conseillers municipaux) au suffrage universel direct et l'élection du maire par le conseil municipal. Le mandat est fixé à 4 ans, il est porté à 6 ans en 192955.
+
+Le mode de scrutin retenu est le scrutin majoritaire plurinominal à deux tours avec panachage. Il reste en vigueur pour toutes les communes jusqu'aux élections de 1947, où un scrutin proportionnel s'applique aux communes de plus de 9 000 habitants.
+
+L'ordonnance du 4 février 1959 rétablit le scrutin majoritaire pour les communes de moins de 120 000 habitants. Pour les autres, le scrutin est un scrutin proportionnel de liste à un tour56. Mais dès 1964, une loi supprime totalement la proportionnelle57 :
+
+dans les communes de moins de 30 000, le scrutin majoritaire avec panachage est maintenu ;
+dans les communes de plus de 30 000 est créé un scrutin majoritaire avec liste bloquée à deux tours : la liste gagnante (majorité absolue au premier tour, relative au second) remporte la totalité des sièges du conseil municipal ; à Paris, Marseille et Lyon, le scrutin a lieu par secteurs composés d'un, plusieurs ou une partie d'arrondissement.
+Une loi du 19 juillet 1976 modifie le découpage des secteurs de Paris, Marseille et Lyon et crée des secteurs pour Toulouse et Nice58.
+
+La loi du 19 novembre 1982 instaure le mode de scrutin actuel59 :
+
+dans les communes de moins de 3 500 habitants, le scrutin majoritaire avec panachage est maintenu ;
+dans les communes de plus de 3 500 habitants, un scrutin proportionnel de liste est instauré avec une prime majoritaire correspondant à la moitié des sièges à pourvoir pour la liste gagnante.
+Le scrutin a lieu dans le cadre de la commune, sauf à Paris, Marseille et Lyon pour lesquelles la loi PML prévoit qu'elle ait lieu par secteur. Cette loi crée également les conseils et maires d'arrondissement.
+
+En 2013, le seuil entre scrutin majoritaire et proportionnel est abaissé à 1 000 habitants.
+
+Les scrutins
+Article connexe : Élections municipales françaises de 1892.
+Article connexe : Élections municipales françaises de 1896.
+Article connexe : Élections municipales françaises de 1900.
+Article connexe : Élections municipales françaises de 1908.
+Article connexe : Élections municipales françaises de 1912.
+Article connexe : Élections municipales françaises de 1919.
+Article connexe : Élections municipales françaises de 1925.
+Article connexe : Élections municipales françaises de 1929.
+Article connexe : Élections municipales françaises de 1945.
+Article connexe : Élections municipales françaises de 1947.
+Article connexe : Élections municipales françaises de 1953.
+Article connexe : Élections municipales françaises de 1959.
+Article connexe : Élections municipales françaises de 1965.
+Article connexe : Élections municipales françaises de 1971.
+Article connexe : Élections municipales françaises de 1977.
+Article connexe : Élections municipales françaises de 1983.
+Article connexe : Élections municipales françaises de 1989.
+Article connexe : Élections municipales françaises de 1995.
+Article connexe : Élections municipales françaises de 2001.
+Article connexe : Élections municipales françaises de 2008.
+Article connexe : Élections municipales françaises de 2014.
+Article connexe : Élections municipales françaises de 2020.
+Les femmes lors des élections municipales françaises
+Article connexe : Place des femmes en politique en France.
+La place des femmes dans les élections municipales françaises demeure, à l'instar de celle qu'elles occupent dans la vie politique française en général, nettement minoritaire. Si d'indéniables progrès ont été réalisés depuis 1947 (date du premier scrutin municipal auquel les femmes sont électrices et éligibles60), la marche vers la parité se révèlent extrêmement lente. Ainsi, après une longue période de stagnation de 1947 à 1965, la féminisation des conseils municipaux ne commence à s'opérer que timidement à partir du début des années 1970. Il faut attendre les années 2000 pour que des mesures législatives ne viennent imposer la parité. Toutefois, si la part des femmes dans les conseils municipaux atteint 40,3 % en 2014, seuls 16 % des maires sont des femmes à cette date.
+
+La stagnation (1947-1965)
+
+Évolution du pourcentage de femmes maires en France entre 1947 et 2014.
+
+Évolution du pourcentage de conseillères municipales en France entre 1947 et 2014.
+Bien que le droit de vote ait été accordé aux femmes en 1944, la féminisation des conseils municipaux demeurent longtemps extrêmement faible61. Ainsi, de 1947 à 1965, la part des femmes dans les conseils municipaux ne dépasse jamais le record établi lors des élections municipales de 1947 (3,1 %). Cette part tend même à diminuer au cours des élections suivantes pour ne plus atteindre que 2,4 % en 1965. Durant la même période, la part de femmes endossant l'écharpe de maire est encore plus faible : de 0,7 % en 1947, elle atteint péniblement 1,1 % en 1965.
+
+Une progression timide (1971-1995)
+Les élections municipales de 1971 constituent une première rupture : bien que le taux de féminisation demeure encore très faible (1,8 % de femmes maires et 4,4 % de conseillères municipales), il connait pour la première fois un bond qui se poursuivra lors des scrutins suivants. Le nombre de femmes maires augmente ainsi de plus de 60 % tandis que la part des femmes dans les conseils municipaux bondit de l'ordre de 80 %. Les élections municipales qui suivent consacrent la marche vers la parité en même temps que la lenteur du processus : de 8,3 % en 1977, le taux de féminisation des conseils municipaux atteint 21,7 % en 1995. Sur la même période, la part des femmes maires ne passe que de 2,8 % à 7,5 %. Ainsi, un demi-siècle après que le droit de vote leur ai été accordé, les femmes demeurent encore très largement sous-représentées lors des scrutins municipaux.
+
+La féminisation à marche forcée (2001-2014)
+La législation concernant la parité dans les scrutins à listes prend forme à partir des années 2000. Une première loi dite « de parité » est adoptée le 6 juin 2000 et oblige les partis politiques à inscrire dans leurs listes de candidats le même nombre d'hommes et de femmes, sous peine de sanctions financières. Cette loi est complétée en 2007 avec l'obligation pour les partis d'alterner sur leurs listes des candidats des deux sexes sous peine de sanctions financières encore plus lourdes ; cette disposition ne concerne toutefois que les communes de plus de 3 500 habitants avant d'être étendue en 2014 à toutes les communes de plus 1 000 habitants. De surcroit, une loi adoptée en 2010 prévoit que la dotation publique des collectivités territoriales prend en compte le respect de la parité aux élections locales.
+
+Grâce à ces mesures, la féminisation des conseils municipaux connait une nette progression, passant de 21,7 % en 1995 à 40,3 % en 2014. La même année, la plus grande ville de France, Paris, élit une femme maire, Anne Hidalgo. Toutefois, à la même date, 84 % des maires de France étaient encore des hommes. Cette situation s'explique par le fait que :
+
+pour ne pas rendre la formation de listes excessivement contraignante, les règles de la parité ne s'appliquent pas dans les communes de moins de 1 000 habitants alors que celles-ci représentent 26 878 des 36 681 communes françaises en 2014. Dans ces communes, le taux de féminisation des conseils municipaux n'atteint que 35 %62 ;
+87 % des têtes de listes sont des hommes en 201462.
+Notes et références
+↑ Article art L. 227 [archive] du Code électoral.
+↑ LOI n° 2013-403 du 17 mai 2013 relative à l'élection des conseillers départementaux, des conseillers municipaux et des conseillers communautaires, et modifiant le calendrier électoral [archive].
+↑ a et b Michel Verpeaux, « Réformes des modes de scrutin locaux : révolutions et continuités », La Semaine juridique, édition administrations et collectivités territoriales, no 2186,‎ 24 juin 2013 (ISSN 1637-5114).
+↑ Article L. 252l [archive] du Code électoral.
+↑ Article L. 253 [archive] du Code électoral.
+↑ Article L. 255-4 [archive] du Code électoral.
+↑ Article art L. 255-3 [archive] du Code électoral.
+↑ Article L. 257 [archive] du Code électoral.
+↑ Article L. 260 [archive] du Code électoral.
+↑ [PDF] Loi no 82-974 du 19 septembre 1982 modifiant le code électoral et le code des communes relative à l'élection des conseillers municipaux et aux conditions d'inscription des français établis hors de France sur les listes électorales [archive].
+↑ Article art L. 264 [archive] du Code électoral.
+↑ Loi no 2013-403 du 17 mai 2013 relative à l'élection des conseillers départementaux, des conseillers municipaux et des conseillers communautaires, et modifiant le calendrier électoral [archive], article 51 et son décret d'application no 2013-938 du 18 octobre 2013 [archive], art. 27 à 39.
+↑ Article L-264 du code electoral.
+↑ Article L. 262 [archive] du Code électoral.
+↑ Le site officiel du ministère de l'Intérieur de l'Outre-mer et des Collectivités Territoriales [archive]
+↑ Le site officiel du ministère de l'Intérieur de l'Outre-mer et des Collectivités Territoriales [archive]
+↑ Article L. 273-11 [archive] du Code électoral.
+↑ Article R. 117-4 [archive] du Code électoral.
+↑ Code général des collectivités territoriales, article L2121-2 [archive] (Consulté le 22 mars 2014).
+↑ Décret no 77-90 [archive] du 27 janvier 1977 portant révision du code de l'administration communale et codification des textes législatifs applicables aux communes, JORF du 3 février 1977.
+↑ Loi no 82-974 du 19 novembre 1982 [archive] modifiant le Code électoral et le Code des communes relative à l'élection des conseillers municipaux et aux conditions d'inscription des Français établis hors de France sur les listes électorales, JORF du 20 novembre 1982.
+↑ Article L. 2121-2 [archive] du code général des collectivités territoriales
+↑ a et b Frédéric Potier, « L'architecte, la parité et le métronome : retours sur l'édification de nouvelles règles électorales pour les élections locales », La Semaine juridique, édition administrations et collectivités territoriales, no 2187,‎ 24 juin 2013 (ISSN 1637-5114)
+↑ Loi No 82-1169 du 31 décembre 1982 relative à l'organisation administrative de Paris, Marseille, Lyon et des établissements publics de coopération intercommunale.
+↑ Article L. 2513-1 [archive] du code général des collectivités territoriales.
+↑ Article L. 2513-1 [archive] du code général des collectivités territoriales.
+↑ Article L. 2512-3 [archive] du code général des collectivités territoriales.
+↑ Code électoral - Article L262 (lire en ligne [archive])
+↑ Article L.2122-4 [archive] du code général des collectivités territoriales
+↑ Article L.2121-7 [archive] du code général des collectivités territoriales
+↑ Article L.2122-8 [archive] du code général des collectivités territoriales
+↑ Article L.2122-7 [archive] du code général des collectivités territoriales
+↑ Article L.2122-2 [archive] du code général des collectivités territoriales
+↑ Article L.2122-7-2 [archive].du code général des collectivités territoriales
+↑ Article 29 de la loi no 2013-403 du 17 mai 2013, modifiant la rédaction de l'article L. 2122-7-2 du code général des collectivités territoriales.
+↑ Article LO. 227-1 [archive] du Code électoral
+↑ Article L. 2122-4-1 [archive] du code général des collectivités territoriales
+↑ Article L. 228 [archive] du Code électoral
+↑ Article L. 228 [archive]
+↑ Article 25 de la loi no 2013-403 du 17 mai 2013 relative à l'élection des conseillers départementaux, des conseillers municipaux et des conseillers communautaires, et modifiant le calendrier électoral
+↑ Article L. 231 [archive] du Code électoral
+↑ Article L. 231 8° du Code électoral, dans sa rédaction de la loi du 17 mai 2013.
+↑ Conseil d'État, 18 janvier 1984, élections municipales de Trois-Fonds.
+↑ Article L. 242 [archive] du Code électoral, modifié par l'article 24 de la loi no 2013-403 du 17 mai 2013.
+↑ Article art L. 243 [archive] du Code électoral.
+↑ Article R. 55 du Code électoral [archive].
+↑ Article L. 58 du Code électoral [archive].
+↑ Article L. 52-11-1 du Code électoral [archive].
+↑ Ministère de l'intérieur, « Modes de scrutin pour les élections municipales et concours de l'État aux candidats » [archive], sur http://www.senat.fr [archive], Questions écrites des Sénateurs, 14e législature, 30 janvier 2014 (consulté le 12 janvier 2014)
+↑ Le site officiel du ministère de l'Intérieur de l'Outre-mer et des Collectivités Territoriales [archive]
+↑ Article L. 248 [archive] du Code électoral.
+↑ a et b Article R. 119 [archive] du Code électoral.
+↑ Municipales : trois questions sur un premier tour indécis [archive] par Matthieu Goar sur lemonde.fr du 20 mars 2014
+↑ Municipales : le taux définitif de l'abstention au premier tour est de 36,45 % [archive] sur lemonde.fr du 25 mars 2014
+↑ « LES GRANDS PRINCIPES DE LA LOI MUNICIPALE DE 1884 » [archive], sur Sénat (consulté le 16 avril 2014).
+↑ « Ordonnance n°59-230 du 4 février 1959 RELATIVE A L'ELECTION DES CONSEILLERS MUNICIPAUX DES COMMUNES DE LA METROPOLE, DES DEPARTEMENTS D'OUTRE-MER ET D'ALGERIE » [archive], sur Légifrance (consulté le 16 avril 2014).
+↑ « Fac-similé JO du 28/06/1964, page 05635 » [archive], sur Légifrance (consulté le 16 avril 2014).
+↑ « Fac-similé JO du 20/07/1976, page 04324 » [archive], sur Légifrance (consulté le 16 avril 2014)
+↑ « Fac-similé JO du 20/11/1982, page 03487 » [archive], sur Légifrance (consulté le 16 avril 2014)
+↑ Christophe Doré et André de Chastenet, « La parité en marche lente », Le Figaro Magazine, semaine du 21 mars 2014, page 30.
+↑ « La représentation des femmes en politique au niveau local » [archive], sur Observatoire des inégalités (consulté le 19 février 2015)
+↑ a et b « Municipales : pourquoi la parité a échoué » [archive], sur Le Monde.fr (consulté le 19 février 2015)
+Voir aussi
+Sur les autres projets Wikimedia :
+
+Élections municipales en France, sur Wikimedia Commons
+Liens externes
+Les modalités d'élection en France (ministère de l'Intérieur) [archive]
+Candidatures et résultats des élections http://elections.interieur.gouv.fr/ [archive]
+Un aperçu des élections municipales de 1945 à 2008 [archive], site vie-publique.fr, mis en ligne le 10 octobre 2013
+Bibliographie
+[PDF] Ministère de l'intérieur, Élections municipales de mars 2014 : Mémento à l'usage des candidats des communes de moins de 1 000 habitants, octobre 2013, 43 p. (lire en ligne [archive])
+[PDF] Ministère de l'intérieur, Élections municipales et communautaires de mars 2014 : Mémento à l'usage des candidats des communes de 1 000 habitants et plus, octobre 2013, 75 p. (lire en ligne [archive])

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : expand.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2018
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
  *   Purpose: expand data areas (program area, trail stack, table space, and global/local stacks)
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -17,7 +17,7 @@ extern BPLONG gc_time;
 /*
   #define DEBUG_EXPAND
 */
-#define VALIDATE_HEAP_PTR(ptr) 
+#define VALIDATE_HEAP_PTR(ptr)
 #define VALIDATE_STACK_PTR(ptr)
 
 /*
@@ -39,13 +39,13 @@ extern BPLONG gc_time;
    3. copy the contents in verbtim to the new trail stack.
    4. free the old trail stack.
 ***********************************************************************************/
-BPLONG_PTR expand_trail(trail_top,breg)
-    BPLONG_PTR trail_top,breg;
+BPLONG_PTR expand_trail(trail_top, breg)
+    BPLONG_PTR trail_top, breg;
 {
-    BPLONG_PTR new_trail_low_addr,new_trail_up_addr,my_breg,top;
-    BPLONG diff,new_trail_size;
+    BPLONG_PTR new_trail_low_addr, new_trail_up_addr, my_breg, top;
+    BPLONG diff, new_trail_size;
     BPLONG msec0;
-  
+
     msec0 = cputime();
 
     /*  printf("EXPAND_TRAIL %d\n",trail_size); */
@@ -53,31 +53,31 @@ BPLONG_PTR expand_trail(trail_top,breg)
     new_trail_size = 2*trail_size;
 
     new_trail_low_addr = (BPLONG_PTR)malloc(sizeof(BPLONG)*new_trail_size);
-    if (new_trail_low_addr==NULL){
+    if (new_trail_low_addr == NULL) {
         new_trail_size = trail_size+1000000L;
         new_trail_low_addr = (BPLONG_PTR)malloc(sizeof(BPLONG)*new_trail_size);
-        if (new_trail_low_addr==NULL){
-            myquit(OUT_OF_MEMORY,"te");
+        if (new_trail_low_addr == NULL) {
+            myquit(OUT_OF_MEMORY, "te");
         }
     }
     num_trail_expansions++;
 
     new_trail_up_addr = new_trail_low_addr + new_trail_size -1;
-  
+
     my_breg = breg;
-    for (;;){
+    for (; ; ) {
         top = (BPLONG_PTR)AR_T(my_breg);
         diff = (BPULONG)trail_up_addr-(BPULONG)top;
         AR_T(my_breg) = (BPULONG)new_trail_up_addr-diff;
-        if (AR_B(my_breg)==(BPLONG)my_breg) break;
+        if (AR_B(my_breg) == (BPLONG)my_breg) break;
         my_breg = (BPLONG_PTR)AR_B(my_breg);
     }
 
-    my_memcpy_top_down(new_trail_up_addr,trail_up_addr,trail_size);
+    my_memcpy_top_down(new_trail_up_addr, trail_up_addr, trail_size);
     diff = (BPULONG)trail_up_addr-(BPULONG)trail_top;
     trail_up_addr = new_trail_up_addr;
     trail_size = new_trail_size;
-    free(trail_low_addr); 
+    free(trail_low_addr);
     trail_low_addr = new_trail_low_addr;
     trail_water_mark = trail_low_addr+LARGE_MARGIN;
     trail_water_mark0 = trail_low_addr+2;
@@ -85,22 +85,22 @@ BPLONG_PTR expand_trail(trail_top,breg)
     return (BPLONG_PTR)((BPULONG)new_trail_up_addr-diff);
 }
 
-void my_memcpy_top_down(des,src,size)
-    BPLONG_PTR des,src;
+void my_memcpy_top_down(des, src, size)
+    BPLONG_PTR des, src;
 BPLONG size;
 {
-    while (size>0){
+    while (size > 0) {
         FOLLOW(des) = FOLLOW(src);
         des--; src--;
         size--;
     }
 }
 
-void my_memcpy_btm_up(des,src,size)
-    BPLONG_PTR des,src;
+void my_memcpy_btm_up(des, src, size)
+    BPLONG_PTR des, src;
 BPLONG size;
 {
-    while (size>0){
+    while (size > 0) {
         FOLLOW(des) = FOLLOW(src);
         des++; src++;
         size--;
@@ -111,7 +111,7 @@ BPLONG size;
 void unmark_ar_chain(f)
     BPLONG_PTR f;
 {
-    while (FRAME_IS_MARKED(f)){
+    while (FRAME_IS_MARKED(f)) {
         UNMARK_FRAME(f);
         f = (BPLONG_PTR)AR_AR(f);
     }
@@ -120,9 +120,9 @@ void unmark_ar_chain(f)
 void unmark_b_chain(b)
     BPLONG_PTR b;
 {
-    for (;;){
+    for (; ; ) {
         unmark_ar_chain(b);
-        if (b==(BPLONG_PTR)AR_B(b)) return;
+        if (b == (BPLONG_PTR)AR_B(b)) return;
         b = (BPLONG_PTR)AR_B(b);
     }
 }
@@ -130,7 +130,7 @@ void unmark_b_chain(b)
 void unmark_sf_chain(sf)
     BPLONG_PTR sf;
 {
-    for (;;){
+    for (; ; ) {
         UNMARK_FRAME(sf);
         if (sf == (BPLONG_PTR)AR_PREV(sf)) return;
         sf = (BPLONG_PTR)AR_PREV(sf);
@@ -148,11 +148,11 @@ void unmark_sf_chain(sf)
   4. reset the pointers in the copied stack and heap to point to the new area.
   5. reset global registers (local_top,heap_top, breg, hbreg, arreg, and sfreg)
 ***********************************************************************************/
-int expand_local_global_stacks(BPLONG preferred_size){
-    BPLONG_PTR new_stack_low_addr,new_stack_up_addr;
-    BPLONG new_stack_size,diff_h,diff_s;
-    BPLONG msec0,maxs;
-  
+int expand_local_global_stacks(BPLONG preferred_size) {
+    BPLONG_PTR new_stack_low_addr, new_stack_up_addr;
+    BPLONG new_stack_size, diff_h, diff_s;
+    BPLONG msec0, maxs;
+
 
     /* precondition (toam_signal_vec == 0) so no need to consider TriggeredCs[..] */
 
@@ -166,41 +166,41 @@ int expand_local_global_stacks(BPLONG preferred_size){
     */
     msec0 = cputime();
 #ifdef DEBUG_EXPAND
-    new_stack_size = stack_size+1004; 
+    new_stack_size = stack_size+1004;
 #else
-    if (preferred_size==0) 
-        new_stack_size = 2*stack_size; 
-    else 
+    if (preferred_size == 0)
+        new_stack_size = 2*stack_size;
+    else
         new_stack_size = preferred_size;
 #endif
 
     /*  if (new_stack_size>stack_size_limit) return;  */
 
-    BP_MALLOC(new_stack_low_addr,new_stack_size);
-    if (new_stack_low_addr==NULL){
-        if (preferred_size!=0) return BP_ERROR;
-        new_stack_size = stack_size+1000000L; 
-        BP_MALLOC(new_stack_low_addr,new_stack_size);
-        if (new_stack_low_addr==NULL){
+    BP_MALLOC(new_stack_low_addr, new_stack_size);
+    if (new_stack_low_addr == NULL) {
+        if (preferred_size != 0) return BP_ERROR;
+        new_stack_size = stack_size+1000000L;
+        BP_MALLOC(new_stack_low_addr, new_stack_size);
+        if (new_stack_low_addr == NULL) {
             return BP_ERROR;
         }
     }
 
     num_stack_expansions++;
     // printf("expanding the stack...");
-    NO_RESERVED_SLOTS(arreg,maxs);
-    expand_initialize_frames(maxs); 
-  
+    NO_RESERVED_SLOTS(arreg, maxs);
+    expand_initialize_frames(maxs);
+
     new_stack_up_addr = new_stack_low_addr + new_stack_size -1;
-    diff_h = (BPULONG)new_stack_low_addr-(BPULONG)stack_low_addr; /* add this to heap pointers */
-    diff_s = (BPULONG)new_stack_up_addr-(BPULONG)stack_up_addr;   /* add this to stack pointers */
+    diff_h = (BPULONG)new_stack_low_addr-(BPULONG)stack_low_addr;  /* add this to heap pointers */
+    diff_s = (BPULONG)new_stack_up_addr-(BPULONG)stack_up_addr;  /* add this to stack pointers */
 
-    my_memcpy_btm_up(new_stack_low_addr,stack_low_addr,((BPULONG)heap_top-(BPULONG)stack_low_addr)/sizeof(BPLONG));
-    my_memcpy_btm_up((BPLONG_PTR)((BPULONG)local_top+diff_s)+1,local_top+1,((BPULONG)stack_up_addr-(BPULONG)local_top)/sizeof(BPLONG));
+    my_memcpy_btm_up(new_stack_low_addr, stack_low_addr, ((BPULONG)heap_top-(BPULONG)stack_low_addr)/sizeof(BPLONG));
+    my_memcpy_btm_up((BPLONG_PTR)((BPULONG)local_top+diff_s)+1, local_top+1, ((BPULONG)stack_up_addr-(BPULONG)local_top)/sizeof(BPLONG));
 
-    if (expandStackNullifyUntaggedCells(diff_s)==BP_ERROR) return BP_ERROR;
+    if (expandStackNullifyUntaggedCells(diff_s) == BP_ERROR) return BP_ERROR;
     /* reset pointers */
-    expandStackResetPointers(diff_h,diff_s);
+    expandStackResetPointers(diff_h, diff_s);
 
     free(stack_low_addr);
     stack_low_addr = new_stack_low_addr;
@@ -231,53 +231,53 @@ int expand_local_global_stacks(BPLONG preferred_size){
 void expand_initialize_frames(maxs)
     BPLONG maxs;
 {
-    BPLONG_PTR b,cp;
+    BPLONG_PTR b, cp;
 
-    expand_initialize_ar_chain(arreg,maxs);
+    expand_initialize_ar_chain(arreg, maxs);
 
     b = breg;
-    for (;;) {
-        if (!FRAME_IS_MARKED(b)){
+    for (; ; ) {
+        if (!FRAME_IS_MARKED(b)) {
             cp = (BPLONG_PTR)AR_CPF(b);
-            maxs = *(cp-1); /* maxS is always accessible through CPF */
-            expand_initialize_ar_chain(b,maxs);
+            maxs = *(cp-1);  /* maxS is always accessible through CPF */
+            expand_initialize_ar_chain(b, maxs);
         }
-        if (b==(BPLONG_PTR)AR_B(b)) break;
+        if (b == (BPLONG_PTR)AR_B(b)) break;
         b = (BPLONG_PTR)AR_B(b);
     }
-  
+
     /* reset AR of initialized frames */
     unmark_ar_chain(arreg);
     unmark_b_chain(breg);
 }
 
-void expand_initialize_ar_chain(f,maxs)
+void expand_initialize_ar_chain(f, maxs)
     BPLONG_PTR f;
     BPLONG maxs;
 {
-    BPLONG_PTR cp,prev_f;
+    BPLONG_PTR cp, prev_f;
 
-    while (!FRAME_IS_MARKED(f)){
+    while (!FRAME_IS_MARKED(f)) {
         prev_f = (BPLONG_PTR)AR_AR(f);
-        initialize_frame(f,maxs);
+        initialize_frame(f, maxs);
         MARK_FRAME(f);
         cp = (BPLONG_PTR)AR_CPS(f);
         maxs = *(cp-1);
         f = prev_f;
-    } 
+    }
 }
 
-void initialize_frame(f,maxs)
+void initialize_frame(f, maxs)
     BPLONG_PTR f;
     BPLONG maxs;
 {
-    BPLONG_PTR ptr,top;
-    if (IS_SUSP_FRAME(f)) return; /* done already */
+    BPLONG_PTR ptr, top;
+    if (IS_SUSP_FRAME(f)) return;  /* done already */
     ptr = f-maxs;
     top = (BPLONG_PTR)AR_TOP(f);
-    while (ptr>top){ 
+    while (ptr > top) {
         FOLLOW(ptr) = (BPLONG)ptr;
-        ptr--; 
+        ptr--;
     }
 }
 
@@ -287,39 +287,39 @@ int expandStackNullifyUntaggedCells(diff_s)
     BPLONG diff_s;
 {
     BPLONG mask_size;
-  
-    mask_size = (heap_top-stack_low_addr)/NBITS_IN_LONG+2; /* masking bits */
-    if (allocateMaskArea(mask_size)==BP_ERROR) return BP_ERROR; /* allocate and initialize copy area */
-  
-    expandStackNullifyUntaggedCellsArFrames(arreg,diff_s);
-    expandStackNullifyUntaggedCellsBFrames(breg,diff_s);
-    expandStackNullifyUntaggedCellsSfFrames(sfreg,diff_s);
+
+    mask_size = (heap_top-stack_low_addr)/NBITS_IN_LONG+2;  /* masking bits */
+    if (allocateMaskArea(mask_size) == BP_ERROR) return BP_ERROR;  /* allocate and initialize copy area */
+
+    expandStackNullifyUntaggedCellsArFrames(arreg, diff_s);
+    expandStackNullifyUntaggedCellsBFrames(breg, diff_s);
+    expandStackNullifyUntaggedCellsSfFrames(sfreg, diff_s);
     expandStackNullifyUntaggedCellsTrail();
     return BP_TRUE;
 }
 
-void expandStackNullifyUntaggedCellsBFrames(breg,diff_s)
+void expandStackNullifyUntaggedCellsBFrames(breg, diff_s)
     BPLONG_PTR breg;
     BPLONG diff_s;
 {
     BPLONG_PTR breg1;
-  
-    for (;;){
-        expandStackNullifyUntaggedCellsArFrames(breg,diff_s); /* active chain from this choice point */
+
+    for (; ; ) {
+        expandStackNullifyUntaggedCellsArFrames(breg, diff_s);  /* active chain from this choice point */
         breg1 = (BPLONG_PTR)AR_B(breg);
-        if (breg1==breg) return;
+        if (breg1 == breg) return;
         breg = breg1;
     }
 }
 
 /* reset pointers in terms reachable from suspension frames. */
-void expandStackNullifyUntaggedCellsSfFrames(sf,diff_s)
+void expandStackNullifyUntaggedCellsSfFrames(sf, diff_s)
     BPLONG_PTR sf;
     BPLONG diff_s;
 {
     BPLONG_PTR sf1;
-    for (;;){
-        expandStackNullifyUntaggedCellsFrame(sf,diff_s);
+    for (; ; ) {
+        expandStackNullifyUntaggedCellsFrame(sf, diff_s);
         sf1 = (BPLONG_PTR)AR_PREV(sf);
         if (sf == sf1) return;
         sf = sf1;
@@ -327,62 +327,62 @@ void expandStackNullifyUntaggedCellsSfFrames(sf,diff_s)
 }
 
 /* reset pointers in slots and terms reachable from activation frames. */
-void expandStackNullifyUntaggedCellsArFrames(ar,diff_s)
+void expandStackNullifyUntaggedCellsArFrames(ar, diff_s)
     BPLONG_PTR ar;
     BPLONG diff_s;
 {
     BPLONG_PTR ar1;
-  
-    for (;;){
-        if (AR_BTM(ar)==0) return; /* nullified already */
-        expandStackNullifyUntaggedCellsFrame(ar,diff_s);
-        ar1 = (BPLONG_PTR)AR_AR(ar); 
-        if (ar==ar1) return;
+
+    for (; ; ) {
+        if (AR_BTM(ar) == 0) return;  /* nullified already */
+        expandStackNullifyUntaggedCellsFrame(ar, diff_s);
+        ar1 = (BPLONG_PTR)AR_AR(ar);
+        if (ar == ar1) return;
         ar = ar1;
     }
 }
 
-void expandStackNullifyUntaggedCellsFrame(ar,diff_s)
+void expandStackNullifyUntaggedCellsFrame(ar, diff_s)
     BPLONG_PTR ar;
     BPLONG diff_s;
 {
     BPLONG nslots;
-  
+
     VALIDATE_STACK_PTR(ar);
-    if (AR_BTM(ar)==0) return; /* nullified already */
+    if (AR_BTM(ar) == 0) return;  /* nullified already */
     AR_CPS(ar) = 0;
-    if (IS_NONDET_FRAME(ar) || IS_TABLE_FRAME(ar)){
+    if (IS_NONDET_FRAME(ar) || IS_TABLE_FRAME(ar)) {
         AR_CPF(ar) = 0;
-        if (IS_TABLE_FRAME(ar)){
-            BPLONG_PTR subgoal_entry,master_ar;
+        if (IS_TABLE_FRAME(ar)) {
+            BPLONG_PTR subgoal_entry, master_ar;
             subgoal_entry = (BPLONG_PTR)GET_AR_SUBGOAL_TABLE(ar);
-            if (subgoal_entry!=(BPLONG_PTR)NULL){ /* reset pointers to the stack in the table area */
-                master_ar = (BPLONG_PTR)GT_TOP_AR(subgoal_entry);    
-                if (master_ar>local_top && master_ar <=stack_up_addr){
+            if (subgoal_entry != (BPLONG_PTR)NULL) {  /* reset pointers to the stack in the table area */
+                master_ar = (BPLONG_PTR)GT_TOP_AR(subgoal_entry);
+                if (master_ar > local_top && master_ar <= stack_up_addr) {
                     GT_TOP_AR(subgoal_entry) = (BPULONG)master_ar + diff_s;
                 }
             }
             AR_SUBGOAL_TABLE(ar) = 0;
             AR_CURR_ANSWER(ar) = 0;
-            AR_TABLE_NEW_BITS(ar) = 0; /* nullify it, so its content is copied in verbatim */
+            AR_TABLE_NEW_BITS(ar) = 0;  /* nullify it, so its content is copied in verbatim */
         }
-    } else if (IS_SUSP_FRAME(ar)){
+    } else if (IS_SUSP_FRAME(ar)) {
         AR_STATUS(ar) = 0;
     }
-    NO_RESERVED_SLOTS(ar,nslots);
-    expandStackNullifyUntaggedCellsFrameSlots(ar,nslots,diff_s);
+    NO_RESERVED_SLOTS(ar, nslots);
+    expandStackNullifyUntaggedCellsFrameSlots(ar, nslots, diff_s);
 }
 
-void expandStackNullifyUntaggedCellsFrameSlots(f,nslots,diff_s)
+void expandStackNullifyUntaggedCellsFrameSlots(f, nslots, diff_s)
     BPLONG_PTR f;
-BPLONG nslots,diff_s;
+BPLONG nslots, diff_s;
 {
-    BPLONG_PTR sp,top;
+    BPLONG_PTR sp, top;
 
     /* arguments */
     sp = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(f));
     VALIDATE_STACK_PTR(sp);
-    while (sp>f){
+    while (sp > f) {
         expandStackNullifyUntaggedCellsTerm(FOLLOW(sp));
         sp--;
     }
@@ -390,31 +390,31 @@ BPLONG nslots,diff_s;
     /* local variables */
     sp = f-nslots;
     top = (BPLONG_PTR)AR_TOP(f);
-    while (sp>top){
+    while (sp > top) {
         expandStackNullifyUntaggedCellsTerm(FOLLOW(sp));
         sp--;
     }
     /* borrow sp */
-    sp = (BPLONG_PTR)((BPULONG)f+diff_s); /* this frame will be moved here, reset AR_BTM(f) now */
-    AR_BTM(sp) = ADDTAG(((BPULONG)UNTAGGED_ADDR(AR_BTM(f))+diff_s),(AR_BTM(f) & TAG_MASK));
+    sp = (BPLONG_PTR)((BPULONG)f+diff_s);  /* this frame will be moved here, reset AR_BTM(f) now */
+    AR_BTM(sp) = ADDTAG(((BPULONG)UNTAGGED_ADDR(AR_BTM(f))+diff_s), (AR_BTM(f) & TAG_MASK));
     AR_BTM(f) = 0;
 }
 
 void expandStackNullifyUntaggedCellsTrail()
 {
-    BPLONG_PTR curr_t,addr;
+    BPLONG_PTR curr_t, addr;
     BPLONG op;
 
     curr_t = trail_top+1;
-    while (curr_t < trail_up_addr){
+    while (curr_t < trail_up_addr) {
         op = FOLLOW(curr_t);
         addr = (BPLONG_PTR)UNTAGGED3(op);
-        if (TAG(op)==TRAIL_VAR){
+        if (TAG(op) == TRAIL_VAR) {
             expandStackNullifyUntaggedCellsTerm(FOLLOW(addr));
-        } else if (TAG(op)==TRAIL_VAL_NONATOMIC){
+        } else if (TAG(op) == TRAIL_VAL_NONATOMIC) {
             expandStackNullifyUntaggedCellsTerm(FOLLOW(addr));
             expandStackNullifyUntaggedCellsTerm(FOLLOW(curr_t+1));
-        } 
+        }
         curr_t += 2;
     }
 }
@@ -423,69 +423,69 @@ void expandStackNullifyUntaggedCellsTerm(term)
     BPLONG term;
 {
     BPLONG_PTR ptr;
-    BPLONG arity,i,tmp;
+    BPLONG arity, i, tmp;
 
-    if (TAG(term)==ATM) return; /* not a pointer to stack or heap */
+    if (TAG(term) == ATM) return;  /* not a pointer to stack or heap */
     gcQueueInit;
     GCQueueAddTerm(term);
 
 loop:
-    while (gcQueueCount>0){
+    while (gcQueueCount > 0) {
         GCQueueGetTerm(term);
     start:
-        if (ISREF(term)){
-            if (IS_STACK_OR_HEAP_REFERENCE(term)){
-                if (!ISFREE(term)){
+        if (ISREF(term)) {
+            if (IS_STACK_OR_HEAP_REFERENCE(term)) {
+                if (!ISFREE(term)) {
                     term = FOLLOW(term);  /* deref */
                     goto start;
                 };
             }
             goto loop;
         }
-        if (TAG(term)==ATM){
+        if (TAG(term) == ATM) {
             goto loop;
-        } else if (ISLIST(term)){
+        } else if (ISLIST(term)) {
             ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
             VALIDATE_HEAP_PTR(ptr);
-            if (IS_HEAP_REFERENCE(ptr) && gcIsMarked(ptr,stack_low_addr)==0){
-                gcSetMask(ptr,2,stack_low_addr);
+            if (IS_HEAP_REFERENCE(ptr) && gcIsMarked(ptr, stack_low_addr) == 0) {
+                gcSetMask(ptr, 2, stack_low_addr);
                 tmp = FOLLOW(ptr);
-                if (TAG(tmp)!=ATM){GCQueueAddTerm(tmp);}
+                if (TAG(tmp) != ATM) {GCQueueAddTerm(tmp);}
                 tmp = FOLLOW(ptr+1);
-                if (TAG(tmp)!=ATM){GCQueueAddTerm(tmp);}
+                if (TAG(tmp) != ATM) {GCQueueAddTerm(tmp);}
                 goto loop;
-            } 
-            goto loop; /* not a heap pointer or marked already */
-        } else if (ISSTRUCT(term)){
+            }
+            goto loop;  /* not a heap pointer or marked already */
+        } else if (ISSTRUCT(term)) {
             ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
             VALIDATE_HEAP_PTR(ptr);
-            if (IS_HEAP_REFERENCE(ptr) && gcIsMarked(ptr,stack_low_addr)==0){
+            if (IS_HEAP_REFERENCE(ptr) && gcIsMarked(ptr, stack_low_addr) == 0) {
                 arity = GET_ARITY((SYM_REC_PTR)FOLLOW(ptr));
-                gcSetMask(ptr,arity+1,stack_low_addr);
-                for (i=1;i<=arity;i++){
+                gcSetMask(ptr, arity+1, stack_low_addr);
+                for (i = 1; i <= arity; i++) {
                     tmp = FOLLOW(ptr+i);
-                    if (TAG(tmp)!=ATM){GCQueueAddTerm(tmp);}
+                    if (TAG(tmp) != ATM) {GCQueueAddTerm(tmp);}
                 }
                 goto loop;
             }
-            goto loop; /* not a heap pointer or marked already */
-        } else { /* susp var */
-            ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(term); /* TAG on data */
+            goto loop;  /* not a heap pointer or marked already */
+        } else {  /* susp var */
+            ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(term);  /* TAG on data */
             VALIDATE_HEAP_PTR(ptr);
-            if (gcIsMarked(ptr,stack_low_addr)==0){
-                gcSetMask(ptr,1,stack_low_addr);
+            if (gcIsMarked(ptr, stack_low_addr) == 0) {
+                gcSetMask(ptr, 1, stack_low_addr);
                 DV_first(ptr) = 0;
                 DV_last(ptr) = 0;
                 DV_size(ptr) = 0;
                 GCQueueAddTerm(DV_attached(ptr));
-                if (IS_BV_DOMAIN(ptr)){
+                if (IS_BV_DOMAIN(ptr)) {
                     BPLONG_PTR bv_ptr;
-                    BPLONG i,from,to;
+                    BPLONG i, from, to;
                     bv_ptr = (BPLONG_PTR)DV_bit_vector_ptr(ptr);
                     from = BV_low_val(bv_ptr); BV_low_val(bv_ptr) = 0;
                     to = BV_up_val(bv_ptr); BV_up_val(bv_ptr) = 0;
                     ptr = BV_base_ptr(bv_ptr);
-                    for (i=from; i<=to; i += NBITS_IN_LONG){
+                    for (i = from; i <= to; i += NBITS_IN_LONG) {
                         FOLLOW(ptr++) = 0;
                     }
                 }
@@ -495,39 +495,39 @@ loop:
     }
 }
 
-void expandStackResetPointers(diff_h,diff_s)
-    BPLONG diff_h,diff_s;
+void expandStackResetPointers(diff_h, diff_s)
+    BPLONG diff_h, diff_s;
 {
     expandStackResetHeap(diff_h);
-    expandStackResetStack(diff_h,diff_s);
-    expandStackResetTrail(diff_h,diff_s);
+    expandStackResetStack(diff_h, diff_s);
+    expandStackResetTrail(diff_h, diff_s);
 }
 
-BPLONG_PTR expandStackResetAddr(addr,diff_h,diff_s)
+BPLONG_PTR expandStackResetAddr(addr, diff_h, diff_s)
     BPLONG_PTR addr;
-BPLONG diff_h,diff_s;
+BPLONG diff_h, diff_s;
 {
-    if (IS_HEAP_REFERENCE(addr)){
+    if (IS_HEAP_REFERENCE(addr)) {
         return (BPLONG_PTR)((BPULONG)addr+diff_h);
-    } else if (IS_STACK_REFERENCE(addr)){
+    } else if (IS_STACK_REFERENCE(addr)) {
         return (BPLONG_PTR)((BPULONG)addr+diff_s);
-    } else 
+    } else
         return addr;
 }
 
 void expandStackResetHeap(diff_h)
     BPLONG diff_h;
 {
-    BPLONG_PTR ptr,new_ptr,addr;
+    BPLONG_PTR ptr, new_ptr, addr;
     BPLONG op;
 
-    for (ptr=stack_low_addr;ptr<heap_top;ptr++){
+    for (ptr = stack_low_addr; ptr < heap_top; ptr++) {
         op = FOLLOW(ptr);
-        if (op!=0 && TAG(op)!=ATM){
+        if (op != 0 && TAG(op) != ATM) {
             addr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-            if (IS_HEAP_REFERENCE(addr)){
+            if (IS_HEAP_REFERENCE(addr)) {
                 new_ptr = (BPLONG_PTR)((BPULONG)ptr+diff_h);
-                FOLLOW(new_ptr)=ADDTAG(((BPULONG)addr+diff_h),(op & TAG_MASK));
+                FOLLOW(new_ptr) = ADDTAG(((BPULONG)addr+diff_h), (op & TAG_MASK));
             }
             /* else if (IS_STACK_REFERENCE(addr)){
                printf("HEAP CELL POINTS TO STACK %x(%x)\n",ptr,addr);
@@ -538,39 +538,39 @@ void expandStackResetHeap(diff_h)
     }
 }
 
-void expandStackResetStack(diff_h,diff_s)
-    BPLONG diff_h,diff_s;
+void expandStackResetStack(diff_h, diff_s)
+    BPLONG diff_h, diff_s;
 {
-    BPLONG_PTR ptr,new_ptr,addr;
+    BPLONG_PTR ptr, new_ptr, addr;
     BPLONG op;
 
-    for (ptr=stack_up_addr;ptr>local_top;ptr--){
+    for (ptr = stack_up_addr; ptr > local_top; ptr--) {
         op = FOLLOW(ptr);
-        if (op!=0 && TAG(op)!=ATM){
+        if (op != 0 && TAG(op) != ATM) {
             addr = (BPLONG_PTR)UNTAGGED_ADDR(op);
             new_ptr = (BPLONG_PTR)((BPULONG)ptr+diff_s);
-            FOLLOW(new_ptr)=ADDTAG((BPLONG)expandStackResetAddr(addr,diff_h,diff_s),(op & TAG_MASK));      
+            FOLLOW(new_ptr) = ADDTAG((BPLONG)expandStackResetAddr(addr, diff_h, diff_s), (op & TAG_MASK));
         }
     }
 }
 
-void expandStackResetTrail(diff_h,diff_s)
-    BPLONG diff_h,diff_s;
+void expandStackResetTrail(diff_h, diff_s)
+    BPLONG diff_h, diff_s;
 {
-    BPLONG_PTR curr_t,addr;
-    BPLONG op,addr_tag;
+    BPLONG_PTR curr_t, addr;
+    BPLONG op, addr_tag;
 
     curr_t = trail_top+1;
-    while (curr_t < trail_up_addr){
-        op = FOLLOW(curr_t); 
+    while (curr_t < trail_up_addr) {
+        op = FOLLOW(curr_t);
         addr = (BPLONG_PTR)UNTAGGED3(op);
         addr_tag = TAG(op);
-        FOLLOW(curr_t) = ADDTAG3((BPLONG)expandStackResetAddr(addr,diff_h,diff_s),addr_tag);
-        if (addr_tag==TRAIL_VAR || addr_tag==TRAIL_VAL_NONATOMIC){ 
+        FOLLOW(curr_t) = ADDTAG3((BPLONG)expandStackResetAddr(addr, diff_h, diff_s), addr_tag);
+        if (addr_tag == TRAIL_VAR || addr_tag == TRAIL_VAL_NONATOMIC) {
             op = FOLLOW(curr_t+1);
-            if (TAG(op)!=ATM){
+            if (TAG(op) != ATM) {
                 addr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-                FOLLOW(curr_t+1) = ADDTAG((BPLONG)expandStackResetAddr(addr,diff_h,diff_s),(op & TAG_MASK));
+                FOLLOW(curr_t+1) = ADDTAG((BPLONG)expandStackResetAddr(addr, diff_h, diff_s), (op & TAG_MASK));
             }
         }
         curr_t += 2;

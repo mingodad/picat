@@ -1,53 +1,63 @@
 module common_constr.
 
-regular_constr(L, Q, S, M, Q0, Fs, Solver), list(L) =>
-    regular_constr_aux(L, Q, S, M, Q0, Fs, Solver).
-regular_constr(L, Q, S, M, Q0, Fs ,Solver), array(L) =>
-    regular_constr_aux(to_list(L), Q, S, M, Q0, Fs ,Solver).
-regular_constr(L, _Q, _S, _M, _Q0, _Fs, _Solver) =>
+% Q - number of states, S - number of input symbols
+regular_constr(L,Q,S,M,Q0,Fs,Solver),list(L) =>
+    regular_constr_aux(L,Q,S,M,Q0,Fs,Solver).
+regular_constr(L,Q,S,M,Q0,Fs ,Solver), array(L) =>
+    regular_constr_aux(to_list(L),Q,S,M,Q0,Fs,Solver).
+regular_constr(L,_Q,_S,_M,_Q0,_Fs,_Solver) =>
     handle_exception($list_or_array_expected(L),regular).
 
 % If W (a list) has index set 1..n, then Visited[1] is the initial state (Q0),
 % and Visited[i+1] holds the state we're in after  processing W[i].
 % If Visited[n+1] is in Fs, then we succeed (ie. accept the string).
 %
-regular_constr_aux([], _Q, _S, _M, Q0, Fs, Solver) =>
+regular_constr_aux([],_Q,_S,_M,Q0,Fs,Solver) =>
     if Solver == cp then
         bp.element(_,Fs,Q0)
     else
-        bp.'$element'(_,Fs,Q0)
+        bp.'$element'(_,Fs,Q0,Solver)
     end.
-regular_constr_aux(W, Q, S, M, Q0, Fs, Solver) =>
-    check_regular_args(Q, S, M, Q0, Fs, Matrix, FsLst),   
-    N = len(W),
-    Visited = new_array(N+1),            % states
+regular_constr_aux(W,Q,S,M,Q0,Fs,Solver) =>
+    check_regular_args(Q,S,M,Q0,Fs,Matrix,FsLst),
+    WArr = to_array(W),
+    N = len(WArr),
+    N1 = N+1,
+    Visited = new_array(N1),           % states
     bp.domain(to_list(Visited),1,Q),
     bp.domain(W,1,S),
-    Visited[1] = Q0,                    % initial state
-    bp.'::'(Visited[N+1],FsLst),
-    %    
-    preprocess_regular_constr(Q,S,Matrix,Q0,FsLst,Visited,N),
-    matrix_element_table(Matrix,Q,S,Table,NFA),
+    Visited[1] = Q0,                   % initial state
+    bp.'::'(Visited[N1],FsLst),
+    transpose_trans_matrix(Matrix,TMatrix),
+    (N > 2 -> preprocess_regular_constr(WArr,Q,S,Matrix,TMatrix,Q0,FsLst,Visited,N); true),
+    matrix_element_table(Matrix,Q,S,Table,IsNFA),
     regular_transitions(W,1,Visited,VarTuples),
     (Solver == cp ->
         bp.table_in(VarTuples,Table)
     ;        
         bp.'$table_in'(VarTuples,Table)
     ),
-    if Solver == cp && NFA == 1 then 
+    if Solver == cp && IsNFA == 1 then 
         bp.wait_to_check_regular(Matrix,Q0,FsLst,W)      % needed for NFA
     end.  
 
-check_regular_args(Q, S, M, Q0, Fs, Matrix, FsList) =>
+check_regular_args(Q,S,M,Q0,Fs,Matrix,FsList) =>
     (integer(Q), Q > 0 -> true; handle_exception($positive_integer_expected(Q),regular)),
-    (integer(Q0), Q0 > 0 -> true; handle_exception($positive_integer_expected(Q0),regular)),    
+    (integer(Q0), Q0 > 0 -> true; handle_exception($positive_integer_expected(Q0),regular)),   
     (integer(S), S > 0 -> true; handle_exception($positive_integer_expected(S),regular)),
-    (array(Fs) -> FsList = to_list(Fs); FsList=Fs),
+    (array(Fs) -> FsList = sort(to_list(Fs)); FsList = sort(Fs)),
     (int_list(FsList) -> true; handle_exception($integer_list_or_array_expected(Fs),regular)),
     (list(M) -> bp.list_matrix_to_array_matrix(M,Matrix); Matrix=M),
     (ground(Matrix) -> true; handle_exception($ground_matrix_expected(M),regular)),
     (check_matrix(Matrix,Q,S) -> true; handle_exception($invalid_matrix(M),regular)).
     
+%% exclude a state from Visited[I] if the state is not reachable at step I
+%
+preprocess_regular_constr(WArr,Q,S,Matrix,TMatrix,Q0,FsLst,Visited,N) =>
+    regular_reason_backward(WArr,Q,FsLst,len(FsLst),TMatrix,Visited,N,Done),
+    regular_reason_forward(WArr,Q,[Q0],1,Matrix,Visited,1,N,Done),
+	(Done == 0 -> regular_reason_shortest_dist(Q,S,Matrix,TMatrix,Q0,FsLst,Visited,N); true).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Visited is a vector of state variables created for the automaton. Visited[I]
 % is the state visited in time I (Visited[1] = Q0). For a state, let D0 be the
@@ -55,17 +65,25 @@ check_regular_args(Q, S, M, Q0, Fs, Matrix, FsList) =>
 % 1,..., D0. Likewise, let Df be the shortest distance from the state to any final
 % state. Then the state cannot be visited in times N-Df+2..N.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-preprocess_regular_constr(Q,S,Matrix,Q0,FsLst,Visited,N) =>
+regular_reason_shortest_dist(Q,S,Matrix,TMatrix,Q0,FsLst,Visited,N) =>
     SDFromQ0 = new_array(Q),                                  % SDFromQ0[I], the shortest distance to state I from Q0
-    SDFromQ0[Q0] = 0,
-    fa_shortest_distance([Q0],S,Matrix,SDFromQ0),           
+    MaxDist = maxint_small(),
+    foreach (I in 1..Q)
+        SDFromQ0[I] = N
+    end,      
+    SDFromQ0[Q0] := 0,
+    MinHeap1 = new_min_heap([[0|Q0]]),
+    fa_shortest_distance(MinHeap1,S,Matrix,SDFromQ0),
     %      
-    transport_trans_matrix(Matrix,TMatrix),
     SDFromF = new_array(Q),                                   % SDFromF[I], the shortest distance to I from any state in FsLst
+    foreach (I in 1..Q)
+        SDFromF[I] = N
+    end,      
     foreach (F in FsLst)
-        SDFromF[F] = 0
+        SDFromF[F] := 0
     end,
-    fa_shortest_distance(FsLst,S,TMatrix,SDFromF),
+    MinHeap2 = new_min_heap([[0|FState] : FState in FsLst]),
+    fa_shortest_distance(MinHeap2,S,TMatrix,SDFromF),
     %
     foreach (State in 1..Q)
         foreach (T in 2..SDFromQ0[State])
@@ -75,48 +93,103 @@ preprocess_regular_constr(Q,S,Matrix,Q0,FsLst,Visited,N) =>
             bp.domain_set_false(Visited[T],State)
         end
     end.
+    %
 
-fa_shortest_distance([],_S,_Matrix,_DistVect) => true.
-fa_shortest_distance([State|Queue],S,Matrix,DistVect) =>
-   NStates = [],
-   foreach (Input in 1..S)
-       Entry = Matrix[State,Input],
-       if list(Entry) then
+% Dijkstra's algorithm
+fa_shortest_distance(MinHeap,_S,_Matrix,_DistVect), heap_is_empty(MinHeap) => true.
+fa_shortest_distance(MinHeap,S,Matrix,DistVect) =>
+    [Dist|State] = heap_pop(MinHeap),
+    Dist1 = Dist+1,
+    foreach (Input in 1..S)
+        Entry = Matrix[State,Input],
+        if list(Entry) then
             foreach (NextState in Entry)
-                if (var(DistVect[NextState])) then
-                    NStates := [NextState|NStates],
-                    DistVect[NextState] = DistVect[State]+1
-                elseif DistVect[NextState] > DistVect[State] + 1 then
-                    NStates := [NextState|NStates],
-                    DistVect[NextState] := DistVect[State]+1
+                if (DistVect[NextState] =< Dist1) then
+                    true
+                else
+                    heap_push(MinHeap,[Dist1|NextState]),
+                    DistVect[NextState] := Dist1
                 end
             end
        elseif Entry !== 0 then
-            if (var(DistVect[Entry])) then
-                NStates := [Entry|NStates],
-                DistVect[Entry] = DistVect[State]+1
-            elseif DistVect[Entry] > DistVect[State] + 1 then
-                NStates := [Entry|NStates],
-                DistVect[Entry] := DistVect[State]+1
+            if (DistVect[Entry] =< Dist1) then
+                true
+            else
+                heap_push(MinHeap,[Dist1|Entry]),
+                DistVect[Entry] := Dist1
             end
         end
     end,
-    if NStates !== [] then
-        append(Queue,NStates,NewQueue)
-    else
-        NewQueue = Queue
+    fa_shortest_distance(MinHeap,S,Matrix,DistVect).
+
+%% When expanding forward, the first frontier is [Q0]. After expanding Front, Font1 becomes the new frontier.
+%% Visited[I] :: Front. After expansion, Visited[I+1] :: Font1, and WArr[I] :: Syms
+regular_reason_forward(WArr,Q,Front,FrontSize,Matrix,Visited,I,N,Done) =>
+    (I > N ->
+        true
+    ; FrontSize == Q ->
+        true
+    ; FrontSize >= 512 ->
+        Done = 0
+    ;
+        Wi = WArr[I],
+        bp.fd_domain(Wi,DWi),        
+        regular_expand(DWi,Matrix,Front,Front1,Syms),
+        I1 is I+1,
+        bp.'::'(Visited[I1],Front1),
+        bp.'::'(Wi,Syms),
+        regular_reason_forward(WArr,Q,Front1,len(Front1),Matrix,Visited,I1,N,Done)
+    ).
+
+%% When expanding backward, the first frontier is FsLst
+%% Visited[I+1] :: Front. After expansion, Visited[I] :: Font1, and WArr[I] :: Syms
+regular_reason_backward(WArr,Q,Front,FrontSize,TMatrix,Visited,I,Done) =>
+    (I == 0 ->
+        true
+    ; FrontSize == Q ->
+        true
+    ; FrontSize >= 512 ->
+        Done = 0
+    ;
+        Wi = WArr[I],
+        bp.fd_domain(Wi,DWi),        
+        regular_expand(DWi,TMatrix,Front,Front1,Syms),
+        bp.'::'(Visited[I],Front1),
+        bp.'::'(Wi,Syms),        
+        regular_reason_backward(WArr,Q,Front1,len(Front1),TMatrix,Visited,I-1,Done)
+    ).
+
+% Expand Front to yield the next frontier Front1.
+regular_expand(DWi,Matrix,Front,Front1,Syms) =>
+    TmpFront = [],
+    TmpSyms = [],
+    foreach (State in Front, Input in DWi)
+        Entry = Matrix[State,Input],
+        (list(Entry) ->
+            foreach(NextState in Entry)
+                TmpFront := [NextState|TmpFront]
+            end,
+            TmpSyms := [Input|TmpSyms]
+        ;Entry !== 0 ->
+            TmpFront := [Entry|TmpFront],
+            TmpSyms := [Input|TmpSyms]            
+        ;
+            true
+        )
     end,
-    fa_shortest_distance(NewQueue,S,Matrix,DistVect).
+    Front1 = sort_remove_dups(TmpFront),
+    Syms = sort_remove_dups(TmpSyms).
+
 
 % convert a matrix to a table
 %  {I,J,M[I,J]}
 %
-matrix_element_table(M,NRows,NCols,TableO,NFA) =>
+matrix_element_table(M,NRows,NCols,TableO,IsNFA) =>
     Table = [],
     foreach(R in 1..NRows, C in 1..NCols)
         Entry = M[R,C],
-        ((list(Entry); struct(Entry)) ->
-		    NFA = 1,
+        (list(Entry) ->
+            IsNFA = 1,
             foreach(E in Entry)
                 Table := [{R,C,E}|Table]
             end
@@ -126,7 +199,8 @@ matrix_element_table(M,NRows,NCols,TableO,NFA) =>
             true
         )
     end,
-	TableO = Table.
+    TableO = Table.
+
 
 % Here is MiniZinc's infamous matrix element
 %     a[i+1] = d[a[i], x[i]]
@@ -134,7 +208,7 @@ matrix_element_table(M,NRows,NCols,TableO,NFA) =>
 regular_transitions([],_I,_Visited,VarTuples) => VarTuples = [].
 regular_transitions([E|L],I,Visited,VarTuples) =>
     I1 is I+1,
-	VarTuples = [{Visited[I],E,Visited[I1]}|VarTuplesR],
+    VarTuples = [{Visited[I],E,Visited[I1]}|VarTuplesR],
     regular_transitions(L,I1,Visited,VarTuplesR).
 
 int_list([]) => true.
@@ -173,8 +247,9 @@ matrix_element(M,NRows,NCols,I,J,MIJ,Solver) =>
 
 
 /* Reverse the transition relation of the automaton */
-transport_trans_matrix(Matrix,TMatrix) =>
-    Q = Matrix.length, S = Matrix[1].length,   % Q is the number of states, S is the number of symbols
+transpose_trans_matrix(Matrix,TMatrix) =>
+    Q = Matrix.length,
+    S = Matrix[1].length,   % Q is the number of states, S is the number of symbols
     TMatrix = new_array(Q,S),
     foreach (State in 1..Q, Input in 1..S)
         TMatrix[State,Input] = 0

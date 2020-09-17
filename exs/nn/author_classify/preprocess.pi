@@ -1,0 +1,29 @@
+
+main =>
+    Files = ["chesterton1.txt", "chesterton2.txt", "chesterton3.txt",
+              "melville1.txt", "melville2.txt", "melville3.txt"],
+    foreach (File in Files)
+         preprocess(File)
+    end.
+
+main([Filename]) =>
+    preprocess(Filename).
+    
+preprocess(Filename) =>
+    printf("preprocessing %s\n", Filename),
+    Reader = open(Filename, read),  
+    Writer = open("processed_" ++ Filename, write),  
+    Char = read_char(Reader),
+    while(Char !== end_of_file)
+        % If the current character is uppercase, skip the entire word
+        if ascii_uppercase(Char) then 
+            while(Char != ' ' && Char !== end_of_file)
+                Char := read_char(Reader)
+            end
+        elseif ascii_lowercase(Char) || Char == ' ' then
+            print(Writer, Char)
+        end,
+        Char := read_char(Reader),
+    end,
+    close(Reader),
+    close(Writer).

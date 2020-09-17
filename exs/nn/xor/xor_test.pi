@@ -1,0 +1,10 @@
+import nn.
+
+main =>
+    NN = nn_load("xor.net"),
+    printf("xor(-1,-1) = %w\n",nn_run(NN,{-1,-1})),
+    printf("xor(-1,1) = %w\n",nn_run(NN,{-1,1})),
+    printf("xor(1,-1) = %w\n",nn_run(NN,{1,-1})),
+    printf("xor(1,1) = %w\n",nn_run(NN,{1,1})),            
+    nn_destroy(NN).
+

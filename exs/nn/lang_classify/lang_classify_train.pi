@@ -1,0 +1,8 @@
+import nn.
+
+main =>
+	Ann = new_nn([26,13,3]),
+	nn_train(Ann,"frequencies.data",$[derror(0.0001),maxep(200),report(10)]),
+	nn_save(Ann, "lang_classify.net"),
+	nn_destroy_all,
+	println("Done").
