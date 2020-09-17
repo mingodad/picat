@@ -518,11 +518,12 @@ extern BPLONG addr_top_bit;
 #endif
 
 #ifdef LINUX
-#define BP_MALLOC(ptr, size) {                                  \
+#define BP_MALLOC(ptr, size, zeroed) {                          \
         ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));        \
         if (ptr != NULL) {                                      \
             if (addr_top_bit == BP_NEG_1) {                     \
                 addr_top_bit = ((BPLONG)ptr & TOP_BIT);         \
+                if(zeroed) memset(ptr, 0, size*sizeof(BPLONG)); \
             } else {                                            \
                 if (addr_top_bit != ((BPLONG)ptr & TOP_BIT)) {  \
                     free(ptr);                                  \
@@ -532,13 +533,14 @@ extern BPLONG addr_top_bit;
         }                                                       \
     }
 #else
-#define BP_MALLOC(ptr, size) {                                  \
+#define BP_MALLOC(ptr, size, zeroed) {                                  \
         ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));        \
         if (ptr != NULL) {                                      \
             if ((BPLONG)ptr & TOP_BIT) {                        \
                 free(ptr);                                      \
                 ptr = NULL;                                     \
             }                                                   \
+            else if(zeroed) memset(ptr, 0, size*sizeof(BPLONG));\
         }                                                       \
     }
 #endif

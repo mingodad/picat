@@ -209,7 +209,7 @@ int allocateCopyArea(size)
 {
     if (copy_area_allocated == 0) {
         size = (size > 1000000 ? size : 1000000);
-        BP_MALLOC(copy_area_low, size);
+        BP_MALLOC(copy_area_low, size, 0);
         if (copy_area_low == NULL) return BP_ERROR;
         copy_area_high = copy_area_low+size-1;
         /*  printf("new block allocated %x %x words\n",copy_area_low,copy_area_high); */
@@ -221,7 +221,7 @@ int allocateCopyArea(size)
             /*      BPLONG doubleSize = 2*(((BPULONG)copy_area_high-(BPULONG)copy_area_low)/sizeof(BPLONG)); */
             free(copy_area_low);
             /* size = size>doubleSize ? size : doubleSize; */
-            BP_MALLOC(copy_area_low, size);
+            BP_MALLOC(copy_area_low, size, 0);
             if (copy_area_low == NULL) return BP_ERROR;
 
             copy_area_high = copy_area_low+size-1;

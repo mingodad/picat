@@ -183,7 +183,7 @@ extern BPLONG no_gcs;
 #define ALLOCATE_NEW_PAREA_BLOCK(size, success) {                       \
         BPLONG_PTR old_parea_low_addr, tmp_ptr;                         \
         old_parea_low_addr = parea_low_addr;                            \
-        BP_MALLOC(tmp_ptr, size);                                       \
+        BP_MALLOC(tmp_ptr, size, 0);                                    \
         if (tmp_ptr != NULL) {                                          \
             success = 1;                                                \
             num_parea_expansions++;                                     \
@@ -212,7 +212,7 @@ extern BPLONG no_gcs;
 
 #define ADD_NEW_NUMBERED_TERM_AREA_BLOCK(area_record_ptr, success) {    \
         BPLONG_PTR tmp_ptr;                                             \
-        BP_MALLOC(tmp_ptr, NUMBERED_TERM_BLOCK_SIZE);                   \
+        BP_MALLOC(tmp_ptr, NUMBERED_TERM_BLOCK_SIZE, 0);                \
         if (tmp_ptr != NULL) {                                          \
             success = 1;                                                \
             FOLLOW(tmp_ptr) = (BPLONG)(area_record_ptr->low_addr);      \

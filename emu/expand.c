@@ -176,11 +176,11 @@ int expand_local_global_stacks(BPLONG preferred_size) {
 
     /*  if (new_stack_size>stack_size_limit) return;  */
 
-    BP_MALLOC(new_stack_low_addr, new_stack_size);
+    BP_MALLOC(new_stack_low_addr, new_stack_size, 0);
     if (new_stack_low_addr == NULL) {
         if (preferred_size != 0) return BP_ERROR;
         new_stack_size = stack_size+1000000L;
-        BP_MALLOC(new_stack_low_addr, new_stack_size);
+        BP_MALLOC(new_stack_low_addr, new_stack_size, 0);
         if (new_stack_low_addr == NULL) {
             return BP_ERROR;
         }

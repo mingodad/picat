@@ -179,7 +179,7 @@ void init_toam(argc, argv)
       printf("PICATPATH= %s\n",str);
       }
     */
-    BP_MALLOC(stack_low_addr, stack_size);
+    BP_MALLOC(stack_low_addr, stack_size, 1);
     if (stack_low_addr == NULL) myquit(OUT_OF_MEMORY, "in");
 
     trail_low_addr = (BPLONG_PTR)malloc(trail_size*sizeof(BPLONG));
