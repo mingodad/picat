@@ -945,9 +945,9 @@ BPLONG_PTR dv_ptr_x, dv_ptr_y;
 
 void print_event_queue() {
     int i;
-    printf("trigger_no=%d\n", trigger_no);
+    printf("trigger_no=" BPLONG_FMT_STR "\n", trigger_no);
     for (i = 1; i <= trigger_no; i++) {
-        printf("FLAG(%ld) queue(%x)\n", event_flag[i], triggeredCs[i]);
+        printf("FLAG(%d) queue(" BPULONG_FMT_STR ")\n", event_flag[i], triggeredCs[i]);
     }
     if (trigger_no >= 1) printf("\n");
 }

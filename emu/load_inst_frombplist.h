@@ -559,7 +559,7 @@ case add_uuv:
 case sub_uuv:
 case mul_uuv:
 case idiv_uuv:
-case arg:
+case picat_arg:
 case functor_uvv:
 case functor_vuu:
 case get_clause_copy:

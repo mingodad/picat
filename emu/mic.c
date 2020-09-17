@@ -1470,7 +1470,7 @@ void quit(s)
     exit(1);
 #else
     c_STATISTICS(); \
-    fprintf(stderr, s);
+    fprintf(stderr, "%s", s);
     exit(0);
 #endif
 }
@@ -1706,7 +1706,7 @@ int b_NTH_ELM_ccf(i, l, v)
 
 void myquit(overflow_type, src)
     BPLONG overflow_type;
-    char *src;
+    const char *src;
 {
 #ifdef BPSOLVER
     // fprintf(stdout,"%% UNKNOWN\n");

@@ -19,6 +19,7 @@ pPLA init_PLA(int n);
 void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA);
 void retrieve_pla_cubes(BPLONG_PTR ptrBNs, pPLA PLA, BPLONG Cls, BPLONG ClsR);
 void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA);
+extern int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA);
 
 /**************************************************************************************************
    call_espresso(BNs,InFlag,Vals,Cls,ClsR):

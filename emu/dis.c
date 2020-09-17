@@ -10,6 +10,9 @@
 #include "basic.h"
 #include "inst.h"
 #include "term.h"
+#if (defined(WIN32) && defined(__MINGW32__))
+#define access _access
+#endif
 /*
   #define DEBUG_DIS 
 */
@@ -40,7 +43,7 @@ void dis_data()
     for (i = 0; i < BUCKET_CHAIN; ++i) {
         psc_ptr = hash_table[i];
         while (psc_ptr != NULL) {
-            fprintf(filedes, "%lx: ", (BPLONG)psc_ptr);
+            fprintf(filedes, BPLONG_FMT_STR ": ", (BPLONG)psc_ptr);
             curr_out = filedes;
             bp_write_pname(GET_NAME(psc_ptr));
             fprintf(filedes, "/%d,\t", GET_ARITY(psc_ptr));
@@ -51,7 +54,7 @@ void dis_data()
             case T_PRED: fprintf(filedes, "PRED"); break;
             case C_PRED: fprintf(filedes, "CPRED"); break;
             }
-            fprintf(filedes, ",  %lx\n", (unsigned long int)GET_EP(psc_ptr));
+            fprintf(filedes, ",  " BPULONG_FMT_STR "\n", (BPULONG)GET_EP(psc_ptr));
             psc_ptr = GET_NEXT(psc_ptr);
         }
     }
@@ -86,7 +89,7 @@ void dis_text()
     fprintf(filedes, "\n/*  text below  */\n");
     cpreg = inst_begin;
 
-    printf("inst_begin=%lx\n", (unsigned long int) inst_begin);
+    printf("inst_begin=" BPULONG_FMT_STR "\n", (BPULONG) inst_begin);
     do {
         fprintf(filedes, "\nNew segment below \n\n");
         while (*cpreg != endfile)
@@ -103,18 +106,18 @@ void print_inst(filedes)
     BPLONG i, n;
     SYM_REC_PTR sym_ptr;
     if (num_line)
-        fprintf(filedes, "%lx\t", (unsigned long int) cpreg);
+        fprintf(filedes, BPULONG_FMT_STR "\t", (BPULONG) cpreg);
     opcode = *cpreg++;
 
     //  printf("dis %s\n",inst_name[opcode]);
 
     if (opcode == tabsize) {
         i = *cpreg++;
-        fprintf(filedes, "\t %lx\n", i);
+        fprintf(filedes, "\t " BPLONG_FMT_STR "\n", i);
 
         while (i > 0) {
-            if (num_line) fprintf(filedes, "%lx\t", (unsigned long int) cpreg);
-            fprintf(filedes, "\t %lx\n", *cpreg++);
+            if (num_line) fprintf(filedes, BPULONG_FMT_STR "\t", (BPULONG) cpreg);
+            fprintf(filedes, "\t " BPLONG_FMT_STR "\n", *cpreg++);
             i--;
         }
     } else {
@@ -126,7 +129,7 @@ void dis_addr(filedes, operand)
     FILE *filedes;
     BPLONG operand;
 {
-    fprintf(filedes, "' %lx'", (operand));
+    fprintf(filedes, "' " BPLONG_FMT_STR "'", (operand));
 }
 
 void dis_y(filedes, operand)

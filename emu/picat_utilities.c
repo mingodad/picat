@@ -1,5 +1,6 @@
 #include "picat.h"
-#include "stdlib.h"
+#include <stdlib.h>
+#include <string.h>
 
 TERM cstring_to_picat(char* v, int n) {
     if (v == NULL || n <= 0) {
@@ -12,7 +13,7 @@ TERM cstring_to_picat(char* v, int n) {
 
 
     for (int i = 0; i < n - 1; i++) {
-        char c[] = { v[i], "\0" };
+        char c[] = { v[i], '\0' };
         picat_unify(car, picat_build_atom(c));
         TERM temp = picat_build_list();
         picat_unify(cdr, temp);
@@ -20,7 +21,7 @@ TERM cstring_to_picat(char* v, int n) {
         car = picat_get_car(temp);
         cdr = picat_get_cdr(temp);
     }
-    char c[] = { v[n - 1], "\0" };
+    char c[] = { v[n - 1], '\0' };
     picat_unify(car, picat_build_atom(c));
     picat_unify(cdr, picat_build_nil());
 

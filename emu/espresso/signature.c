@@ -23,7 +23,12 @@ signature(pset_family F1, pset_family D1, pset_family R1)
 	pcover ESC,ESSet,ESSENTIAL;
 	pcover F,D,R;
 	pcube last,p;
+#if (defined(WIN32) && defined(__MINGW32__))
+        #define sigemptyset(x) memset((x), 0, sizeof(*(x)))
+	//struct signal xcpu_action;
+#else
 	struct sigaction xcpu_action;
+#endif
 
 	/* make scratch copy */
 	F = sf_save(F1);
@@ -34,10 +39,12 @@ signature(pset_family F1, pset_family D1, pset_family R1)
 	R = unravel(R, cube.num_binary_vars);
 	R = sf_contain(R);
 
+#if !(defined(WIN32) && defined(__MINGW32__))
 	xcpu_action.sa_handler = (void (*)()) cleanup;
 	sigemptyset (&xcpu_action.sa_mask);
 	xcpu_action.sa_flags = 0;
 	sigaction (SIGXCPU, &xcpu_action, NULL);
+#endif
 	start_time = ptime();
 
 	/* Initial expand and irredundant */

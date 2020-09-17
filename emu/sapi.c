@@ -13,11 +13,17 @@
 #include "sapi.h"
 #include <stdarg.h>
 #include <string.h>
+#ifdef WIN32
+#include <direct.h>
+#define chdir _chdir
+#else
+#include <unistd.h>
+#endif
 
 /* extern char *malloc();*/
 
 BPLONG SP_list_len(SP_term_ref t);
-int SP_get_list_n_chars(SP_term_ref t, SP_term_ref tail, long n, long *w, char *s);
+int SP_get_list_n_chars(SP_term_ref t, SP_term_ref tail, long n, BPLONG *w, char *s);
 
 char *SP_error_message(BPLONG errno) {
     quit("Not implemented \n");
@@ -29,15 +35,15 @@ SP_term_ref SP_new_term_ref() {
     return op;
 }
 
-unsigned long SP_atom_from_string(char *s) {
-    return (unsigned long)insert_sym(s, strlen(s), 0);
+BPULONG SP_atom_from_string(char *s) {
+    return (BPLONG)insert_sym(s, strlen(s), 0);
 }
 
-char *SP_string_from_atom(unsigned long a) {
+char *SP_string_from_atom(BPULONG a) {
     return GET_NAME((SYM_REC_PTR)a);
 }
 
-UW16 SP_atom_length(unsigned long a) {
+UW16 SP_atom_length(BPULONG a) {
     return GET_LENGTH((SYM_REC_PTR)a);
 }
 
@@ -92,7 +98,7 @@ int SP_put_string(SP_term_ref t, char *name) {
   Assigns to t a Prolog integer from a C pointer. 
 */
 int SP_put_address(SP_term_ref t, void *pointer) {
-    FOLLOW(t) = ADDTAG((long)pointer, INT_TAG);
+    FOLLOW(t) = ADDTAG((BPLONG)pointer, INT_TAG);
     return SP_SUCCESS;
 }
 
@@ -149,7 +155,7 @@ int SP_put_number_chars(SP_term_ref t, char *s) {
   to t. This is similar to calling functor/3 with the frst argument unbound and
   the second and third arguments bound to an atom and an integer, respectively.
 */
-int SP_put_functor(SP_term_ref t, unsigned long name, BPLONG arity) {
+int SP_put_functor(SP_term_ref t, BPLONG name, BPLONG arity) {
     SP_term_ref term;
     NEW_VAR(term);
     cfunctor1(term, ADDTAG(name, ATM), MAKEINT(arity));
@@ -171,7 +177,7 @@ int SP_put_list(SP_term_ref t) {
   This is similar to calling =../2 with the first argument unbound and the
   second argument bound.
 */
-int SP_cons_functor(SP_term_ref t, unsigned long name, BPLONG arity, ...) {
+int SP_cons_functor(SP_term_ref t, BPLONG name, BPLONG arity, ...) {
     va_list ap;
     SP_term_ref arg;
     BPLONG i;
@@ -242,7 +248,7 @@ int SP_get_float(SP_term_ref t, double *d) {
 /*
   Assigns to *a the canonical representation of a Prolog atom.
 */
-int SP_get_atom(SP_term_ref t, unsigned long *a) {
+int SP_get_atom(SP_term_ref t, BPULONG *a) {
     BPLONG_PTR top;
     DEREF(t);
     if (!ISATOM(t)) {
@@ -313,7 +319,7 @@ int SP_get_list_chars(SP_term_ref t, char **s) {
   actually written is assigned to *w. tail is set to the remainder of the list. The
   array s must have room for at least n bytes.
 */
-int SP_get_list_n_chars(SP_term_ref t, SP_term_ref tail, long n, long *w, char *s) {
+int SP_get_list_n_chars(SP_term_ref t, SP_term_ref tail, long n, BPLONG *w, char *s) {
     BPLONG_PTR top;
     BPLONG i, len;
     BPLONG code;
@@ -366,7 +372,7 @@ int SP_get_number_chars(SP_term_ref t, char **s) {
     char *ptr;
     DEREF(t);
     if (ISINT(t)) {
-        sprintf(buf, "%d", INTVAL(t));
+        sprintf(buf, BPLONG_FMT_STR, INTVAL(t));
     } else if (ISFLOAT(t)) {
         sprintf(buf, "%lf", floatval(t));
     } else {
@@ -557,7 +563,7 @@ void SP_free(void *ptr) {
 }
 
 int SP_chdir(const char *path) {
-    chdir(path);
+    if(chdir(path)) return SP_ERROR;
     return SP_SUCCESS;
 }
 
@@ -572,7 +578,7 @@ SP_pred_ref SP_predicate(char *name_string, long arity, char *module_string) {
     return sym_ptr;
 }
 
-SP_pred_ref SP_pred(unsigned long name_atom, long arity, unsigned long module_atom) {
+SP_pred_ref SP_pred(BPULONG name_atom, long arity, BPULONG module_atom) {
     SYM_REC_PTR sym_ptr = (SYM_REC_PTR)name_atom;
     return SP_predicate(GET_NAME(sym_ptr), arity, NULL);
 }
@@ -587,7 +593,7 @@ int SP_query(SP_pred_ref predicate, ...) {
     char *name;
 
     arity = GET_ARITY(predicate);
-    printf("arity=%d\n", arity);
+    printf("arity=" BPLONG_FMT_STR "\n", arity);
 
     if (arity == 0) {
         query = ADDTAG((BPLONG)predicate, ATM);

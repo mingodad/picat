@@ -641,10 +641,12 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
         FOLLOW(timer_no_ptr) = timer_no;
 
 #ifdef _WIN32
-        threadHandle = CreateThread(NULL, 1000, timerThread, timer_no_ptr, 0, &pid);
+        DWORD wpid;
+        threadHandle = CreateThread(NULL, 1000, timerThread, timer_no_ptr, 0, &wpid);
         if (threadHandle == NULL) {
             quit("Failed to create a timer\n");
         }
+        pid = wpid;
 #else
         if (pthread_create( &pid, NULL, timerThread, (void*)timer_no_ptr) != 0) {
             quit("Failed to create a timer\n");

@@ -3,6 +3,7 @@
 extern "C" {
 #include "../picat.h"
 #include "../picat_utilities.h"
+#include <assert.h>
 }
 
 #include "floatfann.h"
@@ -126,6 +127,8 @@ fann_activationfunc_enum picat_to_fann_func(TERM f) {
 	else if (!strcmp(func,"FANN_COS")) {
 		return FANN_COS;
 	}
+	assert(0);
+        return (fann_activationfunc_enum)-1;
 }
 
 extern "C" {
@@ -1080,6 +1083,8 @@ extern "C" {
 		case 4:
 			return picat_unify(ret, picat_build_atom("FANN_TRAIN_SARPROP"));
 		}
+		assert(0);
+                return -1;
 	}
 
 	int pi_fann_set_training_algorithm() {
@@ -1219,6 +1224,8 @@ extern "C" {
 		case 19:
 			return picat_unify(ret, picat_build_atom("FANN_COS"));
 		}
+		assert(0);
+                return -1;
 	}
 
 	int pi_fann_set_activation_function() {
@@ -1378,6 +1385,8 @@ extern "C" {
 		case FANN_ERRORFUNC_TANH:
 			return picat_unify(ret, picat_build_atom("FANN_ERRORFUNC_TANH"));
 		}
+		assert(0);
+                return -1;
 	}
 
 	int pi_fann_set_train_error_function() {
@@ -1410,6 +1419,8 @@ extern "C" {
 		case FANN_STOPFUNC_BIT:
 			return picat_unify(ret, picat_build_atom("FANN_STOPFUNC_BIT"));
 		}
+		assert(0);
+                return -1;
 	}
 
 	int pi_fann_set_train_stop_function() {

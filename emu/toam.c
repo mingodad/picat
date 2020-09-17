@@ -190,7 +190,7 @@ contcase:  /* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
 #ifdef TRACE_BUILTIN
     cpreg = P;
     if (*cpreg >= builtin0 && *cpreg <= builtin4) {
-        printf("ar(%x) lt(%x)", AR, LOCAL_TOP);
+        printf("ar(" BPLONG_FMT_STR ") lt(" BPLONG_FMT_STR ")", AR, LOCAL_TOP);
         print_inst(curr_out);
     }
 #endif

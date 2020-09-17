@@ -5,7 +5,7 @@
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
 #include <string.h>
@@ -37,7 +37,7 @@ int bp_signal(int signo, void user_signal_handler(int, void *), void *userdata)
 /* this function is by Steve Branch */
 void *bp_get_address(BPLONG t)
 {
-    unsigned long int ulint = 0;
+    BPULONG ulint = 0;
 
     DEREF(t);
     if (ISINT(t)) {
@@ -62,8 +62,8 @@ BPLONG bp_build_address(void *address) {
     if (address) {
         temp = ADDTAG(heap_top, STR);
         NEW_HEAP_NODE((BPLONG)address_psc);  /* '$address'(void *)   */
-        NEW_HEAP_NODE(MAKEINT(((unsigned long int)address >> (sizeof(BPLONG)*4))));
-        NEW_HEAP_NODE(MAKEINT(((unsigned long int)address << (sizeof(BPLONG)*4)) >> (sizeof(BPLONG)*4)));
+        NEW_HEAP_NODE(MAKEINT(((BPULONG)address >> (sizeof(BPLONG)*4))));
+        NEW_HEAP_NODE(MAKEINT(((BPULONG)address << (sizeof(BPLONG)*4)) >> (sizeof(BPLONG)*4)));
     } else {
         temp = BP_ZERO;  // prolog code is checking for zero
     }
@@ -906,7 +906,7 @@ void aux_term_2_string_term(term)
     BPLONG_PTR top;
 
     SWITCH_OP(term, term_2_string_l,
-              {sprintf(buf, "_%x", (BPULONG)term);
+              {sprintf(buf, "_" BPULONG_FMT_STR, (BPULONG)term);
                   append_str_to_solution_bag(buf, strlen(buf), 0);},
               {if (ISINT(term)) {
                       sprintf(buf, "%d", (int)INTVAL(term));
@@ -921,7 +921,7 @@ void aux_term_2_string_term(term)
                       sprintf(buf, "%lf", floatval(term));
                       append_str_to_solution_bag(buf, strlen(buf), 0);
                   } else if (IS_SUSP_VAR(term)) {
-                      sprintf(buf, "_%x", (BPULONG)term);
+                      sprintf(buf, "_" BPULONG_FMT_STR, (BPULONG)term);
                       append_str_to_solution_bag(buf, strlen(buf), 1);
                   } else {
                       sym_ptr = GET_STR_SYM_REC(term);
@@ -935,7 +935,7 @@ void aux_term_2_string_term(term)
                       }
                       append_str_to_solution_bag(")", 1, 0);
                   }},
-              {sprintf(buf, "_%x", (BPULONG)term);
+              {sprintf(buf, "_" BPULONG_FMT_STR, (BPULONG)term);
                   append_str_to_solution_bag(buf, strlen(buf), 0);});
 }
 
@@ -974,7 +974,11 @@ void picat_write_term(term)
 }
 /**/
 int currentTime() {
+#if (defined(WIN32) && defined(__MINGW32__))
+    BPLONG t;
+#else
     long t;
+#endif
     struct tm *ct;
     BPLONG Year, Month, Day, Hour, Min, Sec;
 
@@ -1001,28 +1005,28 @@ int currentTime() {
   int test(){
   TERM a1, a2, a, b, c, f1, l1, f12;
   char *name_ptr;
-  
-  a1 = picat_get_call_arg(1, 2);       // first argument 
+
+  a1 = picat_get_call_arg(1, 2);       // first argument
   a2 = picat_get_call_arg(2, 2);       // second argument
   a = picat_build_atom("a");
   b = picat_build_atom("b");
   c = picat_build_atom("c");
-  f1 = picat_build_structure("f", 1);  // f(1) 
+  f1 = picat_build_structure("f", 1);  // f(1)
   picat_unify(picat_get_arg(1, f1), a);
-  l1 = picat_build_list();             // [1] 
+  l1 = picat_build_list();             // [1]
   picat_unify(picat_get_car(l1), picat_build_integer(1));
   picat_unify(picat_get_cdr(l1), picat_build_nil());
-  f12 = picat_build_float(1.2);        // 1.2 
-  
-  if (!picat_is_atom(a1)) 
+  f12 = picat_build_float(1.2);        // 1.2
+
+  if (!picat_is_atom(a1))
   return PICAT_FALSE;
   name_ptr = picat_get_name(a1);
   switch (*name_ptr){
-  case 'a': 
+  case 'a':
   return (picat_unify(a1, a) ? picat_unify(a2, f1) : PICAT_FALSE);
-  case 'b': 
+  case 'b':
   return (picat_unify(a1, b) ? picat_unify(a2, l1) : PICAT_FALSE);
-  case 'c': 
+  case 'c':
   return (picat_unify(a1, c) ? picat_unify(a2, f12) : PICAT_FALSE);
   default: return PICAT_FALSE;
   }
@@ -1081,6 +1085,10 @@ int c_IS_SMALL_INT_c() {
     DEREF(v);
     return (ISINT(v)) ? BP_TRUE : BP_FALSE;
 }
+
+#ifdef FANN
+extern int fann_cpreds();
+#endif
 
 void Cboot() {
     insert_cpred("c_format_set_dest", 1, c_format_set_dest);
@@ -1243,21 +1251,21 @@ void Cboot() {
 
 /* by S. Branch */
 /*
-  extern void Cboot_lcm(void);                                                                                  
-  extern void Cboot_libdata(void);                                                                                      
-  extern void Cboot_libklr(void);                                                                                               
-  extern void Cboot_libprofare(void);                                                                                   
-  extern void Cboot_libtaxtextdata(void);                                                                                       
-  extern int c_current_host(void);                                                                                      
-  extern int c_process_id(void);                                                                                        
-  extern int c_socket_server_open(void);                                                                                        
-  extern int c_socket_server_accept(void);                                                                                      
-  extern int c_socket_server_close(void);                                                                                       
-  extern int c_format_to_codes(void);                                                                                   
-  extern int c_now(void);                                                                                               
-  extern int c_term_hash(void);                                                                                         
-  extern int c_random(void);                                                                                            
-  extern int c_simple(void);                                                                                            
+  extern void Cboot_lcm(void);
+  extern void Cboot_libdata(void);
+  extern void Cboot_libklr(void);
+  extern void Cboot_libprofare(void);
+  extern void Cboot_libtaxtextdata(void);
+  extern int c_current_host(void);
+  extern int c_process_id(void);
+  extern int c_socket_server_open(void);
+  extern int c_socket_server_accept(void);
+  extern int c_socket_server_close(void);
+  extern int c_format_to_codes(void);
+  extern int c_now(void);
+  extern int c_term_hash(void);
+  extern int c_random(void);
+  extern int c_simple(void);
 
   void Cboot_TP(void)
   {

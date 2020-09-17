@@ -584,7 +584,7 @@ key_identical_start:
                              arity = GET_ARITY((SYM_REC_PTR)FOLLOW(op1));
                              for (i = 1; i < arity; i++) {
                                  if (!key_identical(*((BPLONG_PTR) op1 + i), *((BPLONG_PTR) op2 + i))) {
-								   return 0;
+                                     return 0;
                                  }
                              }
                              op1 = *((BPLONG_PTR) op1 + arity);

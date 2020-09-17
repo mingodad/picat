@@ -36,7 +36,15 @@ extern char *string_in;
 #include <sys/resource.h>
 #endif
 
-#ifdef WIN32
+#ifdef __MINGW32__
+#include <direct.h>
+#define mkdir _mkdir
+#define rmdir _rmdir
+#define S_ISLNK(x) 0
+#define S_ISSOCK(x) 0
+#endif 
+
+#if defined(WIN32) && !defined(__MINGW32__) 
 #define S_ISREG(mode) (mode & S_IFREG)
 #define S_ISDIR(mode) (mode & S_IFDIR)
 #define S_ISFIFO(mode) (mode & _S_IFIFO)

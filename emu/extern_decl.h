@@ -1107,7 +1107,7 @@ extern int c_SAVE_AR(void);
 extern int c_set_gc_threshold(void);
 #endif
 extern int b_NTH_ELM_ccf(BPLONG i, BPLONG l, BPLONG v);
-extern void myquit(BPLONG overflow_type, char *src);
+extern void myquit(BPLONG overflow_type, const char *src);
 extern int c_HTABLE_HCODE(void);
 extern int htable_contains_tuple(BPLONG_PTR htable_ptr, BPLONG n, BPLONG_PTR tuple_ptr, BPLONG arity);
 extern int b_HTABLE_CONTAINS_TUPLE(BPLONG Htable, BPLONG Tuple);

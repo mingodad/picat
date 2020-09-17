@@ -8,6 +8,10 @@
  ********************************************************************/
 #ifdef _WIN32
 #include <windows.h>
+#ifdef __MINGW32__
+#include <direct.h>
+#define access _access
+#endif
 #endif
 #include <stdlib.h>
 #ifdef unix
@@ -107,7 +111,7 @@ void init_toam(argc, argv)
                 break;
 
             case 's': i++;
-                sscanf(argv[i], "%ld", &stack_size);
+                sscanf(argv[i], BPLONG_FMT_STR, &stack_size);
                 if (stack_size < 1000000) stack_size = 1000000;
                 break;
 

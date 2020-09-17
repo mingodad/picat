@@ -30,7 +30,7 @@
 #endif
 
 /* default */
-#if !defined(BSD) && !defined(UNIX10) && !defined(UNIX60) && !defined(UNIX100)
+#if !defined(WIN32) && !defined(BSD) && !defined(UNIX10) && !defined(UNIX60) && !defined(UNIX100)
 #define BSD
 #endif
 
@@ -51,6 +51,12 @@
 #include <sys/times.h>
 #endif
 
+#ifdef _WIN32
+#include <sys/timeb.h>
+#include <sys/types.h>
+#define __need_clock_t
+#include <time.h>
+#endif
 
 /*
  *   util_cpu_time -- return a long which represents the elapsed processor
@@ -82,6 +88,10 @@ long util_cpu_time(void)
     struct tms buffer;		/* times() with 100 Hz resolution */
     times(&buffer);
     t = buffer.tms_utime * 10;
+#endif
+
+#ifdef _WIN32
+    return clock();
 #endif
 
     return t;

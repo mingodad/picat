@@ -2101,8 +2101,8 @@ case mod:
     fprintf(filedes, ","); dis_z(filedes, *cpreg++);
     dis_y(filedes, *cpreg++);
     fprintf(filedes, ")"); fprintf(filedes, ".\n"); break;
-case arg:
-    fprintf(filedes, "\t%s", inst_name[arg]);
+case picat_arg:
+    fprintf(filedes, "\t%s", inst_name[picat_arg]);
     fprintf(filedes, "("); dis_y(filedes, *cpreg++);
     fprintf(filedes, ","); dis_y(filedes, *cpreg++);
     dis_y(filedes, *cpreg++);

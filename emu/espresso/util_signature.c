@@ -21,9 +21,12 @@
 #include "espresso.h"
 #include "signature.h"
 #include <sys/time.h>
+#if !(defined(WIN32) && defined(__MINGW32__))
 #include <sys/resource.h>
+#endif
 #include <unistd.h>
 
+#if !(defined(WIN32) && defined(__MINGW32__))
 void
 set_time_limit(int seconds)
 {
@@ -31,6 +34,7 @@ set_time_limit(int seconds)
 	rlp->rlim_cur = seconds;
 	setrlimit(RLIMIT_CPU, rlp);
 }
+#endif
 
 void
 print_cover(pset_family F, char *name)
