@@ -26,7 +26,7 @@ BPLONG free_record_count[MAX_FREE_RECORD_SIZE+1];
             free_record[record_size] = record_ptr;                      \
             free_record_count[record_size]++;                           \
         }                                                               \
-        }
+    }
 
 #define RELEASE_FREE_CLAUSE_RECORD(clause_record_ptr) {                 \
         FOLLOW((BPLONG_PTR)clause_record_ptr) = (BPLONG)free_record[5]; \
@@ -45,7 +45,7 @@ BPLONG free_record_count[MAX_FREE_RECORD_SIZE+1];
             ALLOCATE_FROM_PAREA(tmp_ptr, 5);                    \
         }                                                       \
         clause_record_ptr = (InterpretedClausePtr)tmp_ptr;      \
-        }
+    }
 
 #define ALLOCATE_RECORD_IN_ASSERT(record_ptr, record_size) {            \
         if (record_size <= MAX_FREE_RECORD_SIZE && free_record_count[record_size] > 0) { \
@@ -55,7 +55,7 @@ BPLONG free_record_count[MAX_FREE_RECORD_SIZE+1];
         } else {                                                        \
             ALLOCATE_FROM_PAREA(record_ptr, record_size);               \
         }                                                               \
-        }
+    }
 
 /* the EP of the predicate symbol refers to a term $addr(pred_ptr) */
 #define INTERPRETED_PRED_PTR(pred) (InterpretedPredPtr)UNTAGGED_ADDR(FOLLOW((BPLONG_PTR)UNTAGGED_ADDR(pred)+1))

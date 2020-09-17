@@ -416,7 +416,7 @@ extern BPLONG no_gcs;
         error_goal_name = name;                                         \
         error_goal_arity = arity;                                       \
         goto catch_exception;                                           \
-        }
+    }
 
 #define ASSIGN_ENCODEFLOAT(op1, value)          \
     PUSHTRAIL_s(op1);                           \
@@ -454,7 +454,7 @@ extern BPLONG no_gcs;
             }                                                           \
             bp_gc = old_bp_gc;                                          \
         }                                                               \
-        }
+    }
 
 /* Two things are done in ROLL_CHOICE_POINTS
    1. If the choice point is an incomplete tabled frame, set the AR field of the subgoal table entry to NULL;
@@ -481,7 +481,7 @@ extern BPLONG no_gcs;
                 b = (BPLONG_PTR)AR_B(b);                                \
             } while (b < to_b);                                         \
         }                                                               \
-        }
+    }
 
 #define CUT                                             \
     sreg = (BPLONG_PTR)AR_B(AR);                        \
@@ -588,18 +588,18 @@ extern BPLONG no_gcs;
 
 #define TOAM_KILL_SUSP_FRAME {                  \
         AR_STATUS(AR) = SUSP_EXIT;              \
-        }
+    }
 
 #define CATCH_WAKE_EVENT if (toam_signal_vec != 0) {                    \
         if (toam_signal_vec & INTERRUPT) {bp_exception = interrupt_sym; goto interrupt_handler;} \
         if (toam_signal_vec & EVENT_POOL_NONEMPTY) post_event_pool();   \
         if (trigger_no != 0) goto trigger_on_handler;                   \
-        }
+    }
 
 #define CONNECT_SUSP_FRAME {                    \
         AR_PREV(AR) = (BPLONG)SF;               \
         SF = AR;                                \
-        }
+}
 
 /* frame has been added to the active chain. make a copy of it ontop of the stack */
 #define CLONE_FRAME(frame)                                              \
@@ -625,7 +625,7 @@ extern BPLONG no_gcs;
         AR_AR(frame) = (BPLONG)AR;              \
         AR_CPS(frame) = (BPLONG)P;              \
         AR = frame;                             \
-        }
+    }
 
 #define CONNECT_WOKEN_FRAME_ins(frame)                                  \
     if (FRAME_IS_SLEEP(frame)) {                                        \
@@ -672,10 +672,10 @@ extern BPLONG no_gcs;
         CONNECT_WOKEN_FRAME(frame);                                     \
         P = (BPLONG_PTR)FOLLOW(AR_REEP(AR));                            \
     } else if (FRAME_IS_RUN(frame)) {                                   \
-    CLONE_FRAME(frame);                                                 \
-    AR_OUT(frame_c) = elm;                                              \
-    CONNECT_WOKEN_FRAME(frame_c);                                       \
-    P = (BPLONG_PTR)FOLLOW(AR_REEP(AR));                                \
+        CLONE_FRAME(frame);                                             \
+        AR_OUT(frame_c) = elm;                                          \
+        CONNECT_WOKEN_FRAME(frame_c);                                   \
+        P = (BPLONG_PTR)FOLLOW(AR_REEP(AR));                            \
     }
 
 
@@ -701,7 +701,7 @@ extern BPLONG no_gcs;
         available_sh_space = (LOCAL_TOP-H)/gc_threshold;        \
         stack_water_mark = LOCAL_TOP-available_sh_space;        \
         heap_water_mark = H+available_sh_space;                 \
-        }
+}
 
 #define EXPAND_STACK(margin) if (LOCAL_TOP - H <= margin) {     \
         if (toam_signal_vec == 0 && in_critical_region == 0) {  \
@@ -714,7 +714,7 @@ extern BPLONG no_gcs;
             RESTORE_AR; RESTORE_TOP;                            \
             gc_is_working = 0;                                  \
         }                                                       \
-        }
+    }
 
 #define INVOKE_GC_UNCOND {                                      \
     if (bp_gc) {                                                \
@@ -748,7 +748,7 @@ extern BPLONG no_gcs;
             }                                                           \
             toam_LOCAL_OVERFLOW_CHECK(8);                               \
         }                                                               \
-        }
+    }
 
 /*
   #define INVOKE_GC_NONDET INVOKE_GC_UNCOND     
@@ -787,7 +787,7 @@ extern BPLONG no_gcs;
             RESET_WATER_MARKS;                                          \
         }                                                               \
         toam_LOCAL_OVERFLOW_CHECK(5);                                   \
-        }
+    }
 
 #define REAL_INITIALIZE_STACK_VARS(N) {         \
         top = AR-N;                             \
@@ -795,7 +795,7 @@ extern BPLONG no_gcs;
             FOLLOW(top) = (BPLONG)top;          \
             top--;                              \
         }                                       \
-        }
+    }
 
 #define INITIALIZE_STACK_VARS(N)
 
@@ -810,7 +810,7 @@ extern BPLONG no_gcs;
             }                                                           \
             propagate_scc_root((BPLONG_PTR)AR_AR(AR), subgoal_entry, scc_root, scc_root_ar); \
         }                                                               \
-        }
+}
 
 #define RESET_SUBGOAL_AR(f) {                                           \
         if (IS_TABLE_FRAME(f)) {                                        \
@@ -820,7 +820,7 @@ extern BPLONG no_gcs;
                 GT_TOP_AR(subgoal_entry) = (BPLONG)NULL;                \
             }                                                           \
         }                                                               \
-        }
+    }
 
 
 

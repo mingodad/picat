@@ -21,7 +21,7 @@ extern double floatval();
         } else {                                                \
             glp_set_obj_coef(lp, i, floatval(Pval));            \
         }                                                       \
-        }
+    }
 
 #define GLP_SET_COL_BOUNDS(lp, i, lower, upper) {                       \
         if (ISREF(lower)) {                                             \
@@ -38,19 +38,19 @@ extern double floatval();
         } else {                                                        \
             glp_set_col_bnds(lp, i, GLP_DB, dob_val, floatval(upper));  \
         }                                                               \
-        }
+    }
 
 #define FREE_IF_NOT_NULL(ptr) if (ptr != NULL) free(ptr)
 
 #define RELEASE_SOL_SPACE {                     \
         FREE_IF_NOT_NULL(x);                    \
-        }
+    }
 
 #define RELEASE_PROB_SPACE {                    \
         FREE_IF_NOT_NULL(rn);                   \
         FREE_IF_NOT_NULL(cn);                   \
         FREE_IF_NOT_NULL(rmatval);              \
-        }
+}
 
 int glpk_error(error_msg)
     char *error_msg;

@@ -211,7 +211,6 @@ int c_NUMBER_VARS() {
     register BPLONG_PTR top;
 
     op1 = ARG(1, 3); op2 = ARG(2, 3); op3 = ARG(3, 3);
-
     DEREF(op2);
     if (!ISINT(op2)) {
         bp_exception = c_type_error(et_INTEGER, op2); return BP_ERROR;
@@ -372,7 +371,7 @@ int c_VARS_SET() {
 
     term = ARG(1, 2);
 
-	// printf("=>vars_set ");  write_term(term); printf("\n");
+    // printf("=>vars_set ");  write_term(term); printf("\n");
 
     local_top0 = local_top;
     initial_diff0 = (BPULONG)trail_up_addr-(BPULONG)trail_top;
@@ -387,21 +386,21 @@ int c_VARS_SET() {
         myquit(STACK_OVERFLOW, "vars_set 0");
     }
     while (local_top < local_top0) {
-	    BPLONG tmp_term;
+        BPLONG tmp_term;
         local_top++;
-		tmp_term = FOLLOW(local_top);
-		if ((BPLONG_PTR)tmp_term > heap_top){  /* a stack var */
-		  FOLLOW(heap_top) = (BPLONG)heap_top;
-		  PUSHTRAIL(tmp_term);
-		  FOLLOW(tmp_term) = (BPLONG)heap_top;
-		} else {
-		  FOLLOW(heap_top) = FOLLOW(local_top);
-		}
+        tmp_term = FOLLOW(local_top);
+        if ((BPLONG_PTR)tmp_term > heap_top){  /* a stack var */
+            FOLLOW(heap_top) = (BPLONG)heap_top;
+            PUSHTRAIL(tmp_term);
+            FOLLOW(tmp_term) = (BPLONG)heap_top;
+        } else {
+            FOLLOW(heap_top) = FOLLOW(local_top);
+        }
         FOLLOW(heap_top+1) = set;
         set = ADDTAG(heap_top, LST);
         heap_top += 2;
     }
-	// printf("<=vars_set "); write_term(set); printf("\n");
+    // printf("<=vars_set "); write_term(set); printf("\n");
     return unify(ARG(2, 2), set);
 }
 
@@ -411,10 +410,14 @@ int c_VARS_SET_INTERSECT() {
     BPLONG_PTR trail_top0;
     BPLONG initial_diff0;
 
-    /*  printf("vars_set_intersect local_top=%x heap_top=%x\n",local_top,heap_top); */
+	//	printf("vars_set_intersect local_top=%x heap_top=%x\n",local_top,heap_top); 
     term = ARG(1, 3);
     ex_term = ARG(2, 3);
     DEREF(ex_term);
+	
+	//	printf("term = "); write_term(term); printf("\n");
+	//	printf("ex_term = "); write_term(ex_term); printf("\n");
+	
     if (ISREF(ex_term)) {
         FOLLOW(heap_top) = ex_term;
         FOLLOW(heap_top+1) = nil_sym;
@@ -458,7 +461,7 @@ start:
     } else if (ISSTRUCT(term)) {
         BPLONG_PTR struct_ptr;
         BPLONG i, arity;
-        UNTAG_ADDR(term);
+
         struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
         arity = GET_ARITY((SYM_REC_PTR)FOLLOW(struct_ptr));
         for (i = 1; i <= arity-1; i++) {
@@ -509,14 +512,17 @@ start:
         goto start;
     } else if (ISSTRUCT(term)) {
         BPLONG i, arity;
-        UNTAG_ADDR(term);
-        arity = GET_ARITY((SYM_REC_PTR)FOLLOW(term));
-        for (i = 1; i <= arity; i++) {
-            list0 = collect_shared_vars(*((BPLONG_PTR)term + i), list0);
+        BPLONG_PTR struct_ptr;
+
+        struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
+        arity = GET_ARITY((SYM_REC_PTR)FOLLOW(struct_ptr));
+        for (i = 1; i <= arity-1; i++) {
+		  list0 = collect_shared_vars(*(struct_ptr + i), list0);
         }
-        return list0;
+		term = FOLLOW(struct_ptr+arity);
+		goto start;
     } else {  /* susp var */
-        return list0;
+	  return list0;
     }
 }
 

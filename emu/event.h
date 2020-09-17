@@ -36,7 +36,7 @@
 
 #define KILL_SUSP_FRAME {                       \
         AR_STATUS(arreg) = SUSP_EXIT;           \
-        }
+    }
 
 #define ASSIGN_DVAR(dv_ptr, value) {                    \
         PUSHTRAIL_H_NONATOMIC(dv_ptr, DV_var(dv_ptr));  \
@@ -60,7 +60,7 @@
             DV_size(dv_ptr) = size;                                     \
         }                                                               \
         INSERT_TRIGGER_minmax(dv_ptr);                                  \
-        }
+    }
 
 #define UPDATE_FIRST_SIZE(dv_ptr, old_first, first, size) {     \
         if (dv_ptr < hbreg) {                                   \
@@ -75,7 +75,7 @@
             DV_size(dv_ptr) = size;                             \
         }                                                       \
         INSERT_TRIGGER_minmax(dv_ptr);                          \
-        }
+    }
 
 #define UPDATE_LAST_SIZE(dv_ptr, old_last, last, size) {        \
         if (dv_ptr < hbreg) {                                   \
@@ -90,7 +90,7 @@
             DV_size(dv_ptr) = size;                             \
         }                                                       \
         INSERT_TRIGGER_minmax(dv_ptr);                          \
-        }
+    }
 
 #define UPDATE_SIZE(dv_ptr, old_size, size)     \
     top = A_DV_size(dv_ptr);                    \
@@ -136,7 +136,7 @@
         DV_outer_dom_cs(dv_ptr) = nil_sym;              \
         DV_attached(dv_ptr) = nil_sym;                  \
         heap_top += SIZE_OF_DV;                         \
-        }
+    }
 
 #define CREATE_SUSP_VAR(op1) {                          \
         FOLLOW(op1) = (BPLONG)heap_top;                 \
@@ -146,7 +146,7 @@
         DV_type(dv_ptr) = UN_DOMAIN;                    \
         DV_attached(dv_ptr) = nil_sym;                  \
         heap_top += SIZE_OF_DV;                         \
-        }
+    }
 
 #define CREATE_SUSP_VAR_ins(op1, ar) {                  \
         CREATE_SUSP_VAR(op1);                           \
@@ -184,7 +184,7 @@
         *(heap_top+1) = FOLLOW(top);                                    \
         FOLLOW(top) = ADDTAG(heap_top, LST);                            \
         heap_top += 2;                                                  \
-        }
+    }
 
 #define INSERT_SUSP_CALL_NOINS(op, cs_addr, ar) INSERT_SUSP_CALL(op, cs_addr, ar)
 
@@ -193,7 +193,7 @@
         triggeredCs[++trigger_no] = A_DV_dom_cs(sv_ptr);        \
         event_flag[trigger_no] = type;                          \
         event_object[trigger_no] = (BPLONG)eo;                  \
-        }
+    }
 
 #define ActionPerformed 10
 #define MouseClicked 11

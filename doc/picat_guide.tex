@@ -28,7 +28,7 @@
 \vspace*{4cm}
 \begin{center}
 {\Huge\bf A User's Guide to Picat} \\
-{\large\bf Version 2.8} \\
+{\large\bf Version 3.0} \\
 
 
 
@@ -38,7 +38,7 @@
 \vspace*{1cm}
 {\bf Copyright \copyright picat-lang.org, 2013-2020.} \\
 %{\bf Under construction}
-{\bf Last updated January 10, 2020} \\
+{\bf Last updated September 6, 2020} \\
 \end{center}
 \thispagestyle{empty}
 \clearpage
@@ -49,10 +49,15 @@
 \section*{Preface}
 \input{preface.tex}
 
+\clearpage
+\section*{License}
+The copyright of Picat is owned by picat-lang.org. Picat is provided, free of charge, for any purposes, including commercial ones. The C source files of Picat are covered by the Mozilla Public License, v. 2.0 (http://mozilla.org/MPL/2.0/). In essence, anyone is allowed to build works, including proprietary ones, based on Picat, as long as the Source Code Form is retained. The copyright holders, developers, and distributors will not be held liable for any direct or indirect damages.
+
+ 
 \section*{Acknowledgements}
 The initial design of Picat was published in December 2012, and the first alpha version was released in May 2013.  Many people have contributed to the project by reviewing the ideas, the design, the implementation, and/or the documentation, including Roman Bart\'{a}k, Nikhil Barthwal, Mike Bionchik, Lei Chen, Veronica Dahl, Claudio Cesar de S\'{a}, Agostino Dovier, Sergii Dymchenko, Julio Di Egidio, Christian Theil Have, H{\aa}kan Kjellerstrand,  Annie Liu, Nuno Lopes, Marcio Minicz, Richard O'Keefe, Lorenz Schiffmann, Paul Tarau, and Jan Wielemaker.  Special thanks to H{\aa}kan Kjellerstrand, who has been programming in Picat and blogging about Picat since May 2013. The system wouldn't have matured so quickly without H{\aa}kan's hundreds of programs. The \url{picat-lang.org} web page was designed by Bo Yuan (Bobby) Zhou. The Picat project was supported in part by the NSF under grant numbers CCF1018006 and CCF1618046.
 
-The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Lingeling} by Armin Biere; \texttt{Maple SAT} by Jia Hui Liang, which is based on \texttt{MiniSAT} by Niklas Sorensson; \texttt{Espresso} (by Berkeley); \texttt{FANN} by Steffen Nissen. In addition, Picat also provides interfaces to \texttt{Gurobi} by Gurobi Optimization, Inc, \texttt{CBC} by John Forrest, \texttt{GLPK} by Andrew Makhorin, and \texttt{Z3} by Microsoft.
+The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Espresso} (by Berkeley); \texttt{FANN} by Steffen Nissen. In addition, Picat also provides interfaces to the SAT solver MapleLCMDiscChronoBT-DL-v3 (\url{http://sat-race-2019.ciirc.cvut.cz/}), \texttt{Gurobi} by Gurobi Optimization, Inc, \texttt{CBC} by John Forrest, \texttt{GLPK} by Andrew Makhorin, and \texttt{Z3} by Microsoft.
 
 \tableofcontents
 

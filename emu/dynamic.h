@@ -16,6 +16,6 @@ extern SYM_REC_PTR dollar_var;
             ptr = (BPLONG_PTR)curr_fence;                               \
             curr_fence += sizeof(BPLONG)*size;                          \
         }                                                               \
-        }
+    }
 
 

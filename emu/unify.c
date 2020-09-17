@@ -25,12 +25,12 @@
         } else if (DV_last(dv_ptr) != last) {                           \
             UPDATE_LAST_SIZE(dv_ptr, DV_last(dv_ptr), last, size);      \
         }                                                               \
-        }
+    }
 
 #define DV_NEQ_C(dv_ptr, x) {                                           \
         if (!IS_SUSP_VAR(FOLLOW(dv_ptr))) return (FOLLOW(dv_ptr) == MAKEINT(x)) ? 0 : 1; \
         domain_set_false_aux(dv_ptr, x);                                \
-        }
+    }
 
 
 int unify(op1, op2)
@@ -568,7 +568,12 @@ key_identical_start:
         return 0;
 
     case STR:
-        if (op1 < 0) return 0;
+	  if (op1 < 0){
+		SWITCH_OP_VAR(op2, key_identical_susp_d,
+					  {return 1;},
+					  {return 1;},
+					  {return 0;});
+	  };
         SWITCH_OP_STRUCT(op2, key_identical_str_d,
                          {return 0;},
                          {if (op1 == op2) return 1;
@@ -579,7 +584,7 @@ key_identical_start:
                              arity = GET_ARITY((SYM_REC_PTR)FOLLOW(op1));
                              for (i = 1; i < arity; i++) {
                                  if (!key_identical(*((BPLONG_PTR) op1 + i), *((BPLONG_PTR) op2 + i))) {
-                                     return 0;
+								   return 0;
                                  }
                              }
                              op1 = *((BPLONG_PTR) op1 + arity);

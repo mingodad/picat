@@ -22,6 +22,7 @@ module basic.  % imported by default
 '=<'(X,Y) => X <= Y.
 '=='(X,Y) => X == Y.
 '=\\='(X,Y) => X =\= Y.
+'=..'(X,Y) => '=..'(X,Y).
 '>'(X,Y) => X > Y.
 '>='(X,Y) => X >= Y.
 '>>'(X,Y) = X >> Y.
@@ -33,6 +34,7 @@ module basic.  % imported by default
 '\\/'(X,Y) = X \/ Y.
 '^'(X,Y) = Res => bp.b_XOR_ccf(X,Y,Res).
 '~'(X) = ~X.
+'\\+'(Call) => throw($meta_meta_call_not_allowed('\\+'(Call))).
 acyclic_term(Term) => acyclic_term(Term).
 and_to_list(Conjunction) = and_to_list(Conjunction).
 append(X,Y,Z) => append(X,Y,Z).
@@ -48,6 +50,7 @@ apply(S,A1,A2,A3,A4,A5,A6,A7) = _ => throw($meta_meta_call_not_allowed(apply(S,A
 apply(S,A1,A2,A3,A4,A5,A6,A7,A8) = _ => throw($meta_meta_call_not_allowed(apply(S,A1,A2,A3,A4,A5,A6,A7,A8))).
 apply(S,A1,A2,A3,A4,A5,A6,A7,A8,A9) = _ => throw($meta_meta_call_not_allowed(apply(S,A1,A2,A3,A4,A5,A6,A7,A8,A9))).
 apply(S,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10) = _ => throw($meta_meta_call_not_allowed(apply(S,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10))).
+arg(I,T,A) => arg(I,T,A).
 arity(Term) = arity(Term).
 array(Term) => array(Term).
 ascii_digit(Char) => digit(Char).
@@ -102,6 +105,7 @@ flatten(List) = flatten(List).
 float(Term) => float(Term).
 fold(F,Acc,List) = fold(F,Acc,List).
 freeze(X,Goal) => throw($meta_meta_call_not_allowed(freeze(X,Goal))).
+functor(T,F,N) => functor(T,F,N).
 get(Map,Key) = get(Map,Key).
 get(Map,Key,Default) = get(Map,Key,Default).
 get_attr(AttrVar,Key) = get_attr(AttrVar,Key).
@@ -189,6 +193,7 @@ number(Term) => number(Term).
 number_chars(Num) = number_chars(Num).
 number_codes(Num) = number_codes(Num).
 number_vars(Term,N0) = number_vars(Term,N0).
+number_vars(Term) => number_vars(Term).
 once(Call) => throw($meta_meta_call_not_allowed(once(Call))).
 ord(Char) = ord(Char).
 parse_radix_string(String,Base) = parse_radix_string(String,Base).

@@ -87,7 +87,7 @@ BPLONG atom_length;
             bp_exception = c_evaluation_error(et_FLOAT_OVERFLOW, op);   \
             return BP_ERROR;                                            \
         }                                                               \
-        }
+    }
 
 void init_arith_sym() {
 

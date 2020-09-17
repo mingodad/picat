@@ -40,7 +40,11 @@
 #define MAXREGS 5000
 #define WRITEFLAG 1
 #define READFLAG 0
-#define BUCKET_CHAIN 65536
+#ifdef BPSOLVER
+#define BUCKET_CHAIN  65536
+#else
+#define BUCKET_CHAIN 999983
+#endif
 #define BP_ERROR -1
 #define BP_FALSE 0
 #define BP_TRUE 1
@@ -526,7 +530,7 @@ extern BPLONG addr_top_bit;
                 }                                               \
             }                                                   \
         }                                                       \
-        }
+    }
 #else
 #define BP_MALLOC(ptr, size) {                                  \
         ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));        \
@@ -536,7 +540,7 @@ extern BPLONG addr_top_bit;
                 ptr = NULL;                                     \
             }                                                   \
         }                                                       \
-        }
+    }
 #endif
 
 extern BPLONG use_gl_getline;

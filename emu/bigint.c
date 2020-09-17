@@ -44,7 +44,7 @@
             val = x;                                    \
             carry = 0;                                  \
         }                                               \
-        }
+    }
 
 #define BIGINT_COMPUTE_BORROW_VAL(x, val, carry) {      \
         if (x < 0) {                                    \
@@ -54,7 +54,7 @@
             val = x;                                    \
             borrow = 0;                                 \
         }                                               \
-        }
+    }
 
 
 #define BP_DECOMPOSE_BIGINT(op, sign, size, DLst) {                     \
@@ -63,7 +63,7 @@
         size = FOLLOW(ptr+1); size = INTVAL(size);                      \
         if (size < 0) {size = -size; sign = -1;} else {sign = 1;}       \
         DLst = FOLLOW(ptr+2);                                           \
-        }
+    }
 
 #define BP_MAKE_BIGINT_FROM_DLST(sign, size, DLst, op) {        \
         BPLONG_PTR ptr = heap_top;                              \
@@ -72,7 +72,7 @@
         FOLLOW(ptr+1) = MAKEINT(sign*size);                     \
         FOLLOW(ptr+2) = DLst;                                   \
         op = ADDTAG(ptr, STR);                                  \
-        }
+    }
 
 // An unsigned bigint is to be stored in an array x[0],x[1],...,x[xsize-1]
 // where x[0] is the lowest digit and x[xsize-1] is the highest digit
@@ -87,7 +87,7 @@
             lst = FOLLOW(cell_ptr+1);                   \
             i++;                                        \
         } while (ISLIST(lst));                          \
-        }
+    }
 
 /* size>0 */
 #define BP_MAKE_BIGINT_FROM_UBIG(sign, size, x, op) {   \
@@ -101,7 +101,7 @@
             DLst = ADDTAG(cell_ptr, LST);               \
         }                                               \
         BP_MAKE_BIGINT_FROM_DLST(sign, size, DLst, op); \
-        }
+    }
 
 
 int c_test_bigint() {

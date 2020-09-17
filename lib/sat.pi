@@ -381,12 +381,12 @@ circuit_aux(A) =>                            % single-agent path finding
     P[Start] = 1,
     P :: 1..N,
     circuit_preprocess(N,P,Start,NeibVect,TNeibVect),
-    % if H[Start,I] then node I is visited after node Start; if node I is visited at time N, then (I,Start) must be in
+    %
     foreach (I in 1..N, I !== Start)
         H[Start,I] #=> P[I] #= 2,        % H[Start,I] -> I is the successor of Start
         H[I,Start] #=> (P[I] #= N)       % H[I,Start] -> I is visited at time N
     end,
-    % if edge (I,J) is in, and J's position is the successor of I's position
+    % if edge (I,J) is in, then J's position is the successor of I's position
     foreach (I in 1..N, I !== Start, J in 1..N, J !== Start, H[I,J] !== 0)
         H[I,J] #=> P[J] #= P[I]+1
     end.

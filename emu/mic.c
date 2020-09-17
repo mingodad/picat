@@ -55,13 +55,13 @@
         } else if (IS_SUSP_VAR(term)) {                         \
             term = (BPLONG)UNTAGGED_TOPON_ADDR(term);           \
         }                                                       \
-        }
+    }
 
 #define COMPARE_FLOAT_FLOAT(f1, f2) {           \
         if (f1 < f2) return -1L;                \
         else if (f1 == f2) return 0;            \
         else return 1;                          \
-        }
+    }
 
 extern BPLONG no_gcs;
 extern BPLONG gc_time;
@@ -1761,7 +1761,7 @@ void myquit(overflow_type, src)
             hcode += MULTIPLIER*INTVAL(op)+1;   \
         }                                       \
         hcode = (hcode & HASH_BITS);            \
-        }
+    }
 
 /* Hashtable talored to tuples of integers */
 /* htable = '{}'(B1,...,Bn) where Bi is a bucket */

@@ -23,7 +23,7 @@ extern BPLONG table_allocate_code;
         } else {                                                        \
             ALLOCATE_FROM_NUMBERED_TERM_AREA(ta_record_ptr, ptr, 2);    \
         }                                                               \
-        }
+    }
 
 extern FILE *curr_out;
 

@@ -1,5 +1,5 @@
-CPP    = /usr/bin/g++ -std=c++11 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS  -DFANN_NO_DLL -DFANN
-CC     = /usr/bin/gcc -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS  -DFANN_NO_DLL -DFANN
+CPP    = /usr/bin/g++ -std=c++11 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
+CC     = /usr/bin/gcc -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
 #CC     = cc
 
 #CFLAGS = -c  -O4 -Dunix -DGC -DBSD             #SunOS
@@ -10,9 +10,19 @@ CC     = /usr/bin/gcc -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS  -DFANN_NO_D
 #CFLAGS = -c  -O -DDARWIN -DGLPK -DGC -finline-functions -fomit-frame-pointer -arch i386 #x86_64  #MacOS X, Darwin
 CFLAGS = -c  -O3 -DDARWIN -Wall -DGC -fomit-frame-pointer -arch x86_64  #MacOS X, Darwin
 
+#LGLFLAG = -Wall -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT
+ESPRESSO_FLAGS = -c -O3 -I. -Iespresso
+
 LFLAGS = -lm  -lpthread -arch x86_64 # x86_64 -Wall
 
 MAPLE = maple/
+
+ESPRESSO_OBJ = black_white.o canonical.o cofactor.o cols.o compl.o contain.o cpu_time.o cubestr.o \
+               cvrin.o cvrm.o cvrmisc.o cvrout.o dominate.o equiv.o espresso.o espresso_expand.o \
+               essen.o essentiality.o exact.o gasp.o gimpel.o globals.o hack.o indep.o irred.o \
+               map.o matrix.o mincov.o opo.o pair.o part.o primes.o prtime.o reduce.o rows.o \
+               set.o setc.o sharp.o sigma.o signature.o signature_exact.o sminterf.o solution.o \
+               sparse.o unate.o util_signature.o verify.o
 
 OBJ = dis.o init.o init_sym.o loader.o inst_inf.o main.o toam.o unify.o \
 	file.o domain.o cfd.o float1.o arith.o token.o global.o \
@@ -20,23 +30,11 @@ OBJ = dis.o init.o init_sym.o loader.o inst_inf.o main.o toam.o unify.o \
     delay.o clpfd.o clpfd_libs.o event.o toamprofile.o \
     kapi.o getline.o table.o gcstack.o gcheap.o gcqueue.o debug.o \
 	mSolver.o mOptions.o mSystem.o mSimpSolver.o \
-    expand.o bigint.o sapi.o sat_bp.o espresso_bp.o  maple_interface.o \
+    expand.o bigint.o sapi.o sat_bp.o maple_interface.o espresso_bp.o \
 	picat_utilities.o fann.o fann_cascade.o fann_error.o fann_io.o fann_train.o fann_train_data.o fann_interface.o
-	
 
-ESP = espresso/
-
-ESPRESSO_OBJ = $(ESP)black_white.o $(ESP)canonical.o $(ESP)cofactor.o $(ESP)cols.o $(ESP)compl.o $(ESP)contain.o \
-			 $(ESP)cpu_time.o $(ESP)cubestr.o $(ESP)cvrin.o $(ESP)cvrm.o $(ESP)cvrmisc.o $(ESP)cvrout.o \
-			 $(ESP)dominate.o $(ESP)equiv.o $(ESP)essen.o $(ESP)essentiality.o $(ESP)exact.o $(ESP)espresso_expand.o \
-			 $(ESP)gasp.o $(ESP)gimpel.o $(ESP)globals.o $(ESP)hack.o $(ESP)indep.o $(ESP)irred.o $(ESP)map.o \
-			 $(ESP)matrix.o $(ESP)mincov.o $(ESP)opo.o $(ESP)pair.o $(ESP)part.o $(ESP)primes.o $(ESP)prtime.o \
-			 $(ESP)reduce.o $(ESP)rows.o $(ESP)set.o $(ESP)setc.o $(ESP)sharp.o $(ESP)sigma.o $(ESP)signature.o \
-			 $(ESP)signature_exact.o $(ESP)sminterf.o $(ESP)solution.o $(ESP)sparse.o $(ESP)unate.o $(ESP)util_signature.o \
-			 $(ESP)verify.o $(ESP)espresso.o
-
-picat : $(OBJ) 
-	cd espresso && make -f Makefile.mac64 && cd .. && $(CPP) -o picat $(ESPRESSO_OBJ) $(OBJ)  $(LFLAGS)
+picat : $(OBJ) $(ESPRESSO_OBJ) 
+	$(CPP) -o picat $(OBJ) $(ESPRESSO_OBJ) $(LFLAGS)
 clean :
 	rm -f *.o picat
 dis.o   : dis.c term.h inst.h basic.h 
@@ -57,39 +55,39 @@ toamprofile.o  : toamprofile.c term.h inst.h basicd.h basic.h toam.h event.h fra
 	$(CC) $(CFLAGS) toamprofile.c
 unify.o : unify.c term.h basic.h event.h bapi.h frame.h
 	$(CC) $(CFLAGS) unify.c 
-file.o    : file.c term.h basic.h bapi.h
+file.o	: file.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) file.c 
-domain.o    : domain.c term.h basic.h bapi.h event.h frame.h
+domain.o	: domain.c term.h basic.h bapi.h event.h frame.h
 	$(CC) $(CFLAGS) domain.c 
-cfd.o    : cfd.c term.h basic.h bapi.h event.h frame.h
+cfd.o	: cfd.c term.h basic.h bapi.h event.h frame.h
 	$(CC) $(CFLAGS) cfd.c 
-float1.o    : float1.c term.h basic.h bapi.h
+float1.o	: float1.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) float1.c 
-arith.o    : arith.c term.h basic.h bapi.h
+arith.o	: arith.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) arith.c 
-bigint.o    : bigint.c term.h basic.h bapi.h
+bigint.o	: bigint.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) bigint.c 
-token.o    : token.c term.h basic.h bapi.h
+token.o	: token.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) token.c 
-global.o    : global.c term.h basic.h bapi.h 
+global.o	: global.c term.h basic.h bapi.h 
 	$(CC) $(CFLAGS) global.c 
-builtins.o    : builtins.c term.h basic.h bapi.h
+builtins.o	: builtins.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) builtins.c 
-mic.o    : mic.c term.h basic.h bapi.h
+mic.o	: mic.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) mic.c 
-numbervars.o    : numbervars.c term.h basic.h bapi.h
+numbervars.o	: numbervars.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) numbervars.c 
-cpreds.o    : cpreds.c term.h basic.h bapi.h
+cpreds.o	: cpreds.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) cpreds.c
-univ.o    : univ.c term.h basic.h bapi.h
+univ.o	: univ.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) univ.c
-assert.o    : assert.c term.h basic.h bapi.h
+assert.o	: assert.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) assert.c
-findall.o    : findall.c term.h basic.h bapi.h
+findall.o	: findall.c term.h basic.h bapi.h
 	$(CC) $(CFLAGS) findall.c
-clause.o    : clause.c term.h basic.h bapi.h dynamic.h
+clause.o	: clause.c term.h basic.h bapi.h dynamic.h
 	$(CC) $(CFLAGS) clause.c
-delay.o    : delay.c term.h basic.h bapi.h 
+delay.o	: delay.c term.h basic.h bapi.h 
 	$(CC) $(CFLAGS) delay.c
 clpfd.o : clpfd.c term.h basic.h bapi.h event.h frame.h
 	$(CC) $(CFLAGS) clpfd.c 
@@ -127,6 +125,102 @@ mSimpSolver.o : maple/simp/SimpSolver.cc
 	$(CPP) $(CFLAGS) -Imaple -o mSimpSolver.o maple/simp/SimpSolver.cc 
 maple_interface.o : maple_interface.cpp
 	$(CPP) $(CFLAGS) -Imaple maple_interface.cpp
+black_white.o : espresso/black_white.c
+	$(CC) $(ESPRESSO_FLAGS)  -o black_white.o espresso/black_white.c
+canonical.o : espresso/canonical.c
+	$(CC) $(ESPRESSO_FLAGS) -o canonical.o espresso/canonical.c
+cofactor.o : espresso/cofactor.c
+	$(CC) $(ESPRESSO_FLAGS) -o cofactor.o espresso/cofactor.c
+cols.o : espresso/cols.c
+	$(CC) $(ESPRESSO_FLAGS) -o cols.o espresso/cols.c
+compl.o : espresso/compl.c
+	$(CC) $(ESPRESSO_FLAGS) -o compl.o espresso/compl.c
+contain.o : espresso/contain.c
+	$(CC) $(ESPRESSO_FLAGS) -o contain.o espresso/contain.c
+cpu_time.o : espresso/cpu_time.c
+	$(CC) $(ESPRESSO_FLAGS) -o cpu_time.o espresso/cpu_time.c
+cubestr.o : espresso/cubestr.c
+	$(CC) $(ESPRESSO_FLAGS) -o cubestr.o espresso/cubestr.c
+cvrin.o : espresso/cvrin.c
+	$(CC) $(ESPRESSO_FLAGS) -o cvrin.o espresso/cvrin.c
+cvrm.o : espresso/cvrm.c
+	$(CC) $(ESPRESSO_FLAGS) -o cvrm.o espresso/cvrm.c
+cvrmisc.o : espresso/cvrmisc.c
+	$(CC) $(ESPRESSO_FLAGS) -o cvrmisc.o espresso/cvrmisc.c
+cvrout.o : espresso/cvrout.c
+	$(CC) $(ESPRESSO_FLAGS) -o cvrout.o espresso/cvrout.c
+dominate.o : espresso/dominate.c
+	$(CC) $(ESPRESSO_FLAGS) -o dominate.o espresso/dominate.c
+equiv.o : espresso/equiv.c
+	$(CC) $(ESPRESSO_FLAGS) -o equiv.o espresso/equiv.c
+espresso.o : espresso/espresso.c
+	$(CC) $(ESPRESSO_FLAGS) -o espresso.o espresso/espresso.c
+espresso_expand.o : espresso/espresso_expand.c
+	$(CC) $(ESPRESSO_FLAGS) -o espresso_expand.o espresso/espresso_expand.c
+espresso_main.o : espresso/espresso_main.c
+	$(CC) $(ESPRESSO_FLAGS) -o espresso_main.o espresso/espresso_main.c
+essen.o : espresso/essen.c
+	$(CC) $(ESPRESSO_FLAGS) -o essen.o espresso/essen.c
+essentiality.o : espresso/essentiality.c
+	$(CC) $(ESPRESSO_FLAGS) -o essentiality.o espresso/essentiality.c
+exact.o : espresso/exact.c
+	$(CC) $(ESPRESSO_FLAGS) -o exact.o espresso/exact.c
+gasp.o : espresso/gasp.c
+	$(CC) $(ESPRESSO_FLAGS) -o gasp.o espresso/gasp.c
+gimpel.o : espresso/gimpel.c
+	$(CC) $(ESPRESSO_FLAGS) -o gimpel.o espresso/gimpel.c
+globals.o : espresso/globals.c
+	$(CC) $(ESPRESSO_FLAGS) -o globals.o espresso/globals.c
+hack.o : espresso/hack.c
+	$(CC) $(ESPRESSO_FLAGS) -o hack.o espresso/hack.c
+indep.o : espresso/indep.c
+	$(CC) $(ESPRESSO_FLAGS) -o indep.o espresso/indep.c
+irred.o : espresso/irred.c
+	$(CC) $(ESPRESSO_FLAGS) -o irred.o espresso/irred.c
+map.o : espresso/map.c
+	$(CC) $(ESPRESSO_FLAGS) -o map.o espresso/map.c
+matrix.o : espresso/matrix.c
+	$(CC) $(ESPRESSO_FLAGS) -o matrix.o espresso/matrix.c
+mincov.o : espresso/mincov.c
+	$(CC) $(ESPRESSO_FLAGS) -o mincov.o espresso/mincov.c
+opo.o : espresso/opo.c
+	$(CC) $(ESPRESSO_FLAGS) -o opo.o espresso/opo.c
+pair.o : espresso/pair.c
+	$(CC) $(ESPRESSO_FLAGS) -o pair.o espresso/pair.c
+part.o : espresso/part.c
+	$(CC) $(ESPRESSO_FLAGS) -o part.o espresso/part.c
+primes.o : espresso/primes.c
+	$(CC) $(ESPRESSO_FLAGS) -o primes.o espresso/primes.c
+prtime.o : espresso/prtime.c
+	$(CC) $(ESPRESSO_FLAGS) -o prtime.o espresso/prtime.c
+reduce.o : espresso/reduce.c
+	$(CC) $(ESPRESSO_FLAGS) -o reduce.o espresso/reduce.c
+rows.o : espresso/rows.c
+	$(CC) $(ESPRESSO_FLAGS) -o rows.o espresso/rows.c
+set.o : espresso/set.c
+	$(CC) $(ESPRESSO_FLAGS) -o set.o espresso/set.c
+setc.o : espresso/setc.c
+	$(CC) $(ESPRESSO_FLAGS) -o setc.o espresso/setc.c
+sharp.o : espresso/sharp.c
+	$(CC) $(ESPRESSO_FLAGS) -o sharp.o espresso/sharp.c
+sigma.o : espresso/sigma.c
+	$(CC) $(ESPRESSO_FLAGS) -o sigma.o espresso/sigma.c
+signature.o : espresso/signature.c
+	$(CC) $(ESPRESSO_FLAGS) -o signature.o espresso/signature.c
+signature_exact.o : espresso/signature_exact.c
+	$(CC) $(ESPRESSO_FLAGS) -o signature_exact.o espresso/signature_exact.c
+sminterf.o : espresso/sminterf.c
+	$(CC) $(ESPRESSO_FLAGS) -o sminterf.o espresso/sminterf.c
+solution.o : espresso/solution.c
+	$(CC) $(ESPRESSO_FLAGS) -o solution.o espresso/solution.c
+sparse.o : espresso/sparse.c
+	$(CC) $(ESPRESSO_FLAGS) -o sparse.o espresso/sparse.c
+unate.o : espresso/unate.c
+	$(CC) $(ESPRESSO_FLAGS) -o unate.o espresso/unate.c
+util_signature.o : espresso/util_signature.c
+	$(CC) $(ESPRESSO_FLAGS) -o util_signature.o espresso/util_signature.c
+verify.o : espresso/verify.c
+	$(CC) $(ESPRESSO_FLAGS) -o verify.o espresso/verify.c
 picat_utilities.o : picat_utilities.c
 	$(CC) $(CFLAGS) picat_utilities.c
 fann.o : fann/src/fann.c
@@ -143,4 +237,3 @@ fann_train_data.o : fann/src/fann_train_data.c
 	$(CC) $(CFLAGS) -Ifann/src/include fann/src/fann_train_data.c
 fann_interface.o : fann/fann_interface.cpp
 	$(CPP) $(CFLAGS) -Ifann/src/include fann/fann_interface.cpp
-

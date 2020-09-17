@@ -18,6 +18,7 @@
 #include <signal.h>
 /* #include <setjmp.h> */
 
+#define TRACE_BUILTIN
 /*
   #define DEBUG_CALL 
   #define DEBUG_INST

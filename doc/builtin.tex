@@ -59,7 +59,8 @@ January 14, 2013 \\
     \item {\tt $X$ @<= $Y$} 
     \item {\tt $X$ @=< $Y$} 
     \item {\tt $X$ @> $Y$} 
-    \item {\tt $X$ @>= $Y$} 
+    \item {\tt $X$ @>= $Y$}
+    \item {\tt $X$ =.. $Y$} 
     \item {\tt $Term_1$ \verb-++- $Term_2$ = $List$} 
     \item {\tt \verb+[+$X$ : $I$ in $D$,$\ldots$ \verb+]+ = $List$}
     \item {\tt $L$ \verb+..+ $U$ = $List$} 
@@ -92,7 +93,8 @@ January 14, 2013 \\
     \item \texttt{and\_to\_list($Conj$) = $List$}
     \item \texttt{append($X$,$Y$,$Z$)}  (nondet)
     \item \texttt{append($X$,$Y$,$Z$,$T$)}  (nondet)
-    \item \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$) = $Val$} 
+    \item \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$) = $Val$}
+    \item \texttt{arg($I$,$T$,$A$)}    
     \item \texttt{arity($Struct$) = $Arity$}
     \item \texttt{array($Term$)}
     \item \texttt{ascii\_alpha($Term$)}
@@ -134,6 +136,7 @@ January 14, 2013 \\
     \item \texttt{float($Term$)} 
     \item \texttt{fold($F$,$ACC$,$List$) = $Res$} 
     \item \texttt{freeze($X$,$Goal$)}
+    \item \texttt{functor($T$,$F$,$N$)}
     \item \texttt{get($Map$,$Key$) = $Val$}
     \item \texttt{get($Map$,$Key$,$DefaultVal$)=$Val$} 
     \item \texttt{get\_attr($AttrVar$,$Key$) = $Val$}
@@ -206,6 +209,7 @@ January 14, 2013 \\
     \item \texttt{number($Term$)} 
     \item \texttt{number\_chars($Num$) = $String$} 
     \item \texttt{number\_codes($Num$) = $List$} 
+    \item \texttt{number\_vars($Term$)}
     \item \texttt{number\_vars($Term$,$N_0$) = $N_1$}
     \item \texttt{once $Call$}
     \item \texttt{ord($Char$) = $Int$} 

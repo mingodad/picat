@@ -32,7 +32,7 @@
         } else {                                \
             UP_DIV(V, X, a);                    \
         }                                       \
-        }
+    }
 
 /* a must be positive */
 #define SOUND_LOW_DIV_U(V, X, a) {              \
@@ -41,7 +41,7 @@
         } else {                                \
             LOW_DIV(V, X, a);                   \
         }                                       \
-        }
+    }
 
 #define IS_SMALL_DOMAIN(dv_ptr) (DV_first(dv_ptr) >= fd_region_low && DV_last(dv_ptr) <= fd_region_up)
 
@@ -67,7 +67,7 @@
             if (max < dv_ptr_last) {                            \
                 CALL_DOMAIN_REGION_MAX(dv_ptr, max);}           \
         }                                                       \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MIN_MAX(dv_ptr, min, max) {                  \
         if (min == max) {                                               \
@@ -113,7 +113,7 @@
                 dv_ptr_first = min; dv_ptr_last = max;                  \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MIN(dv_ptr, min) {                           \
         if (min >= dv_ptr_last) {                                       \
@@ -151,7 +151,7 @@
                 dv_ptr_first = min;                                     \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MAX(dv_ptr, max) {                           \
         if (max <= dv_ptr_first) {                                      \
@@ -189,7 +189,7 @@
                 dv_ptr_last = max;                                      \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_noseed(dv_ptr, min, max) {                   \
         if (min > max) RETURN_0;                                        \
@@ -202,7 +202,7 @@
             if (max < dv_ptr_last) {                                    \
                 CALL_DOMAIN_REGION_MAX_noseed(dv_ptr, max);}            \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MIN_MAX_noseed(dv_ptr, min, max) {           \
         if (min == max) {                                               \
@@ -248,7 +248,7 @@
                 dv_ptr_first = min; dv_ptr_last = max;                  \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MIN_noseed(dv_ptr, min) {                    \
         if (min >= dv_ptr_last) {                                       \
@@ -286,7 +286,7 @@
                 dv_ptr_first = min;                                     \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define CALL_DOMAIN_REGION_MAX_noseed(dv_ptr, max) {                    \
         if (max <= dv_ptr_first) {                                      \
@@ -324,7 +324,7 @@
                 dv_ptr_last = max;                                      \
             }                                                           \
         }                                                               \
-        }
+    }
 
 /* t2 = t1+a*x  (a>0) */
 #define COMPUTE_LOW_UPPER_BOUNDS_p(a, x, l1, u1, l2, u2) {      \
@@ -341,7 +341,7 @@
             l2 = SOUND_C_ADD_L(x, l1);                          \
             u2 = SOUND_C_ADD_U(x, u1);                          \
         }                                                       \
-        }
+    }
 
 /* t2 = t1+a*x  (a>0) */
 #define COMPUTE_LOW_UPPER_BOUNDS_nooverflow_p(a, x, l1, u1, l2, u2) {   \
@@ -356,7 +356,7 @@
             l2 = l1+x;                                                  \
             u2 = u1+x;                                                  \
         }                                                               \
-        }
+    }
 
 /* t2 = t1-a*x  (a>0) */
 #define COMPUTE_LOW_UPPER_BOUNDS_m(a, x, l1, u1, l2, u2) {      \
@@ -373,7 +373,7 @@
             l2 = SOUND_L_SUB_C(l1, x);                          \
             u2 = SOUND_U_SUB_C(u1, x);                          \
         }                                                       \
-        }
+    }
 
 /* t2 = t1-a*x  (a>0) */
 #define COMPUTE_LOW_UPPER_BOUNDS_nooverflow_m(a, x, l1, u1, l2, u2) {   \
@@ -388,7 +388,7 @@
             l2 = l1-x;                                                  \
             u2 = u1-x;                                                  \
         }                                                               \
-        }
+    }
 
 /* t2 = t1+x */
 #define COMPUTE_LOW_UPPER_BOUNDS_p1(x, l1, u1, l2, u2) {        \
@@ -403,7 +403,7 @@
             l2 = SOUND_C_ADD_L(x, l1);                          \
             u2 = SOUND_C_ADD_U(x, u1);                          \
         }                                                       \
-        }
+    }
 
 /* t2 = t1+x */
 #define COMPUTE_LOW_UPPER_BOUNDS_nooverflow_p1(x, l1, u1, l2, u2) {     \
@@ -418,7 +418,7 @@
             l2 = l1+x;                                                  \
             u2 = u1+x;                                                  \
         }                                                               \
-        }
+    }
 
 /* t2 = t1-x */
 #define COMPUTE_LOW_UPPER_BOUNDS_m1(x, l1, u1, l2, u2) {        \
@@ -433,7 +433,7 @@
             l2 = SOUND_L_SUB_C(l1, x);                          \
             u2 = SOUND_U_SUB_C(u1, x);                          \
         }                                                       \
-        }
+    }
 
 /* t2 = t1-x */
 #define COMPUTE_LOW_UPPER_BOUNDS_nooverflow_m1(x, l1, u1, l2, u2) {     \
@@ -448,7 +448,7 @@
             l2 = l1-x;                                                  \
             u2 = u1-x;                                                  \
         }                                                               \
-        }
+    }
 
 /*
   t2 = t1+a*x (a>0) 
@@ -483,7 +483,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   t2 = t1+a*x (a>0) 
@@ -516,7 +516,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1+a*x (a>0) 
@@ -550,7 +550,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1+a*x (a>0) 
@@ -582,7 +582,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 
 /*
@@ -614,7 +614,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   t2 = t1+x 
@@ -645,7 +645,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1+x 
@@ -675,7 +675,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 
 /*
@@ -711,7 +711,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 
 /*
@@ -745,7 +745,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1-a*x 
@@ -777,7 +777,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1-a*x 
@@ -809,7 +809,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   t2 = t1-x 
@@ -840,7 +840,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 
 /*
@@ -872,7 +872,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   0 = t1-x 
@@ -902,7 +902,7 @@
             if (last < u1) u1 = last;                           \
         }                                                       \
         if (u1 < l1) RETURN_0;                                  \
-        }
+    }
 
 /*
   t2 = t1+ax >= l2  (a>0) 
@@ -927,7 +927,7 @@
         }                                                               \
         if (first < l1) {RETURN_1;}                                     \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1+ax >= l2  (a>0) 
@@ -951,7 +951,7 @@
         }                                                               \
         if (first < l1) {RETURN_1;}                                     \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t1+ax >= 0  (a>0) 
@@ -975,7 +975,7 @@
         }                                                               \
         if (first < l1) {RETURN_1;}                                     \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t1+ax >= 0  (a>0) 
@@ -998,7 +998,7 @@
         }                                                               \
         if (first < l1) {RETURN_1;}                                     \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1+x >= l2  (a>0) 
@@ -1021,7 +1021,7 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1+x >= l2  (a>0) 
@@ -1044,7 +1044,7 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1-ax >= l2  (a>0) 
@@ -1069,7 +1069,7 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1-ax >= l2  (a>0) 
@@ -1093,7 +1093,7 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 
 /*
   t2 = t1-x >= l2  
@@ -1115,7 +1115,7 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 
 
 /*
@@ -1138,5 +1138,5 @@
         }                                                               \
         if (first < l1) RETURN_1;                                       \
         l1 = first;                                                     \
-        }
+    }
 

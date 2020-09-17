@@ -44,7 +44,7 @@ nn_destroy_all() =>
     bp.fann_destroy_all().
 
 %
-% create and train neural net from file or data
+% train neural net from file or data
 %
 nn_train(NN,DataOrFile) =>
     nn_train(NN,DataOrFile,[]).

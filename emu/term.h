@@ -296,7 +296,7 @@
                   {hashcode = (ISLIST(op)) ? list_psc_hashcode : 0;},   \
                   {hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS) >> 3;}, \
                   {hashcode = 0;});                                     \
-        }
+    }
 #else
 #define BP_HASH_CODE1(op, hashcode, lab) {                              \
         SWITCH_OP(op, lab,                                              \
@@ -305,7 +305,7 @@
                   {hashcode = (ISLIST(op)) ? list_psc_hashcode : 0;},   \
                   {hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS) >> 2;}, \
                   {hashcode = 0;});                                     \
-        }
+    }
 #endif
 
 #ifdef M64BITS
@@ -316,7 +316,7 @@
                   {if (ISLIST(op)) {key = list_psc_int; hashcode = list_psc_hashcode;} else {key = BP_ZERO; hashcode = 0;}}, \
                   {SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS) >> 3;}, \
                   {key = BP_ZERO; hashcode = 0;});                      \
-        }
+    }
 #else
 #define BP_HASH_KEY1_CODE1(op, key, hashcode, lab) {                    \
         SWITCH_OP(op, lab,                                              \
@@ -325,7 +325,7 @@
                   {if (ISLIST(op)) {key = list_psc_int; hashcode = list_psc_hashcode;} else {key = BP_ZERO; hashcode = 0;}}, \
                   {SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS) >> 2;}, \
                   {key = BP_ZERO; hashcode = 0;});                      \
-        }
+    }
 #endif
 
 #define BP_HASH_KEY1(op, key, lab) {                                    \
@@ -335,7 +335,7 @@
                   {if (ISLIST(op)) key = list_psc_int; else key = BP_ZERO;}, \
                   {key = ADDTAG((BPLONG)GET_STR_SYM_REC(op), INT_TAG);}, \
                   {key = BP_ZERO;});                                    \
-        }
+    }
 
 #define SWITCH_OP_VAR(op, nderef, VarCode, SuspCode, OtherCode) \
     nderef:                                                     \
@@ -379,7 +379,7 @@
                 event_flag[trigger_no] = EVENT_VAR_INS;                 \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define INSERT_TRIGGER_dvar_ins(dv_ptr) {                               \
         if (DV_ins_cs(dv_ptr) != (BPLONG)nil_sym) {                     \
@@ -391,7 +391,7 @@
                 triggering_frame[trigger_no] = NULL;                    \
             }                                                           \
         }                                                               \
-        }
+    }
 
 #define INSERT_TRIGGER_minmax(dv_ptr)                                   \
     if (DV_minmax_cs(dv_ptr) != (BPLONG)nil_sym) {                      \
@@ -545,7 +545,7 @@
                 from = from + NBITS_IN_LONG;            \
             }                                           \
         }                                               \
-        }
+    }
 
 
 #define NEXT_IN_ELM(elm, w, offset, mask) {                             \
@@ -556,14 +556,14 @@
             mask <<= 1;                                                 \
             offset++;                                                   \
         }                                                               \
-        }
+    }
 
 /* elm is the next element that is in the domain, mask is the mask for the elm */
 #define BV_NEXT_IN(bv_ptr, elm, w, w_ptr, offset, mask) {       \
         WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset);             \
         NEXT_IN_WORD(elm, w, w_ptr, offset, mask);              \
         NEXT_IN_ELM(elm, w, offset, mask);                      \
-        }
+    }
 
 #define PREV_IN_WORD(elm, w, w_ptr, offset, mask) {     \
         mask = (MASK_FF >> (NBITS_IN_LONG-1-offset));   \
@@ -574,7 +574,7 @@
             offset = NBITS_IN_LONG-1;                   \
             mask = MASK_FF;                             \
         }                                               \
-        }
+    }
 
 #define PREV_IN_ELM(elm, w, offset, mask) {     \
         mask = ((BPULONG)0x1 << offset);        \
@@ -582,13 +582,13 @@
             elm--;                              \
             mask >>= 1;                         \
         }                                       \
-        }
+    }
 
 #define BV_PREV_IN(bv_ptr, elm, w, w_ptr, offset, mask) {       \
         WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset);             \
         PREV_IN_WORD(elm, w, w_ptr, offset, mask);              \
         PREV_IN_ELM(elm, w, offset, mask);                      \
-        }
+    }
 
 /********************************************/
 #define IS_IT_DOMAIN(dv_ptr) (DV_type(dv_ptr) == IT_DOMAIN)
@@ -602,12 +602,12 @@
 #define PREPARE_NUMBER_TERM(num) {              \
         number_var_exception = 0;               \
         global_var_num = num;                   \
-        }
+    }
 
 #define PREPARE_UNNUMBER_TERM(ptr) {                                    \
         global_unnumbervar_max = -1;                                    \
         global_unnumbervar_watermark = global_unnumbervar_ptr = ptr;    \
-        }
+    }
 
 /* a must be positive */
 #define UP_DIV(V, X, a) {                       \
@@ -617,7 +617,7 @@
         } else {                                \
             V = X/a;                            \
         }                                       \
-        }
+    }
 
 #define LOW_DIV(V, X, a) {                      \
         if (X >= 0) {                           \
@@ -626,6 +626,6 @@
             V = X/a;                            \
             if (V*a != X) V--;                  \
         }                                       \
-        }
+    }
 
 

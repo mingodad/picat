@@ -30,21 +30,21 @@
             bp_exception = illegal_arguments;   \
             return BP_ERROR;                    \
         }                                       \
-        }
+    }
 
 #define BP_check_float(A) {                     \
         if (!ISFLOAT(A)) {                      \
             bp_exception = illegal_arguments;   \
             return BP_ERROR;                    \
         }                                       \
-        }
+    }
 
 #define BP_check_atom(A) {                      \
         if (!ISATOM(A)) {                       \
             bp_exception = illegal_arguments;   \
             return BP_ERROR;                    \
         }                                       \
-        }
+    }
 
 #define BP_DOUBLE_VAL(op, f)                    \
     if (ISINT(op))                              \
@@ -99,7 +99,7 @@
 #define POPTRAIL(t) {                           \
         ++t; op1 = UNTAGGED3(FOLLOW(t));        \
         ++t; *(BPLONG_PTR)op1 = FOLLOW(t);      \
-        }
+    }
 
 #define UNDO_TRAILING {                         \
         register BPLONG op1;                    \
@@ -150,7 +150,7 @@
 
 #define QUIT_IF_OVERFLOW_HEAP(margin) if (local_top-heap_top <= margin) { \
         quit("Control stack overflow. (domain.c) \n");                  \
-        }
+    }
 
 #define BUILD_VALUE(op1, lab1)                                  \
     SWITCH_OP_VAR(op1, lab1,                                    \
@@ -170,15 +170,15 @@
 #define LIST_NEXT(op) *(op+1)
 
 /* tail and new_list maybe the same */
-#define NEW_LIST_NODE(elm, tail, new_list) {                            \
-                                            BPLONG tmp;                 \
-                                            tmp = ADDTAG(heap_top, LST); \
-                                            FOLLOW(heap_top++) = elm;   \
-                                            FOLLOW(heap_top++) = tail;  \
-                                            new_list = tmp;             \
-                                        }
+#define NEW_LIST_NODE(elm, tail, new_list) {    \
+        BPLONG tmp;                             \
+        tmp = ADDTAG(heap_top, LST);            \
+        FOLLOW(heap_top++) = elm;               \
+        FOLLOW(heap_top++) = tail;              \
+        new_list = tmp;                         \
+        }
 
-                  extern BPLONG no_gcs;
+extern BPLONG no_gcs;
 
 #define ALLOCATE_NEW_PAREA_BLOCK(size, success) {                       \
         BPLONG_PTR old_parea_low_addr, tmp_ptr;                         \
@@ -196,7 +196,7 @@
         } else {                                                        \
             success = 0;                                                \
         }                                                               \
-        }
+    }
 
 #define GET_GLOBAL_SYM(name, arity, sym_ptr) {                          \
         DEREF(name); DEREF(arity);                                      \
@@ -205,7 +205,7 @@
         }                                                               \
         sym_ptr = GET_ATM_SYM_REC(name);                                \
         if (arity != BP_ZERO) sym_ptr = insert_sym(GET_NAME(sym_ptr), GET_LENGTH(sym_ptr), INTVAL(arity)); \
-        }
+    }
 
 
 #define NUMBERED_TERM_BLOCK_SIZE 1000000
@@ -222,7 +222,7 @@
         } else {                                                        \
             success = 0;                                                \
         }                                                               \
-        }
+    }
 
 #define ALLOCATE_FROM_NUMBERED_TERM_AREA(area_record_ptr, ptr, size) {  \
         if (area_record_ptr->top + size >= area_record_ptr->up_addr) {  \
@@ -239,6 +239,6 @@
             ptr = area_record_ptr->top;                                 \
             area_record_ptr->top += size;                               \
         }                                                               \
-        }
+    }
 
 

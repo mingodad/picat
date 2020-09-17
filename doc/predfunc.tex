@@ -11,7 +11,7 @@
 
 }
 \chapter{\label{chapter:predicates}Predicates and Functions}
-In Picat, predicates\index{predicate} and functions\index{function} are defined with pattern-matching rules. Picat has two types of rules: the \emph{non-backtrackable} rule\index{non-backtrackable rule} 
+In Picat, predicates\index{predicate} and functions\index{function} are defined with rules. Picat has two types of pattern-matching rules: the \emph{non-backtrackable} rule\index{non-backtrackable rule} 
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head, Cond\ $\verb+=>+$\ Body$. 
@@ -21,7 +21,12 @@ and the \emph{backtrackable} rule\index{backtrackable rule}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head, Cond\ $\verb+?=>+$\ Body$. 
 \end{tabbing}
-Each rule is terminated by a dot (\verb+.+) followed by a white space. 
+In version 3.0 and later, Picat also support Prolog-style rules, called Horn clauses. A Horn clause takes the form:
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \> $Head\ $\verb+:-+$\ Body$. 
+\end{tabbing}
+which can be written as $Head$ if $Body$ is \texttt{true}. Each rule is terminated by a dot (\verb+.+) followed by a white space or the newline character. 
 
 \section{Predicates}
 A \emph{predicate}\index{predicate} defines a relation, and can have zero, one, or multiple answers. Within a predicate\index{predicate}, the $Head$ is a \emph{pattern} in the form $p(t_1,\ldots,t_n)$, where $p$ is called the predicate\index{predicate} \emph{name}, and $n$ is called the \emph{arity}\index{arity}. When $n=0$, the parentheses can be omitted. The condition $Cond$, which is an optional goal\index{goal}, specifies a condition under which the rule is applicable. $Cond$ cannot succeed more than once. The compiler converts $Cond$ to \texttt{once $Cond$}\index{\texttt{once/1}} if would otherwise be possible for $Cond$ to succeed more than once.
@@ -148,6 +153,9 @@ where the \texttt{elseif} and \texttt{else} clauses are optional. If the \texttt
 \item \texttt{try-catch}\index{\texttt{try}}: A \texttt{try-catch}\index{\texttt{try}} statement specifies a goal\index{goal} to try, the exceptions that need to be handled when they occur during the execution of the goal\index{goal}, and a clean-up goal\index{goal} that is executed no matter whether the goal\index{goal} succeeds, fails, or is terminated by an exception. The detailed syntax and semantics of the \texttt{try-catch}\index{\texttt{try}} statement will be given in Chapter \ref{chapter:exception} on Exceptions.
 }
 \item \texttt{throw $Exception$}\index{\texttt{throw/1}}: This predicate throws the term $Exception$. This predicate will be detailed in Chapter \ref{chapter:exception} on Exceptions.
+
+\item \verb+!+\index{cut}: This special predicate, called a \textit{cut}, is provided for controlling backtracking. A cut in the body of a rule has the effect of removing the choice points, or alternative rules, of the goals to the left of the cut. 
+
 \item Loops: Picat has three types of loop statements: foreach, while, and do-while.  A loop statement is true if and only if every iteration of the loop is true. The details of loops are given in Chapter \ref{chapter:loops}.
 \end{itemize}
 

@@ -23,13 +23,13 @@
         if (bp_exception != (BPLONG)NULL) {     \
             return BP_ERROR;                    \
         }                                       \
-        }
+    }
 
 #define TOKEN_CHECK_EXCEPTION_STRING() {        \
         if (bp_exception != (BPLONG)NULL) {     \
             return BP_ERROR;                    \
         }                                       \
-        }
+    }
 
 #define StrCpy(dst, src) (void)strcpy(dst, src)
 #define Printf (void)printf
@@ -120,11 +120,7 @@ struct CHARS intab =  /* Special character table */
         /*  ^X      ^Y      ^Z      ^[      ^\      ^]      ^^      ^_      */
         SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, SPACE,
         /*  sp      !       "       #       $       %       &       '       */
-#ifdef PICAT
-        SPACE, SIGN, LISQT, SIGN, DOLLAR, PUNCT, SIGN, ATMQT,
-#else
         SPACE, NOBLE, LISQT, SIGN, DOLLAR, PUNCT, SIGN, ATMQT,
-#endif
         /*  (       )       *       +       ,       -       .       /       */
         PUNCT, PUNCT, SIGN, SIGN, PUNCT, SIGN, SIGN, SIGN,
         /*  0       1       2       3       4       5       6       7       */
@@ -304,19 +300,19 @@ int next_token_index = 0;
         if (c != 0) {                           \
             string_in++;                        \
         }                                       \
-        }
+    }
 
 #define BP_UNGETC_STRING {                      \
         string_in--;                            \
-        }
+    }
 
 #define BP_GETC(card, c) {                      \
         c = getc(card);                         \
-        }
+    }
 
 #define BP_UNGETC(c, card) {                    \
         ungetc((char)c, card);                  \
-        }
+    }
 #else
 #define BP_GETC_STRING(c) {                                             \
         c = *string_in;                                                 \
@@ -324,24 +320,24 @@ int next_token_index = 0;
             string_in++;                                                \
             if (chars_pool_index < MAX_CHARS_IN_POOL) chars_pool[chars_pool_index++] = (char)c; \
         }                                                               \
-        }
+    }
 
 #define BP_UNGETC_STRING {                      \
         string_in--;                            \
         chars_pool_index--;                     \
-        }
+    }
 
 #define BP_GETC(card, c) {                                              \
         c = getc(card);                                                 \
         if (c >= 0) {                                                   \
             if (chars_pool_index < MAX_CHARS_IN_POOL) chars_pool[chars_pool_index++] = (char)c; \
         }                                                               \
-        }
+    }
 
 #define BP_UNGETC(c, card) {                    \
         ungetc((char)c, card);                  \
         chars_pool_index--;                     \
-        }
+    }
 #endif
 
 /* convert a code point to char array s, which has n remaining slots */
@@ -363,7 +359,7 @@ int next_token_index = 0;
                 s = s1;                                 \
             }                                           \
         }                                               \
-        }
+    }
 
 CHAR AtomStr[MAX_STR_LEN];
 BPLONG list_p;
@@ -1309,6 +1305,7 @@ START:
 #endif
         *s = (BYTE)c;
         BP_GETC(card, d);
+	lab_sign_stream:
         if (c == intab.begcom && d == intab.astcom) {
         ASTCOM:
             if (com2plain(card, d, intab.endcom) == BP_ERROR) return BP_ERROR;
@@ -1333,7 +1330,7 @@ START:
                 }
             }
         }
-        while (InType(d) == SIGN) {
+        while (InType(d) == SIGN || d == '!') {   // e.g., #!=
             if (--n == 0) printAtomStr(tok2long);
             *++s = (BYTE)d;
             BP_GETC(card, d);
@@ -1357,10 +1354,14 @@ START:
             goto START;
 #endif
         }
-        *s++ = (BYTE)c;
-        *s = 0;
-        BP_GETC(card, c);
-        lastc = c;
+        *s = (BYTE)c;
+        BP_GETC(card, d);
+		if (d == '='){     // e.g., !=
+		  goto lab_sign_stream;
+		}
+        *++s = 0;
+		c = d;
+        lastc = d;
         goto SYMBOL;
 
     case PUNCT:
@@ -1402,7 +1403,7 @@ START:
         while ((d = read_utf8_character(card, c)) >= 0 && bp_exception == (BPLONG)NULL) {
             UTF8_CODEPOINT_TO_STR(d, s, n);
         }
-        TOKEN_CHECK_EXCEPTION();
+		//        TOKEN_CHECK_EXCEPTION();
         *s = '\0';
         //    rtnint = (BPLONG) (s - AtomStr);
         c = lastc;
@@ -1426,7 +1427,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-        TOKEN_CHECK_EXCEPTION();
+		//        TOKEN_CHECK_EXCEPTION();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {
@@ -1713,6 +1714,7 @@ START:
     lab_sign_case:
         *s = (char)c;
         BP_GETC_STRING(d);
+	lab_sign_string:
         if (c == intab.begcom && d == intab.astcom) {
         ASTCOM:
             if (com2plain_string(d, intab.endcom) == BP_ERROR) return BP_ERROR;
@@ -1737,7 +1739,7 @@ START:
                 }
             }
         }
-        while (InType(d) == SIGN) {
+        while (InType(d) == SIGN  || d == '!') {
             if (--n == 0) printAtomStr(tok2long);
             *++s = (char)d;
             BP_GETC_STRING(d);
@@ -1760,10 +1762,14 @@ START:
             goto START;
 #endif
         }
-        *s++ = (char)c;
-        *s = 0;
-        BP_GETC_STRING(c);
-        lastc = c;
+        *s = (char)c;
+        BP_GETC_STRING(d);
+		if (d == '='){     // e.g., !=
+		  goto lab_sign_string;
+		}
+        *++s = 0;
+		c = d;
+        lastc = d;
         goto SYMBOL;
 
     case PUNCT:
@@ -1827,7 +1833,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-        TOKEN_CHECK_EXCEPTION_STRING();
+		//        TOKEN_CHECK_EXCEPTION_STRING();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {
@@ -1911,7 +1917,12 @@ int b_NEXT_TOKEN_ff(op1, op2)
     if (bp_exception != (BPLONG)NULL) {
         if (string_in == NULL) {
             char c;
-            fprintf(stderr, "*** error on line %d\n", (int)curr_line_no);
+            fprintf(stderr, "*** error until line %d\n", (int)curr_line_no);
+			if (i == LISQT){
+			  picat_str_to_c_str(list_p, chars_pool, MAX_CHARS_IN_POOL);
+			  chars_pool[100] = '\0';
+			  fputs(chars_pool,stderr);
+			}
             BP_GETC(card, c);
             while (c != -1 && c != '\n' && c != '\r') {
                 if (c == '\n') {INC_LINE_NO;}

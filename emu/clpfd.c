@@ -33,7 +33,7 @@
         } else {                                                \
             return B == val;                                    \
         }                                                       \
-        }
+    }
 
 int dvar_bv(op)
     BPLONG op;

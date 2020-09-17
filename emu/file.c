@@ -70,7 +70,7 @@ extern char *string_in;
         b1 = (BYTE)op;                                                  \
         putc(b1, curr_out); putc(b2, curr_out); putc(b3, curr_out); putc(b4, curr_out);}
 
-    BPLONG line_position = 0;
+BPLONG line_position = 0;
 BPLONG out_line_no = 0;
 static UW16 fileerrors = 0;  /* abort, or not on file errors */
 static SYM_REC_PTR user_sym_ptr, user_input_sym_ptr, user_output_sym_ptr, user_error_sym_ptr, sym_ptr;
@@ -1855,67 +1855,67 @@ int b_TELLING_f(temp)  /* arg1: unified with the current out put file name */
 int b_OPEN_ccf(fop, sop, Index)
     BPLONG sop, fop, Index;
 {
-  register BPLONG_PTR top;
-  BPLONG index, mode;
+    register BPLONG_PTR top;
+    BPLONG index, mode;
 
-  DEREF(sop);
-  DEREF(fop);
-  mode = INTVAL(sop);
-  get_file_name(fop);
-  if (mode == READ_MODE && sys_access(full_file_name, mode) != 0) {
-	bp_exception = c_existence_error(et_SOURCE_SINK, fop);
-	return BP_ERROR;
-  }
-  switch (mode) {
-  case 0:
+    DEREF(sop);
+    DEREF(fop);
+    mode = INTVAL(sop);
+    get_file_name(fop);
+    if (mode == READ_MODE && sys_access(full_file_name, mode) != 0) {
+        bp_exception = c_existence_error(et_SOURCE_SINK, fop);
+        return BP_ERROR;
+    }
+    switch (mode) {
+    case 0:
 #ifdef WIN32
-	tempfile = fopen(full_file_name, "rb");
+        tempfile = fopen(full_file_name, "rb");
 #else
-	tempfile = fopen(full_file_name, "r");
+        tempfile = fopen(full_file_name, "r");
 #endif
-	break;
-  case 1:
+        break;
+    case 1:
 #ifdef WIN32
-	tempfile = fopen(full_file_name, "wb");
+        tempfile = fopen(full_file_name, "wb");
 #else
-	tempfile = fopen(full_file_name, "w");
+        tempfile = fopen(full_file_name, "w");
 #endif
-	break;
-  case 2:
+        break;
+    case 2:
 #ifdef WIN32
-	tempfile = fopen(full_file_name, "ab");
+        tempfile = fopen(full_file_name, "ab");
 #else
-	tempfile = fopen(full_file_name, "a");
+        tempfile = fopen(full_file_name, "a");
 #endif
-	break;
-  default:
-	bp_exception = illegal_arguments; return BP_ERROR;
-  }
-  if (!tempfile) {
-	bp_exception = c_permission_error(et_OPEN, et_SOURCE_SINK, fop);
-	return BP_ERROR;
-  }
-  index = next_file_index();
-  if (index < 0) {
-	bp_exception = out_of_range; return BP_ERROR;
-  }
-  file_table[index].mode = mode;
-  file_table[index].name_atom = fop;
-  file_table[index].fdes = tempfile;
-  file_table[index].aliases = nil_sym;
-  file_table[index].eos = STREAM_NOT_EOS;
-  file_table[index].type = STREAM_TYPE_TEXT;  /* default type */
+        break;
+    default:
+        bp_exception = illegal_arguments; return BP_ERROR;
+    }
+    if (!tempfile) {
+        bp_exception = c_permission_error(et_OPEN, et_SOURCE_SINK, fop);
+        return BP_ERROR;
+    }
+    index = next_file_index();
+    if (index < 0) {
+        bp_exception = out_of_range; return BP_ERROR;
+    }
+    file_table[index].mode = mode;
+    file_table[index].name_atom = fop;
+    file_table[index].fdes = tempfile;
+    file_table[index].aliases = nil_sym;
+    file_table[index].eos = STREAM_NOT_EOS;
+    file_table[index].type = STREAM_TYPE_TEXT;  /* default type */
 
-  /**/
-  if (mode == 0) {
-	file_table[index].line_no = 1;
-	file_table[index].lastc = ' ';
-  } else {
-	file_table[index].line_no = 0;
-	file_table[index].line_position = 0;
-  }
-  ASSIGN_f_atom(Index, MAKEINT(index));
-  return 1;
+    /**/
+    if (mode == 0) {
+        file_table[index].line_no = 1;
+        file_table[index].lastc = ' ';
+    } else {
+        file_table[index].line_no = 0;
+        file_table[index].line_position = 0;
+    }
+    ASSIGN_f_atom(Index, MAKEINT(index));
+    return 1;
 }
 
 /* this function is by Steve Branch */
@@ -2277,11 +2277,11 @@ int c_directory_list_picat(BPLONG List) {
 
 #ifdef WIN32
     {WIN32_FIND_DATA found_file;
-	  HANDLE hFind = INVALID_HANDLE_VALUE;
+        HANDLE hFind = INVALID_HANDLE_VALUE;
 
-		strcat(full_file_name, "\\*");
+        strcat(full_file_name, "\\*");
         if ((hFind = FindFirstFile(full_file_name, &found_file)) == INVALID_HANDLE_VALUE) {
-		  return unify(List, nil_sym);
+            return unify(List, nil_sym);
         }
         lst = ADDTAG(heap_top, LST);
         while (1) {
@@ -2291,7 +2291,7 @@ int c_directory_list_picat(BPLONG List) {
             LOCAL_OVERFLOW_CHECK("file_list");
             FOLLOW(lst_ptr) = c_str_to_picat_str0(found_file.cFileName);
             if (FindNextFile(hFind, &found_file) == 0) {
-			  FOLLOW(lst_ptr+1) = nil_sym; break;
+                FOLLOW(lst_ptr+1) = nil_sym; break;
             }
             FOLLOW(lst_ptr+1) = ADDTAG(heap_top, LST);
         }

@@ -298,7 +298,13 @@ The compiler will report a syntax error when it encounters any of these expressi
 
 The following built-ins are provided for structures\index{structure}:
 \begin{itemize}
+\item \texttt{$T$ =.. $L$}\index{{\verb+=../2+}}: The name and the arguments of $T$ comprise the list $L$. This predicate extracts the name and arguments of $T$ when $T$ is instantiated, and constructs $T$ from the list $L$ when $L$ is instantiated.
+
+\item \texttt{arg($I$,$T$,$A$)}\index{\texttt{arg/3}}: The $I$th argument of the term $T$ is $A$. This predicate is the equivalent to: $X$\ =\ $T$,\ $A$\ =\ $X[I]$, except when $I$ is 0 or $T$ is a list. When $I$ is 0, the call fails. When $T$ is a list, only two indices, namely 1 and 2, are acceptable. For $I$ = 1, $A$ is unified with the car of the list, and for $I$ = 2, $A$ is unified with the cdr of the list.
 \item \texttt{arity($Struct$) = $Arity$}\index{\texttt{arity/1}}: This function returns the arity of $Struct$, which must be a structure.
+
+\item \texttt{functor($T$,$F$,$N$)}\index{\texttt{functor/3}}: The principal functor of the term $T$ has the name $F$ and the arity $N$. This predicate extracts the functor $F/N$ of $T$ when $T$ is instantiated, and constructs a term $T$ of the given functor $F/N$ when $T$ is a variable.
+
 \item \texttt{len($Struct$) = $Arity$}\index{\texttt{len/1}}: This function is the same as \texttt{arity($Struct$)}.
 \item \texttt{name($Struct$) = $Name$}\index{\texttt{name/1}}: This function returns the name of $Struct$.
 \item \texttt{new\_struct($Name$, $IntOrList$) = $Struct$}\index{\texttt{new\_struct/2}}: This function creates a structure\index{structure} that has the name $Name$.  If $IntOrList$ is an integer, $N$, then the structure\index{structure} has $N$ free variable\index{free variable} arguments.  Otherwise, if $IntOrList$ is a list\index{list}, then the structure\index{structure} contains the elements in the list\index{list}.  
@@ -504,7 +510,8 @@ A predicate\index{predicate} or function\index{function} is said to be \emph{hig
 \item \texttt{get\_table\_map($ID$) = $Map$}\index{\texttt{get\_table\_map/1}}: This function returns the table map with the identifier $ID$, which must be a ground term. 
 \item \texttt{ground($Term$)}\index{\texttt{ground/1}}: This predicate is true if $Term$ is ground\index{ground}.  A \emph{ground}\index{ground} term does not contain any variables.
 \item \texttt{list\_to\_and($List$) = $Conj$}\index{\texttt{list\_to\_and/1}}: This function converts $List$ in the form \texttt{[$a_1$,$\ldots$,$a_n$]} into a term in the form \texttt{($a_1$,$\ldots$,$a_n$)}.
-\item \texttt{number\_vars($Term$, $N_0$) = $N_1$}\index{\texttt{number\_vars/2}}: This function numbers the variables in $Term$ by using the integers starting from $N_0$.  $N_1$ is the next integer that is available after $Term$ is numbered.  Different variables receive different numberings, and the occurrences of the same variable all receive the same numbering.
+\item \texttt{number\_vars($Term$)}\index{\texttt{number\_vars/1}}: This predicate numbers the variables in $Term$ by using the integers starting from 0. Different variables receive different numberings, and the occurrences of the same variable all receive the same numbering.
+\item \texttt{number\_vars($Term$, $N_0$) = $N_1$}\index{\texttt{number\_vars/2}}: This function numbers the variables in $Term$ by using the integers starting from $N_0$.  $N_1$ is the next integer that is available after $Term$ is numbered.  
 \item \texttt{parse\_radix\_string($String$, $Base$) = $Int$}\index{\texttt{parse\_radix\_string/2}}: This function converts a radix $String$ of $Base$ into a decimal integer $Int$, where $Base$ must be greater than 1 and less than 37. For example, \texttt{parse\_radix\_string("101",2)} returns 5, which is the same as \texttt{parse\_term("0b101")}.
 \item \texttt{parse\_term($String$, $Term$, $Vars$)}\index{\texttt{parse\_term/3}}: This predicate uses the Picat parser to extract a term $Term$ from $String$. $Vars$ is a list of pairs, where each pair has the form $Name$=$Var$. 
 \item \texttt{parse\_term($String$) = $Term$}\index{\texttt{parse\_term/1}}: This function converts $String$ to a term.

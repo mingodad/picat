@@ -85,7 +85,7 @@
         case CATCHER_FRAME_TAG: no = 9; break;                  \
         case TABLE_FRAME_TAG: no = 13; break;                   \
         }                                                       \
-        }
+    }
 
 #define FLAT_FRAME_SIZE 4
 #define FLAT_B_FRAME_SIZE 5
@@ -173,7 +173,7 @@ subgoalTableEntry ->
 /* a subgoal is in its own scc */
 #define AllocateSubgoalTableEntry(ptr, arity, sym) {            \
         AllocateFromTableArea(ptr, arity+GT_RECORD_SIZE);       \
-        }
+    }
 
 #define InitializeSubgoalTableEntry(ptr, sym) { \
         GT_ANSWER_TABLE(ptr) = (BPLONG)NULL;    \
@@ -182,7 +182,7 @@ subgoalTableEntry ->
         GT_SYM(ptr) = (BPLONG)sym;              \
         GT_SCC_ELMS(ptr) = (BPLONG)NULL;        \
         GT_SCC_ROOT(ptr) = (BPLONG)ptr;         \
-        }
+    }
 
 #define TABLE_FREE_CELL(ptr) {FOLLOW(ptr+1) = (BPLONG)table_free_cells_ptr; table_free_cells_ptr = ptr;}
 

@@ -2195,7 +2195,7 @@ int check_var_notin_d(x, List)
                 if (domain_exclude_interval_noint(dv_ptr, lst0-duration+1, est0+duration0-1) == BP_FALSE) return BP_FALSE; \
             }                                                           \
         }                                                               \
-        }
+    }
 
 int b_TASKS_EXCLUDE_NOGOOD_INTERVAL_ccc(start, duration, tasks)
     BPLONG start, duration, tasks;
@@ -2297,7 +2297,7 @@ int b_DISJUNCTIVE_TASKS_AC(n)
                 }                                                       \
             }                                                           \
         }                                                               \
-        }
+    }
 
 /* Q and T
    if (acc_est+acc_duration1>acc_lct1)  T << Q 
@@ -2337,7 +2337,7 @@ int b_DISJUNCTIVE_TASKS_AC(n)
             acc_duration = acc_duration1;                               \
             if (acc_lct-acc_est < acc_duration) {return BP_FALSE;}      \
         }                                                               \
-        }
+    }
 
 #define FORWARD_EDGE_FINDER {                                           \
         start = starts[0]; DEREF_NONVAR(start);                         \
@@ -2362,7 +2362,7 @@ int b_DISJUNCTIVE_TASKS_AC(n)
             lct1 = lct;                                                 \
             duration1 = duration;                                       \
         }                                                               \
-        }
+    }
 
 int b_DISJUNCTIVE_TASKS_EF(n)
     BPLONG n;
@@ -2913,9 +2913,11 @@ void exclude_unsupported_z_constr_xy_eq_z(BPLONG_PTR dv_ptr_x, BPLONG_PTR dv_ptr
     }  /* end of loop_Z */
 }
 
-/* X+Y = Z, X is a bit-vector domain. The constraint is already interval consistent. */
+/* X+Y = Z, X is a bit-vector domain. The constraint is already interval consistent. 
+   Ensure that every element in Y's domain and Z's domain is supported.
+*/
 int c_CLPFD_ADD_AC_ccc() {
-    BPLONG X, Y, Z, i, sizeZ;
+    BPLONG X, Y, Z, i, size;
     BPLONG_PTR dv_ptr_x, dv_ptr_y, dv_ptr_z, ptr;
     BPLONG elmX, maxX, elmY, minY, maxY, elmZ, minZ, maxZ;
 
@@ -2925,19 +2927,23 @@ int c_CLPFD_ADD_AC_ccc() {
 
     //  printf("=> ADD_AC "); write_term(X); printf(" + "); write_term(Y); printf(" = "); write_term(Z); printf("\n");
 
+    if (!IS_SUSP_VAR(X)) return BP_TRUE;
+    dv_ptr_x = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(X);
     if (!IS_SUSP_VAR(Z)) return BP_TRUE;
     dv_ptr_z = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(Z);
+    if (!IS_SMALL_DOMAIN(dv_ptr_z)) return BP_TRUE;
+
+    // enforce AC on Z
     minZ = DV_first(dv_ptr_z);
     maxZ = DV_last(dv_ptr_z);
-    sizeZ = maxZ-minZ+1;
-    if (local_top - heap_top <= sizeZ || DV_size(dv_ptr_z) > 1024) {
+    size = maxZ-minZ+1;
+    if (local_top - heap_top <= size) {
         return BP_TRUE;  /* do not enforce AC on Z*/
     }
-    ptr = local_top-sizeZ;
-    for (i = 1; i < sizeZ-1; i++) {
+    ptr = local_top-size;
+    for (i = 1; i < size-1; i++) {
         *(ptr+i) = 0;  /* 0 means unsupported, minZ and maxZ are supported */
     }
-    dv_ptr_x = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(X);
     elmX = DV_first(dv_ptr_x); maxX = DV_last(dv_ptr_x);
     if (IS_SUSP_VAR(Y)) {
         dv_ptr_y = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(Y);
@@ -2978,13 +2984,15 @@ int c_CLPFD_ADD_AC_ccc() {
     }
 
     elmZ = minZ+1;
-    for (i = 1; i < sizeZ-1; i++) {
+    for (i = 1; i < size-1; i++) {
         if (*(ptr+i) == 0) {  /* elmZ is unsupported */
             domain_set_false_noint(dv_ptr_z, elmZ);
         }
         elmZ++;
     }
-    //  printf("<= ADD_AC "); write_term(X); printf(" + "); write_term(Y); printf(" = "); write_term(Z); printf("\n");
+
+    //  printf("<= ADD_AC "); write_term(X); printf(" + "); write_term(Y); printf(" = "); write_term(Z); printf("\n"); 
+
     return BP_TRUE;
 }
 

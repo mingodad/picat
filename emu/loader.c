@@ -77,7 +77,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         bp_exception = invalid_byte_file;       \
         fclose(fp);                             \
         return BP_ERROR;                        \
-        }
+    }
 
 #define CHECK_PCODE(ptr, size)                                          \
     if ((CHAR_PTR)ptr + 1000 + size >= (CHAR_PTR)parea_water_mark) {    \
@@ -96,7 +96,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         READ_DATA_ONLY(buf_for_read, 1);        \
         *inst_addr++ = BB4(buf_for_read);       \
         count++;                                \
-        }
+    }
 
 #define LoadY LoadLiteral
 
@@ -111,7 +111,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         }                                                       \
         inst_addr++;                                            \
         count++;                                                \
-        }
+    }
 #else
 #define LoadConstant {                                          \
         READ_DATA_ONLY(buf_for_read, 1);                        \
@@ -123,7 +123,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         }                                                       \
         inst_addr++;                                            \
         count++;                                                \
-        }
+    }
 #endif
 
 #define LoadAddr {                                      \
@@ -131,7 +131,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         temp = BB4(buf_for_read);                       \
         *inst_addr++ = (BPLONG)RELOC_ADDR(temp);        \
         count++;                                        \
-        }
+    }
 
 #define LoadStruct {                            \
         READ_DATA_ONLY(buf_for_read, 1);        \
@@ -139,7 +139,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
         *inst_addr = (BPLONG)reloc_table[temp]; \
         inst_addr++;                            \
         count++;                                \
-        }
+    }
 
 #ifdef M64BITS
 #define LoadZ {                                                 \
@@ -153,7 +153,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
             *inst_addr = temp32;                                \
         }                                                       \
         inst_addr++; count++;                                   \
-        }
+    }
 #else
 #define LoadZ {                                                 \
         READ_DATA_ONLY(buf_for_read, 1);                        \
@@ -164,7 +164,7 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
             *inst_addr = temp;                                  \
         }                                                       \
         inst_addr++; count++;                                   \
-        }
+    }
 #endif
 
 #define LoadZs(n) {                             \
@@ -172,21 +172,21 @@ void IGUR(int i);  /* see https://stackoverflow.com/a/16245669/490291 */
             LoadZ;                              \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadYs(n) {                             \
         while (n > 0) {                         \
             LoadLiteral;                        \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadConstants(n) {                      \
         while (n > 0) {                         \
             LoadZ;                              \
             n--;                                \
         }                                       \
-        }
+    }
 
 extern void **jmp_table;
 
@@ -1416,13 +1416,13 @@ SYM_REC_PTR look_for_sym_with_entrance(p)
         DEREF(val);                                     \
         BCInsts = FOLLOW(list_ptr+1);                   \
         DEREF(BCInsts);                                 \
-        }
+    }
 
 #define LoadLiteralFromBPList {                 \
         READ_FROM_BCINSTS(temp);                \
         *inst_addr = INTVAL(temp);              \
         inst_addr++;                            \
-        }
+    }
 
 #define LoadYFromBPList LoadLiteralFromBPList
 
@@ -1441,21 +1441,21 @@ SYM_REC_PTR look_for_sym_with_entrance(p)
             *inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);   \
         }                                                       \
         inst_addr++;                                            \
-        }
+    }
 
 #define LoadAddrFromBPList {                    \
         READ_FROM_BCINSTS(temp);                \
         temp = INTVAL(temp);                    \
         *inst_addr = (BPLONG)RELOC_ADDR(temp);  \
         inst_addr++;                            \
-        }
+    }
 
 #define LoadStructFromBPList {                  \
         READ_FROM_BCINSTS(temp);                \
         temp = INTVAL(temp);                    \
         *inst_addr = (BPLONG)reloc_table[temp]; \
         inst_addr++;                            \
-        }
+    }
 
 /*  Z is integer(i) or an integer. The integer means C, u(y), or v(y) depending on the last two bits */
 #define LoadZFromBPList {                                               \
@@ -1476,28 +1476,28 @@ SYM_REC_PTR look_for_sym_with_entrance(p)
             }                                                           \
         }                                                               \
         inst_addr++;                                                    \
-        }
+    }
 
 #define LoadZsFromBPList(n) {                   \
         while (n > 0) {                         \
             LoadZFromBPList;                    \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadYsFromBPList(n) {                   \
         while (n > 0) {                         \
             LoadLiteralFromBPList;              \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadConstantsFromBPList(n) {            \
         while (n > 0) {                         \
             LoadZFromBPList;                    \
             n--;                                \
         }                                       \
-        }
+    }
 
 /* Load in-memory byte codes */
 int c_LOAD_BYTE_CODE_FROM_BPLISTS() {
@@ -1726,7 +1726,7 @@ void get_index_tab_fromlist(HashArgs, clause_no)
 #define LoadLiteralFromCArray {                 \
         *inst_addr = bc_insts[count++];         \
         inst_addr++;                            \
-        }
+    }
 
 #define LoadYFromCArray LoadLiteralFromCArray
 
@@ -1738,19 +1738,19 @@ void get_index_tab_fromlist(HashArgs, clause_no)
             *inst_addr = ADDTAG(reloc_table[bc_insts[count++] >> 2], ATM); \
         }                                                               \
         inst_addr++;                                                    \
-        }
+    }
 
 #define LoadAddrFromCArray {                    \
         temp = bc_insts[count++];               \
         *inst_addr = (BPLONG)RELOC_ADDR(temp);  \
         inst_addr++;                            \
-        }
+    }
 
 #define LoadStructFromCArray {                  \
         temp = bc_insts[count++];               \
         *inst_addr = (BPLONG)reloc_table[temp]; \
         inst_addr++;                            \
-        }
+    }
 
 /*  Z is integer(i) or an integer. The integer means C, u(y), or v(y) depending on the last two bits */
 #define LoadZFromCArray {                                               \
@@ -1765,28 +1765,28 @@ void get_index_tab_fromlist(HashArgs, clause_no)
             }                                                           \
         }                                                               \
         inst_addr++;                                                    \
-        }
+    }
 
 #define LoadZsFromCArray(n) {                   \
         while (n > 0) {                         \
             LoadZFromCArray;                    \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadYsFromCArray(n) {                   \
         while (n > 0) {                         \
             LoadLiteralFromCArray;              \
             n--;                                \
         }                                       \
-        }
+    }
 
 #define LoadConstantsFromCArray(n) {            \
         while (n > 0) {                         \
             LoadZFromCArray;                    \
             n--;                                \
         }                                       \
-        }
+    }
 
 typedef struct {
     int offset;
@@ -1795,9 +1795,7 @@ typedef struct {
     char *name;
 } BC_SYM;
 
-#ifdef PRISM
-#include "picat_prism_bc.h"
-#elif FZN_PICAT_SAT
+#ifdef FZN_PICAT_SAT
 #include "fzn_picat_sat_bc.h"
 #elif FZN_PICAT_CP
 #include "fzn_picat_cp_bc.h"
