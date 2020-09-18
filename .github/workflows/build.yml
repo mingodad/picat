@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  build-release-linux-amd64:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,18 +14,19 @@ jobs:
       run: |
         cd emu
         make -f Makefile.linux64
+        mv picat ../picat-linux-amd64
     # run tests
     - name: run test_exs
       run: |
         cd exs
-        ../emu/picat test_exs.pi
+        ../picat-linux-amd64 test_exs.pi
     - name: run test_exs_cp
       run: |
         cd exs
-        ../emu/picat test_exs_cp.pi
+        ../picat-linux-amd64 test_exs_cp.pi
     # upload artifact, picat binary
-    - name: Upload Picat binary
+    - name: Upload Picat-linux-amd64 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary
-        path: emu/picat
+        name: upload binary picat-linux-amd64
+        path: ../picat-linux-amd64
