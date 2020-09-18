@@ -1,0 +1,31 @@
+name: build and run tests
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # build project
+    - name: build
+      run: |
+        cd emu
+        make -f Makefile.linux64
+    # run tests
+    - name: run test_exs
+      run: |
+        cd exs
+        ../emu/picat test_exs.pi
+    - name: run test_exs_cp
+      run: |
+        cd exs
+        ../emu/picat test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload binary
+        path: emu/picat
