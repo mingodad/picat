@@ -6,9 +6,13 @@ on:
     branches: [ master ]
 jobs:
   build-release-linux-amd64:
+    name: picat master linux/amd64
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    # see what's available in /usr/bin
+    - name: see what's available
+      run: ls -l /usr/bin
     # build project
     - name: build
       run: |
