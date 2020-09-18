@@ -34,3 +34,37 @@ jobs:
       with:
         name: upload binary picat-linux-amd64
         path: picat-linux-amd64
+
+  build-release-windows-amd64:
+    name: picat master windows/amd64
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install depedencies
+    run: sudo apt-get install -y
+      mingw-w64
+      wine
+    # see what's available in /usr/bin
+    - name: see what's available
+      run: ls -l /usr/bin
+    # build project
+    - name: build
+      run: |
+        cd emu
+        make -f Makefile.mingwin64
+        mv picat.exe ../picat-windows-amd64.exe
+    # run tests
+    - name: run test_exs
+      run: |
+        cd exs
+        wine ../picat-windows-amd64.exe test_exs.pi
+    - name: run test_exs_cp
+      run: |
+        cd exs
+        wine ../picat-windows-amd64.exe test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat-windows-amd64 binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload binary picat-windows-amd64
+        path: picat-windows-amd64.exe
