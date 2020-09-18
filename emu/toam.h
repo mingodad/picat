@@ -599,7 +599,7 @@ extern BPLONG no_gcs;
 #define CONNECT_SUSP_FRAME {                    \
         AR_PREV(AR) = (BPLONG)SF;               \
         SF = AR;                                \
-}
+    }
 
 /* frame has been added to the active chain. make a copy of it ontop of the stack */
 #define CLONE_FRAME(frame)                                              \
@@ -701,7 +701,7 @@ extern BPLONG no_gcs;
         available_sh_space = (LOCAL_TOP-H)/gc_threshold;        \
         stack_water_mark = LOCAL_TOP-available_sh_space;        \
         heap_water_mark = H+available_sh_space;                 \
-}
+    }
 
 #define EXPAND_STACK(margin) if (LOCAL_TOP - H <= margin) {     \
         if (toam_signal_vec == 0 && in_critical_region == 0) {  \
@@ -810,7 +810,7 @@ extern BPLONG no_gcs;
             }                                                           \
             propagate_scc_root((BPLONG_PTR)AR_AR(AR), subgoal_entry, scc_root, scc_root_ar); \
         }                                                               \
-}
+    }
 
 #define RESET_SUBGOAL_AR(f) {                                           \
         if (IS_TABLE_FRAME(f)) {                                        \

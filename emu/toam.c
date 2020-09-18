@@ -176,21 +176,21 @@ contcase:  /* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
 #ifdef DEBUG_INST
     // if (trace_toam) {
     cpreg = P;
-    printf("%d p(%x) ar(%x) lt(%x) h(%x)\n", toam_signal_vec, P, AR, LOCAL_TOP, H);
+    printf(BPULONG_FMT_STR " p(" BPULONG_FMT_STR ") ar(" BPULONG_FMT_STR ") lt(" BPULONG_FMT_STR ") h(" BPULONG_FMT_STR ")\n", toam_signal_vec, P, AR, LOCAL_TOP, H);
     print_inst(stdout);
     // }
 #endif
 #ifdef TRACE_TOAM
     if (trace_toam) {
         cpreg = P;
-        printf("ar(%x) lt(%x)", AR, LOCAL_TOP);
+        printf("ar(" BPULONG_FMT_STR ") lt(" BPULONG_FMT_STR ")", AR, LOCAL_TOP);
         print_inst(curr_out);
     }
 #endif
 #ifdef TRACE_BUILTIN
     cpreg = P;
     if (*cpreg >= builtin0 && *cpreg <= builtin4) {
-        printf("ar(" BPLONG_FMT_STR ") lt(" BPLONG_FMT_STR ")", AR, LOCAL_TOP);
+        printf("ar(" BPULONG_FMT_STR ") lt(" BPULONG_FMT_STR ")", AR, LOCAL_TOP);
         print_inst(curr_out);
     }
 #endif

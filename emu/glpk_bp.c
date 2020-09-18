@@ -50,7 +50,7 @@ extern double floatval();
         FREE_IF_NOT_NULL(rn);                   \
         FREE_IF_NOT_NULL(cn);                   \
         FREE_IF_NOT_NULL(rmatval);              \
-}
+    }
 
 int glpk_error(error_msg)
     char *error_msg;

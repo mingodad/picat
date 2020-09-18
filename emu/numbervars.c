@@ -5,7 +5,7 @@
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 #include <string.h>
 #include <stdlib.h>
@@ -410,14 +410,14 @@ int c_VARS_SET_INTERSECT() {
     BPLONG_PTR trail_top0;
     BPLONG initial_diff0;
 
-	//	printf("vars_set_intersect local_top=%x heap_top=%x\n",local_top,heap_top); 
+    //  printf("vars_set_intersect local_top=%x heap_top=%x\n",local_top,heap_top);
     term = ARG(1, 3);
     ex_term = ARG(2, 3);
     DEREF(ex_term);
-	
-	//	printf("term = "); write_term(term); printf("\n");
-	//	printf("ex_term = "); write_term(ex_term); printf("\n");
-	
+
+    //  printf("term = "); write_term(term); printf("\n");
+    //  printf("ex_term = "); write_term(ex_term); printf("\n");
+
     if (ISREF(ex_term)) {
         FOLLOW(heap_top) = ex_term;
         FOLLOW(heap_top+1) = nil_sym;
@@ -517,12 +517,12 @@ start:
         struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
         arity = GET_ARITY((SYM_REC_PTR)FOLLOW(struct_ptr));
         for (i = 1; i <= arity-1; i++) {
-		  list0 = collect_shared_vars(*(struct_ptr + i), list0);
+            list0 = collect_shared_vars(*(struct_ptr + i), list0);
         }
-		term = FOLLOW(struct_ptr+arity);
-		goto start;
+        term = FOLLOW(struct_ptr+arity);
+        goto start;
     } else {  /* susp var */
-	  return list0;
+        return list0;
     }
 }
 

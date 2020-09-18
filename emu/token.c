@@ -1305,19 +1305,21 @@ START:
 #endif
         *s = (BYTE)c;
         BP_GETC(card, d);
-	lab_sign_stream:
+    lab_sign_stream:
         if (c == intab.begcom && d == intab.astcom) {
         ASTCOM:
             if (com2plain(card, d, intab.endcom) == BP_ERROR) return BP_ERROR;
             BP_GETC(card, c);
             goto START;
-        } else if (c == '&' && d == '&') {
-            *s++ = '&';
-            *s++ = '&';
-            *s = '\0';
-            lastc = ' ';
-            rtnint = 2;
-            return LOWER;
+            /*                  
+                                } else if (c == '&' && d == '&') {
+                                *s++ = '&';
+                                *s++ = '&';
+                                *s = '\0';
+                                lastc = ' ';
+                                rtnint = 2;
+                                return LOWER;
+            */
         } else if (c == '.') {
             if (d == '.') {  /* .. */
                 *++s = (BYTE)d;
@@ -1329,8 +1331,12 @@ START:
                     return LOWER;
                 }
             }
+        } else if (c == '#' && d == '!') {   // e.g., #!=
+            if (--n == 0) printAtomStr(tok2long);
+            *++s = (BYTE)d;
+            BP_GETC(card, d);
         }
-        while (InType(d) == SIGN || d == '!') {   // e.g., #!=
+        while (InType(d) == SIGN) {   
             if (--n == 0) printAtomStr(tok2long);
             *++s = (BYTE)d;
             BP_GETC(card, d);
@@ -1356,11 +1362,11 @@ START:
         }
         *s = (BYTE)c;
         BP_GETC(card, d);
-		if (d == '='){     // e.g., !=
-		  goto lab_sign_stream;
-		}
+        if (d == '='){     // e.g., !=
+            goto lab_sign_stream;
+        }
         *++s = 0;
-		c = d;
+        c = d;
         lastc = d;
         goto SYMBOL;
 
@@ -1403,7 +1409,7 @@ START:
         while ((d = read_utf8_character(card, c)) >= 0 && bp_exception == (BPLONG)NULL) {
             UTF8_CODEPOINT_TO_STR(d, s, n);
         }
-		//        TOKEN_CHECK_EXCEPTION();
+        //        TOKEN_CHECK_EXCEPTION();
         *s = '\0';
         //    rtnint = (BPLONG) (s - AtomStr);
         c = lastc;
@@ -1427,7 +1433,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-		//        TOKEN_CHECK_EXCEPTION();
+        //        TOKEN_CHECK_EXCEPTION();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {
@@ -1714,19 +1720,21 @@ START:
     lab_sign_case:
         *s = (char)c;
         BP_GETC_STRING(d);
-	lab_sign_string:
+    lab_sign_string:
         if (c == intab.begcom && d == intab.astcom) {
         ASTCOM:
             if (com2plain_string(d, intab.endcom) == BP_ERROR) return BP_ERROR;
             BP_GETC_STRING(c);
             goto START;
-        } else if (c == '&' && d == '&') {
-            *s++ = '&';
-            *s++ = '&';
-            *s = '\0';
-            lastc = ' ';
-            rtnint = 2;
-            return LOWER;
+            /*                  
+                                } else if (c == '&' && d == '&') {
+                                *s++ = '&';
+                                *s++ = '&';
+                                *s = '\0';
+                                lastc = ' ';
+                                rtnint = 2;
+                                return LOWER;
+            */
         } else if (c == '.') {
             if (d == '.') {  /* .. */
                 *++s = (BYTE)d;
@@ -1738,8 +1746,12 @@ START:
                     return LOWER;
                 }
             }
+        } else if (c == '#' && d == '!') {   // e.g., #!=
+            if (--n == 0) printAtomStr(tok2long);
+            *++s = (BYTE)d;
+            BP_GETC_STRING(d);
         }
-        while (InType(d) == SIGN  || d == '!') {
+        while (InType(d) == SIGN) {
             if (--n == 0) printAtomStr(tok2long);
             *++s = (char)d;
             BP_GETC_STRING(d);
@@ -1764,11 +1776,11 @@ START:
         }
         *s = (char)c;
         BP_GETC_STRING(d);
-		if (d == '='){     // e.g., !=
-		  goto lab_sign_string;
-		}
+        if (d == '='){     // e.g., !=
+            goto lab_sign_string;
+        }
         *++s = 0;
-		c = d;
+        c = d;
         lastc = d;
         goto SYMBOL;
 
@@ -1833,7 +1845,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-		//        TOKEN_CHECK_EXCEPTION_STRING();
+        //        TOKEN_CHECK_EXCEPTION_STRING();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {
@@ -1918,11 +1930,11 @@ int b_NEXT_TOKEN_ff(op1, op2)
         if (string_in == NULL) {
             char c;
             fprintf(stderr, "*** error until line %d\n", (int)curr_line_no);
-			if (i == LISQT){
-			  picat_str_to_c_str(list_p, chars_pool, MAX_CHARS_IN_POOL);
-			  chars_pool[100] = '\0';
-			  fputs(chars_pool,stderr);
-			}
+            if (i == LISQT){
+                picat_str_to_c_str(list_p, chars_pool, MAX_CHARS_IN_POOL);
+                chars_pool[100] = '\0';
+                fputs(chars_pool,stderr);
+            }
             BP_GETC(card, c);
             while (c != -1 && c != '\n' && c != '\r') {
                 if (c == '\n') {INC_LINE_NO;}

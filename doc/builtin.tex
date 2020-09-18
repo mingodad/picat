@@ -30,7 +30,7 @@
 \cfoot{}
 \begin{document}
 \begin{center}
-\noindent {\bf The Library Modules of Picat} \\ 
+\noindent {\bf The Library Modules of Picat} \\
 \vspace*{5mm}
 Neng-Fa Zhou and Jonathan Fruhman \\
 \vspace*{5mm}
@@ -44,46 +44,47 @@ January 14, 2013 \\
 \section*{ Module \texttt{basic} (imported by default)}
 \begin{scriptsize}
 \begin{itemize}
-    \item {\tt $X$ \verb+!=+ $Y$} 
+    \item {\tt $X$ \verb+!=+ $Y$}
     \item {\tt $X$ \verb+!==+ $Y$}
-    \item {\tt $X$ \verb+:=+ $Y$} 
-    \item {\tt $X$ \verb+<+ $Y$} 
-    \item {\tt $X$ \verb+<=+ $Y$} 
-    \item {\tt $X$ \verb+=+ $Y$} 
-    \item {\tt $X$ \verb+=<+ $Y$} 
+    \item {\tt $X$ \verb+:=+ $Y$}
+    \item {\tt $X$ \verb+<+ $Y$}
+    \item {\tt $X$ \verb+<=+ $Y$}
+    \item {\tt $X$ \verb+=+ $Y$}
+    \item {\tt $X$ \verb+=<+ $Y$}
     \item {\tt $X$ \verb+=:=+ $Y$}
-    \item {\tt $X$ \verb+==+ $Y$} 
-    \item {\tt $X$ \verb+>+ $Y$} 
-    \item {\tt $X$ \verb+>=+ $Y$} 
-    \item {\tt $X$ @< $Y$} 
-    \item {\tt $X$ @<= $Y$} 
-    \item {\tt $X$ @=< $Y$} 
-    \item {\tt $X$ @> $Y$} 
+    \item {\tt $X$ \verb+=\=+ $Y$}
+    \item {\tt $X$ \verb+==+ $Y$}
+    \item {\tt $X$ \verb+>+ $Y$}
+    \item {\tt $X$ \verb+>=+ $Y$}
+    \item {\tt $X$ @< $Y$}
+    \item {\tt $X$ @<= $Y$}
+    \item {\tt $X$ @=< $Y$}
+    \item {\tt $X$ @> $Y$}
     \item {\tt $X$ @>= $Y$}
-    \item {\tt $X$ =.. $Y$} 
-    \item {\tt $Term_1$ \verb-++- $Term_2$ = $List$} 
+    \item {\tt $X$ =.. $Y$}
+    \item {\tt $Term_1$ \verb-++- $Term_2$ = $List$}
     \item {\tt \verb+[+$X$ : $I$ in $D$,$\ldots$ \verb+]+ = $List$}
-    \item {\tt $L$ \verb+..+ $U$ = $List$} 
-    \item {\tt $L$ \verb+..+ $Step$ \verb+..+ $U$ = $List$} 
+    \item {\tt $L$ \verb+..+ $U$ = $List$}
+    \item {\tt $L$ \verb+..+ $Step$ \verb+..+ $U$ = $List$}
     \item {\tt \verb+-+$X$ = $Y$}
     \item {\tt \verb-+-$X$ = $Y$}
-    \item {\tt $X$ \verb-+- $Y$ = $Z$} 
-    \item {\tt $X$ \verb+-+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+*+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+/+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+//+ $Y$ = $Z$} 
-    \item \texttt{$X$ div $Y$ = $Z$} 
-    \item {\tt $X$ \verb+/<+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+/>+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+**+ $Y$ = $Z$} 
-    \item \texttt{$X$ mod $Y$ = $Z$} 
-    \item \texttt{$X$ rem $Y$ = $Z$} 
-    \item {\tt \verb+~+$X$ = $Y$} 
-    \item {\tt $X$ \verb+\/+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+/\+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+^+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+<<+ $Y$ = $Z$} 
-    \item {\tt $X$ \verb+>>+ $Y$ = $Z$} 
+    \item {\tt $X$ \verb-+- $Y$ = $Z$}
+    \item {\tt $X$ \verb+-+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+*+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+/+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+//+ $Y$ = $Z$}
+    \item \texttt{$X$ div $Y$ = $Z$}
+    \item {\tt $X$ \verb+/<+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+/>+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+**+ $Y$ = $Z$}
+    \item \texttt{$X$ mod $Y$ = $Z$}
+    \item \texttt{$X$ rem $Y$ = $Z$}
+    \item {\tt \verb+~+$X$ = $Y$}
+    \item {\tt $X$ \verb+\/+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+/\+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+^+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+<<+ $Y$ = $Z$}
+    \item {\tt $X$ \verb+>>+ $Y$ = $Z$}
     \item {\tt $Var$\verb+[+$Index_1$,$\ldots$,$Index_n$\verb+]+}
     \item \texttt{$Goal_1$,$Goal_2$}
     \item \texttt{$Goal_1$ \&\& $Goal_2$}
@@ -94,7 +95,7 @@ January 14, 2013 \\
     \item \texttt{append($X$,$Y$,$Z$)}  (nondet)
     \item \texttt{append($X$,$Y$,$Z$,$T$)}  (nondet)
     \item \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$) = $Val$}
-    \item \texttt{arg($I$,$T$,$A$)}    
+    \item \texttt{arg($I$,$T$,$A$)}
     \item \texttt{arity($Struct$) = $Arity$}
     \item \texttt{array($Term$)}
     \item \texttt{ascii\_alpha($Term$)}
@@ -102,23 +103,23 @@ January 14, 2013 \\
     \item \texttt{ascii\_digit($Term$)}
     \item \texttt{ascii\_lowercase($Term$)}
     \item \texttt{ascii\_uppercase($Term$)}
-    \item \texttt{atom($Term$)} 
+    \item \texttt{atom($Term$)}
     \item \texttt{atom\_chars($Atm$) = $String$}
-    \item \texttt{atom\_codes($Atm$) = $List$} 
-    \item \texttt{atomic($Term$)} 
-    \item \texttt{attr\_var($Term$)} 
+    \item \texttt{atom\_codes($Atm$) = $List$}
+    \item \texttt{atomic($Term$)}
+    \item \texttt{attr\_var($Term$)}
     \item \texttt{avg($ListOrArray$) = $Val$}
     \item \texttt{between($From$,$To$,$X$)} (nondet)
     \item \texttt{bigint($Term$)}
     \item \texttt{bind\_vars($Term$,$Val$)}
-    \item \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)} 
-    \item \texttt{call\_cleanup($S$,$Cleanup$)} 
-    \item \texttt{catch($S$,$Exception$,$Handler$)} 
-    \item \texttt{char($Term$)} 
-    \item \texttt{chr($Code$) = $Char$} 
-    \item \texttt{clear($Map$)} 
-    \item \texttt{compare\_terms($Term_1$,$Term_2$) = $Res$} 
-    \item \texttt{compound($Term$)} 
+    \item \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)}
+    \item \texttt{call\_cleanup($S$,$Cleanup$)}
+    \item \texttt{catch($S$,$Exception$,$Handler$)}
+    \item \texttt{char($Term$)}
+    \item \texttt{chr($Code$) = $Char$}
+    \item \texttt{clear($Map$)}
+    \item \texttt{compare\_terms($Term_1$,$Term_2$) = $Res$}
+    \item \texttt{compound($Term$)}
     \item \texttt{copy\_term($Term_1$) = $Term_2$}
     \item \texttt{count\_all($Call$) = $Int$}
     \item \texttt{delete($List$,$X$) = $ResList$}
@@ -131,88 +132,88 @@ January 14, 2013 \\
     \item \texttt{false}
     \item \texttt{find\_all($Template$,$Call$) = $List$}
     \item \texttt{findall($Template$,$Call$) = $List$}
-    \item \texttt{first($Compound$) = $Term$} 
-    \item \texttt{flatten($List1$) = $List2$} 
-    \item \texttt{float($Term$)} 
-    \item \texttt{fold($F$,$ACC$,$List$) = $Res$} 
+    \item \texttt{first($Compound$) = $Term$}
+    \item \texttt{flatten($List1$) = $List2$}
+    \item \texttt{float($Term$)}
+    \item \texttt{fold($F$,$ACC$,$List$) = $Res$}
     \item \texttt{freeze($X$,$Goal$)}
     \item \texttt{functor($T$,$F$,$N$)}
     \item \texttt{get($Map$,$Key$) = $Val$}
-    \item \texttt{get($Map$,$Key$,$DefaultVal$)=$Val$} 
+    \item \texttt{get($Map$,$Key$,$DefaultVal$)=$Val$}
     \item \texttt{get\_attr($AttrVar$,$Key$) = $Val$}
-    \item \texttt{get\_attr($AttrVar$,$Key$,$DefaultVal$)=$Val$} 
+    \item \texttt{get\_attr($AttrVar$,$Key$,$DefaultVal$)=$Val$}
     \item \texttt{get\_global\_map($ID$) = $Map$}
     \item \texttt{get\_global\_map() = $Map$}
-    \item \texttt{get\_heap\_map($ID$) = $Map$} 
-    \item \texttt{get\_heap\_map() = $Map$} 
-    \item \texttt{get\_table\_map($ID$) = $Map$} 
-    \item \texttt{get\_table\_map() = $Map$} 
-    \item \texttt{ground($Term$)} 
-    \item \texttt{handle\_exception($Term$,$Term$)} 
-    \item \texttt{has\_key($Map$,$Key$)} 
-    \item \texttt{hash\_code($Term$) = $Int$} 
-    \item \texttt{head($List$) = $Term$} 
+    \item \texttt{get\_heap\_map($ID$) = $Map$}
+    \item \texttt{get\_heap\_map() = $Map$}
+    \item \texttt{get\_table\_map($ID$) = $Map$}
+    \item \texttt{get\_table\_map() = $Map$}
+    \item \texttt{ground($Term$)}
+    \item \texttt{handle\_exception($Term$,$Term$)}
+    \item \texttt{has\_key($Map$,$Key$)}
+    \item \texttt{hash\_code($Term$) = $Int$}
+    \item \texttt{head($List$) = $Term$}
     \item \texttt{heap\_is\_empty($Heap$)}
     \item \texttt{heap\_pop($Heap$) = $Elm$}
     \item \texttt{heap\_push($Heap$,$Elm$)}
     \item \texttt{heap\_size($Heap$) = $Size$}
     \item \texttt{heap\_to\_list($Heap$) = $List$}
     \item \texttt{heap\_top($Heap$) = $Elm$}
-    \item \texttt{insert($List$,$Index$,$Elm$) = $ResList$} 
-    \item \texttt{insert\_all($List$,$Index$,$AList$) = $ResList$} 
-    \item \texttt{insert\_ordered($List$,$Term$) = $R$} 
-    \item \texttt{insert\_ordered\_down($List$,$Term$) = $R$} 
-    \item \texttt{int($Term$)} 
-    \item \texttt{integer($Term$)} 
-    \item \texttt{is($Exp$,$Exp$)} 
-    \item \texttt{keys($Map$) = $List$} 
-    \item \texttt{last($Compound$) = $Term$} 
-    \item \texttt{len($Term$) = $Len$} 
-    \item \texttt{length($Term$) = $Len$} 
-    \item \texttt{list($Term$)} 
+    \item \texttt{insert($List$,$Index$,$Elm$) = $ResList$}
+    \item \texttt{insert\_all($List$,$Index$,$AList$) = $ResList$}
+    \item \texttt{insert\_ordered($List$,$Term$) = $R$}
+    \item \texttt{insert\_ordered\_down($List$,$Term$) = $R$}
+    \item \texttt{int($Term$)}
+    \item \texttt{integer($Term$)}
+    \item \texttt{is($T_1$,$T_2$)}
+    \item \texttt{keys($Map$) = $List$}
+    \item \texttt{last($Compound$) = $Term$}
+    \item \texttt{len($Term$) = $Len$}
+    \item \texttt{length($Term$) = $Len$}
+    \item \texttt{list($Term$)}
     \item \texttt{list\_to\_and($List$) = $Conj$}
-    \item \texttt{lowercase($Char$)} 
-    \item \texttt{map($Func$,$List1$,$List2$) = $ResList$} 
-    \item \texttt{map($FuncOrList$,$ListOrFunc$) = $ResList$} 
-    \item \texttt{map($Term$)} 
-    \item \texttt{map\_to\_list($Map$) = $List$} 
-    \item \texttt{max($ListOrArray$) = $Val$} 
-    \item \texttt{max($X$,$Y$) = $Val$} 
+    \item \texttt{lowercase($Char$)}
+    \item \texttt{map($Func$,$List1$,$List2$) = $ResList$}
+    \item \texttt{map($FuncOrList$,$ListOrFunc$) = $ResList$}
+    \item \texttt{map($Term$)}
+    \item \texttt{map\_to\_list($Map$) = $List$}
+    \item \texttt{max($ListOrArray$) = $Val$}
+    \item \texttt{max($X$,$Y$) = $Val$}
     \item \texttt{maxint\_small() = $Int$}
-    \item \texttt{maxof($Call$,$Objective$)} 
-    \item \texttt{maxof($Call$,$Objective$,$ReportCall$)} 
-    \item \texttt{maxof\_inc($Call$,$Objective$)} 
-    \item \texttt{maxof\_inc($Call$,$Objective$,$ReportCall$)} 
-    \item \texttt{membchk($Term$,$List$)} 
+    \item \texttt{maxof($Call$,$Objective$)}
+    \item \texttt{maxof($Call$,$Objective$,$ReportCall$)}
+    \item \texttt{maxof\_inc($Call$,$Objective$)}
+    \item \texttt{maxof\_inc($Call$,$Objective$,$ReportCall$)}
+    \item \texttt{membchk($Term$,$List$)}
     \item \texttt{member($Term$,$List$)} (nondet)
-    \item \texttt{min($ListOrArray$) = $Val$} 
-    \item \texttt{min($X$,$Y$) = $Val$} 
+    \item \texttt{min($ListOrArray$) = $Val$}
+    \item \texttt{min($X$,$Y$) = $Val$}
     \item \texttt{minint\_small() = $Int$}
-    \item \texttt{minof($Call$,$Objective$)} 
-    \item \texttt{minof($Call$,$Objective$,$ReportCall$)} 
-    \item \texttt{minof\_inc($Call$,$Objective$)} 
-    \item \texttt{minof\_inc($Call$,$Objective$,$ReportCall$)} 
-    \item \texttt{name($Struct$) = $Name$} 
-    \item \texttt{new\_array($D_1$,$\ldots$,$D_n$) = $Arr$} 
-    \item \texttt{new\_list($N$) = $List$} 
-    \item \texttt{new\_list($N$,$InitVal$) = $List$} 
-    \item \texttt{new\_map($Int$,$PairsList$) = $Map$} 
-    \item \texttt{new\_map($IntOrPairsList$) = $Map$} 
+    \item \texttt{minof($Call$,$Objective$)}
+    \item \texttt{minof($Call$,$Objective$,$ReportCall$)}
+    \item \texttt{minof\_inc($Call$,$Objective$)}
+    \item \texttt{minof\_inc($Call$,$Objective$,$ReportCall$)}
+    \item \texttt{name($Struct$) = $Name$}
+    \item \texttt{new\_array($D_1$,$\ldots$,$D_n$) = $Arr$}
+    \item \texttt{new\_list($N$) = $List$}
+    \item \texttt{new\_list($N$,$InitVal$) = $List$}
+    \item \texttt{new\_map($Int$,$PairsList$) = $Map$}
+    \item \texttt{new\_map($IntOrPairsList$) = $Map$}
     \item \texttt{new\_max\_heap($IntOrList$) = $Heap$}
     \item \texttt{new\_min\_heap($IntOrList$) = $Heap$}
-    \item \texttt{new\_set($Int$,$ElmsList$) = $Map$} 
-    \item \texttt{new\_set($IntOrElmsList$) = $Map$} 
-    \item \texttt{new\_struct($Name$,$IntOrList$) = $Struct$} 
-    \item \texttt{nonvar($Term$)} 
+    \item \texttt{new\_set($Int$,$ElmsList$) = $Map$}
+    \item \texttt{new\_set($IntOrElmsList$) = $Map$}
+    \item \texttt{new\_struct($Name$,$IntOrList$) = $Struct$}
+    \item \texttt{nonvar($Term$)}
     \item \texttt{not $Call$}
     \item \texttt{nth($I$,$ListOrArray$,$Val$)} (nondet)
-    \item \texttt{number($Term$)} 
-    \item \texttt{number\_chars($Num$) = $String$} 
-    \item \texttt{number\_codes($Num$) = $List$} 
+    \item \texttt{number($Term$)}
+    \item \texttt{number\_chars($Num$) = $String$}
+    \item \texttt{number\_codes($Num$) = $List$}
     \item \texttt{number\_vars($Term$)}
     \item \texttt{number\_vars($Term$,$N_0$) = $N_1$}
     \item \texttt{once $Call$}
-    \item \texttt{ord($Char$) = $Int$} 
+    \item \texttt{ord($Char$) = $Int$}
     \item \texttt{parse\_radix\_string($String$,$Base$) = $Int$}
     \item \texttt{parse\_term($String$) = $Term$}
     \item \texttt{parse\_term($String$,$Term$,$Vars$)}
@@ -222,62 +223,62 @@ January 14, 2013 \\
     \item \texttt{post\_event\_dom($X$,$Event$)}
     \item \texttt{post\_event\_ins($X$)}
     \item \texttt{prod($ListOrArray$) = $Val$}
-    \item \texttt{put($Map$,$Key$)} 
-    \item \texttt{put($Map$,$Key$,$Val$)} 
-    \item \texttt{put\_attr($Var$,$Key$)} 
-    \item \texttt{put\_attr($Var$,$Key$,$Val$)} 
-    \item \texttt{real($Term$)} 
-    \item \texttt{reduce($Func$,$List$) = $Res$} 
-    \item \texttt{reduce($Func$,$List$,$InitVal$) = $Res$} 
-    \item \texttt{remove\_dups($ListOrArray$) = $ResList$} 
+    \item \texttt{put($Map$,$Key$)}
+    \item \texttt{put($Map$,$Key$,$Val$)}
+    \item \texttt{put\_attr($Var$,$Key$)}
+    \item \texttt{put\_attr($Var$,$Key$,$Val$)}
+    \item \texttt{real($Term$)}
+    \item \texttt{reduce($Func$,$List$) = $Res$}
+    \item \texttt{reduce($Func$,$List$,$InitVal$) = $Res$}
+    \item \texttt{remove\_dups($ListOrArray$) = $ResList$}
     \item \texttt{repeat} (nondet)
-    \item \texttt{reverse($ListOrArray$) = $Res$} 
-    \item \texttt{second($Compound$) = $Term$} 
+    \item \texttt{reverse($ListOrArray$) = $Res$}
+    \item \texttt{second($Compound$) = $Term$}
     \item \texttt{select($X$,$List$,$ResList$)} (nondet)
     \item \texttt{size($Map$) = $Size$}
     \item \texttt{slice($ListOrArray$,$From$)}
     \item \texttt{slice($ListOrArray$,$From$,$To$)}
-    \item \texttt{sort($ListOrArray$) = $Sorted$} 
-    \item \texttt{sort($ListOrArray$,$KeyIndex$) = $Sorted$} 
-    \item \texttt{sort\_down($ListOrArray$) = $Sorted$} 
-    \item \texttt{sort\_down($ListOrArray$,$KeyIndex$) = $Sorted$} 
-    \item \texttt{sort\_down\_remove\_dups($ListOrArray$) = $Sorted$} 
-    \item \texttt{sort\_down\_remove\_dups($ListOrArray$,$KeyIndex$) = $Sorted$} 
-    \item \texttt{sort\_remove\_dups($ListOrArray$) = $Sorted$} 
-    \item \texttt{sort\_remove\_dups($ListOrArray$,$KeyIndex$) = $Sorted$} 
-    \item \texttt{sorted($ListOrArray$)} 
-    \item \texttt{sorted\_down($ListOrArray$)} 
-    \item \texttt{string($Term$)} 
-    \item \texttt{struct($Term$)} 
+    \item \texttt{sort($ListOrArray$) = $Sorted$}
+    \item \texttt{sort($ListOrArray$,$KeyIndex$) = $Sorted$}
+    \item \texttt{sort\_down($ListOrArray$) = $Sorted$}
+    \item \texttt{sort\_down($ListOrArray$,$KeyIndex$) = $Sorted$}
+    \item \texttt{sort\_down\_remove\_dups($ListOrArray$) = $Sorted$}
+    \item \texttt{sort\_down\_remove\_dups($ListOrArray$,$KeyIndex$) = $Sorted$}
+    \item \texttt{sort\_remove\_dups($ListOrArray$) = $Sorted$}
+    \item \texttt{sort\_remove\_dups($ListOrArray$,$KeyIndex$) = $Sorted$}
+    \item \texttt{sorted($ListOrArray$)}
+    \item \texttt{sorted\_down($ListOrArray$)}
+    \item \texttt{string($Term$)}
+    \item \texttt{struct($Term$)}
     \item \texttt{subsumes($Term_1$,$Term_2$)}
     \item \texttt{sum($ListOrArray$) = $Val$}
-    \item \texttt{tail($List$) = $Term$} 
-    \item \texttt{throw($E$)}    
-    \item \texttt{to\_array($List$) = $Array$} 
-    \item \texttt{to\_atom($String$) = $Atom$} 
+    \item \texttt{tail($List$) = $Term$}
+    \item \texttt{throw($E$)}
+    \item \texttt{to\_array($List$) = $Array$}
+    \item \texttt{to\_atom($String$) = $Atom$}
     \item \texttt{to\_binary\_string($Int$) = $String$}
-    \item \texttt{to\_codes($Term$) = $List$}        
+    \item \texttt{to\_codes($Term$) = $List$}
     \item \texttt{to\_fstring($Format$,$Args\ldots$) = $String$}
-    \item \texttt{to\_hex\_string($Int$) = $String$}    
-    \item \texttt{to\_int($NumOrCharOrStr$) = $Int$} 
-    \item \texttt{to\_integer($NumOrCharOrStr$) = $Int$} 
-    \item \texttt{to\_list($Struct$) = $List$} 
+    \item \texttt{to\_hex\_string($Int$) = $String$}
+    \item \texttt{to\_int($NumOrCharOrStr$) = $Int$}
+    \item \texttt{to\_integer($NumOrCharOrStr$) = $Int$}
+    \item \texttt{to\_list($Struct$) = $List$}
     \item \texttt{to\_lowercase($String$) = $LString$}
     \item \texttt{to\_number($NumOrCharOrStr$) = $Number$}
-    \item \texttt{to\_oct\_string($Int$) = $String$}    
+    \item \texttt{to\_oct\_string($Int$) = $String$}
     \item \texttt{to\_radix\_string($Int$,$Base$) = $String$}
-    \item \texttt{to\_real($NumOrStr$) = $Real$} 
-    \item \texttt{to\_string($Term$) = $String$}        
+    \item \texttt{to\_real($NumOrStr$) = $Real$}
+    \item \texttt{to\_string($Term$) = $String$}
     \item \texttt{to\_uppercase($String$) = $UString$}
     \item \texttt{true}
-    \item \texttt{uppercase($Char$)} 
-    \item \texttt{values($Map$) = $List$} 
-    \item \texttt{var($Term$)} 
+    \item \texttt{uppercase($Char$)}
+    \item \texttt{values($Map$) = $List$}
+    \item \texttt{var($Term$)}
     \item \texttt{variant($Term_1$,$Term_2$)}
     \item \texttt{vars($Term$) = $Vars$}
-    \item \texttt{zip($List_1$,$List_2$) = $List$} 
-    \item \texttt{zip($List_1$,$List_2$,$List_3$) = $List$} 
-    \item \texttt{zip($List_1$,$List_2$,$List_3$,$List_4$) = $List$} 
+    \item \texttt{zip($List_1$,$List_2$) = $List$}
+    \item \texttt{zip($List_1$,$List_2$,$List_3$) = $List$}
+    \item \texttt{zip($List_1$,$List_2$,$List_3$,$List_4$) = $List$}
 %    \item \texttt{unnumber\_vars($Term_1$) = $Term_2$}
 \end{itemize}
 \end{scriptsize}
@@ -285,75 +286,75 @@ January 14, 2013 \\
 \section*{Module \texttt{math} (imported by default)}
 \begin{scriptsize}
 \begin{itemize}
-   \item \texttt{abs($X$) = $Val$} 
+   \item \texttt{abs($X$) = $Val$}
    \item \texttt{acos($X$) = $Val$}
-   \item \texttt{acosh($X$) = $Val$} 
+   \item \texttt{acosh($X$) = $Val$}
    \item \texttt{acot($X$) = $Val$}
-   \item \texttt{acoth($X$) = $Val$} 
-   \item \texttt{acsc($X$) = $Val$} 
-   \item \texttt{acsch($X$) = $Val$} 
+   \item \texttt{acoth($X$) = $Val$}
+   \item \texttt{acsc($X$) = $Val$}
+   \item \texttt{acsch($X$) = $Val$}
    \item \texttt{asec($X$) = $Val$}
-   \item \texttt{asech($X$) = $Val$} 
+   \item \texttt{asech($X$) = $Val$}
    \item \texttt{asin($X$) = $Val$}
-   \item \texttt{asinh($X$) = $Val$} 
+   \item \texttt{asinh($X$) = $Val$}
    \item \texttt{atan($X$) = $Val$}
    \item \texttt{atan2($X$,$Y$) = $Val$}
-   \item \texttt{atanh($X$) = $Val$} 
-   \item \texttt{ceiling($X$) = $Val$} 
-   \item \texttt{cos($X$) = $Val$} 
-   \item \texttt{cosh($X$)  = $Val$} 
+   \item \texttt{atanh($X$) = $Val$}
+   \item \texttt{ceiling($X$) = $Val$}
+   \item \texttt{cos($X$) = $Val$}
+   \item \texttt{cosh($X$)  = $Val$}
    \item \texttt{cot($X$) = $Val$}
-   \item \texttt{coth($X$)  = $Val$} 
+   \item \texttt{coth($X$)  = $Val$}
    \item \texttt{csc($X$) = $Val$}
-   \item \texttt{csch($X$)  = $Val$} 
-   \item \texttt{e() = 2.71828182845904523536} 
-   \item \texttt{even($Int$)} 
-   \item \texttt{exp($X$) = $Val$} 
-   \item \texttt{floor($X$) = $Val$} 
+   \item \texttt{csch($X$)  = $Val$}
+   \item \texttt{e() = 2.71828182845904523536}
+   \item \texttt{even($Int$)}
+   \item \texttt{exp($X$) = $Val$}
+   \item \texttt{floor($X$) = $Val$}
    \item \texttt{frand() = $Val$}
-   \item \texttt{frand($Low$,$High$) = $Val$}    
-   \item \texttt{gcd($A$,$B$) = $Val$} 
+   \item \texttt{frand($Low$,$High$) = $Val$}
+   \item \texttt{gcd($A$,$B$) = $Val$}
    \item \texttt{log($X$) = $Val$}
-   \item \texttt{log(B,$X$) = $Val$} 
-   \item \texttt{log10($X$) = $Val$} 
-   \item \texttt{log2($X$) = $Val$} 
-   \item \texttt{modf($X$) = ($IntVal$,$FractVal$)} 
-   \item \texttt{odd($Int$)} 
-   \item \texttt{pi() = 3.14159265358979323846} 
+   \item \texttt{log(B,$X$) = $Val$}
+   \item \texttt{log10($X$) = $Val$}
+   \item \texttt{log2($X$) = $Val$}
+   \item \texttt{modf($X$) = ($IntVal$,$FractVal$)}
+   \item \texttt{odd($Int$)}
+   \item \texttt{pi() = 3.14159265358979323846}
    \item \texttt{pow($X$,$Y$) = $Val$}
    \item \texttt{pow\_mod($X$,$Y$,$Z$) = $Val$}
-   \item \texttt{prime($Int$)} 
-   \item \texttt{primes($Int$) = $List$} 
-   \item \texttt{rand\_max() = $Val$} 
-   \item \texttt{random = $Val$} 
-   \item \texttt{random($Low$,$High$) = $Val$} 
-   \item \texttt{random($Seed$) = $Val$} 
-   \item \texttt{random2() = $Int$} 
+   \item \texttt{prime($Int$)}
+   \item \texttt{primes($Int$) = $List$}
+   \item \texttt{rand\_max() = $Val$}
+   \item \texttt{random = $Val$}
+   \item \texttt{random($Low$,$High$) = $Val$}
+   \item \texttt{random($Seed$) = $Val$}
+   \item \texttt{random2() = $Int$}
    \item \texttt{round($X$) = $Val$}
    \item \texttt{sec($X$) = $Val$}
-   \item \texttt{sech($X$) = $Val$} 
-   \item \texttt{sign($X$) = $Val$}  
-   \item \texttt{sin($X$) = $Val$} 
-   \item \texttt{sinh($X$) = $Val$} 
-   \item \texttt{sqrt($X$) = $Val$} 
+   \item \texttt{sech($X$) = $Val$}
+   \item \texttt{sign($X$) = $Val$}
+   \item \texttt{sin($X$) = $Val$}
+   \item \texttt{sinh($X$) = $Val$}
+   \item \texttt{sqrt($X$) = $Val$}
    \item \texttt{tan($X$) = $Val$}
-   \item \texttt{tanh($X$) = $Val$} 
-   \item \texttt{to\_degrees($Radian$) = $Degree$} 
+   \item \texttt{tanh($X$) = $Val$}
+   \item \texttt{to\_degrees($Radian$) = $Degree$}
    \item \texttt{to\_radians($Degree$) = $Radian$}
-   \item \texttt{truncate($X$) = $Val$}  
+   \item \texttt{truncate($X$) = $Val$}
 %   \item \texttt{inf}
 %   \item \texttt{acosh($X$) = $Val$}
 %   \item \texttt{asinh($X$) = $Val$}
-%   \item \texttt{atanh($X$) = $Val$} 
+%   \item \texttt{atanh($X$) = $Val$}
 %   \item \texttt{cbrt($X$) = $Val$}
-%   \item \texttt{cosh($X$) = $Val$} 
+%   \item \texttt{cosh($X$) = $Val$}
 %   \item \texttt{coth($X$) = $Val$}
 %   \item \texttt{ninf}
 %   \item \texttt{nthrt($N$,$X$) = $Val$}
-%   \item \texttt{randrange($From$,$Step$,$To$) = $Val$}  
-%   \item \texttt{randrange($From$,$To$) = $Val$}  
-%   \item \texttt{sech($X$) = $Val$} 
-%   \item \texttt{sinh($X$) = $Val$} 
+%   \item \texttt{randrange($From$,$Step$,$To$) = $Val$}
+%   \item \texttt{randrange($From$,$To$) = $Val$}
+%   \item \texttt{sech($X$) = $Val$}
+%   \item \texttt{sinh($X$) = $Val$}
 %   \item \texttt{tanh($X$) = $Val$}
 %   \item \texttt{csch($X$) = $Val$}
 \end{itemize}
@@ -531,16 +532,16 @@ January 14, 2013 \\
 \begin{scriptsize}
 \begin{itemize}
     \item {\tt \verb+#~+$X$}
-    \item {\tt $X$ \verb+#!=+ $Y$} 
+    \item {\tt $X$ \verb+#!=+ $Y$}
     \item {\tt $X$ \verb+#/\+ $Y$}
-    \item {\tt $X$ \verb+#<+ $Y$} 
+    \item {\tt $X$ \verb+#<+ $Y$}
     \item {\tt $X$ \verb+#<=+ $Y$}
     \item {\tt $X$ \verb+#<=>+ $Y$}
-    \item {\tt $X$ \verb+#=+ $Y$} 
-    \item {\tt $X$ \verb+#=<+ $Y$} 
+    \item {\tt $X$ \verb+#=+ $Y$}
+    \item {\tt $X$ \verb+#=<+ $Y$}
     \item {\tt $X$ \verb+#=>+ $Y$}
-    \item {\tt $X$ \verb+#>+ $Y$} 
-    \item {\tt $X$ \verb+#>=+ $Y$} 
+    \item {\tt $X$ \verb+#>+ $Y$}
+    \item {\tt $X$ \verb+#>=+ $Y$}
     \item {\tt $X$ \verb+#\/+ $Y$}
     \item {\tt $X$ \verb+#^+ $Y$}
 \item \texttt{$Vars$ :: $Exp$}
@@ -550,7 +551,7 @@ January 14, 2013 \\
 \item \texttt{all\_distinct($FDVars$)}
 \item \texttt{assignment($FDVars1$,$FDVars2$)}
 \item \texttt{at\_least($N$,$L$,$V$)}:
-\item \texttt{at\_most($N$,$L$,$V$)}: 
+\item \texttt{at\_most($N$,$L$,$V$)}:
 \item \texttt{circuit($FDVars$)}
 \item \texttt{count($V$,$FDVars$,$N$)}
 \item \texttt{count($V$,$FDVars$,$Rel$,$N$)}
@@ -562,7 +563,7 @@ January 14, 2013 \\
 \item \texttt{element($I$,$List$,$V$)}
 \item \texttt{exactly($N$,$L$,$V$)}:
 \item \texttt{fd\_degree($FDVar$) = $Degree$} (cp only)
-\item \texttt{fd\_disjoint($DVar1$,$DVar2$)} 
+\item \texttt{fd\_disjoint($DVar1$,$DVar2$)}
 \item \texttt{fd\_dom($FDVar$) = $List$}
 \item \texttt{fd\_false($FDVar$,$Elm$)}
 \item \texttt{fd\_max($FDVar$) = $Max$}
@@ -586,7 +587,7 @@ January 14, 2013 \\
 \item \texttt{new\_dvar() = $FDVar$}
 \item \texttt{new\_fd\_var() = $FDVar$}
 \item \texttt{regular$(X,Q,S,D,Q0,F)$}
-\item \texttt{scalar\_product($A$,$X$,$Product$)} 
+\item \texttt{scalar\_product($A$,$X$,$Product$)}
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}
 \item \texttt{serialized($Starts$,$Durations$)}
 \item \texttt{solve($Opts$,$Vars$)} (nondet)
@@ -597,12 +598,12 @@ January 14, 2013 \\
 \item \texttt{solve\_suspended($Opt$)} (cp only)
 \item \texttt{subcircuit($FDVars$)}
 \item \texttt{subcircuit\_grid($A$) (sat only)}
-\item \texttt{subcircuit\_grid($A$,$K$) (sat only)} 
+\item \texttt{subcircuit\_grid($A$,$K$) (sat only)}
 \item \texttt{table\_in($DVars$,$R$)}
 \item \texttt{table\_notin($DVars$,$R$)}
 \end{itemize}
 \end{scriptsize}
-\section*{Module \texttt{planner}}  
+\section*{Module \texttt{planner}}
 \begin{scriptsize}
 \begin{itemize}
 \item \texttt{best\_plan($S$,$Limit$,$Plan$)}
@@ -667,7 +668,7 @@ January 14, 2013 \\
 \item \texttt{nn\_train\_data\_size($Data$) = $Size$}
 \end{itemize}
 \end{scriptsize}
-\section*{Module \texttt{datetime}}  
+\section*{Module \texttt{datetime}}
 \begin{scriptsize}
 \begin{itemize}
 \item \texttt{current\_datetime() = $DateTime$}
@@ -777,16 +778,16 @@ January 14, 2013 \\
     \item \texttt{cl}
     \item \texttt{cl($File$)}
     \item \texttt{cl\_facts($Facts$)}
-    \item \texttt{cl\_facts($Facts$,$IndexInfo$)}    
+    \item \texttt{cl\_facts($Facts$,$IndexInfo$)}
     \item \texttt{cl\_facts\_table($Facts$)}
     \item \texttt{cl\_facts\_table($Facts$,$IndexInfo$)}
     \item \texttt{command($String$)}
     \item \texttt{compile($File$)}
     \item \texttt{debug}
-    \item \texttt{exit} 
-    \item \texttt{garbage\_collect} 
-    \item \texttt{garbage\_collect(Size)} 
-    \item \texttt{halt} 
+    \item \texttt{exit}
+    \item \texttt{garbage\_collect}
+    \item \texttt{garbage\_collect(Size)}
+    \item \texttt{halt}
     \item \texttt{initialize\_table}
     \item \texttt{load($File$)}
     \item \texttt{loaded\_modules()}
@@ -796,9 +797,9 @@ January 14, 2013 \\
     \item \texttt{spy $Functor$}
     \item \texttt{statistics}
     \item \texttt{statistics($Name$,$Value$)} (nondet)
-    \item \texttt{statistics\_all() = $List$}    
+    \item \texttt{statistics\_all() = $List$}
     \item \texttt{time($Goal$)}
-    \item \texttt{time2($Goal$)} 
+    \item \texttt{time2($Goal$)}
     \item \texttt{time\_out($Goal$,$Limit$,$Res$)}
     \item \texttt{trace}
 %    \item \texttt{execute($CommandString$) = $Status$}
@@ -815,7 +816,7 @@ January 14, 2013 \\
 \section*{Module \texttt{util}}
 \begin{scriptsize}
 \begin{itemize}
-%    \item \texttt{ = } 
+%    \item \texttt{ = }
     \item \texttt{array\_matrix\_to\_list($Matrix$) = $List$}
     \item \texttt{array\_matrix\_to\_list\_matrix($AMatrix$) = $LMatrix$}
     \item \texttt{chunks\_of($List$,$K$) = $ListOfLists$}
@@ -825,7 +826,7 @@ January 14, 2013 \\
     \item \texttt{find\_last\_of($Term$,$Pattern$) = $Index$}
     \item \texttt{join($Words$) = $String$}
     \item \texttt{join($Words$,$Separator$) = $String$}
-    \item \texttt{list\_matrix\_to\_array\_matrix($LMatrix$) = $AMatrix$} 
+    \item \texttt{list\_matrix\_to\_array\_matrix($LMatrix$) = $AMatrix$}
     \item \texttt{lstrip($List$) = $List$ }
     \item \texttt{lstrip($List$,$Elms$) = $List$ }
     \item \texttt{matrix\_multi($MatrixA$,$MatrixB$) = $MatrixC$}
@@ -834,13 +835,13 @@ January 14, 2013 \\
     \item \texttt{power\_set($List$) = $Lists$}
     \item \texttt{replace($Term$,$Old$,$New$) = $NewTerm$}
     \item \texttt{replace\_at($Term$,$Index$,$New$) = $NewTerm$}
-    \item \texttt{rstrip($List$) = $List$ } 
+    \item \texttt{rstrip($List$) = $List$ }
     \item \texttt{rstrip($List$,$Elms$) = $List$ }
-    \item \texttt{split($List$) = $Words$ } 
+    \item \texttt{split($List$) = $Words$ }
     \item \texttt{split($List$,$Separators$) = $Words$ }
     \item \texttt{strip($List$) = $List$ }
-    \item \texttt{strip($List$,$Elms$) = $List$ } 
-    \item \texttt{take($List$,$K$) = $List$} 
+    \item \texttt{strip($List$,$Elms$) = $List$ }
+    \item \texttt{take($List$,$K$) = $List$}
     \item \texttt{transpose($Matrix$) = $Transposed$}
 \end{itemize}
 \end{scriptsize}

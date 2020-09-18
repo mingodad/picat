@@ -295,7 +295,7 @@ p(_, _) => true.
 
 Note that the first rule of the predicate \texttt{p(I, N)} has the same condition as the while loop\index{while loop}.  The second rule, which has no condition, terminates the while loop\index{while loop}, because the second rule is only executed if \texttt{I > N}.  The call \texttt{p(I1, N)} is the tail-recursive\index{tail recursion} call, with \texttt{I1} storing the modified value.
 
-Suppose that a while loop\index{while loop} modifies a variable that is then used outside of the while loop\index{while loop}.   For each modified variable \texttt{V} that is used after the while loop\index{while loop}, predicate \texttt{p} is passed two arguments, \texttt{Vin} and \texttt{Vout}.  Then, a predicate that has the body \texttt{true}\index{\texttt{true}} is not sufficient to terminate the compiled while loop\index{while loop}.  Instead, a predicate fact must be used, as in the next example.
+Suppose that a while loop\index{while loop} modifies a variable that is then used outside of the while loop\index{while loop}.   For each modified variable \texttt{V} that is used after the while loop\index{while loop}, predicate \texttt{p} is passed two arguments, \texttt{Vin} and \texttt{Vout}.  Then, a predicate that has the body \texttt{true}\index{\texttt{true}} is not sufficient to terminate the compiled while loop\index{while loop}. 
 
 The next example demonstrates a loop that has multiple accumulators\index{accumulator}, and that modifies values which are then used outside of the loop.
 \subsection*{Example}

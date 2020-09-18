@@ -924,6 +924,29 @@ void install_coes_vars_to_stack(int n, BPLONG Terms, BPLONG Const) {
     }
 }
 
+/* install the terms in reversed order */
+void install_coes_vars_to_stack_rev(int n, BPLONG Terms, BPLONG Const) {
+    int i;
+    BPLONG_PTR var_ptr, coe_ptr;
+
+    var_ptr = arreg+n+1;
+    coe_ptr = var_ptr+n;
+    FOLLOW(coe_ptr+1) = BP_ZERO;  /* type is 0, indicating the general case */
+    FOLLOW(coe_ptr) = Const;
+
+    i = n;
+    while (ISLIST(Terms)) {
+        BPLONG pair, tmp;
+        BPLONG_PTR lst_ptr, pair_ptr;
+        lst_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Terms);
+        pair = FOLLOW(lst_ptr); DEREF(pair);
+        pair_ptr = (BPLONG_PTR)UNTAGGED_ADDR(pair);
+        tmp = FOLLOW(pair_ptr+1); DEREF(tmp); FOLLOW(coe_ptr-i) = tmp;
+        tmp = FOLLOW(pair_ptr+2); FOLLOW(var_ptr-i) = tmp;
+        i--;
+        Terms = FOLLOW(lst_ptr+1); DEREF(Terms);
+    }
+}
 
 /* Terms=[(An,Vn),...,(A1,V1)].
    Reduce domains of Vi's such that the constraint An*Vn+...,A1*V1+Const=0 is interval consistent
@@ -945,6 +968,13 @@ int c_REDUCE_DOMAINS_IC_EQ() {
     old_arreg = arreg;
     arreg = local_top-2*n-2;
     install_coes_vars_to_stack(n, Terms, Const);
+    res = nary_interval_consistent_eq(n);
+    if (res == BP_FALSE){
+        arreg = old_arreg;
+        return BP_FALSE;
+    }
+        
+    install_coes_vars_to_stack_rev(n, Terms, Const);
     res = nary_interval_consistent_eq(n);
     arreg = old_arreg;
     /*
@@ -972,6 +1002,14 @@ int c_REDUCE_DOMAINS_IC_GE() {
     arreg = local_top-2*n-2;
     install_coes_vars_to_stack( n, Terms, Const);
     res = nary_interval_consistent_ge(n);
+    if (res == BP_FALSE){
+        arreg = old_arreg;
+        return BP_FALSE;
+    }
+        
+    install_coes_vars_to_stack_rev(n, Terms, Const);
+    res = nary_interval_consistent_ge(n);
+        
     arreg = old_arreg;
     return res;
 }

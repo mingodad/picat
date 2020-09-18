@@ -18,6 +18,7 @@
   #endif
 */
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #ifdef M64BITS
 #define BP_NEG_1 -1LL

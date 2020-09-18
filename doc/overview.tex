@@ -231,7 +231,21 @@ membchk(X,[_|L]) => membchk(X,L).
 \end{verbatim}
 The first rule is applicable to a call if the second argument is a list\index{list} and the first argument of the call is identical to the first element of the list\index{list}.
 
-Picat allows inclusion of \emph{predicate facts}\index{predicate fact} in the form \texttt{$p$($t_1$,$\ldots$,$t_n$)} in predicate\index{predicate} definitions. Facts\index{predicate fact} are translated into pattern-matching rules before they are compiled. A predicate\index{predicate} definition that consists of facts\index{predicate fact} can be preceded by an \emph{index declaration}\index{index declaration} in the form \texttt{index ($M_{11},\ldots,M_{1n}$) $\ldots$ ($M_{m1},\ldots,M_{mn}$)}\index{\texttt{index}} where each $M_{ij}$ is either $+$ (meaning indexed) or $-$ (meaning not indexed). For each index pattern \texttt{($M_{i1},\ldots,M_{in}$)}, the compiler generates a version of the predicate\index{predicate} that indexes all of the $+$ arguments. 
+\subsection{\label{section:horn}Horn Clauses}
+Picat supports Prolog-style Horn clauses\index{Horn clause}\index{Prolog}.\footnote{This feature has been supported since version 3.0.} A Horn clause takes the form $Head$\ :-\ $Body$. When $Body$ is \texttt{true}, the clause can be written as $Head$. Let $Head$ be $p(t_1,\ldots,t_n)$. The Horn clause can be translated equivalently to the following pattern-matching rule:
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> $p(V_1,\ldots,V_n)$ \verb+?=>+\ $V_1 = \$t_1$, $\ldots$, $V_n = \$t_n$, $Body$.
+\end{tabbing}
+where the dollar symbols indicate that all of the $t_i$'s are terms, not function calls.
+
+A predicate\index{predicate} definition that consists of Horn clauses can be preceded by an \emph{index declaration}\index{index declaration} in the form
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{index ($M_{11},\ldots,M_{1n}$) $\ldots$ ($M_{m1},\ldots,M_{mn}$)}\index{\texttt{index}}
+\end{tabbing}
+where each $M_{ij}$ is either $+$ (meaning indexed) or $-$ (meaning not indexed). When a predicate defined by Horn clauses is not preceded by an index declaration, Picat automatically generates one for the predicate. For each index pattern \texttt{($M_{i1},\ldots,M_{in}$)}, the compiler generates a version of the predicate\index{predicate} that indexes all of the $+$ arguments. An index declaration only affects the efficiency but not the behavior of the predicate. It is assumed that there is a default version of the predicate that has none of its arguments indexed.
+
 
 \subsection*{Example}
 \begin{verbatim}
@@ -241,14 +255,7 @@ edge(a,c).
 edge(b,c).
 edge(c,b).
 \end{verbatim}
-For a predicate\index{predicate} of indexed facts\index{predicate fact}, a matching version of the predicate\index{predicate} is selected for a call. If no matching version is available, Picat throws an exception\index{exception}. For example, for the call \texttt{edge(X,Y)}, if both \texttt{X} and \texttt{Y} are free\index{free variable}, then no version of the predicate matches this call and Picat throws an exception\index{exception}. If predicate facts\index{predicate fact} are not preceded by any index declaration\index{index declaration}, then no argument is indexed.
-
-In version 3.0 and later versions, Picat supports Prolog-style Horn clauses\index{Horn clause}\index{Prolog}. A Horn clause takes the form $Head$\ :-\ $Body$. When $Body$ is \texttt{true}, the clause can be written as $Head$. Let $Head$ be $p(t_1,\ldots,t_n)$. The Horn clause can be translated equivalently to the following pattern-matching rule:
-\begin{tabbing}
-aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
-\> $p(V_1,\ldots,V_n)$ \verb+?=>+\ $V_1 = \$t_1$, $\ldots$, $V_n = \$t_n$, $Body$.
-\end{tabbing}
-where the dollar symbols indicate that all of the $t_i$'s are terms, not function calls.
+For a predicate of Horn clauses, a matching version of the predicate\index{predicate} is selected for a call. If no matching version is available, Picat uses the default version. For example, for the call \texttt{edge(X,Y)}, if both \texttt{X} and \texttt{Y} are free\index{free variable}, then the default version is used.
 
 \section{Defining Functions}
 A function\index{function} call always succeeds with a return value if no exception\index{exception} occurs. Functions\index{function} are defined with non-backtrackable rules\index{non-backtrackable rule} in which the head is an equation $F$\verb+=+$X$, where $F$ is the function\index{function} pattern in the form $f(t_1,\ldots, t_n)$ and $X$ holds the return value. When $n=0$, the parentheses can be omitted.

@@ -1,8 +1,6 @@
 import os,exs,util.
-
 main =>
     top.
-
 top ?=>
     fibp(10,F),
     writeln($fibp(10,F)),
@@ -90,7 +88,6 @@ top ?=>
 top ?=>
     sendmory,
     fail.
-
 top ?=>
     once(queens(100)),
     fail.
@@ -125,5 +122,3 @@ top ?=>
     test_ar,
     fail.
 top => true.
-
-

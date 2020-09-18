@@ -337,7 +337,7 @@
 #define divge 334
 #define divle 335
 #define mod 336
-#define picat_arg 337
+#define picat_arg 337 /*it was "arg" but mingw64 somehow already has it defined */
 #define arg0 338
 #define setarg 339
 #define setarg0 340

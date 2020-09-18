@@ -568,12 +568,12 @@ key_identical_start:
         return 0;
 
     case STR:
-	  if (op1 < 0){
-		SWITCH_OP_VAR(op2, key_identical_susp_d,
-					  {return 1;},
-					  {return 1;},
-					  {return 0;});
-	  };
+        if (op1 < 0){
+            SWITCH_OP_VAR(op2, key_identical_susp_d,
+                          {return 1;},
+                          {return 1;},
+                          {return 0;});
+        };
         SWITCH_OP_STRUCT(op2, key_identical_str_d,
                          {return 0;},
                          {if (op1 == op2) return 1;

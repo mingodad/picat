@@ -50,9 +50,7 @@ void gcQueueExpand() {
         }
     }
     while (i < gcQueueCount) {  /* copy the elements */
-        q[i].addr = gcQueue[i_old].addr;
-        q[i].term = gcQueue[i_old].term;
-        i++;
+        q[i++] = gcQueue[i_old];
         i_old = (i_old+1) % gcQueueSize;
     }
     free(gcQueue);

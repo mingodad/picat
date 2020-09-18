@@ -11,7 +11,9 @@
 
 }
 \chapter{\label{chapter:predicates}Predicates and Functions}
-In Picat, predicates\index{predicate} and functions\index{function} are defined with rules. Picat has two types of pattern-matching rules: the \emph{non-backtrackable} rule\index{non-backtrackable rule} 
+In Picat, predicates\index{predicate} and functions\index{function} are defined with rules. Each rule is terminated by a dot (\verb+.+) followed by a white space or the newline character.
+
+Picat has two types of pattern-matching rules: the \emph{non-backtrackable} rule\index{non-backtrackable rule} 
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head, Cond\ $\verb+=>+$\ Body$. 
@@ -21,12 +23,17 @@ and the \emph{backtrackable} rule\index{backtrackable rule}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head, Cond\ $\verb+?=>+$\ Body$. 
 \end{tabbing}
-In version 3.0 and later, Picat also support Prolog-style rules, called Horn clauses. A Horn clause takes the form:
+Picat also support Prolog-style Horn clauses \index{Horn clause} and DCG rules \index{DCG rule} for predicate definitions. A Horn clause takes the form:
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head\ $\verb+:-+$\ Body$. 
 \end{tabbing}
-which can be written as $Head$ if $Body$ is \texttt{true}. Each rule is terminated by a dot (\verb+.+) followed by a white space or the newline character. 
+which can be written as $Head$ if $Body$ is \texttt{true}. A DCG rule takes the form:
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \> $Head\ $\verb+-->+$\ Body$. 
+\end{tabbing}
+A predicate definition that consists of Horn clauses can be preceded by an \emph{index declaration}, as described in \ref{section:horn}. Picat converts Horn clauses and DCG rules into pattern-matching rules.
 
 \section{Predicates}
 A \emph{predicate}\index{predicate} defines a relation, and can have zero, one, or multiple answers. Within a predicate\index{predicate}, the $Head$ is a \emph{pattern} in the form $p(t_1,\ldots,t_n)$, where $p$ is called the predicate\index{predicate} \emph{name}, and $n$ is called the \emph{arity}\index{arity}. When $n=0$, the parentheses can be omitted. The condition $Cond$, which is an optional goal\index{goal}, specifies a condition under which the rule is applicable. $Cond$ cannot succeed more than once. The compiler converts $Cond$ to \texttt{once $Cond$}\index{\texttt{once/1}} if would otherwise be possible for $Cond$ to succeed more than once.
@@ -158,34 +165,6 @@ where the \texttt{elseif} and \texttt{else} clauses are optional. If the \texttt
 
 \item Loops: Picat has three types of loop statements: foreach, while, and do-while.  A loop statement is true if and only if every iteration of the loop is true. The details of loops are given in Chapter \ref{chapter:loops}.
 \end{itemize}
-
-\section{Predicate Facts}
-For an extensional relation that contains a large number of tuples, it is tedious to define such a relation as a predicate\index{predicate} with pattern-matching rules. It is worse if the relation has multiple keys. In order to facilitate the definition of extensional relations, Picat allows the inclusion of \emph{predicate facts}\index{predicate fact} in the form \texttt{$p$($t_1$,$\ldots$,$t_n$)} in predicate\index{predicate} definitions. Facts and rules cannot co-exist in predicate definitions and facts must be ground. A predicate\index{predicate} definition that consists of facts can be preceded by an \emph{index declaration}\index{index declaration} in the form 
-\begin{tabbing}
-aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
-\> \texttt{index ($M_{11},M_{12},\ldots,M_{1n}$) $\ldots$ ($M_{m1},M_{m2},\ldots,M_{mn}$)}\index{\texttt{index}} 
-\end{tabbing}
-where each $M_{ij}$ is either $+$ (meaning indexed) or $-$ (meaning not indexed). If no index declaration is given, then Picat assumes that no arguments are indexed. Facts are translated into pattern-matching rules before they are compiled. 
-
-\subsection*{Example}
-\begin{verbatim}
-    index (+,-) (-,+)
-    edge(a,b).
-    edge(a,c).
-    edge(b,c).
-    edge(c,b).
-\end{verbatim}
-The predicate \texttt{edge} is translated into the following rules:
-\begin{verbatim}
-    edge(a,Y) ?=> Y=b.
-    edge(a,Y) =>  Y=c.
-    edge(b,Y) =>  Y=c.
-    edge(c,Y) =>  Y=b.
-    edge(X,b) ?=> X=a.
-    edge(X,c) ?=> X=a.
-    edge(X,c) =>  X=b.
-    edge(X,b) =>  X=c.
-\end{verbatim}
 
 \section{Tail Recursion}
 A rule is said to be \emph{tail-recursive}\index{tail recursion} if the last call of the body is the same predicate\index{predicate} as the head. The \emph{last-call optimization}\index{last-call optimization} enables last calls to reuse the stack frame of the head predicate\index{predicate} if the frame is not protected by any choice points. This optimization is especially effective for tail recursion\index{tail recursion}, because it converts recursion into iteration. Tail recursion\index{tail recursion} runs faster and consumes less memory than non-tail recursion.

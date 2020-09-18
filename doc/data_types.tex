@@ -424,7 +424,7 @@ The last query illustrates the \emph{occurs-check problem}\index{occurs-check pr
 When a unification's operands contain attributed variables\index{attributed variable}, the implementation is more complex. When a plain variable is unified with an attributed variable\index{attributed variable}, the plain variable is bound to the attributed variable\index{attributed variable}. When two attributed variables\index{attributed variable}, say $Y$ and $O$, where $Y$ is younger than $O$, are unified,  $Y$ is bound to $O$, but $Y$'s attributes are not copied to $O$. Since garbage collection does not preserve the seniority of terms, the result of the unification of two attributed variables\index{attributed variable} is normally unpredictable.
 
 \subsection{Numerical Equality}
-The numerical equality test \texttt{$T_1$ =:= $T_2$} \index{{\verb+=:=/2+}} is true if term $T_1$ and term $T_2$ are pretty much the same numerical value.  This means that $T1$ and $T2$ must both be numbers.  Whereas the test \texttt{$T_1$ == $T_2$} fails if one number is an integer and one number is a real number, the test \texttt{$T_1$ =:= $T_2$} may succeed.  Consider the following examples.
+The numerical equality test \texttt{$T_1$ =:= $T_2$}\index{{\verb+=:=/2+}} is true if term $T_1$ and term $T_2$ are pretty much the same numerical value.  This means that $T1$ and $T2$ must both be numbers after evaluation.  Whereas the test \texttt{$T_1$ == $T_2$} fails if one number is an integer and one number is a real number, the test \texttt{$T_1$ =:= $T_2$} may succeed if the difference between $T_1$ and $T_2$ is less than 0.00000001.  Consider the following examples.
 \subsection*{Example}
 
 \begin{verbatim}
@@ -436,6 +436,12 @@ Picat> 1 =:= 1.0
 yes
 \end{verbatim}
 In the first query, $1$ is an integer, while $1.0$ is a real number, so the equality test fails.  However, the second query, which is a numerical equality test, succeeds.  
+
+\begin{itemize}
+\item \texttt{$T_1$ is $T_2$}\index{\texttt{is/2}}: If \texttt{$T_1$} is a variable, then the call binds the variable to the result of \texttt{$T_2$}, which must be a number after evaluation. If \texttt{$T_1$} is a non-variable expression, then the call is equivalent to \texttt{$T_1$ =:= $T_2$}.
+
+\item $T_1$ \verb+=\=+ $T_2$\index{{\verb+=\=/2+}}: The expression \texttt{$T_1$} is not numerically equal to \texttt{$T_2$}.
+\end{itemize}
 
 \subsection{Ordering of Terms}
 Picat orders terms in the following way:

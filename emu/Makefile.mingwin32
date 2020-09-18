@@ -1,11 +1,11 @@
 EXT =".exe"
-CPP    = g++ -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS -DFANN_NO_DLL -DFANN 
-CC     = gcc -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS -DFANN_NO_DLL -DFANN
+CPP    = i686-w64-mingw32-g++ -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM32BITS -DFANN_NO_DLL -DFANN
+CC     = i686-w64-mingw32-gcc -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM32BITS -DFANN_NO_DLL -DFANN
 #CC     = gcc -DGC -pg  -DSAT -DNO_SEMI_OPT -DGLPK -DPICAT
 #CC     = gcc -DGCC -shared
 #CC     = cc
 
-CFLAGS = -O3 -fno-strict-aliasing -Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
+CFLAGS = -O3 -fno-strict-aliasing #-Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
 #CFLAGS = -O4 -Dunix -DBSD             #SunOS
 #CFLAGS = -O3 -fno-strict-aliasing -Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
 #CFLAGS = -O4 -Dunix -DPOSIX           #HP
@@ -16,6 +16,6 @@ CFLAGS = -O3 -fno-strict-aliasing -Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
 #LGLFLAG = -Wall -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT
 ESPRESSO_FLAGS = -O3 -I. -Iespresso
 
-LFLAGS = -lm -lpthread
+LFLAGS = -lm -lpthread -static-libgcc -static-libstdc++
 
 include common.mak

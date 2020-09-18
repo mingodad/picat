@@ -176,7 +176,7 @@
         FOLLOW(heap_top++) = elm;               \
         FOLLOW(heap_top++) = tail;              \
         new_list = tmp;                         \
-        }
+    }
 
 extern BPLONG no_gcs;
 
