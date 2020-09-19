@@ -139,7 +139,7 @@ jobs:
         name: upload binary picat-windows-i686
         path: picat-windows-i686.exe
 
-  build-release-windows-i686-amd64-on-windows:
+  build-release-windows-amd64-on-windows:
     name: picat master windows/amd64 on Windows
     runs-on: windows-latest
     steps:
@@ -165,25 +165,4 @@ jobs:
       with:
         name: upload binary picat-windows-amd64-on-windows
         path: picat-windows-amd64.exe
-    # build project i686
-    - name: build i686
-      run: |
-        cd emu
-        make -f Makefile.mingwin64-32 clean
-        make -f Makefile.mingwin64-32
-        mv picat.exe ../picat-windows-i686.exe
-    # run tests
-    - name: run test_exs i686
-      run: |
-        cd exs
-        ..\picat-windows-i686.exe test_exs.pi
-    - name: run test_exs_cp i686
-      run: |
-        cd exs
-        ..\picat-windows-i686.exe test_exs_cp.pi
-    # upload artifact, picat binary
-    - name: Upload Picat-windows-i686 binary OnWindows
-      uses: actions/upload-artifact@v1
-      with:
-        name: upload binary picat-windows-i686-on-windows
-        path: picat-windows-i686.exe
+    # build project i686 with mingw doesn't work
