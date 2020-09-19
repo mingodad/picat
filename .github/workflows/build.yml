@@ -63,7 +63,7 @@ jobs:
 
   build-release-osx-amd64:
     name: picat master osx/amd64
-    runs-on: macos-10.14
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     # see what's available in /usr/bin
@@ -140,7 +140,7 @@ jobs:
         path: picat-windows-i686.exe
 
   build-release-windows-i686-amd64-on-windows:
-    name: picat master windows/amd64
+    name: picat master windows/amd64 on Windows
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -169,8 +169,8 @@ jobs:
     - name: build i686
       run: |
         cd emu
-        make -f Makefile.mingwin32 clean
-        make -f Makefile.mingwin32
+        make -f Makefile.mingwin64-32 clean
+        make -f Makefile.mingwin64-32
         mv picat.exe ../picat-windows-i686.exe
     # run tests
     - name: run test_exs i686

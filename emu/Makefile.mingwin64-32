@@ -1,0 +1,21 @@
+EXT =".exe"
+CPP    = x86_64-w64-mingw32-g++ -m32 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM32BITS -DFANN_NO_DLL -DFANN
+CC     = x86_64-w64-mingw32-gcc -m32 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM32BITS -DFANN_NO_DLL -DFANN
+#CC     = gcc -DGC -pg  -DSAT -DNO_SEMI_OPT -DGLPK -DPICAT
+#CC     = gcc -DGCC -shared
+#CC     = cc
+
+CFLAGS = -O3 -fno-strict-aliasing #-Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
+#CFLAGS = -O4 -Dunix -DBSD             #SunOS
+#CFLAGS = -O3 -fno-strict-aliasing -Dunix -DLINUX -DPOSIX -DCYGWIN #Linux,#HP
+#CFLAGS = -O4 -Dunix -DPOSIX           #HP
+#CFLAGS = -O4 -Dunix                   #Solaris,SonyNews
+#CFLAGS = -O4 -DWIN32                  #Windows-PC
+#CFLAGS = -O4 -DDARWIN                 #MacOS X, Darwin
+
+#LGLFLAG = -Wall -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT
+ESPRESSO_FLAGS = -O3 -I. -Iespresso
+
+LFLAGS = -lm -lpthread -static-libgcc -static-libstdc++
+
+include common.mak
