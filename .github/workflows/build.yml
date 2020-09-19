@@ -61,6 +61,36 @@ jobs:
         name: upload binary picat-linux-i686
         path: picat-linux-i686
 
+  build-release-osx-amd64:
+    name: picat master osx/amd64
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    # see what's available in /usr/bin
+    - name: see what's available
+      run: ls -l /usr/bin
+    # build project amd64
+    - name: build amd64
+      run: |
+        cd emu
+        make -f Makefile.mac64
+        mv picat ../picat-osx-amd64
+    # run tests
+    - name: run test_exs amd64
+      run: |
+        cd exs
+        ../picat-osx-amd64 test_exs.pi
+    - name: run test_exs_cp amd64
+      run: |
+        cd exs
+        ../picat-osx-amd64 test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat-osx-amd64 binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload binary picat-osx-amd64
+        path: picat-osx-amd64
+
   build-release-windows-i686-amd64:
     name: picat master windows/amd64
     runs-on: ubuntu-18.04
