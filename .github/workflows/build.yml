@@ -70,7 +70,6 @@ jobs:
       run: sudo apt-get install -y
         mingw-w64
         libz-mingw-w64-dev
-        wine32
         wine64
     # see what's available in /usr/bin
     - name: see what's available
@@ -103,15 +102,6 @@ jobs:
         make -f Makefile.mingwin32 clean
         make -f Makefile.mingwin32
         mv picat.exe ../picat-windows-i686.exe
-    # run tests
-    - name: run test_exs i686
-      run: |
-        cd exs
-        wine ../picat-windows-i686.exe test_exs.pi
-    - name: run test_exs_cp i686
-      run: |
-        cd exs
-        wine ../picat-windows-i686.exe test_exs_cp.pi
     # upload artifact, picat binary
     - name: Upload Picat-windows-i686 binary
       uses: actions/upload-artifact@v1
