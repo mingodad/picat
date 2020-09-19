@@ -5,26 +5,30 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build-release-linux-amd64:
+  build-release-linux-i686-amd64:
     name: picat master linux/amd64
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install depedencies
+      run: sudo apt-get install -y
+        gcc-8-multilib
+        g++-8-multilib
     # see what's available in /usr/bin
     - name: see what's available
       run: ls -l /usr/bin
-    # build project
-    - name: build
+    # build project amd64
+    - name: build amd64
       run: |
         cd emu
         make -f Makefile.linux64
         mv picat ../picat-linux-amd64
     # run tests
-    - name: run test_exs
+    - name: run test_exs amd64
       run: |
         cd exs
         ../picat-linux-amd64 test_exs.pi
-    - name: run test_exs_cp
+    - name: run test_exs_cp amd64
       run: |
         cd exs
         ../picat-linux-amd64 test_exs_cp.pi
@@ -34,8 +38,30 @@ jobs:
       with:
         name: upload binary picat-linux-amd64
         path: picat-linux-amd64
+    # build project i686
+    - name: build i686
+      run: |
+        cd emu
+        make -f Makefile.linux32 clean
+        make -f Makefile.linux32
+        mv picat ../picat-linux-i686
+    # run tests
+    - name: run test_exs i686
+      run: |
+        cd exs
+        ../picat-linux-i686 test_exs.pi
+    - name: run test_exs_cp i686
+      run: |
+        cd exs
+        ../picat-linux-i686 test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat-linux-i686 binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload binary picat-linux-i686
+        path: picat-linux-i686
 
-  build-release-windows-amd64:
+  build-release-windows-i686-amd64:
     name: picat master windows/amd64
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +74,7 @@ jobs:
     # see what's available in /usr/bin
     - name: see what's available
       run: ls -l /usr/bin
-    # build project
+    # build project amd64
     - name: build
       run: |
         cd emu
@@ -69,3 +95,25 @@ jobs:
       with:
         name: upload binary picat-windows-amd64
         path: picat-windows-amd64.exe
+    # build project i686
+    - name: build
+      run: |
+        cd emu
+        make -f Makefile.mingwin32 clean
+        make -f Makefile.mingwin32
+        mv picat.exe ../picat-windows-i686.exe
+    # run tests
+    - name: run test_exs
+      run: |
+        cd exs
+        wine ../picat-windows-i686.exe test_exs.pi
+    - name: run test_exs_cp
+      run: |
+        cd exs
+        wine ../picat-windows-i686.exe test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat-windows-i686 binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload binary picat-windows-i686
+        path: picat-windows-i686.exe
