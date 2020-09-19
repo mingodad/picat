@@ -36,7 +36,7 @@ jobs:
     - name: Upload Picat-linux-amd64 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-linux-amd64
+        name: download picat-linux-amd64
         path: picat-linux-amd64
     # build project i686
     - name: build i686
@@ -58,7 +58,7 @@ jobs:
     - name: Upload Picat-linux-i686 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-linux-i686
+        name: download picat-linux-i686
         path: picat-linux-i686
 
   build-release-osx-amd64:
@@ -88,7 +88,7 @@ jobs:
     - name: Upload Picat-osx-amd64 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-osx-amd64
+        name: download picat-osx-amd64
         path: picat-osx-amd64
 
   build-release-windows-i686-amd64:
@@ -123,7 +123,7 @@ jobs:
     - name: Upload Picat-windows-amd64 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-windows-amd64
+        name: download picat-windows-amd64.exe
         path: picat-windows-amd64.exe
     # build project i686
     - name: build i686
@@ -136,7 +136,7 @@ jobs:
     - name: Upload Picat-windows-i686 binary
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-windows-i686
+        name: download picat-windows-i686.exe
         path: picat-windows-i686.exe
 
   build-release-windows-amd64-on-windows:
@@ -163,6 +163,6 @@ jobs:
     - name: Upload Picat-windows-amd64 binary OnWindows
       uses: actions/upload-artifact@v1
       with:
-        name: upload binary picat-windows-amd64-on-windows
+        name: download picat-windows-amd64.exe (built on windows VM)
         path: picat-windows-amd64.exe
     # build project i686 with mingw doesn't work
