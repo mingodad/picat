@@ -63,7 +63,7 @@ jobs:
 
   build-release-osx-amd64:
     name: picat master osx/amd64
-    runs-on: macos-latest
+    runs-on: macos-10.13
     steps:
     - uses: actions/checkout@v2
     # see what's available in /usr/bin
