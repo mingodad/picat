@@ -1,5 +1,5 @@
-CPP    = /usr/bin/g++ -std=c++11 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
-CC     = /usr/bin/gcc -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
+CPP    = /usr/bin/g++ -mmacosx-version-min=10.3 -std=c++11 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
+CC     = /usr/bin/gcc -mmacosx-version-min=10.3 -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
 #CC     = cc
 
 #CFLAGS = -O4 -Dunix -DGC -DBSD             #SunOS
