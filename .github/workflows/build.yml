@@ -70,22 +70,23 @@ jobs:
       run: sudo apt-get install -y
         mingw-w64
         libz-mingw-w64-dev
+        wine32
         wine64
     # see what's available in /usr/bin
     - name: see what's available
       run: ls -l /usr/bin
     # build project amd64
-    - name: build
+    - name: build amd64
       run: |
         cd emu
         make -f Makefile.mingwin64
         mv picat.exe ../picat-windows-amd64.exe
     # run tests
-    - name: run test_exs
+    - name: run test_exs amd64
       run: |
         cd exs
         wine ../picat-windows-amd64.exe test_exs.pi
-    - name: run test_exs_cp
+    - name: run test_exs_cp amd64
       run: |
         cd exs
         wine ../picat-windows-amd64.exe test_exs_cp.pi
@@ -96,18 +97,18 @@ jobs:
         name: upload binary picat-windows-amd64
         path: picat-windows-amd64.exe
     # build project i686
-    - name: build
+    - name: build i686
       run: |
         cd emu
         make -f Makefile.mingwin32 clean
         make -f Makefile.mingwin32
         mv picat.exe ../picat-windows-i686.exe
     # run tests
-    - name: run test_exs
+    - name: run test_exs i686
       run: |
         cd exs
         wine ../picat-windows-i686.exe test_exs.pi
-    - name: run test_exs_cp
+    - name: run test_exs_cp i686
       run: |
         cd exs
         wine ../picat-windows-i686.exe test_exs_cp.pi
