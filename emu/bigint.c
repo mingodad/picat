@@ -1432,6 +1432,7 @@ void bp_print_bigint(BPLONG op) {
 */
 int b_BUILD_56B_INT_ccf(BPLONG w1, BPLONG w0, BPLONG v) {
     BPLONG res;
+
     DEREF_NONVAR(w1); w1 = INTVAL(w1);
     DEREF_NONVAR(w0); w0 = INTVAL(w0);
 #ifdef M64BITS

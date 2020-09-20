@@ -519,7 +519,7 @@ extern BPLONG addr_top_bit;
 #endif
 
 #ifdef LINUX
-#define BP_MALLOC(ptr, size, zeroed) {                          \
+#define BP_MALLOC_AUX(ptr, size, zeroed) {                      \
         ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));        \
         if (ptr != NULL) {                                      \
             if (addr_top_bit == BP_NEG_1) {                     \
@@ -534,7 +534,7 @@ extern BPLONG addr_top_bit;
         }                                                       \
     }
 #else
-#define BP_MALLOC(ptr, size, zeroed) {                                  \
+#define BP_MALLOC_AUX(ptr, size, zeroed) {                      \
         ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));        \
         if (ptr != NULL) {                                      \
             if ((BPLONG)ptr & TOP_BIT) {                        \
@@ -545,6 +545,8 @@ extern BPLONG addr_top_bit;
         }                                                       \
     }
 #endif
+
+#define BP_MALLOC(ptr, size) BP_MALLOC_AUX(ptr, size, 0)
 
 extern BPLONG use_gl_getline;
 extern BPLONG num_stack_expansions;

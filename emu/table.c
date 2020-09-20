@@ -81,6 +81,7 @@ BPLONG table_area_size() {
     BPLONG_PTR block_low_addr, subgoal_entry, answerTable;
     BPLONG size, i;
 
+    //printf("table_area_size \n");
     size = 0;
     block_low_addr = ta_record_ptr->low_addr;
     while (block_low_addr != NULL) {

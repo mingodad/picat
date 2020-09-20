@@ -98,7 +98,7 @@ void init_toam(argc, argv)
                     print_picat_usage();
                     exit(0);
                 } else if (*(str+2) == 'v' || strcmp(str+2, "version") == 0) {
-                    printf("Picat version 3.0b5\n");
+                    printf("Picat version 3.0\n");
                     exit(0);
                 }
 
@@ -179,7 +179,7 @@ void init_toam(argc, argv)
       printf("PICATPATH= %s\n",str);
       }
     */
-    BP_MALLOC(stack_low_addr, stack_size, 1);
+    BP_MALLOC_AUX(stack_low_addr, stack_size, 1);
     if (stack_low_addr == NULL) myquit(OUT_OF_MEMORY, "in");
 
     trail_low_addr = (BPLONG_PTR)malloc(trail_size*sizeof(BPLONG));
