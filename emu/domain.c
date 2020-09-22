@@ -3170,15 +3170,18 @@ x_is_int:
 
     // printf("=> multi-3 "); write_term(X); printf(" "); write_term(Y); printf(" "); write_term(Z); printf("\n");
     if (IS_SUSP_VAR(Z)) {
-        if (IS_SMALL_DOMAIN(dv_ptr_y) && maxX-minX <= 65536) {
+	  if (IS_SMALL_DOMAIN(dv_ptr_y) && maxX-minX <= 65536 && (IS_BV_DOMAIN(dv_ptr_x) || IS_BV_DOMAIN(dv_ptr_z))) {
             exclude_unsupported_y_constr_xy_eq_z(dv_ptr_x, dv_ptr_y, dv_ptr_z);
             if (ISINT(FOLLOW(dv_ptr_y))) return BP_TRUE;
         }
-        if (IS_SMALL_DOMAIN(dv_ptr_x) && maxY-minY <= 65536) {
+	  if (IS_SMALL_DOMAIN(dv_ptr_x) && maxY-minY <= 65536 && (IS_BV_DOMAIN(dv_ptr_y) || IS_BV_DOMAIN(dv_ptr_z))) {
             exclude_unsupported_y_constr_xy_eq_z(dv_ptr_y, dv_ptr_x, dv_ptr_z);
             if (ISINT(FOLLOW(dv_ptr_x))) return BP_TRUE;
         }
-        if (IS_SMALL_DOMAIN2(minZ, maxZ)) exclude_unsupported_z_constr_xy_eq_z(dv_ptr_x, dv_ptr_y, dv_ptr_z);
+	  if (IS_SMALL_DOMAIN2(minZ, maxZ) && (IS_BV_DOMAIN(dv_ptr_x) || IS_BV_DOMAIN(dv_ptr_y))) {
+		exclude_unsupported_z_constr_xy_eq_z(dv_ptr_x, dv_ptr_y, dv_ptr_z);
+	  }
+	  //	  printf("<= multi "); write_term(X); printf(" "); write_term(Y); printf(" "); write_term(Z); printf("\n");
     } else {
         Z = INTVAL(Z);
         if (IS_SMALL_DOMAIN(dv_ptr_y) && maxX-minX <= 65536) {
@@ -3190,7 +3193,6 @@ x_is_int:
             if (ISINT(FOLLOW(dv_ptr_x))) return BP_TRUE;
         }
     }
-    // printf("<= multi "); write_term(X); printf(" "); write_term(Y); printf(" "); write_term(Z); printf("\n");
 
     return BP_TRUE;
 }

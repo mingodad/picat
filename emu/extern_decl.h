@@ -2,6 +2,7 @@
 #include <time.h>
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 
 extern char *inst_name[];
 extern BPLONG foreign_exception;

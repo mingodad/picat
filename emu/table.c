@@ -41,7 +41,7 @@ NUMBERED_TERM_AREA_RECORD_PTR ta_record_ptr;
 BPLONG_PTR picat_table_maps[NUM_PICAT_TABLE_MAPS];
 BPLONG picat_table_map_ids[NUM_PICAT_TABLE_MAPS];
 
-/* used for hash-consing for the table area */
+/* used in hash-consing for the table area */
 /*
   typedef struct {
   BPLONG_PTR htable; 
@@ -81,7 +81,6 @@ BPLONG table_area_size() {
     BPLONG_PTR block_low_addr, subgoal_entry, answerTable;
     BPLONG size, i;
 
-    //printf("table_area_size \n");
     size = 0;
     block_low_addr = ta_record_ptr->low_addr;
     while (block_low_addr != NULL) {

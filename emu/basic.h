@@ -275,7 +275,7 @@ typedef int (*Builtins)();
 
 extern int curr_toam_status;
 
-#ifdef DEBUG
+#ifdef NOINLINE
 #define INLINE
 #else
 #ifdef WIN32
