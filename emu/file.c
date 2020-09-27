@@ -3137,6 +3137,141 @@ int b_ATOM_CONCAT_ccf(BPLONG a1, BPLONG a2, BPLONG a3) {
     return BP_TRUE;
 }
 
+/*
+  matm = "e$$glb$$" ++ atm
+*/
+int c_module_glb_pred_name() {
+    BPLONG atm, matm;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+    int len;
+  
+    atm = ARG(1, 2);
+    matm = ARG(2, 2);
+  
+    bp_buf[0] = 'e';  bp_buf[1] = '$'; bp_buf[2] = '$';
+    bp_buf[3] = 'g';  bp_buf[4] = 'l'; bp_buf[5] = 'b';
+    bp_buf[6] = '$';  bp_buf[7] = '$'; 
+  
+    char_ptr = bp_buf+8;
+
+    DEREF(atm);
+    sym_ptr = GET_ATM_SYM_REC(atm);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+    *char_ptr = '\0';
+    len = char_ptr - bp_buf;
+
+    unify(matm, ADDTAG(insert_sym(bp_buf, len, 0), ATM));
+    return BP_TRUE;
+}
+
+/*
+  matm = "e$$glb$$f$$" ++ atm
+*/
+int c_module_glb_func_name() {
+    BPLONG atm, matm;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+    int len;
+
+    atm = ARG(1, 2);
+    matm = ARG(2, 2);
+  
+    bp_buf[0] = 'e';  bp_buf[1] = '$'; bp_buf[2] = '$';
+    bp_buf[3] = 'g';  bp_buf[4] = 'l'; bp_buf[5] = 'b';
+    bp_buf[6] = '$';  bp_buf[7] = '$';
+    bp_buf[8] = 'f';  bp_buf[9] = '$';  bp_buf[10] = '$';   
+  
+    char_ptr = bp_buf+11;
+
+    DEREF(atm);
+    sym_ptr = GET_ATM_SYM_REC(atm);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+    *char_ptr = '\0';
+    len = char_ptr - bp_buf;
+
+    unify(matm, ADDTAG(insert_sym(bp_buf, len, 0), ATM));
+    return BP_TRUE;
+}
+
+/*
+  matm = "e$$" ++ m ++ "$$" ++ atm
+*/
+int c_module_qualified_pred_name() {
+    BPLONG m, atm, matm;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+    int len;
+
+    m = ARG(1, 3);
+    atm = ARG(2, 3);
+    matm = ARG(3, 3);
+    bp_buf[0] = 'e';  bp_buf[1] = '$'; bp_buf[2] = '$';
+    char_ptr = bp_buf+3;
+
+    DEREF(m);
+    sym_ptr = GET_ATM_SYM_REC(m);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+
+    char_ptr[0] = '$';
+    char_ptr[1] = '$';
+    char_ptr += 2;
+
+    DEREF(atm);
+    sym_ptr = GET_ATM_SYM_REC(atm);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+    *char_ptr = '\0';
+    len = char_ptr - bp_buf;
+
+    unify(matm, ADDTAG(insert_sym(bp_buf, len, 0), ATM));
+    return BP_TRUE;
+}
+
+/*
+  matm = "e$$" ++ m ++ "$$f$$" ++ atm
+*/
+int c_module_qualified_func_name() {
+    BPLONG m, atm, matm;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+    int len;
+
+    m = ARG(1, 3);
+    atm = ARG(2, 3);
+    matm = ARG(3, 3);
+    bp_buf[0] = 'e';  bp_buf[1] = '$'; bp_buf[2] = '$';
+    char_ptr = bp_buf+3;
+
+    DEREF(m);
+    sym_ptr = GET_ATM_SYM_REC(m);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+
+    char_ptr[0] = '$';  char_ptr[1] = '$';
+    char_ptr[2] = 'f';  char_ptr[3] = '$';  char_ptr[4] = '$';  
+    char_ptr += 5;
+
+    DEREF(atm);
+    sym_ptr = GET_ATM_SYM_REC(atm);
+    sprintf(char_ptr, "%s", GET_NAME(sym_ptr));
+    len = GET_LENGTH(sym_ptr);
+    char_ptr += len;
+    *char_ptr = '\0';
+    len = char_ptr - bp_buf;
+
+    unify(matm, ADDTAG(insert_sym(bp_buf, len, 0), ATM));
+    return BP_TRUE;
+}
+
 /* for Picat */
 int print_term_to_buf(BPLONG term) {
     DEREF(term);

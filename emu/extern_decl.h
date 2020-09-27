@@ -880,6 +880,11 @@ extern void b_put_char_code(FILE *tmp_curr_out, BPLONG op);
 extern int b_WRITE_CHAR_CODE_cc(BPLONG FDIndex, BPLONG op);
 extern int c_CP_FILE_cc();
 extern void print_cnf_header(int sat_nvars, int num_cls);
+extern int c_module_glb_pred_name();
+extern int c_module_glb_func_name();
+extern int c_module_qualified_pred_name();
+extern int c_module_qualified_func_name();
+
 //[]
 //      float1.c prototypes
 //[]
@@ -1161,6 +1166,7 @@ extern int b_IS_ALPHA_DIGIT_c(BPLONG term);
 extern int b_IS_LOWERCASE_c(BPLONG term);
 extern int b_IS_UPPERCASE_c(BPLONG term);
 extern int b_IS_LIST_c(BPLONG term);
+extern int b_IS_CALLABLE_c(BPLONG term);
 extern int b_PICAT_COMPARE_fcc(BPLONG res, BPLONG term1, BPLONG term2);
 extern int b_STRUCT_ARITY_cf(BPLONG term, BPLONG arity);
 extern int b_STRUCT_NAME_cf(BPLONG term, BPLONG name);
@@ -1168,6 +1174,8 @@ extern int b_TO_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr);
 extern int b_TO_QUOTED_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr);
 extern int b_TO_CODES_cff(BPLONG term, BPLONG lst, BPLONG lstr);
 extern int b_NEW_STRUCT_ccf(BPLONG name, BPLONG arity, BPLONG term);
+extern int c_is_picat_public_name();
+
 /**/
 
 extern void Cboot_mic(void);

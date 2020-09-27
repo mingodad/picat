@@ -231,7 +231,7 @@ membchk(X,[_|L]) => membchk(X,L).
 \end{verbatim}
 The first rule is applicable to a call if the second argument is a list\index{list} and the first argument of the call is identical to the first element of the list\index{list}.
 
-\subsection{\label{section:horn}Horn Clauses}
+\subsection*{\label{section:horn}Horn Clauses}
 Picat supports Prolog-style Horn clauses\index{Horn clause}\index{Prolog}.\footnote{This feature has been supported since version 3.0.} A Horn clause takes the form $Head$\ :-\ $Body$. When $Body$ is \texttt{true}, the clause can be written as $Head$. Let $Head$ be $p(t_1,\ldots,t_n)$. The Horn clause can be translated equivalently to the following pattern-matching rule:
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
@@ -500,7 +500,7 @@ The command \texttt{load(File)}\index{\texttt{load/1}} loads a module file\index
 
 The Picat module system is static, meaning that the binding of normal calls to their definitions takes place at compile time. For higher-order calls\index{higher-order call}, however, Picat may need to search for their definitions at runtime. Several built-in modules are imported by default, including  \texttt{basic}, \texttt{io}, \texttt{math},  and \texttt{sys}. For a normal call that is not higher-order in a module, the Picat compiler searches modules for a definition in the following order:
 \begin{enumerate}
-\item The implicitly imported built-in modules in the order from \texttt{basic} to \texttt{sys}.
+\item The implicitly imported built-in modules in the order from \texttt{basic}, \texttt{math}, \texttt{io} to \texttt{sys}.
 \item The enclosing module of the call.
 \item The explicitly imported modules in the order that they were imported.
 \item The global module.

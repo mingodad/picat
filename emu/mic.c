@@ -2719,6 +2719,43 @@ int b_IS_UPPERCASE_c(BPLONG term) {
     return (*char_ptr >= 'A' && *char_ptr <= 'Z') ? BP_TRUE : BP_FALSE;
 }
 
+int b_IS_CALLABLE_c(BPLONG term) {
+    SWITCH_OP(term, lab1,
+              {return BP_FALSE;},
+              {return (ISINT(term) ? BP_FALSE : BP_TRUE);},
+              {return BP_FALSE;},
+              {return BP_TRUE;},
+              {return BP_FALSE;});
+}
+
+/* a name that begins with e$$ is public */
+int c_is_picat_public_name(){
+    BPLONG term;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+    int len;
+  
+    term = ARG(1,1);
+
+    //  printf("is_public "); write_term(term);  printf("\n");
+  
+    SWITCH_OP(term, lab1,
+              {return BP_FALSE;},
+              {if (ISINT(term)) return BP_FALSE;
+                  sym_ptr = GET_ATM_SYM_REC(term);},
+              {return BP_FALSE;},
+              {sym_ptr = GET_STR_SYM_REC(term);},
+              {return BP_FALSE;});
+    char_ptr = GET_NAME(sym_ptr);
+    len = GET_LENGTH(sym_ptr);
+    if (len > 3 && char_ptr[0] == 'e' && char_ptr[1] == '$' && char_ptr[2] == '$'){
+        return BP_TRUE;
+    } else {
+        return BP_FALSE;
+    }
+}  
+  
+
 int b_IS_LIST_c(BPLONG term) {
     SWITCH_OP_LST(term, lab1,
                   {return BP_FALSE;},
@@ -2841,6 +2878,11 @@ void Cboot_mic()
     insert_cpred("$in_critical_region", 0, c_in_critical_region);
     insert_cpred("c_set_exception", 1, c_set_exception);
     insert_cpred("c_sort_term_list", 2, c_sort_term_list);
+    insert_cpred("c_module_glb_pred_name", 2, c_module_glb_pred_name);
+    insert_cpred("c_module_glb_func_name", 2, c_module_glb_func_name);
+    insert_cpred("c_module_qualified_pred_name", 3, c_module_qualified_pred_name);
+    insert_cpred("c_module_qualified_func_name", 3, c_module_qualified_func_name);
+    insert_cpred("c_is_picat_public_name", 1, c_is_picat_public_name);
 }
 
 #if defined(_MSC_VER)
