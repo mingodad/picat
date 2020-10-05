@@ -1,4 +1,4 @@
-### Unofficial binaries here https://github.com/mingodad/picat/actions/runs/274910047
+### https://github.com/mingodad/picat/actions/runs/289038533
 
 Picat is a simple, and yet powerful, logic-based
 multi-paradigm programming language aimed for
