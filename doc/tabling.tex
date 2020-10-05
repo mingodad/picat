@@ -13,7 +13,7 @@
 The Picat system is a term-rewriting system. For a predicate call, Picat selects a matching rule and rewrites the call into the body of the rule. For a function call $C$, Picat rewrites the equation $C = X$ where $X$ is a variable that holds the return value of $C$. Due to the existence of recursion in programs, the term-rewriting process may never terminate. Consider, for example, the following program:  
 \begin{verbatim}
     reach(X,Y) ?=> edge(X,Y).
-    reach(X,Y) => reach(X,Z),edge(Z,Y).
+    reach(X,Y) => reach(X,Z), edge(Z,Y).
 \end{verbatim}
 where the predicate \texttt{edge} defines a relation, and the predicate \texttt{reach} defines the transitive closure of the relation. For a query such as \texttt{reach(a,X)}, the program never terminates due to the existence of left-recursion in the second rule. Even if the rule is converted to right-recursion, the query may still not terminate if the graph that is represented by the relation contains cycles. 
 
@@ -32,7 +32,7 @@ Tabling\index{tabling} is a memoization technique that can prevent infinite loop
 \begin{verbatim}
     table
     reach(X,Y) ?=> edge(X,Y).
-    reach(X,Y) => reach(X,Z),edge(Z,Y).
+    reach(X,Y) => reach(X,Z), edge(Z,Y).
 
     table
     route(N,N,_Col) = 1.
@@ -76,7 +76,7 @@ For each pair of nodes, the pair of variables \texttt{(W,Len)} is minimized, whe
 The tabling system is useful for offering dynamic programming solutions for planning problems. The following shows a tabled program for general planning problems:
 \begin{verbatim}
     table (+,-,min)
-    plan(S,Plan,Len),final(S) => Plan=[],Len=0.
+    plan(S,Plan,Len), final(S) => Plan=[], Len=0.
     plan(S,Plan,Len) =>
         action(Action,S,S1),
         plan(S1,Plan1,Len1),
@@ -106,22 +106,22 @@ The program shown in Figure \ref{fig:farmer} solves the Farmer's problem: {\em T
         Len=Len1+1.
     
     action([F,F,G,C],S1,Action) ?=>
-        Action=farmer_wolf,
+        Action = farmer_wolf,
         opposite(F,F1),
         S1=[F1,F1,G,C],
         not unsafe(S1).
     action([F,W,F,C],S1,Action) ?=>
-        Action=farmer_goat,
+        Action = farmer_goat,
         opposite(F,F1),
         S1=[F1,W,F1,C],
         not unsafe(S1).
     action([F,W,G,F],S1,Action) ?=>
-        Action=farmer_cabbage,
+        Action = farmer_cabbage,
         opposite(F,F1),
         S1=[F1,W,G,F1],
         not unsafe(S1).
     action([F,W,G,C],S1,Action) ?=>
-        Action=farmer_alone,
+        Action = farmer_alone,
         opposite(F,F1),
         S1=[F1,W,G,C],
         not unsafe(S1).
@@ -130,8 +130,8 @@ The program shown in Figure \ref{fig:farmer} solves the Farmer's problem: {\em T
     opposite(n,s).
     opposite(s,n).
 
-    unsafe([F,W,G,_C]),W==G,F!==W => true.
-    unsafe([F,_W,G,C]),G==C,F!==G => true.
+    unsafe([F,W,G,_C]), W == G, F !== W => true.
+    unsafe([F,_W,G,C]), G == C, F !== G => true.
 \end{verbatim}
 \end{center}
 \caption{\label{fig:farmer}A program for the Farmer's problem.}

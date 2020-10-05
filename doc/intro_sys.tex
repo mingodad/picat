@@ -44,8 +44,8 @@ where $PicatMainFileName$ can have the extension \texttt{.pi} and can contain a 
 
 Once the interpreter is started, users can type a query after the prompt. For example,
 \begin{verbatim}
-      Picat> X=1+1
-      X=2
+      Picat> X = 1+1
+      X = 2
       Picat> printf("hello"++" picat")
       hello picat
 \end{verbatim}
@@ -214,10 +214,10 @@ In trace mode\index{trace mode}, the debugger displays execution traces\index{ex
 
 Consider, for example, the following program:
 \begin{verbatim}
-    p(X) ?=> X=a.
-    p(X) => X=b.
-    q(X) ?=> X=1.
-    q(X) => X=2.
+    p(X) ?=> X = a.
+    p(X) => X = b.
+    q(X) ?=> X = 1.
+    q(X) => X = 2.
 \end{verbatim}
 Assume the program is stored in a file named \texttt{myprog.pi}. The following shows a trace for a query:
 \begin{verbatim}

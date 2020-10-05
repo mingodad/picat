@@ -40,7 +40,7 @@ A constraint program normally poses a problem in three steps: (1) generate varia
     import cp.
 
     queens(N) =>
-        Qs=new_array(N),
+        Qs = new_array(N),
         Qs :: 1..N,
         foreach (I in 1..N-1, J in I+1..N)
             Qs[I] #!= Qs[J],
@@ -74,17 +74,17 @@ The following built-ins are provided for domain variables.
 \begin{itemize}
 \item \texttt{$Vars$ notin $Exp$}: This predicate excludes values $Exp$ from the domain or domains of $Vars$, where $Vars$ and $Exp$ are the same as in \texttt{$Vars$ :: $Exp$}. This constraint cannot be applied to real-domain variables.
 \item \texttt{fd\_degree($FDVar$) = $Degree$}\index{\texttt{fd\_degree/1}}: This function returns the number of propagators that are attached to $FDVar$. This built-in is only provided by {\tt cp}.
-\item \texttt{fd\_disjoint($FDVar1$, $FDVar2$)}\index{\texttt{fd\_disjoint/2}}: This predicate is true if $FDVar1$'s domain and $FDVar2$'s domain are disjoint.
+\item \texttt{fd\_disjoint($FDVar1$,$FDVar2$)}\index{\texttt{fd\_disjoint/2}}: This predicate is true if $FDVar1$'s domain and $FDVar2$'s domain are disjoint.
 \item \texttt{fd\_dom($FDVar$) = $List$}\index{\texttt{fd\_dom/1}}: This function returns the domain of $FDVar$ as a list,  where $FDVar$ is an integer-domain variable. If $FDVar$ is an integer, then the returned list contains the integer itself.
-\item \texttt{fd\_false($FDVar$, $Elm$)}\index{\texttt{fd\_false/2}}: This predicate is true if the integer $Elm$ is not an element in the domain of $FDVar$.
+\item \texttt{fd\_false($FDVar$,$Elm$)}\index{\texttt{fd\_false/2}}: This predicate is true if the integer $Elm$ is not an element in the domain of $FDVar$.
 \item \texttt{fd\_max($FDVar$) = $Max$}\index{\texttt{fd\_max/1}}: This function returns the upper bound of the domain of $FDVar$, where $FDVar$ is an integer-domain variable.
 \item \texttt{fd\_min($FDVar$) = $Min$}\index{\texttt{fd\_min/1}}: This function returns the lower bound of the domain of \\ $FDVar$, where $FDVar$ is an integer-domain variable.
-\item \texttt{fd\_min\_max($FDVar$, $Min$, $Max$)}\index{\texttt{fd\_min\_max/3}}: This predicate binds $Min$ to the lower bound of the domain of $FDVar$, and binds $Max$ to the upper bound of the domain of $FDVar$, where $FDVar$ is an integer-domain variable.
-\item \texttt{fd\_next($FDVar$, $Elm$) = $NextElm$}\index{\texttt{fd\_next/2}}: This function returns the next element of $Elm$ in $FDVar$'s domain. It throws an exception if $Elm$ has no next element in $FDVar$'s domain.
-\item \texttt{fd\_prev($FDVar$, $Elm$) = $PrevElm$}\index{\texttt{fd\_prev/2}}: This function returns the previous element of $Elm$ in $FDVar$'s domain. It throws an exception if $Elm$ has no previous element in $FDVar$'s domain.
-\item \texttt{fd\_set\_false($FDVar$, $Elm$)}\index{\texttt{fd\_set\_false/2}}: This predicate excludes the element $Elm$ from the domain of $FDVar$. If this operation results in a hole in the domain, then the domain changes from an interval representation into a bit-vector representation, no matter how big the domain is. This built-in is only provided by {\tt cp}.
+\item \texttt{fd\_min\_max($FDVar$,$Min$,$Max$)}\index{\texttt{fd\_min\_max/3}}: This predicate binds $Min$ to the lower bound of the domain of $FDVar$, and binds $Max$ to the upper bound of the domain of $FDVar$, where $FDVar$ is an integer-domain variable.
+\item \texttt{fd\_next($FDVar$,$Elm$) = $NextElm$}\index{\texttt{fd\_next/2}}: This function returns the next element of $Elm$ in $FDVar$'s domain. It throws an exception if $Elm$ has no next element in $FDVar$'s domain.
+\item \texttt{fd\_prev($FDVar$,$Elm$) = $PrevElm$}\index{\texttt{fd\_prev/2}}: This function returns the previous element of $Elm$ in $FDVar$'s domain. It throws an exception if $Elm$ has no previous element in $FDVar$'s domain.
+\item \texttt{fd\_set\_false($FDVar$,$Elm$)}\index{\texttt{fd\_set\_false/2}}: This predicate excludes the element $Elm$ from the domain of $FDVar$. If this operation results in a hole in the domain, then the domain changes from an interval representation into a bit-vector representation, no matter how big the domain is. This built-in is only provided by {\tt cp}.
 \item \texttt{fd\_size($FDVar$) = $Size$}\index{\texttt{fd\_size/1}}: This function returns the size of the domain of $FDVar$,  where $FDVar$ is an integer-domain variable.
-\item \texttt{fd\_true($FDVar$, $Elm$)}\index{\texttt{fd\_true/2}}: This predicate is true if the integer $Elm$ is an element in the domain of $FDVar$.
+\item \texttt{fd\_true($FDVar$,$Elm$)}\index{\texttt{fd\_true/2}}: This predicate is true if the integer $Elm$ is an element in the domain of $FDVar$.
 \item \texttt{new\_dvar() = $FDVar$}\index{\texttt{new\_dvar/0}}: This function creates a new domain variable with the default domain, which has the bounds \texttt{-72057594037927935..72057594037927935} on 64-bit computers and \texttt{-268435455..268435455} on 32-bit computers.\footnote{Note that incorrect results may be caused by overflows or underflows.}
 \end{itemize}
 
@@ -98,20 +98,20 @@ The following example solves a toy crossword puzzle. One variable is used for ea
     import cp.
 
     crossword(Vars) =>
-        Vars=[X1,X2,X3,X4,X5,X6,X7], 
-    Words2=[{ord('I'),ord('N')},
-            {ord('I'),ord('F')},
-            {ord('A'),ord('S')},
-            {ord('G'),ord('O')},
-            {ord('T'),ord('O')}],
-    Words3=[{ord('F'),ord('U'),ord('N')},
-            {ord('T'),ord('A'),ord('D')},
-            {ord('N'),ord('A'),ord('G')},
-            {ord('S'),ord('A'),ord('G')}],
-    table_in([{X1,X2},{X1,X3},{X5,X7},{X6,X7}], Words2),
-    table_in([{X3,X4,X5},{X2,X4,X6}],Words3),
-    solve(Vars),
-    writeln([chr(Code) : Code in Vars]).
+        Vars = [X1,X2,X3,X4,X5,X6,X7], 
+        Words2 = [{ord('I'),ord('N')},
+                  {ord('I'),ord('F')},
+                  {ord('A'),ord('S')},
+                  {ord('G'),ord('O')},
+                  {ord('T'),ord('O')}],
+        Words3 = [{ord('F'),ord('U'),ord('N')},
+                  {ord('T'),ord('A'),ord('D')},
+                  {ord('N'),ord('A'),ord('G')},
+                  {ord('S'),ord('A'),ord('G')}],
+        table_in([{X1,X2},{X1,X3},{X5,X7},{X6,X7}], Words2),
+        table_in([{X3,X4,X5},{X2,X4,X6}], Words3),
+        solve(Vars),
+        writeln([chr(Code) : Code in Vars]).
 \end{verbatim}
 
 \section{Arithmetic Constraints}
@@ -122,12 +122,12 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \end{tabbing}
 where $Exp1$ and $Exp2$ are arithmetic expressions, and $Rel$ is one of the constraint operators:  \verb+#=+, \verb+#!=+, \verb+#<+, \verb+#=<+, \verb+#<=+, \verb+#>+, or \verb+#>=+. The operators \verb+#=<+ and \verb+#<=+ are the same, meaning less than or equal to. An arithmetic expression is made from integers, variables, arithmetic functions, and constraints. The following arithmetic functions are allowed: \texttt{+} (addition), \texttt{-} (subtraction), \texttt{*} (multiplication), \texttt{/} (truncated integer division), \texttt{//} (truncated integer division), \texttt{count}, \texttt{div} (floored integer division), \texttt{mod}, \texttt{**} (power), \texttt{abs}, \texttt{min}, \texttt{max}, and \texttt{sum}.  Except for index notations, array comprehensions and list comprehensions, which are interpreted as function calls as in normal expressions, expressions in arithmetic constraints are treated as terms, and it is unnecessary to enclose them with dollar-signs. In addition to the numeric operators, the following functions are allowed in constraints:
 \begin{itemize}
-\item \texttt{cond($BoolConstr$, $ThenExp$, $ElseExp$)}: This expression is the same as\\ \texttt{$BoolConstr$*$ThenExp$+(1-$BoolConstr$)*$ElseExp$}.
+\item \texttt{cond($BoolConstr$,$ThenExp$,$ElseExp$)}: This expression is the same as\\ \texttt{$BoolConstr$*$ThenExp$+(1-$BoolConstr$)*$ElseExp$}.
 \item \texttt{count($V$,$DVars$)}: The number of times $V$ occurs in $DVars$, where $DVars$ is a list of domain variables.
 \item \texttt{min($DVars$)}: The minimum of $DVars$, where $DVars$ is a list of domain variables.
 \item \texttt{max($DVars$)}: The maximum of $DVars$, where $DVars$ is a list of domain variables.
-\item \texttt{min($Exp1$, $Exp2$)}: The minimum of $Exp1$ and $Exp2$.
-\item \texttt{max($Exp1$, $Exp2$)}: The maximum of $Exp1$ and $Exp2$.
+\item \texttt{min($Exp1$,$Exp2$)}: The minimum of $Exp1$ and $Exp2$.
+\item \texttt{max($Exp1$,$Exp2$)}: The maximum of $Exp1$ and $Exp2$.
 \item \texttt{sum($DVars$)}: The sum of $DVars$, where $DVars$ is a list of domain variables.
 \item \texttt{prod($DVars$)}: The product of $DVars$, where $DVars$ is a list of domain variables.
 \end{itemize}
@@ -138,19 +138,19 @@ When a constraint occurs in an arithmetic expression, it is evaluated to 1 if it
     import mip.
 
     go =>
-        M={{0,3,2,3,0,0,0,0},
-           {0,0,0,0,0,0,5,0},
-           {0,1,0,0,0,1,0,0},
-           {0,0,2,0,2,0,0,0},
-           {0,0,0,0,0,0,0,5},
-           {0,4,0,0,2,0,0,1},
-           {0,0,0,0,0,2,0,3},
-           {0,0,0,0,0,0,0,0}},
+        M = {{0,3,2,3,0,0,0,0},
+             {0,0,0,0,0,0,5,0},
+             {0,1,0,0,0,1,0,0},
+             {0,0,2,0,2,0,0,0},
+             {0,0,0,0,0,0,0,5},
+             {0,4,0,0,2,0,0,1},
+             {0,0,0,0,0,2,0,3},
+             {0,0,0,0,0,0,0,0}},
         maxflow(M,1,8).
 
     maxflow(M,Source,Sink) =>
-        N=M.length,
-        X=new_array(N,N),
+        N = M.length,
+        X = new_array(N,N),
         foreach(I in 1..N, J in 1..N)
             X[I,J] :: 0..M[I,J]
         end,
@@ -213,7 +213,7 @@ Picat provides the following global constraints.
 \item \texttt{all\_distinct($FDVars$)}\index{\texttt{all\_distinct/1}}: This constraint is the same as \texttt{all\_different}\index{\texttt{all\_different/1}}, but for the \texttt{cp} module it maintains a higher level of consistency. For some problems, this constraint is faster and requires fewer backtracks than \texttt{all\_different}\index{\texttt{all\_different/1}}, and, for some other problems, this constraint is slower due to the overhead of consistency checking.
 
 \item \texttt{all\_different\_except\_0($FDVars$)}\index{\texttt{all\_different\_except\_0/1}}: This constraint is true if all non-zero values in $FDVars$ are different.
-\item \texttt{assignment($FDVars1$, $FDVars2$)}\index{\texttt{assignment/2}}: This constraint ensures that $FDVars2$ is a \emph{dual assignment} of $FDVars1$, i.e., if the $i$th element of $FDVars1$ is $j$, then the $j$th element of $FDVars2$ is $i$. The constraint can be defined as:
+\item \texttt{assignment($FDVars1$,$FDVars2$)}\index{\texttt{assignment/2}}: This constraint ensures that $FDVars2$ is a \emph{dual assignment} of $FDVars1$, i.e., if the $i$th element of $FDVars1$ is $j$, then the $j$th element of $FDVars2$ is $i$. The constraint can be defined as:
 \begin{verbatim}
     assignment(Xs,Ys) =>
         N = Xs.length,
@@ -234,15 +234,15 @@ Picat provides the following global constraints.
     circuit([X1,X2,X3,X4])
 \end{verbatim}
 \texttt{[3,4,2,1]} is a solution, but \texttt{[2,1,4,3]} is not, because the graph \texttt{1->2, 2->1, 3->4, 4->3} contains two sub-cycles.
-\item \texttt{count($V$, $FDVars$, $Rel$, $N$)}\index{\texttt{count/4}}:  In this constraint, $V$ and $N$ are integer-domain variables, $FDVars$ is a list of integer-domain variables, and $Rel$ is an arithmetic constraint operator (\verb+#=+,  \verb+#!=+,  \verb+#>+,  \verb+#>=+,  \verb+#<+,  \verb+#=<+, or \verb+#<=+). Let $Count$ be the number of elements in $FDVars$ that are equal to $V$. The constraint is true iff $Count$ $Rel$ $N$ is true. This constraint can be defined as follows:
+\item \texttt{count($V$,$FDVars$,$Rel$,$N$)}\index{\texttt{count/4}}:  In this constraint, $V$ and $N$ are integer-domain variables, $FDVars$ is a list of integer-domain variables, and $Rel$ is an arithmetic constraint operator (\verb+#=+,  \verb+#!=+,  \verb+#>+,  \verb+#>=+,  \verb+#<+,  \verb+#=<+, or \verb+#<=+). Let $Count$ be the number of elements in $FDVars$ that are equal to $V$. The constraint is true iff $Count$ $Rel$ $N$ is true. This constraint can be defined as follows:
 \begin{verbatim}
     count(V,L,Rel,N) =>
        sum([V #= E : E in L]) #= Count,
        call(Rel,Count,N).
 \end{verbatim}
-\item \texttt{count($V$, $FDVars$, $N$)}\index{\texttt{count/3}}: This constraint is the same as \texttt{count}($V$, $FDVars$, \verb+#=+, $N$).
+\item \texttt{count($V$,$FDVars$,$N$)}\index{\texttt{count/3}}: This constraint is the same as \texttt{count}($V$,$FDVars$,\verb+#=+,$N$).
 
-\item \texttt{cumulative($Starts$, $Durations$, $Resources$, $Limit$)}\index{\texttt{cumulative/4}}: This constraint is useful for describing and solving scheduling problems. The arguments $Starts$, $Durations$, and $Resources$ are lists of integer-domain variables of the same length, and $Limit$ is an integer-domain variable. Let $Starts$ be \texttt{[$S_1$, $S_2$, $\ldots$, $S_n$]}, $Durations$ be \texttt{[$D_1$, $D_2$, $\ldots$, $D_n$]}, and $Resources$ be \texttt{[$R_1$, $R_2$, $\ldots$, $R_n$]}. For each job \texttt{$i$}, \texttt{$S_i$} represents the start time, \texttt{$D_i$} represents the duration, and \texttt{$R_i$} represents the units of resources needed. $Limit$ is the limit on the units of resources available at any time. This constraint ensures that the limit cannot be exceeded at any time.
+\item \texttt{cumulative($Starts$,$Durations$,$Resources$,$Limit$)}\index{\texttt{cumulative/4}}: This constraint is useful for describing and solving scheduling problems. The arguments $Starts$, $Durations$, and $Resources$ are lists of integer-domain variables of the same length, and $Limit$ is an integer-domain variable. Let $Starts$ be \texttt{[$S_1$, $S_2$, $\ldots$, $S_n$]}, $Durations$ be \texttt{[$D_1$, $D_2$, $\ldots$, $D_n$]}, and $Resources$ be \texttt{[$R_1$, $R_2$, $\ldots$, $R_n$]}. For each job \texttt{$i$}, \texttt{$S_i$} represents the start time, \texttt{$D_i$} represents the duration, and \texttt{$R_i$} represents the units of resources needed. $Limit$ is the limit on the units of resources available at any time. This constraint ensures that the limit cannot be exceeded at any time.
 
 \item \texttt{decreasing($L$)}\index{\texttt{decreasing/1}}: The sequence (an array or a list) $L$ is in (non-strictly) decreasing order.
 
@@ -252,11 +252,11 @@ Picat provides the following global constraints.
 
 \item \texttt{disjunctive\_tasks($Tasks$)}\index{\texttt{disjunctive\_tasks/1}}: $Tasks$ is a list of terms.  Each term has the form \\ \texttt{disj\_tasks($S_1$,$D_1$,$S_2$,$D_2$)}, where \texttt{$S_1$} and \texttt{$S_2$} are two integer-domain variables, and \texttt{$D_1$} and \texttt{$D_2$} are two positive integers. This constraint is equivalent to posting the disjunctive constraint $S_1$+$D_1$ \verb+#=<+ $S_2$ \verb+#\/+ $S_2$+$D_2$ \verb+#=<+ $S_1$ for each term in $Tasks$; however the constraint may be more efficient, because it converts the disjunctive tasks into global constraints. 
 
-\item \texttt{element($I$, $List$, $V$)}\index{\texttt{element/3}}: This constraint is true if the $I$th element of $List$ is $V$, where $I$ and $V$ are integer-domain variables, and $List$ is a list of integer-domain variables.
+\item \texttt{element($I$,$List$,$V$)}\index{\texttt{element/3}}: This constraint is true if the $I$th element of $List$ is $V$, where $I$ and $V$ are integer-domain variables, and $List$ is a list of integer-domain variables.
 
-\item \texttt{exactly($N$, $L$, $V$)}\index{\texttt{exactly/3}}: This constraint succeeds if there are exactly $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
+\item \texttt{exactly($N$,$L$,$V$)}\index{\texttt{exactly/3}}: This constraint succeeds if there are exactly $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
 
-\item \texttt{global\_cardinality($List$, $Pairs$)}\index{\texttt{global\_cardinality/2}}: Let $List$ be a list of integer-domain variables \texttt{[$X_1$, $\ldots$, $X_d$]}, and $Pairs$ be a list of pairs \texttt{[$K_1$-$V_1$, $\ldots$, $K_n$-$V_n$]}, where each key \texttt{$K_i$} is a unique integer, and each \texttt{$V_i$} is an integer-domain variable. The constraint is true if every element of $List$ is equal to some key, and, for each pair \texttt{$K_i$-$V_i$}, exactly \texttt{$V_i$} elements of $List$ are equal to \texttt{$K_i$}. This constraint can be defined as follows:
+\item \texttt{global\_cardinality($List$,$Pairs$)}\index{\texttt{global\_cardinality/2}}: Let $List$ be a list of integer-domain variables \texttt{[$X_1$, $\ldots$, $X_d$]}, and $Pairs$ be a list of pairs \texttt{[$K_1$-$V_1$, $\ldots$, $K_n$-$V_n$]}, where each key \texttt{$K_i$} is a unique integer, and each \texttt{$V_i$} is an integer-domain variable. The constraint is true if every element of $List$ is equal to some key, and, for each pair \texttt{$K_i$-$V_i$}, exactly \texttt{$V_i$} elements of $List$ are equal to \texttt{$K_i$}. This constraint can be defined as follows:
 \begin{verbatim}
     global_cardinality(List,Pairs) =>
         foreach($Key-V in Pairs) 
@@ -284,7 +284,7 @@ Picat provides the following global constraints.
 
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}\index{\texttt{scalar\_product/4}}: The scalar product of $A$ and $X$ has the relation $Rel$ with $Product$, where $Rel$ is one of the following operators: \verb+#=+, \verb+#!=+, \verb+#>=+, \verb+#>+, \verb+#=<+ (\verb+#<=+), and \verb+#<+. 
 
-\item \texttt{serialized($Starts$, $Durations$)}\index{\texttt{serialized/2}}: This constraint describes a set of non-overlapping tasks, where $Starts$ and $Durations$ are lists of integer-domain variables, and the lists have the same length. Let $Os$ be a list of 1s that has the same length as $Starts$. This constraint is equivalent to \texttt{cumulative($Starts$,$Durations$,$Os$,1)}\index{\texttt{cumulative/4}}.
+\item \texttt{serialized($Starts$,$Durations$)}\index{\texttt{serialized/2}}: This constraint describes a set of non-overlapping tasks, where $Starts$ and $Durations$ are lists of integer-domain variables, and the lists have the same length. Let $Os$ be a list of 1s that has the same length as $Starts$. This constraint is equivalent to \texttt{cumulative($Starts$,$Durations$,$Os$,1)}\index{\texttt{cumulative/4}}.
 
 \item \texttt{subcircuit($FDVars$)}\index{\texttt{subcircuit/1}}: This constraint is the same as \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}, except that not all of the vertices are required to be in the circuit. If the $i$th element of $FDVars$ is $i$, then the vertex $i$ is not part of the circuit. 
 
@@ -296,11 +296,11 @@ Picat provides the following global constraints.
 
 \section{Solver Invocation}
 \begin{itemize}
-\item \texttt{solve($Opts$, $Vars$)}\index{\texttt{solve/2}}: This predicate calls the imported solver to label the variables $Vars$ with values, where $Opts$ is a list of options for the solver. The options will be detailed below. This predicate can backtrack in order to find multiple solutions. The \texttt{cp} module allows \textit{incremental labeling} of variables, and some variables that occur in constraints but are not passed to \texttt{solve} may remain uninstantiated after a call to \texttt{solve}. The user is responsible for having all the variables that need to be instantiated passed to \texttt{solve}. In constrast, the \texttt{sat} and \texttt{mip} modules do not support incremental labeling of variables.
+\item \texttt{solve($Opts$,$Vars$)}\index{\texttt{solve/2}}: This predicate calls the imported solver to label the variables $Vars$ with values, where $Opts$ is a list of options for the solver. The options will be detailed below. This predicate can backtrack in order to find multiple solutions. The \texttt{cp} module allows \textit{incremental labeling} of variables, and some variables that occur in constraints but are not passed to \texttt{solve} may remain uninstantiated after a call to \texttt{solve}. The user is responsible for having all the variables that need to be instantiated passed to \texttt{solve}. In constrast, the \texttt{sat} and \texttt{mip} modules do not support incremental labeling of variables.
 
-\item\texttt{solve($Vars$)}\index{\texttt{solve/1}}: This predicate is the same as \texttt{solve([], $Vars$)}\index{\texttt{solve/2}}. 
+\item\texttt{solve($Vars$)}\index{\texttt{solve/1}}: This predicate is the same as \texttt{solve([],$Vars$)}\index{\texttt{solve/2}}. 
 \item \texttt{indomain($Var$)}\index{\texttt{indomain/1}}: This predicate is only accepted by \texttt{cp}. It is the same as \texttt{solve([], [$Var$])}\index{\texttt{solve/2}}.
-\item \texttt{solve\_all($Opts$, $Vars$) = $Solutions$}\index{\texttt{solve\_all/2}}: This function returns all the solutions that satisfy the constraints.
+\item \texttt{solve\_all($Opts$,$Vars$) = $Solutions$}\index{\texttt{solve\_all/2}}: This function returns all the solutions that satisfy the constraints.
 \item \texttt{solve\_all($Vars$) = $Solutions$}\index{\texttt{solve\_all/1}}: This function is the same as \texttt{solve\_all([],$Vars$)}.
 \item \texttt{solve\_suspended($Opts$)}\index{\texttt{solve\_suspended/1}}: After \texttt{solve($Vars$)} has successfully labeled $Vars$, some constraints may remain suspended and not completely checked because not all of the decision variables are included in $Vars$. The \texttt{solve\_suspended($Opts$)} predicate labels all remaining variables in the suspended constraints. This predicate is only provided by the \texttt{cp} module. 
 \item \texttt{solve\_suspended}\index{\texttt{solve\_suspended/0}}: This predicate is the same as \texttt{solve\_suspended([])}.

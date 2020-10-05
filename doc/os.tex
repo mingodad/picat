@@ -43,7 +43,7 @@ The following function can be used to read the contents of a directory:
 \begin{itemize}
 \item \texttt{listdir($Path$) = $List$}\index{\texttt{listdir/1}}: This function returns a list of all of the files and directories that are contained inside the directory specified by $Path$.  If $Path$ is not a directory, then an error is thrown.  The returned list contains strings, each of which is the name of a file or directory.
 \ignore{
-\item \texttt{listdir($Path$, $Pattern$) = $List$}\index{\texttt{listdir/2}}: The $Pattern$ parameter is a string that represents a regular expression.  The list that is returned will only contain files and directories whose names match the regular expression.
+\item \texttt{listdir($Path$,$Pattern$) = $List$}\index{\texttt{listdir/2}}: The $Pattern$ parameter is a string that represents a regular expression.  The list that is returned will only contain files and directories whose names match the regular expression.
 \item \texttt{root() = $Path$}\index{\texttt{root/0}}: This function returns a string representing the path of the root of the file system tree (such as ``C:$\backslash$", or ``/").
 }
 \end{itemize}
@@ -73,13 +73,13 @@ The \texttt{os} module contains a number of predicates for creating new files an
 \begin{itemize}
 \ignore{
 \item \texttt{create($Path$)}\index{\texttt{create/1}}: This predicate creates a new file at location $Path$.  The file will be created with a default permission list of \texttt{[rwu, rwg, ro]}.  If the program does not have permission to write to the parent directory of $Path$, this predicate will throw an error.  An error will also occur if the parent directory does not exist.  
-\item \texttt{create($Path$, $Mode$)}\index{\texttt{create/2}}: The $Mode$ parameter indicates access permissions.  For details, see the \texttt{chmod}\index{\texttt{chmod/2}} function, in Section \ref{modification}.  If a permission is not explicitly specified in the $Mode$ parameter, then the permission is not provided.
+\item \texttt{create($Path$,$Mode$)}\index{\texttt{create/2}}: The $Mode$ parameter indicates access permissions.  For details, see the \texttt{chmod}\index{\texttt{chmod/2}} function, in Section \ref{modification}.  If a permission is not explicitly specified in the $Mode$ parameter, then the permission is not provided.
 }
 \item \texttt{mkdir($Path$)}\index{\texttt{mkdir/1}}: This predicate creates a new directory at location $Path$.  The directory will be created with a default permission list of \texttt{[rwu, rwg, ro]}.  If the program does not have permission to write to the parent directory of $Path$, this predicate will throw an error.  An error will also occur if the parent directory does not exist.  
 
-\item \texttt{rename($Old$, $New$)}\index{\texttt{rename/2}}: This renames a file or a directory from $Old$ to $New$.  This predicate will throw an error if $Old$ does not exist.  An error will also occur if the program does not have permission to write to $Old$ or $New$.
+\item \texttt{rename($Old$,$New$)}\index{\texttt{rename/2}}: This renames a file or a directory from $Old$ to $New$.  This predicate will throw an error if $Old$ does not exist.  An error will also occur if the program does not have permission to write to $Old$ or $New$.
 
-\item \texttt{cp($FromPath$, $ToPath$)}\index{\texttt{cp/2}}: This copies a file from $FromPath$ to $ToPath$.  This predicate will throw an error if $FromPath$ does not exist or $FromPath$ is a directory.  An error will also occur if the program does not have permission to read from $FromPath$, or if it does not have permission to write to $ToPath$.
+\item \texttt{cp($FromPath$,$ToPath$)}\index{\texttt{cp/2}}: This copies a file from $FromPath$ to $ToPath$.  This predicate will throw an error if $FromPath$ does not exist or $FromPath$ is a directory.  An error will also occur if the program does not have permission to read from $FromPath$, or if it does not have permission to write to $ToPath$.
 
 \end{itemize}
 
@@ -87,7 +87,7 @@ The \texttt{os} module contains a number of predicates for creating new files an
 \subsection{\label{modification}Modification}
 The \texttt{os} module has one predicate for modifying access permissions.
 \begin{itemize}
-\item \texttt{chmod($Path$, $Mode$)}\index{\texttt{chmod/2}}: An error will be thrown if the program cannot modify the permissions.
+\item \texttt{chmod($Path$,$Mode$)}\index{\texttt{chmod/2}}: An error will be thrown if the program cannot modify the permissions.
 \end{itemize}
 The $Mode$ parameter is either a single atom or a list of two or three atoms.  This parameter specifies the access permissions.  The format of the atoms is specified by the regular expression \texttt{r?w?x?(u|g|o)}.  If the atom contains \texttt{r}, then it provides permission to read from the file.  If the atom contains \texttt{w}, then it provides permission to write to the file.  If the atom contains \texttt{x}, then it provides permission to execute the file.  The second part of the atom indicates the receiver(s) of the permission, where \texttt{u} specifies the user, \texttt{g} specifies anybody who is in the user's group, and \texttt{o} specifies anybody who is not in the user's group.  At most one atom can exist for each of \texttt{u}, \texttt{g}, and \texttt{o}.  
 
@@ -111,7 +111,7 @@ The \texttt{os} module contains a number of functions that retrieve file status 
 \item \texttt{dev\_id($Path$) = $Int$}\index{\texttt{dev\_id/1}}: This function returns the device ID of the device that contains $Path$.
 \item \texttt{ino($Path$) = $Int$}\index{\texttt{ino/1}}: This function returns the inode\index{inode} number of $Path$.  
 \item \texttt{mode($Path$) = $String$}\index{\texttt{mode/1}}: This function returns the file permissions for $Path$ in a string.  The string will contain atoms, in the same format as the atoms that are passed to the \texttt{chmod}\index{\texttt{chmod/2}} predicate.  This function will throw an error if $Path$ does not exist.
-\item \texttt{mode($Path$, $Value$)}\index{\texttt{mode/2}}: Does the program's current permission for the file include $Value$?  The $Value$ parameter is one of the atoms: \texttt{read}, \texttt{write}, or \texttt{execute}.
+\item \texttt{mode($Path$,$Value$)}\index{\texttt{mode/2}}: Does the program's current permission for the file include $Value$?  The $Value$ parameter is one of the atoms: \texttt{read}, \texttt{write}, or \texttt{execute}.
 \item \texttt{nlink($Path$) = $Int$}\index{\texttt{nlink/1}}: This function returns the number of hard links\index{hard link} to the inode\index{inode} to which $Path$ refers.
 \item \texttt{uid($Path$) = $Int$}\index{\texttt{uid/1}}: This function returns the user ID of the user who created $Path$.  This function will throw an error if $Path$ does not exist.
 \item \texttt{gid($Path$) = $Int$}\index{\texttt{gid/1}}: This function returns the group ID of the user who created $Path$.  This function will throw an error if $Path$ does not exist.

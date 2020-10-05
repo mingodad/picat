@@ -61,7 +61,7 @@ January 14, 2013 \\
     \item {\tt $X$ @=< $Y$} 
     \item {\tt $X$ @> $Y$} 
     \item {\tt $X$ @>= $Y$}
-    \item {\tt $X$ =.. $Y$} 
+    \item {\tt $X$\ =..\ $Y$} 
     \item {\tt $Term_1$ \verb-++- $Term_2$ = $List$} 
     \item {\tt \verb+[+$X$ : $I$ in $D$,$\ldots$ \verb+]+ = $List$}
     \item {\tt $L$ \verb+..+ $U$ = $List$} 
@@ -597,8 +597,8 @@ January 14, 2013 \\
 \item \texttt{solve\_suspended} (cp only)
 \item \texttt{solve\_suspended($Opt$)} (cp only)
 \item \texttt{subcircuit($FDVars$)}
-\item \texttt{subcircuit\_grid($A$) (sat only)}
-\item \texttt{subcircuit\_grid($A$,$K$) (sat only)} 
+\item \texttt{subcircuit\_grid($A$)} (sat only)
+\item \texttt{subcircuit\_grid($A$,$K$)} (sat only) 
 \item \texttt{table\_in($DVars$,$R$)}
 \item \texttt{table\_notin($DVars$,$R$)}
 \end{itemize}
@@ -609,23 +609,23 @@ January 14, 2013 \\
 \item \texttt{best\_plan($S$,$Limit$,$Plan$)}
 \item \texttt{best\_plan($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{best\_plan($S$,$Plan$)}
-\item \texttt{best\_plan($S$,$Plan$,$PlanCost$)}
+\item \texttt{best\_plan($S$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_bb($S$,$Limit$,$Plan$)}
 \item \texttt{best\_plan\_bb($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_bb($S$,$Plan$)}
-\item \texttt{best\_plan\_bb($S$,$Plan$,$PlanCost$)}
+\item \texttt{best\_plan\_bb($S$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_bin($S$,$Limit$,$Plan$)}
 \item \texttt{best\_plan\_bin($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_bin($S$,$Plan$)}
-\item \texttt{best\_plan\_bin($S$,$Plan$,$PlanCost$)}
+\item \texttt{best\_plan\_bin($S$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_nondet($S$,$Limit$,$Plan$)} (nondet)
 \item \texttt{best\_plan\_nondet($S$,$Limit$,$Plan$,$Cost$)} (nondet)
 \item \texttt{best\_plan\_nondet($S$,$Plan$)} (nondet)
-\item \texttt{best\_plan\_nondet($S$,$Plan$,$PlanCost$)} (nondet)
+\item \texttt{best\_plan\_nondet($S$,$Plan$,$Cost$)} (nondet)
 \item \texttt{best\_plan\_unbounded($S$,$Limit$,$Plan$)}
 \item \texttt{best\_plan\_unbounded($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{best\_plan\_unbounded($S$,$Plan$)}
-\item \texttt{best\_plan\_unbounded($S$,$Plan$,$PlanCost$)}
+\item \texttt{best\_plan\_unbounded($S$,$Plan$,$Cost$)}
 \item \texttt{current\_plan()=$Plan$}
 \item \texttt{current\_resource()=$Amount$}
 \item \texttt{current\_resource\_plan\_cost($Amount$,$Plan$,$Cost$)}
@@ -633,11 +633,11 @@ January 14, 2013 \\
 \item \texttt{plan($S$,$Limit$,$Plan$)}
 \item \texttt{plan($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{plan($S$,$Plan$)}
-\item \texttt{plan($S$,$Plan$,$PlanCost$)}
+\item \texttt{plan($S$,$Plan$,$Cost$)}
 \item \texttt{plan\_unbounded($S$,$Limit$,$Plan$)}
 \item \texttt{plan\_unbounded($S$,$Limit$,$Plan$,$Cost$)}
 \item \texttt{plan\_unbounded($S$,$Plan$)}
-\item \texttt{plan\_unbounded($S$,$Plan$,$PlanCost$)}
+\item \texttt{plan\_unbounded($S$,$Plan$,$Cost$)}
 \end{itemize}
 \end{scriptsize}
 \section*{Module \texttt{nn} (Neural Networks)}

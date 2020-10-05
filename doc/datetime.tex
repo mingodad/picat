@@ -18,7 +18,7 @@ Picat's \texttt{datetime} module provides built-ins for retrieving the date and 
 \item \texttt{current\_datetime() = $DateTime$}\index{\texttt{current\_datetime/0}}: This function returns the current date and time as a structure in the form 
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
-\> \texttt{date\_time($Year$, $Month$, $Day$, $Hour$, $Minute$, $Second$)}
+\> \texttt{date\_time($Year$,$Month$,$Day$,$Hour$,$Minute$,$Second$)}
 \end{tabbing}
 where the arguments are all integers, and have the following meanings and ranges.
 
@@ -43,11 +43,11 @@ $Second$ & seconds after the minute & 0-60 \\
 \noindent
 In the $Month$ argument, $0$ represents January, and $11$ represents December.  In the $Hour$ argument, $0$ represents $12$ AM, and $23$ represents $11$ PM.  In the $Second$ argument, the value $60$ represents a leap second.
 
-\item \texttt{current\_date() = $Date$}\index{\texttt{current\_date/0}}: This function returns the current date as a structure in the form \texttt{date($Year$, $Month$, $Day$)}, where the arguments have the meanings and ranges that are defined above.
+\item \texttt{current\_date() = $Date$}\index{\texttt{current\_date/0}}: This function returns the current date as a structure in the form \texttt{date($Year$,$Month$,$Day$)}, where the arguments have the meanings and ranges that are defined above.
 
 \item \texttt{current\_day() = $WDay$}\index{\texttt{current\_day/0}}: This function returns the number of days since Sunday, in the range 0 to 6. 
 
-\item \texttt{current\_time() = $Time$}\index{\texttt{current\_time/0}}: This function returns the current time as a structure in the form \texttt{time($Hour$, $Minute$, $Second$)}, where the arguments have the meanings and ranges that are defined above.
+\item \texttt{current\_time() = $Time$}\index{\texttt{current\_time/0}}: This function returns the current time as a structure in the form \texttt{time($Hour$,$Minute$,$Second$)}, where the arguments have the meanings and ranges that are defined above.
 
 \end{itemize}
 \ignore{

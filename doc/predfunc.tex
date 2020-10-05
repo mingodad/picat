@@ -23,7 +23,7 @@ and the \emph{backtrackable} rule\index{backtrackable rule}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head, Cond\ $\verb+?=>+$\ Body$. 
 \end{tabbing}
-Picat also supports Prolog-style Horn clauses \index{Horn clause} and DCG rules \index{DCG rule} for predicate definitions. A Horn clause takes the form:
+Picat also supports Prolog-style Horn clauses \index{Prolog}\index{Horn clause} and Definite Clause Grammar (DCG) rules \index{Definite Clause Grammar}\index{DCG rule} for predicate definitions. A Horn clause takes the form:
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head\ $\verb+:-+$\ Body$. 
@@ -33,7 +33,7 @@ which can be written as $Head$ if $Body$ is \texttt{true}. A DCG rule takes the 
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Head\ $\verb+-->+$\ Body$. 
 \end{tabbing}
-A predicate definition that consists of Horn clauses can be preceded by an \emph{index declaration}, as described in \ref{section:horn}. Picat converts Horn clauses and DCG rules into pattern-matching rules.
+A predicate definition that consists of Horn clauses can be preceded by an \emph{index declaration}, as described in Section \ref{section:horn}. Picat converts Horn clauses and DCG rules into pattern-matching rules.
 
 \section{Predicates}
 A \emph{predicate}\index{predicate} defines a relation, and can have zero, one, or multiple answers. Within a predicate\index{predicate}, the $Head$ is a \emph{pattern} in the form $p(t_1,\ldots,t_n)$, where $p$ is called the predicate\index{predicate} \emph{name}, and $n$ is called the \emph{arity}\index{arity}. When $n=0$, the parentheses can be omitted. The condition $Cond$, which is an optional goal\index{goal}, specifies a condition under which the rule is applicable. $Cond$ cannot succeed more than once. The compiler converts $Cond$ to \texttt{once $Cond$}\index{\texttt{once/1}} if would otherwise be possible for $Cond$ to succeed more than once.
@@ -44,14 +44,14 @@ A predicate\index{predicate} is said to be \emph{deterministic} if it is defined
 
 \subsection*{Example}
 \begin{verbatim}
-    append(Xs,Ys,Zs) ?=> Xs=[], Ys=Zs.
-    append(Xs,Ys,Zs) => Xs=[X|XsR], append(XsR,Ys,Zs).
+    append(Xs,Ys,Zs) ?=> Xs = [], Ys = Zs.
+    append(Xs,Ys,Zs) => Xs = [X|XsR], append(XsR,Ys,Zs).
 
-    min_max([H],Min,Max) => Min=H, Max=H.
+    min_max([H],Min,Max) => Min = H, Max = H.
     min_max([H|T],Min,Max) => 
         min_max(T,MinT,MaxT), 
-        Min=min(MinT,H),
-        Max=max(MaxT,H).
+        Min = min(MinT,H),
+        Max = max(MaxT,H).
 \end{verbatim}
 The predicate \texttt{append(Xs,Ys,Zs)}\index{\texttt{append/3}} is true if the concatenation of \texttt{Xs} and \texttt{Ys} is \texttt{Zs}. It defines a relation among the three arguments, and does not assume directionality of any of the arguments. For example, this predicate can be used to concatenate two lists, as in the call 
 \begin{verbatim}
@@ -109,12 +109,12 @@ A pattern can contain \emph{as-patterns}\index{as-pattern} in the form \texttt{$
 \begin{verbatim}
     merge([],Ys) = Ys.
     merge(Xs,[]) = Xs.
-    merge([X|Xs],Ys@[Y|_]) = [X|Zs], X<Y => Zs=merge(Xs,Ys). 
+    merge([X|Xs],Ys@[Y|_]) = [X|Zs], X<Y => Zs = merge(Xs,Ys). 
     merge(Xs,[Y|Ys]) = [Y|merge(Xs,Ys)].
 \end{verbatim}
 In the third rule, the as-pattern\index{as-pattern} \texttt{Ys@[Y|\_]} binds two variables: \texttt{Ys} references the second argument, and \texttt{Y} references the car\index{car} of the argument. The rule can be rewritten as follows without using any as-pattern\index{as-pattern}:
 \begin{verbatim}
-    merge([X|Xs],[Y|Ys]) = [X|Zs], X<Y => Zs=merge(Xs,[Y|Ys]). 
+    merge([X|Xs],[Y|Ys]) = [X|Zs], X<Y => Zs = merge(Xs,[Y|Ys]). 
 \end{verbatim}
 Nevertheless, this version is less efficient, because the cons\index{cons} \texttt{[Y|Ys]} needs to be re-constructed.
 
@@ -125,11 +125,12 @@ In a rule, both the condition and the body are \emph{goals}\index{goal}. Queries
 \item \texttt{fail}\index{\texttt{fail}}: This goal\index{goal} is always false. When \texttt{fail}\index{\texttt{fail}} occurs in a condition, the condition is false, and the rule is never applicable. When \texttt{fail}\index{\texttt{fail}} occurs in a body, it causes execution to backtrack.
 \item \texttt{false}\index{\texttt{false}}: This goal is the same as \texttt{fail}.
 \item $p(t_1, \ldots, t_n)$: This goal\index{goal} is a predicate call. The arguments $t_1, \ldots, t_n$ are evaluated in the given order, and the resulting call is resolved using the rules in the predicate $p/n$. If the call succeeds, then variables in the call may get instantiated. Many built-in predicates\index{predicate} are written in infix notation. For example, \texttt{X=Y} is the same as \texttt{'='(X,Y)}.
-\item \texttt{$P$, $Q$}: This goal\index{goal} is a conjunction of goal\index{goal} $P$ and goal\index{goal} $Q$. It is resolved by first resolving $P$, and then resolving $Q$. The goal\index{goal} is true if both $P$ and $Q$ are true. Note that the order is important: ($P$, $Q$) is in general not the same as ($Q$, $P$).
-\item \texttt{$P$ $\&\&$ $Q$}: This is the same as \texttt{($P$, $Q$)}. 
+\item \texttt{$P$, $Q$}: This goal\index{goal} is a conjunction of goal\index{goal} $P$ and goal\index{goal} $Q$. It is resolved by first resolving $P$, and then resolving $Q$. The goal\index{goal} is true if both $P$ and $Q$ are true. Note that the order is important: ($P$,$Q$) is in general not the same as ($Q$,$P$).
+\item \texttt{$P$ $\&\&$ $Q$}: This is the same as \texttt{($P$,$Q$)}. 
 \item \texttt{$P$; $Q$}: This goal\index{goal} is a disjunction of goal\index{goal} $P$ and goal\index{goal} $Q$. It is resolved by first resolving $P$. If $P$ is true, then the disjunction is true. If $P$ is false, then $Q$ is resolved. The disjunction is true if $Q$ is true. The disjunction is false if both $P$ and $Q$ are false. Note that a disjunction can succeed more than once. Note also that the order is important: ($P$; $Q$) is generally not the same as ($Q$; $P$).
 \item \texttt{$P$ $|$$|$ $Q$}: This is the same as \texttt{($P$; $Q$)}.
 \item \texttt{not $P$}\index{\texttt{not/1}}: This goal\index{goal} is the negation of $P$. It is false if $P$ is true, and true if $P$ is false.  Note a negation goal\index{goal} can never succeed more than once.  Also note that no variables can get instantiated, no matter whether the goal\index{goal} is true or false.
+\item \verb-\+- \texttt{$P$}\index{{\verb-\+/1-}}: The same as \texttt{not $P$}.
 \item \texttt{once $P$}\index{\texttt{once/1}}: This goal\index{goal} is the same as $P$, but can never succeed more than once.
 \item \texttt{repeat}\index{\texttt{repeat/0}}: This predicate is defined as follows:
 \begin{verbatim}
@@ -177,7 +178,7 @@ The trick to convert a predicate\index{predicate} (or a function\index{function}
     min_max([H|T],Min,Max) => 
         min_max_helper([H|T],H,Min,H,Max).
 
-    min_max_helper([],CMin,Min,CMax,Max) => Min=CMin, Max=CMax.
+    min_max_helper([],CMin,Min,CMax,Max) => Min = CMin, Max = CMax.
     min_max_helper([H|T],CMin,Min,CMax,Max) => 
         min_max_helper(T,min(CMin,H),Min,max(CMax,H),Max).
 

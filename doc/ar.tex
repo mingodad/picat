@@ -23,8 +23,8 @@ The following built-ins are used to post events to one of a channel's four ports
 \begin{itemize}
 \item \texttt{post\_event\_ins($X$)}\index{\texttt{post\_event\_ins/1}}: posts an event to the \texttt{ins}-port\index{\texttt{ins}-port} of the channel $X$. 
 \item \texttt{post\_event\_bound($X$)}\index{\texttt{post\_event\_bound/1}}: posts an event to the \texttt{bound}-port\index{\texttt{bound}-port} of the channel $X$. 
-\item \texttt{post\_event\_dom($X$, $T$)}\index{\texttt{post\_event\_dom/2}}: posts the term $T$ to the \texttt{dom}-port\index{\texttt{dom}-port} of the channel $X$.
-\item \texttt{post\_event\_any($X$, $T$)}\index{\texttt{post\_event\_any/2}}: posts the event $T$ to the \texttt{any}-port\index{\texttt{any}-port} of the channel of $X$.
+\item \texttt{post\_event\_dom($X$,$T$)}\index{\texttt{post\_event\_dom/2}}: posts the term $T$ to the \texttt{dom}-port\index{\texttt{dom}-port} of the channel $X$.
+\item \texttt{post\_event\_any($X$,$T$)}\index{\texttt{post\_event\_any/2}}: posts the event $T$ to the \texttt{any}-port\index{\texttt{any}-port} of the channel of $X$.
 \end{itemize}
 The call \texttt{post\_event($X$,$T$)}\index{\texttt{post\_event/2}} is the same as \texttt{post\_event\_dom($X$,$T$)}\index{\texttt{post\_event\_dom/2}}.  This means that the \texttt{dom}-port\index{\texttt{dom}-port} of a finite domain variable has two uses: posting exclusions of inner elements from the domain, and posting general term events. 
 
@@ -75,7 +75,7 @@ There is no primitive for killing actors or explicitly detaching actors from cha
           {event(X,T)}
       => 
           writeln(T),
-          Flag=1.
+          Flag = 1.
       p(_,_) => true.
 \end{verbatim}
 An actor defined here can only handle one event posting. After it handles an event, it binds the variable \texttt{Flag}. When a second event is posted, the action rule\index{action rule} is no longer applicable, causing the second rule to be selected.
@@ -88,7 +88,7 @@ One question arises here: what happens if a second event is never posted to \tex
 
       => 
           write(O),
-          Flag=1.
+          Flag = 1.
       p(_,_) => true.
 \end{verbatim}
 In this way, the actor will be activated again after \texttt{Flag} is bound to $1$, and will be killed after the second rule is applied to it.
@@ -96,7 +96,7 @@ In this way, the actor will be activated again after \texttt{Flag} is bound to $
 \section{Lazy Evaluation}
 The built-in predicate \texttt{freeze(X,Goal)}\index{\texttt{freeze/2}} is equivalent to `\texttt{once Goal}'\index{\texttt{once/1}}, but its evaluation is delayed until \texttt{X} is bound to a non-variable term. The predicate is defined as follows:
 \begin{verbatim}
-     freeze(X,Goal),var(X),{ins(X)} => true.
+     freeze(X,Goal), var(X), {ins(X)} => true.
      freeze(X,Goal) => call(Goal).
 \end{verbatim}
 For the call \texttt{freeze(X,Goal)}\index{\texttt{freeze/2}}, if  \texttt{X} is a variable, then \texttt{X} is registered as an actor on the \texttt{ins}-port\index{\texttt{ins}-port} of \texttt{X}, and \texttt{X} is then suspended. Whenever \texttt{X} is bound, the event \texttt{ins} is posted to the \texttt{ins}-port\index{\texttt{ins}-port} of \texttt{X}, which activates the actor \texttt{freeze(X,Goal)}\index{\texttt{freeze/2}}. The condition \texttt{var(X)}\index{\texttt{var/1}} is checked. If true, the actor is suspended again; otherwise, the second rule is executed, causing the actor to vanish after it is rewritten into \texttt{once Goal}\index{\texttt{once/1}}.
@@ -108,13 +108,13 @@ import cp.
 different_terms(X,Y) =>
     different_terms(X,Y,1).
 
-different_terms(X,Y,B),var(X),{ins(X),ins(Y)} => true.
-different_terms(X,Y,B),var(Y),{ins(X)} => true.
+different_terms(X,Y,B), var(X), {ins(X),ins(Y)} => true.
+different_terms(X,Y,B), var(Y), {ins(X)} => true.
 different_terms([X|Xs],[Y|Ys],B) =>
     different_terms(X,Y,B1),
     different_terms(Xs,Ys,B2),
     B #= (B1 #\/ B2).
-different_terms(X,Y,B),struct(X),struct(Y) =>
+different_terms(X,Y,B), struct(X), struct(Y) =>
     writeln(X), writeln(Y),											  
     if (X.name !== Y.name; X.length !== Y.length) then
        B=1
@@ -125,7 +125,7 @@ different_terms(X,Y,B),struct(X),struct(Y) =>
        end,
        max(Bs) #= B
     end.
-different_terms(X,Y,B),X==Y => B=0.
+different_terms(X,Y,B), X == Y => B=0.
 different_terms(X,Y,B) => B=1.
 \end{verbatim}
 The call \texttt{different\_terms(X,Y,B)} is delayed if either \texttt{X} or \texttt{Y} is a variable. The delayed call watches \texttt{ins(X)} and  \texttt{ins(Y)} events. Once both \texttt{X} and \texttt{Y} become non-variable, the action rule\index{action rule} becomes inapplicable, and one of the subsequent rules will be applied. If \texttt{X} and \texttt{Y} are lists, then they are different if the heads are different (\verb+B1+), or if the tails are different (\verb+B2+).  This relationship is represented as the Boolean constraint \verb+ B #= (B1 #\/ B2)+. If \texttt{X} and \texttt{Y} are both structures, then they are different if the functor is different, or if any pair of arguments of the structures is different.
@@ -136,7 +136,7 @@ A constraint propagator is an actor that reacts to updates of the domains of the
 \begin{verbatim}
    import cp.
 
-   x_in_c_y_ac(X,Y,C),var(X),var(Y),
+   x_in_c_y_ac(X,Y,C), var(X), var(Y),
       {dom(Y,Ey)}
        =>         
       fd_set_false(X,C-Ey).
@@ -146,12 +146,12 @@ Whenever an inner element \texttt{Ey} is excluded from the domain of \texttt{Y},
 \begin{verbatim}
    import cp.
 
-   x_add_y_eq_c_ic(X,Y,C),var(X),var(Y),
+   x_add_y_eq_c_ic(X,Y,C), var(X), var(Y),
        {generated,ins(X),ins(Y),bound(X),bound(Y)}
    =>         
        X :: C-Y.max .. C-Y.min,
        Y :: C-X.max .. C-X.min.
-   x_add_y_eq_c_ic(X,Y,C),var(X) =>
+   x_add_y_eq_c_ic(X,Y,C), var(X) =>
        X = C-Y.
    x_add_y_eq_c_ic(X,Y,C) =>
        Y = C-X.
@@ -170,7 +170,7 @@ The function \texttt{new\_timer($Interval$)}\index{\texttt{new\_timer/1}} return
 \item \texttt{start($T$)}\index{\texttt{start/1}}: Start the timer $T$. After a timer is created, it starts ticking immediately. Therefore, it is unnecessary to start a timer with this call. This predicate is used to restart a stopped timer.
 \item \texttt{stop($T$)}\index{\texttt{stop/1}}: Stop the timer.
 \item \texttt{kill($T$)}\index{\texttt{kill/1}}: Kill the timer.
-\item \texttt{set\_interval($T$, $Interval$)}\index{\texttt{set\_interval/2}}: Reset the interval of the timer $T$ to $Interval$. The update is destructive, and the old value is not restored upon backtracking.
+\item \texttt{set\_interval($T$,$Interval$)}\index{\texttt{set\_interval/2}}: Reset the interval of the timer $T$ to $Interval$. The update is destructive, and the old value is not restored upon backtracking.
 \item \texttt{get\_interval($T$) = $Interval$}\index{\texttt{get\_interval/1}}: Get the interval of the timer $T$.
 \end{itemize}
 

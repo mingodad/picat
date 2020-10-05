@@ -65,16 +65,16 @@ IF = (3.0 , 0.2)
 \subsection{Exponents, Roots, and Logarithms}
 The following functions provide exponentiation, root, and logarithmic functions.  Note that, in the logarithmic functions, if $X \le 0$, then an error is thrown.
 \begin{itemize}
-\item \texttt{pow($X$, $Y$) = $Val$}\index{\texttt{pow/2}}:  This function returns $X^Y$.  It does the same thing as $X ** Y$.
-\item \texttt{pow\_mod($X$, $Y$, $Z$) = $Val$}\index{\texttt{pow\_mod/3}}:  This function returns \texttt{$X^Y$ mod $Z$}.  All of the arguments must be integers, and $Y$ must not be negative.
+\item \texttt{pow($X$,$Y$) = $Val$}\index{\texttt{pow/2}}:  This function returns $X^Y$.  It does the same thing as $X ** Y$.
+\item \texttt{pow\_mod($X$,$Y$,$Z$) = $Val$}\index{\texttt{pow\_mod/3}}:  This function returns \texttt{$X^Y$ mod $Z$}.  All of the arguments must be integers, and $Y$ must not be negative.
 \item \texttt{exp($X$) = $Val$}\index{\texttt{exp/1}}:  This function returns $e^X$.
 \item \texttt{sqrt($X$) = $Val$}\index{\texttt{sqrt/1}}: This function returns the square root of $X$.  Note that the \texttt{math} module does not support imaginary numbers.  Therefore, if $X < 0$, this function throws an error.
 %\item \texttt{cbrt($X$) = $Val$}\index{\texttt{cbrt/1}}: This function returns the cube root of $X$.
-%\item \texttt{nthrt($N$, $X$) = $Val$}\index{\texttt{nthrt/2}}: This function returns the $N$th root of $X$.  Note that, if $N$ is even, and $X < 0$, then this function throws an error. 
+%\item \texttt{nthrt($N$,$X$) = $Val$}\index{\texttt{nthrt/2}}: This function returns the $N$th root of $X$.  Note that, if $N$ is even, and $X < 0$, then this function throws an error. 
 \item \texttt{log($X$) = $Val$}\index{\texttt{log/1}}: This function returns $log_e(X)$.
 \item \texttt{log10($X$) = $Val$}\index{\texttt{log10/1}}: This function returns $log_{10}(X)$.
 \item \texttt{log2($X$) = $Val$}\index{\texttt{log2/1}}: This function returns $log_2(X)$.
-\item \texttt{log($B$, $X$) = $Val$}\index{\texttt{log/2}}:  This function returns $log_B(X)$.
+\item \texttt{log($B$,$X$) = $Val$}\index{\texttt{log/2}}:  This function returns $log_B(X)$.
 \end{itemize}
 
 \subsection*{Example}
@@ -118,7 +118,7 @@ The \texttt{math} module provides the following trigonometric functions.
 \item \texttt{asin($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc sine of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
 \item \texttt{acos($X$) = $Val$}\index{\texttt{acos/1}}: This function returns the arc cosine of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}].  $X$ must be in the range [$-1$, $1$]; otherwise, this function throws an error.
 \item \texttt{atan($X$) = $Val$}\index{\texttt{atan/1}}: This function returns the arc tangent of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].
-\item \texttt{atan2($X$, $Y$) = $Val$}\index{\texttt{atan2/2}}: This function returns the arc tangent of $Y$ / $X$, in radians.  $X$ and $Y$ are coordinates.  The returned value is in the range [\texttt{-pi}, \texttt{pi}].  
+\item \texttt{atan2($X$,$Y$) = $Val$}\index{\texttt{atan2/2}}: This function returns the arc tangent of $Y$ / $X$, in radians.  $X$ and $Y$ are coordinates.  The returned value is in the range [\texttt{-pi}, \texttt{pi}].  
 \ignore{Note that, if both $X$ and $Y$ are $0$, then this function throws an error.}
 \item \texttt{asec($X$) = $Val$}\index{\texttt{asin/1}}: This function returns the arc secant of $X$, in radians.  The returned value is in the range [$0$, \texttt{pi}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
 \item \texttt{acsc($X$) = $Val$}\index{\texttt{acsc/1}}: This function returns the arc cosecant of $X$, in radians.  The returned value is in the range [\texttt{-pi / 2}, \texttt{pi / 2}].  $X$ must be in the range ($-\infty$, $-1$] or [$1$, $\infty$); otherwise, this function throws an error.
@@ -186,12 +186,12 @@ The following functions provide access to a random number generator.
 \item \texttt{random2() = $Val$}\index{\texttt{random2/0}}: This function returns a random integer, using an environment-dependent seed.
 \item \texttt{rand\_max() = $Val$}\index{\texttt{rand\_max/0}}: This function returns the maximum random integer.
 \item \texttt{random($Seed$) = $Val$}\index{\texttt{random/1}}: This function returns a random integer.  At the same time, it changes the seed of the random number generator.
-\item \texttt{random($Low$, $High$) = $Val$}\index{\texttt{random/2}}: This function returns a random integer in the range $Low$..$High$.
+\item \texttt{random($Low$,$High$) = $Val$}\index{\texttt{random/2}}: This function returns a random integer in the range $Low$..$High$.
 \item \texttt{frand() = $Val$}\index{\texttt{frand/0}}: This function returns a random real number between 0.0 and 1.0, inclusive.
-\item \texttt{frand($Low$, $High$) = $Val$}\index{\texttt{frand/2}}: This function returns a random real number between $Low$ and $High$, inclusive.
+\item \texttt{frand($Low$,$High$) = $Val$}\index{\texttt{frand/2}}: This function returns a random real number between $Low$ and $High$, inclusive.
 
-%\item \texttt{randrange($From$, $To$) = $Val$}\index{\texttt{randrange/2}}: This function returns a random integer in the range [$From$, $To$).
-%\item \texttt{randrange($From$, $Step$, $To$) = $Val$}\index{\texttt{randrange/3}}: This function returns a random integer in the range [$From$, $To$).  The integer will be equal to $From + K * Step$, for some integer $K$.
+%\item \texttt{randrange($From$,$To$) = $Val$}\index{\texttt{randrange/2}}: This function returns a random integer in the range [$From$, $To$).
+%\item \texttt{randrange($From$,$Step$,$To$) = $Val$}\index{\texttt{randrange/3}}: This function returns a random integer in the range [$From$, $To$).  The integer will be equal to $From + K * Step$, for some integer $K$.
 \end{itemize}
 
 \subsection{Other Built-ins}

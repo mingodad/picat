@@ -237,14 +237,14 @@ Picat supports Prolog-style Horn clauses\index{Horn clause}\index{Prolog}.\footn
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> $p(V_1,\ldots,V_n)$ \verb+?=>+\ $V_1 = \$t_1$, $\ldots$, $V_n = \$t_n$, $Body$.
 \end{tabbing}
-where the dollar symbols indicate that all of the $t_i$'s are terms, not function calls.
+where the dollar symbols indicate that all of the $t_i$'s are terms, rather than function calls.
 
 A predicate\index{predicate} definition that consists of Horn clauses can be preceded by an \emph{index declaration}\index{index declaration} in the form
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \texttt{index ($M_{11},\ldots,M_{1n}$) $\ldots$ ($M_{m1},\ldots,M_{mn}$)}\index{\texttt{index}}
 \end{tabbing}
-where each $M_{ij}$ is either $+$ (meaning indexed) or $-$ (meaning not indexed). When a predicate defined by Horn clauses is not preceded by an index declaration, Picat automatically generates one for the predicate. For each index pattern \texttt{($M_{i1},\ldots,M_{in}$)}, the compiler generates a version of the predicate\index{predicate} that indexes all of the $+$ arguments. An index declaration only affects the efficiency but not the behavior of the predicate. It is assumed that there is a default version of the predicate that has none of its arguments indexed.
+where each $M_{ij}$ is either $+$ (meaning indexed) or $-$ (meaning not indexed). When a predicate defined by Horn clauses is not preceded by an index declaration, Picat automatically generates one for the predicate. For each index pattern \texttt{($M_{i1},\ldots,M_{in}$)}, the compiler generates a version of the predicate\index{predicate} that indexes all of the $+$ arguments. An index declaration only affects the efficiency, but not the behavior of the predicate. It is assumed that there is a default version of the predicate that has none of its arguments indexed.
 
 
 \subsection*{Example}
@@ -262,13 +262,13 @@ A function\index{function} call always succeeds with a return value if no except
 
 \subsection*{Example}
 \begin{verbatim}
-fib(0)=F => F=1.
-fib(1)=F => F=1.
-fib(N)=F,N>1 => F=fib(N-1)+fib(N-2).
+fib(0) = F => F=1.
+fib(1) = F => F=1.
+fib(N) = F, N>1 => F = fib(N-1)+fib(N-2).
 
-qsort([])=L => L=[].
-qsort([H|T])=L => L = qsort([E : E in T, E=<H])++[H]++
-                      qsort([E : E in T, E>H]).
+qsort([]) = L => L=[].
+qsort([H|T]) = L => L = qsort([E : E in T, E=<H]) ++ [H] ++
+                        qsort([E : E in T, E>H]).
 \end{verbatim}
 A function\index{function} call never fails and never succeeds more than once. For function\index{function} calls such as \texttt{fib(-1)} or \texttt{fib(X)}, Picat raises an exception\index{exception}. 
 
@@ -276,19 +276,19 @@ Picat allows inclusion of \emph{function facts}\index{function fact} in the form
 
 \subsection*{Example}
 \begin{verbatim}
-fib(0)=1.    
-fib(1)=1.
-fib(N)=F,N>1 => F=fib(N-1)+fib(N-2).
+fib(0) = 1.    
+fib(1) = 1.
+fib(N) = F, N>1 => F = fib(N-1)+fib(N-2).
 
-qsort([])=[].
+qsort([]) = [].
 qsort([H|T]) =
-    qsort([E : E in T, E=<H])++[H]++qsort([E : E in T, E>H]).
+    qsort([E : E in T, E=<H]) ++ [H] ++ qsort([E : E in T, E>H]).
 \end{verbatim}
 Function facts\index{function fact} are automatically indexed on all of the input arguments, and hence no index declaration\index{index declaration} is necessary. Note that while a predicate\index{predicate} call with no argument does not need parentheses, a function\index{function} call with no argument must be followed with parentheses, unless the function\index{function} is module-quantified, as in \texttt{math.pi}.
 
 The \texttt{fib} function can also be defined as follows:
 \begin{verbatim}
-fib(N) = cond((N=0;N=1),1,fib(N-1)+fib(N-2)).
+fib(N) = cond((N=0;N=1), 1, fib(N-1)+fib(N-2)).
 \end{verbatim}
 The conditional expression returns 1 if the condition \texttt{(N=0;N=1)} is true, and the value of \\ \texttt{fib(N-1)+fib(N-2)} if the condition is false.
 
@@ -345,14 +345,14 @@ write_map(Map) =>
         writef("%w=%w\n",Key,Value)
     end.
 
-sum_list(L)=Sum =>    % returns sum(L)
+sum_list(L) = Sum =>    % returns sum(L)
     S=0,
     foreach (X in L)
         S:=S+X
     end,
     Sum=S.
 
-read_list=List =>
+read_list = List =>
     L=[],
     E=read_int(),
     while (E != 0) 
@@ -373,9 +373,9 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \end{tabbing}
 Note that the list\index{list} of integers is in reversed order. If users want a list\index{list} in the same order as the input, then the following loop can be used:
 \begin{verbatim}
-read_list=List =>
-    List=L,
-    E=read_int(),
+read_list = List =>
+    List = L,
+    E = read_int(),
     while (E != 0) 
         L = [E|T],
         L := T,
@@ -394,15 +394,15 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \end{tabbing}
 Loop statements are compiled into tail-recursive\index{tail recursion} predicates\index{predicate}. For example, the second \texttt{read\_list} function given above is compiled into:
 \begin{verbatim}
-read_list=List =>
-    List=L,
-    E=read_int(),
+read_list = List =>
+    List = L,
+    E = read_int(),
     p(E,L,Lout),
-    Lout=[].
+    Lout = [].
 
-p(0,Lin,Lout) => Lout=Lin.
+p(0,Lin,Lout) => Lout = Lin.
 p(E,Lin,Lout) => 
-    Lin=[E|Lin1],
+    Lin = [E|Lin1],
     NE = read_int(),
     p(NE,Lin1,Lout).
 \end{verbatim}
@@ -438,15 +438,15 @@ Users can also give table\index{tabling} modes to instruct the system on what an
 \subsection*{Example}
 \begin{verbatim}
 table(+,+,min)
-edit([],[],D) => D=0.
+edit([],[],D) => D = 0.
 edit([X|Xs],[X|Ys],D) =>   
     edit(Xs,Ys,D).
 edit(Xs,[Y|Ys],D) ?=>      % insert
     edit(Xs,Ys,D1),
-    D=D1+1.
+    D = D1+1.
 edit([X|Xs],Ys,D) =>       % delete
     edit(Xs,Ys,D1),
-    D=D1+1.
+    D = D1+1.
 \end{verbatim}
 For a call \texttt{edit(L1,L2,D)}, where \texttt{L1} and \texttt{L2} are given lists\index{list} and \texttt{D} is a variable, the rules can generate all facts, each of which contains a different editing distance between the two lists\index{list}. The table\index{tabling}\index{mode-directed tabling} mode \texttt{table(+,+,min)}\index{\texttt{table}} tells the system to keep a fact with the minimal editing distance. 
 
@@ -474,11 +474,11 @@ Atoms\index{atom} and structure\index{structure} names do not belong to any modu
 % in file my_sum.pi
 module my_sum.
 
-my_sum(L)=Sum =>
+my_sum(L) = Sum =>
    sum_aux(L,0,Sum).
 
 private
-sum_aux([],Sum0,Sum) => Sum=Sum0.
+sum_aux([],Sum0,Sum) => Sum = Sum0.
 sum_aux([X|L],Sum0,Sum) => sum_aux(L,X+Sum0,Sum).
 
 % in file test_my_sum.pi
@@ -514,7 +514,7 @@ Picat can be used as a modeling and solving language for constraint\index{constr
 import cp.
 
 go => 
-    Vars=[S,E,N,D,M,O,R,Y],  % generate variables
+    Vars = [S,E,N,D,M,O,R,Y],  % generate variables
     Vars :: 0..9,
     all_different(Vars),     % generate constraints
     S #!= 0,
@@ -574,26 +574,26 @@ The call \texttt{call\_cleanup($Goal$,$Cleanup$)} is equivalent to {\tt call($Ca
 
 
 \section{Higher-Order Calls}
-A predicate\index{predicate} or function\index{function} is said to be \emph{higher-order}\index{higher-order call} if it takes calls as arguments. The built-ins \texttt{call}\index{\texttt{call}}, \texttt{apply}\index{\texttt{apply}}, and \texttt{find\_all}\index{\texttt{find\_all/2}} are higher-order\index{higher-order call}. The predicate \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{call}}, where $S$ is an atom\index{atom} or a structure\index{structure}, calls the predicate named by $S$ with the arguments that are specified in $S$ together with extra arguments $Arg_1$,$\ldots$,$Arg_n$. The function \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{apply}} is similar to \texttt{call}\index{\texttt{call}}, except that \texttt{apply}\index{\texttt{apply}} returns a value. The function \texttt{findall($Template$,$S$)}\index{\texttt{findall/2}} returns a list\index{list} of all possible solutions of \texttt{call($S$)}\index{\texttt{call}} in the form of $Template$. Other higher-order predicates include \texttt{call\_cleanup/2}\index{\texttt{call\_cleanup/2}}, \texttt{catch/3}\index{\texttt{catch/3}}, \texttt{count\_all}\index{\texttt{count\_all/2}}, \texttt{freeze/2}\index{\texttt{freeze/2}}, \texttt{not/1}\index{\texttt{not/1}}, \texttt{maxof/2-3}\index{\texttt{maxof/2}}\index{\texttt{maxof/3}}, \texttt{maxof\_inc/2-3}\index{\texttt{maxof\_inc/2}}\index{\texttt{maxof\_inc/3}}, \texttt{minof/2-3}\index{\texttt{minof/2}}\index{\texttt{minof/3}}, \texttt{minof\_inc/2-3}\index{\texttt{minof\_inc/2}}\index{\texttt{minof\_inc/3}}, \texttt{once/1}\index{\texttt{once/1}},  \texttt{time/1}\index{\texttt{time/1}}, \texttt{time\_out/3}\index{\texttt{time\_out/3}} and \texttt{time2/1}\index{\texttt{time/1}}. All of these higher-order predicates are defined in the {\tt basic} module, except for \texttt{time/1}, \texttt{time2/1}, and \texttt{time\_out/3}, which are defined in the {\tt sys} module. Higher-order calls cannot contain assignments or loops.
+A predicate\index{predicate} or function\index{function} is said to be \emph{higher-order}\index{higher-order call} if it takes calls as arguments. The built-ins \texttt{call}\index{\texttt{call}}, \texttt{apply}\index{\texttt{apply}}, and \texttt{find\_all}\index{\texttt{find\_all/2}} are higher-order\index{higher-order call}. The predicate \texttt{call($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{call}}, where $S$ is an atom\index{atom} or a structure\index{structure}, calls the predicate named by $S$ with the arguments that are specified in $S$ together with extra arguments $Arg_1$,$\ldots$,$Arg_n$. The function \texttt{apply($S$,$Arg_1$,$\ldots$,$Arg_n$)}\index{\texttt{apply}} is similar to \texttt{call}\index{\texttt{call}}, except that \texttt{apply}\index{\texttt{apply}} returns a value. The function \texttt{findall($Template$,$S$)}\index{\texttt{findall/2}} returns a list\index{list} of all possible solutions of \texttt{call($S$)}\index{\texttt{call}} in the form of $Template$. Other higher-order predicates include \verb-\+/1-\index{{\verb-\+/1-}}, \texttt{call\_cleanup/2}\index{\texttt{call\_cleanup/2}}, \texttt{catch/3}\index{\texttt{catch/3}}, \texttt{count\_all}\index{\texttt{count\_all/2}}, \texttt{freeze/2}\index{\texttt{freeze/2}}, \texttt{maxof/2-3}\index{\texttt{maxof/2}}\index{\texttt{maxof/3}}, \texttt{maxof\_inc/2-3}\index{\texttt{maxof\_inc/2}}\index{\texttt{maxof\_inc/3}}, \texttt{minof/2-3}\index{\texttt{minof/2}}\index{\texttt{minof/3}}, \texttt{minof\_inc/2-3}\index{\texttt{minof\_inc/2}}\index{\texttt{minof\_inc/3}}, \texttt{not/1}\index{\texttt{not/1}}, \texttt{once/1}\index{\texttt{once/1}},  \texttt{time/1}\index{\texttt{time/1}}, \texttt{time\_out/3}\index{\texttt{time\_out/3}} and \texttt{time2/1}\index{\texttt{time/1}}. All of these higher-order predicates are defined in the {\tt basic} module, except for \texttt{time/1}, \texttt{time2/1}, and \texttt{time\_out/3}, which are defined in the {\tt sys} module. Higher-order calls cannot contain assignments or loops.
 
 \subsection*{Example}
 \begin{verbatim}
-Picat> S=$member(X), call(S,[1,2,3])
-X=1;
-X=2;
-X=3;
+Picat> S = $member(X), call(S,[1,2,3])
+X = 1;
+X = 2;
+X = 3;
 no
 
-Picat> L=findall(X,member(X,[1,2,3])).
-L=[1,2,3]
+Picat> L = findall(X,member(X,[1,2,3])).
+L = [1,2,3]
 
-Picat> Z=apply('+',1,2)
-Z=3
+Picat> Z = apply('+',1,2)
+Z = 3
 \end{verbatim}
 \ignore{
 A lambda term\index{term} in the form \texttt{lambda($VList$,$Exp$)}, where $VList$ is a list\index{list} of input variables, and $Exp$ is an expression, denotes an anonymous function\index{function}. The last command in the example is the same as \texttt{Z=apply(add,1,2)}\index{\texttt{apply}}, where \texttt{add} is a function defined as follows:
 \begin{verbatim}
-add(X,Y)=Z => Z=X+Y.
+add(X,Y) = Z => Z = X+Y.
 \end{verbatim}
 }
 
@@ -604,13 +604,13 @@ The meta-call \texttt{apply}\index{\texttt{apply}} never returns a partially eva
 \subsection*{Example}
 \begin{verbatim}
 map(_F,[]) = [].
-map(F,[X|Xs])=[apply(F,X)|map(F,Xs)].
+map(F,[X|Xs]) = [apply(F,X)|map(F,Xs)].
 
 map2(_F,[],[]) = [].
-map2(F,[X|Xs],[Y|Ys])=[apply(F,X,Y)|map2(F,Xs,Ys)].
+map2(F,[X|Xs],[Y|Ys]) = [apply(F,X,Y)|map2(F,Xs,Ys)].
 
 fold(_F,Acc,[]) = Acc.
-fold(F,Acc,[H|T])=fold(F, apply(F,H,Acc),T).
+fold(F,Acc,[H|T]) = fold(F, apply(F,H,Acc),T).
 \end{verbatim}
 
 A call that is passed to \texttt{apply} is assumed to invoke a definition in a pre-imported built-in module, the enclosing module in which \texttt{apply} occurs, an imported module of the enclosing module, or the global module. Due to the overhead of runtime search, the use of higher-order calls is discouraged. Whenever possible, recursion, loops, or list and array comprehensions should be used instead.
@@ -627,7 +627,7 @@ An event channel is an attributed variable\index{attributed variable} to which a
 
 \subsection*{Example}
 \begin{verbatim}
-echo(X,Flag),var(Flag),{event(X,T)} => writeln(T).
+echo(X,Flag), var(Flag), {event(X,T)} => writeln(T).
 echo(_X,_Flag) => writeln(done).
 
 foo(Flag) => Flag=1.
@@ -660,10 +660,10 @@ install_echo_actor =>
 
 echo(X,Flag),var(Flag),{event(X,T)} => 
     writeln(T), 
-    if (T==done) then Flag=1 end.
+    if (T == done) then Flag=1 end.
 echo(_,_) => true.
 
-loop(Flag),var(Flag) => loop(Flag).
+loop(Flag), var(Flag) => loop(Flag).
 loop(_) => true.
 
 send(N,EchoThread) =>

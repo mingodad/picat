@@ -45,7 +45,7 @@ module qsort.
 
 sort([]) = [].
 sort([H|T]) = 
-    sort([E : E in T, E=<H])++[H]++sort([E : E in T, E>H]).
+    sort([E : E in T, E=<H]) ++ [H] ++ sort([E : E in T, E>H]).
 
 % isort.pi
 module isort.
@@ -55,7 +55,7 @@ sort([H|T]) = insert(H,sort(T)).
 
 private
 insert(X,[]) = [X].
-insert(X,Ys@[Y|_]) = Zs, X=<Y => Zs=[X|Ys].
+insert(X,Ys@[Y|_]) = Zs, X =< Y => Zs = [X|Ys].
 insert(X,[Y|Ys]) = [Y|insert(X,Ys)].
 \end{verbatim}
 The module \texttt{qsort.pi} defines a function named \texttt{sort} using quick sort, and the module \texttt{isort} defines a function of the same name using insertion sort. In the following session, both modules are used.
