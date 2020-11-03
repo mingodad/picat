@@ -1,9 +1,10 @@
 /*
   Some supporting utilities used by built-ins in basic, io, sys, and math modules
-  by Hakan Kjellerstrand and Neng-Fa Zhou.
+  by Hakan Kjellerstrand, Jonathan Fruhman, and Neng-Fa Zhou.
 */
 
 module picat_lib_aux.
+
 
 %
 % Flatten a list of nested lists.
@@ -21,7 +22,7 @@ flatten(L) = [L] => true.
 
 %% higher-order fold
 fold(_F,Acc,[]) = Acc.
-fold(F,Acc,[H|T])=fold(F, apply(F,H,Acc),T).
+fold(F,Acc,[H|T]) = fold(F, apply(F,H,Acc),T).
 
 even(N) => N mod 2 == 0.
 
@@ -47,8 +48,8 @@ prime(N),N>=11 =>
     end.
 
 % Sieve of Eratosthenes
-primes(N)=L =>
-    A=new_array(N),
+primes(N) = L =>
+    A = new_array(N),
     foreach(I in 2..floor(sqrt(N)))
         if (var(A[I])) then
             foreach(J in I**2..I..N)
@@ -101,10 +102,10 @@ first([X|_]) = X.
 first(Struct) = Struct[1], struct(Struct) => true.
 
 second([_,X|_]) = X.
-second(Struct)=Struct[2],struct(Struct),Struct.length>=2 => true.
+second(Struct) = Struct[2],struct(Struct),Struct.length>=2 => true.
 
-last(List)=Last, List=[_|_] => last_list(List,Last).
-last(Struct)=Last, struct(Struct) => Last=Struct[Struct.length].
+last(List) = Last, List=[_|_] => last_list(List,Last).
+last(Struct) = Last, struct(Struct) => Last=Struct[Struct.length].
 
 private
 last_list([X],Last) => Last=X.
@@ -149,3 +150,164 @@ notrace => bp.c_init_dg_flag(0).
 
 trace => bp.c_init_dg_flag(1).
 
+%%%%%%%% new math functions proposed by Jonathan Fruhman %%%%%%%%%%%%%%%
+% MODULE math
+% ===========
+
+to_degrees(X) = (X/3.141592653589793)*180.0.
+
+to_radians(X) = X/180.0*3.141592653589793.
+
+% inverse hyperbolic cosine
+acosh(X) = Val =>
+      if X < 1 then
+         throw $error(domain_error(X), acosh)
+      else
+         Val = log(X + sqrt(X + 1) * sqrt(X - 1))
+      end.
+
+% inverse cotangent
+acot(X) = Val =>
+   if X == 0 || X == 0.0 then
+      Val = pi / 2
+   else
+      Val = atan(1 / X)
+   end.
+
+% inverse hyperbolic cotangent
+acoth(X) = Val =>
+      if X >= -1 && X <= 1 then
+         throw $error(domain_error(X), acoth)
+      else
+         Val = (log(1 + 1 / X) - log(1 - 1 / X)) / 2
+      end.
+
+% inverse cosecant
+acsc(X) = Val =>                               
+   if X > -1 && X < 1 then                     % asin must be passed values in the range [-1, 1]
+      throw $error(domain_error(X), acsc)
+   else
+      Val = asin(1 / X)
+   end.
+
+% inverse hyperbolic cosecant
+acsch(X) = Val =>
+      if X == 0 || X == 0.0 then
+         throw $error(domain_error(X), acsch)
+      else
+         Val = log(sqrt(1 + 1 / (X ** 2)) + 1 / X)
+      end.
+
+% inverse secant
+asec(X) = Val =>
+   if X > -1 && X < 1 then                     % acos must be passed values in the range [-1, 1]
+      throw $error(domain_error(X), asec)
+   else
+      Val = acos(1 / X)
+   end.
+
+% inverse hyperbolic secant
+asech(X) = Val =>
+      if X <= 0 || X > 1 then
+         throw $error(domain_error(X), asech)
+      else
+         Val = log(sqrt(1 / X - 1) * sqrt(1 / X + 1) + 1 / X)
+      end.
+
+% inverse hyperbolic sine
+asinh(X) = Val =>
+     Val = log(X + sqrt(1 + X ** 2)).
+
+% inverse hyperbolic tangent
+atanh(X) = Val =>
+      if X <= -1 || X >= 1 then
+         throw $error(domain_error(X), atanh)
+      else
+         Val = (log(1 + X) - log(1 - X)) / 2
+      end.
+
+% hyperbolic cosine
+cosh(X) = Val =>
+     Val = (exp(X) + exp(-X)) / 2.
+
+% cotangent of X radians
+cot(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+   if X == 0 || X == 0.0 || X == pi() then     % cotangent cannot be given multiples of pi
+      throw $error(domain_error(Orig), cot)
+   elseif X == pi / 2 || X == 3 * pi / 2 then  % tan(X) is undefined, so manually assign 0
+      Val = 0.0
+   else
+      Val = cos(X) / sin(X)
+   end.
+
+% hyperbolic cotangent
+coth(X) = Val =>
+     if X == 0 || X == 0.0 then
+        throw $error(domain_error(X), coth)
+     else
+        Val = (exp(2 * X) + 1) / (exp(2 * X) - 1)
+     end.
+
+% cosecant of X radians
+csc(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+
+   if X == 0 || X == 0.0 || X == pi() then     % cosecant cannot be given multiples of pi
+      throw $error(domain_error(Orig), csc)
+   else
+      Val = 1 / sin(X)
+   end.
+
+
+% hyperbolic cosecant
+csch(X) = Val =>
+     if X == 0 || X == 0.0 then
+        throw $error(domain_error(X), csch)
+     else
+        Val = 2 / (exp(X) - exp(-X))
+     end.
+
+% secant of X radians
+sec(X) = Val =>
+   Orig = X,
+   TwoPi = 2 * pi,
+   while (X < 0)
+          X := X + TwoPi
+   end,
+   while (X >= TwoPi)
+          X := X - TwoPi
+   end,
+
+   if X == pi / 2 || X == 3 * pi / 2 then      % secant cannot be given odd multiples of pi / 2
+      throw $error(domain_error(Orig), sec)
+   else
+      Val = 1 / cos(X)
+   end.
+
+
+% hyperbolic secant
+sech(X) = Val =>
+     Val = 2 / (exp(X) + exp(-X)).
+
+% hyperbolic sine
+sinh(X) = Val =>
+     Val = (exp(X) - exp(-X)) / 2.
+
+% hyperbolic tangent
+tanh(X) = Val =>
+     Val = (exp(2 * X) - 1) / (exp(2 * X) + 1).

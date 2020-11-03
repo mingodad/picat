@@ -130,7 +130,7 @@ In a rule, both the condition and the body are \emph{goals}\index{goal}. Queries
 \item \texttt{$P$; $Q$}: This goal\index{goal} is a disjunction of goal\index{goal} $P$ and goal\index{goal} $Q$. It is resolved by first resolving $P$. If $P$ is true, then the disjunction is true. If $P$ is false, then $Q$ is resolved. The disjunction is true if $Q$ is true. The disjunction is false if both $P$ and $Q$ are false. Note that a disjunction can succeed more than once. Note also that the order is important: ($P$; $Q$) is generally not the same as ($Q$; $P$).
 \item \texttt{$P$ $|$$|$ $Q$}: This is the same as \texttt{($P$; $Q$)}.
 \item \texttt{not $P$}\index{\texttt{not/1}}: This goal\index{goal} is the negation of $P$. It is false if $P$ is true, and true if $P$ is false.  Note a negation goal\index{goal} can never succeed more than once.  Also note that no variables can get instantiated, no matter whether the goal\index{goal} is true or false.
-\item \verb-\+- \texttt{$P$}\index{{\verb-\+/1-}}: The same as \texttt{not $P$}.
+\item \verb-\+- \texttt{$P$}\index{{\verb-\+/1-}}: This is the same as \texttt{not $P$}.
 \item \texttt{once $P$}\index{\texttt{once/1}}: This goal\index{goal} is the same as $P$, but can never succeed more than once.
 \item \texttt{repeat}\index{\texttt{repeat/0}}: This predicate is defined as follows:
 \begin{verbatim}

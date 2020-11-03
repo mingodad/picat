@@ -61,6 +61,7 @@ extern char *string_in;
 #if defined(WIN32) && defined(M64BITS)
 #define sys_access(a, b) _access(a, b)
 #else
+int access(const char *pathname, int mode);
 #define sys_access(a, b) access(a, b)
 #endif
 
@@ -2209,17 +2210,17 @@ int c_file_permission()
         perm = (perm | 0x1);
     }
 #else
-    if (access(full_file_name, F_OK) < 0) {
+    if (sys_access(full_file_name, F_OK) < 0) {
         bp_exception = file_does_not_exist;
         return -1L;
     }
-    if (access(full_file_name, R_OK) == 0) {
+    if (sys_access(full_file_name, R_OK) == 0) {
         perm = (perm | 0x4);
     }
-    if (access(full_file_name, W_OK) == 0) {
+    if (sys_access(full_file_name, W_OK) == 0) {
         perm = (perm | 0x2);
     }
-    if (access(full_file_name, X_OK) == 0) {
+    if (sys_access(full_file_name, X_OK) == 0) {
         perm = (perm | 0x1);
     }
 #endif

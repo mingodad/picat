@@ -17,6 +17,14 @@
 #ifdef unix
 #include <unistd.h>
 #endif
+
+#if defined(WIN32) && defined(M64BITS)
+#define sys_access(a, b) _access(a, b)
+#else
+int access(const char *pathname, int mode);
+#define sys_access(a, b) access(a, b)
+#endif
+
 #include "bprolog.h"
 #include "frame.h"
 #include "inst.h"
@@ -98,7 +106,7 @@ void init_toam(argc, argv)
                     print_picat_usage();
                     exit(0);
                 } else if (*(str+2) == 'v' || strcmp(str+2, "version") == 0) {
-                    printf("Picat version 3.0#2\n");
+                    printf("Picat version 3.0#3\n");
                     exit(0);
                 }
 
@@ -397,7 +405,7 @@ int is_bc_file(main_arg)
     FILE *fp;
     BYTE magic;
 
-    if (access(main_arg, 0) == 0) {
+    if (sys_access(main_arg, 0) == 0) {
 #ifdef MSDOS
         fp = fopen(main_arg, "rb");
 #else

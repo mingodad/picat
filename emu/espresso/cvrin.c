@@ -8,6 +8,8 @@
 static bool line_length_error;
 static int lineno;
 
+int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA);
+
 void skip_line(register FILE *fpin, register FILE *fpout, register int echo)
 {
   register int ch;
