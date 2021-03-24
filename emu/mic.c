@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : mic.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
  *   Purpose: miscellaneous functions
  *            Includes MurmurHash by Austin Appleby
 
@@ -2440,7 +2440,7 @@ BPLONG bp_reverse_list(lst)
     while (ISLIST(lst)) {
         BPLONG tmp_lst;
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(lst);
-        elm = FOLLOW(ptr); DEREF(elm);
+        elm = FOLLOW(ptr);
         tmp_lst = ADDTAG(heap_top, LST);
         NEW_HEAP_NODE(elm);
         NEW_HEAP_NODE(rev_lst);

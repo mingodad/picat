@@ -63,6 +63,7 @@ import common_constr.
 % subcircuit(FDVars) => subcircuit(FDVars).
 % subcircuit_grid(A) => subcircuit_grid(A).
 % subcircuit_grid(A,K) => subcircuit_grid(A,K).
+% subcircuit_grid(A,K,EMap) => subcircuit_grid(A,K,EMap).
 % table_in(Vars, Tuples) => table_in(Vars, Tuples).
 % table_notin(Vars, Tuples) => table_notin(Vars, Tuples).
 
@@ -532,7 +533,6 @@ subcircuit(A),array(A) =>
 subcircuit(L) =>
     handle_exception($array_or_list_expected(L),subcircuit).
 
-%% use LFSR (left-feedback-shift-register) encoding
 subcircuit_aux(A), subcircuit_no_loop(A) =>
     circuit_aux(A).
 subcircuit_aux({V}) => V = 1.
@@ -612,51 +612,54 @@ subcircuit_choose_start(A,CurIndex,CurDeg,BestIndex,I,N) =>
 % A is a two-dimensional array. All the non-zero cells of A form a Hamiltonian cycle
 % A[R,C] is filled with 0 if it's known to be not in the cycle.
 % The total number of non-zero cells is K
+% EMap is a map from each edge (directed) (R,C) -> (R1,C1) to B, where B = 1 iff the
+% edge is in the cycle
 %
 subcircuit_grid(A) =>
     subcircuit_grid(A,_).
 
-subcircuit_grid({},K) => K = 0.
 subcircuit_grid(A,K) =>
-    (array(A) -> true; handle_exception($array_expected(A),subcircuit_grid)),
-    NRows = len(A),
-    foreach (R in 1..NRows)
-        (array(A[R]) -> true; handle_exception($array_expected(A[R]),subcircuit_grid))
-    end,
-    A :: 0..1,
-    NCols = len(A[1]),
-    NZeros = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 0]),
-    NCells = max(NRows*NCols-NZeros,1),
-    %
-    K :: 0..NCells,
-    sum([A[R,C] : R in 1..NRows, C in 1..NCols, A[R,C] !== 0]) #= K,
-    KGtOne #<=> (K #> 1),
-    KGtTwo #<=> (K #> 2),
-    KGtTwo #=> KGtOne,
-    %
-    H = new_array(NRows,NCols),    % H[R,C] = [{R1,C1,B1},{R2,C2,B2},...], Bi <=> (R,C) and (Ri,Ci) are connected in the circuit
+    subcircuit_grid(A,K,_EMap).
+
+subcircuit_grid({},K,_EMap) => K = 0.
+subcircuit_grid(A,K,EMap) =>
+    (var(EMap) -> true; handle_exception($var_expected(EMap),subcircuit_grid)),
+    check_matrix(A,NRows,NCols),
+    EMap = new_map(),                     % each edge is mapped to a Boolean var
     foreach (R in 1..NRows, C in 1..NCols)
         (A[R,C] !== 0 ->
-            Neibs = [{R1,C1,B} : (Dr,Dc) in [(-1,0),(1,0),(0,-1),(0,1)],
-                                   R1 = R+Dr, C1 = C+Dc, R1 >= 1, R1 =< NRows, C1 >= 1, C1 =< NCols, A[R1,C1] !== 0, B :: 0..1],
-            H[R,C] = Neibs
+            grid_neibs(A,NRows,NCols,R,C,Neibs)
         ;
-            H[R,C] = []
-        )
+            Neibs = []
+        ),
+        foreach ((R1,C1) in Neibs)
+            B :: 0..1,
+            EMap.put({R,C,R1,C1}, B),     % map the edge (directed) (R,C)->(Ri,Ci) to B, which is 1 iff the edge is in the circuit
+            A[R,C] #\/ #~B                % B -> A[R,C]
+        end
     end,
+    A :: 0..1,
+    NZeros = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 0]),
+    NOnes = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 1]),
+    NCells = max(NRows*NCols-NZeros,1),
+    %
+    K :: NOnes..NCells,
+    sum([A[R,C] : R in 1..NRows, C in 1..NCols, A[R,C] !== 0]) #= K,
+    (NOnes > 2 ->
+        KGtOne = 1,
+        KGtTwo = 1
+    ;
+        KGtOne #<=> (K #> 1),
+        KGtTwo #<=> (K #> 2),
+        KGtTwo #=> KGtOne
+    ),
+    %
     foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
-        Neibs = H[R,C],
-        OutBs = [B : {_,_,B} in Neibs],
-        foreach ({_,_,B} in Neibs)
-            A[R,C] #\/ #~B
-        end,
+        grid_neibs(A,NRows,NCols,R,C,Neibs),
+        OutBs = [B : (R1,C1) in Neibs, B = EMap.get({R,C,R1,C1})],
         LenOutBs = len(OutBs),
         bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,OutBs,LenOutBs,1)),   % one outgoing
-        InBs = [],
-        foreach ({R1,C1,_} in Neibs, member({R,C,B}, H[R1,C1]))
-            A[R,C] #\/ #~B,
-            InBs := [B|InBs]
-        end,
+        InBs = [B : (R1,C1) in Neibs, B = EMap.get({R1,C1,R,C})],
         LenInBs = len(InBs),
         bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,InBs,LenInBs,1))      % one incoming
     end,
@@ -675,8 +678,8 @@ subcircuit_grid(A,K) =>
     HasStartedList :: 0..1,
     constr_start(A,StartList,HasStartedList,KGtOne),
     %
-    P = new_array(NRows,NCols),
-    NB is round(log(2,NCells)+0.5),                % number of bits needed by the log encoding
+    P = new_array(NRows,NCols),                    % each in-circuit cell is mapped to a unique position
+    NB is round(log(2,NCells)+0.5),                % number of bits needed by log encoding
     Max is 2**NB-1,
     P :: 0..Max,
     foreach (R in 1..NRows, C in 1..NCols)
@@ -687,15 +690,30 @@ subcircuit_grid(A,K) =>
         )
     end,
     foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
+        grid_neibs(A,NRows,NCols,R,C,Neibs),
         #~A[R,C] #<=> P[R,C] #= 0,
         Start[R,C] #<=> P[R,C] #= 1,
-        Neibs = H[R,C],
-        foreach ({R1,C1,B} in Neibs)
-            once member({R,C,B1}, H[R1,C1]),
-            #~KGtTwo #\/ #~B #\/ #~B1,              % no cycle of size 2
+        foreach ((R1,C1) in Neibs)
+            B = EMap.get({R,C,R1,C1}),
+            B1 = EMap.get({R1,C1,R,C}),
+            if (R,C) @=< (R1,C1) then
+                #~KGtTwo #\/ #~B #\/ #~B1              % no cycle of size 2
+            end,
             entail_lfsr_succ(NB, #~Start[R1,C1], B, P[R,C], P[R1,C1])
         end
     end.
+
+check_matrix(A,NRows,NCols) =>
+    (array(A) -> true; handle_exception($array_expected(A),subcircuit_grid)),
+    NRows = len(A),
+    foreach (R in 1..NRows)
+        (array(A[R]) -> true; handle_exception($array_expected(A[R]),subcircuit_grid))
+    end,
+    NCols = len(A[1]).
+
+grid_neibs(A,NRows,NCols,R,C,Neibs) =>
+        Neibs = [(R1,C1) : (R1,C1) in [(R-1,C), (R+1,C), (R,C-1), (R,C+1)],
+                            R1 >= 1, R1 =< NRows, C1 >= 1, C1 =< NCols, A[R1,C1] !== 0].
 
 % Start and HasStarted must follow the following pattern:
 %      Start = 0 ... 0 1 0 ... 0

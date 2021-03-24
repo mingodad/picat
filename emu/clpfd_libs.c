@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : clpfd_libs.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
  *   Purpose: Primitives on linear constraints
 
  * This Source Code Form is subject to the terms of the Mozilla Public

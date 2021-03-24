@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : cpreds.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
  *   Purpose: Implementation of =../2
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -132,7 +132,7 @@ BPLONG univ_str2lst(op1)
         fprintf(stderr, "No case for op1 in univ_str2lst()\n");
         n = 0;
         ptr = NULL;
-        Head = 0;
+        Head = BP_ZERO;
     }
     if (local_top-heap_top <= 2*n + LARGE_MARGIN) {
         myquit(STACK_OVERFLOW, "univ");

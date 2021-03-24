@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : unify.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -292,6 +292,8 @@ int unify_suspvar_suspvar(op1, op2)
 {
     BPLONG_PTR dv_ptr1, dv_ptr2;
 
+//  printf("UNIFY_SUSP_SUSP %x %x\n",op1,op2);
+
     if (op1 == op2) return 1;
     dv_ptr1 = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op1);
     dv_ptr2 = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op2);
@@ -322,6 +324,8 @@ int unify_dvar_dvar(dv_ptr1, dv_ptr2)
 {
     BPLONG first, last, count;
     BPLONG_PTR top;
+//  printf("UNIFY_DVAR_DVAR %x %x\n",dv_ptr1,dv_ptr2);
+//  write_term(dv_ptr1); printf(" "); write_term(dv_ptr2); printf("\n");
 
     first = (DV_first(dv_ptr1) >= DV_first(dv_ptr2)) ? DV_first(dv_ptr1) : DV_first(dv_ptr2);
     last = (DV_last(dv_ptr1) <= DV_last(dv_ptr2)) ? DV_last(dv_ptr1) : DV_last(dv_ptr2);

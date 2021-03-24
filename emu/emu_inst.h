@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : emu_inst.h
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2020
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
  *   THIS FILE IS AUTOMATICALLY ASSEMBLED. 
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -6273,7 +6273,7 @@ lab_mod:
 
 
 #ifndef GCC
-case arg:  /* y,y,y */
+case picat_arg:  /* y,y,y */
 #endif
 lab_arg:
     op1 = YC(*P++);
