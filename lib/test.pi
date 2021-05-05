@@ -1,5 +1,4 @@
-module sat.
-import common_constr.
+import sat, common_constr.
 
 % '#!='(X,Y) =>  X #!= Y.
 % '#/\\'(X,Y) =>  X #/\ Y.
@@ -119,7 +118,7 @@ all_distinct(FDVars) =>
     all_different(FDVars).
 
 %
-% Requires that all non-zero values in Xs are distinct.
+% Requires that all non-zero values in Xs be distinct.
 %
 alldifferent_except_0(Xs) =>
     all_different_except_0(Xs).
@@ -540,9 +539,9 @@ subcircuit_aux(A) =>
     A.length = N,
     A :: 1..N,
     H = new_array(N,N),                         % H[I,I] = 1 means node I is not in the circuit
-    subcircuit_init_adj_matrix(H,A,N,MinK,MaxK),
+    subcircuit_init_adj_matrix(H,A,N,MinK),     % MinK: the number of vertices that are known to be in the cycle
     H :: 0..1,
-    K :: MinK..MaxK,                            % number of vertices in the cycle
+    K :: MinK..N,                               % number of vertices in the cycle
     foreach (I in 1..N, J in 1..N)              % channel
         if H[I,J] !== 0 then
             H[I,J] #<=> (A[I] #= J)
@@ -552,35 +551,25 @@ subcircuit_aux(A) =>
         sum([H[J,I] : J in 1..N]) #= 1        
     end,
     K #= sum([#~H[I,I] : I in 1..N]),
-    (MinK > 2 ->
-        KGt2 = 1,
-        KGt1 = 1
-    ;
-        KGt2 #<=> (K #> 2),
-        KGt1 #<=> (K #> 1),
-        KGt2 #=> KGt1
-    ),
+    KGtTwo #<=> K #> 2,
     % ban sub-cycles
-    subcircuit_choose_start(H,N,KGt1,MinK,Start),    % Start[I] = 1 iff the cycle starts at vertex I
+    subcircuit_choose_start(H,N,MinK,Start),    % Start[I] = 1 iff the cycle starts at vertex I
     P = new_array(N),                           % each in-cycle vertex is mapped to a unique position
     NB is round(log(2,N)+0.5),                  % number of bits needed by log encoding
-    Max is 2**NB-1,
-    P :: 0..Max,
+    P :: 0..N,
     foreach (I in 1..N)
         if H[I,I] == 1 then
             P[I] = 0
         else
             bp.sat_encode_dvar(P[I],_),          % get the log encoding
-            H[I,I] #<=> P[I] #= 0
+            H[I,I] #=> P[I] #= 0
         end
     end,
     foreach (I in 1..N)
-        Start[I] #=> P[I] #= 1,
+        Start[I] #<=> P[I] #= 1,
         foreach (J in 1..N, I !== J, H[I,J] !== 0)
-            H[I,J] #=> #~H[J,J],
-            H[I,J] #=> #~H[I,I],
-            if I < J then
-                #~KGt2 #\/ #~H[I,J] #\/ #~H[J,I]   % no cycle of size 2
+            if I =< J then
+                #~KGtTwo #\/ #~H[I,J] #\/ #~H[J,I]   % no cycle of size 2
             end,
             entail_lfsr_succ(NB, #~Start[J], H[I,J], P[I], P[J])
         end
@@ -592,12 +581,10 @@ subcircuit_no_loop(A) =>
         fd_false(A[I],I)
     end.
 
-subcircuit_init_adj_matrix(H,A,N,MinK,MaxK) =>
-    MinK0 = 0,
-    MaxK0 = N,
+subcircuit_init_adj_matrix(H,A,N,MinK) =>
+    K = 0,
     foreach (I in 1..N)
-        (fd_false(A[I], I) -> MinK0 := MinK0+1; true),
-        (A[I] == I -> MaxK0 := MaxK0-1; true),
+        (fd_false(A[I], I) -> K := K+1; true),
         foreach (J in 1..N)                   % H is a subgraph of A
             if fd_true(A[I],J) then
                 true
@@ -606,15 +593,14 @@ subcircuit_init_adj_matrix(H,A,N,MinK,MaxK) =>
             end
         end
     end,
-    MinK = MinK0,
-    MaxK = MaxK0.
+    MinK = K.
 
 %
 % Start and HasStarted must follow the following pattern:
 %      Start = 0 ... 0 1 0 ... 0
 % HasStarted = 0 ... 0 1 1 ... 1
 %
-subcircuit_choose_start(H,N,KGt1,MinK,Start) =>
+subcircuit_choose_start(H,N,MinK,Start) =>
     Start = new_array(N),                   % Start[I] = 1 iff the cycle starts at vertex I
     Start :: 0..1,                          
     foreach (I in 1..N)
@@ -622,320 +608,105 @@ subcircuit_choose_start(H,N,KGt1,MinK,Start) =>
     end,
     HasStarted = new_array(N),              % HasStarted[I] iff there exists I1 (I1 =< I) such that Start[I1]
     HasStarted :: 0..1,
-    (MinK > 1 ->
-        HasStarted[N-MinK+1] #= 1
-    ;
-        KGt1 #=> HasStarted[N]
-    ),
-    #~H[1,1] #=> Start[1],
+    (MinK > 1 -> HasStarted[N-MinK+1] #= 1; true),
+    Start[1] #<=> #~H[1,1],
     HasStarted[1] #<=> Start[1],
     foreach (I in 2..N)
         HasStarted[I-1] #=> HasStarted[I],
         Start[I] #=> #~HasStarted[I-1],
         Start[I] #=> HasStarted[I],
-        H[I,I] #\/ HasStarted[I-1] #\/ Start[I],               % (#~H[I,I] #/\ #~HasStarted[I-1]) #=> Start[I],
-        #~HasStarted[I] #\/ Start[I] #\/ HasStarted[I-1]       % (HasStarted[I] #/\ #~Start[I]) #=> HasStarted[I-1]
+        #~H[I,I] #/\ #~HasStarted[I-1] #=> Start[I],
+        HasStarted[I] #/\ #~Start[I] #=> HasStarted[I-1]
     end.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A is a two-dimensional array. All the non-zero cells of A form a Hamiltonian cycle
 % A[R,C] is filled with 0 if it's known to be not in the cycle.
 % The total number of non-zero cells is K
+% EMap is a map from each edge (directed) (R,C) -> (R1,C1) to B, where B = 1 iff the
+% edge is in the cycle
 %
 subcircuit_grid(A) =>
-    hcp_grid(A,_,_).
+    subcircuit_grid(A,_).
 
 subcircuit_grid(A,K) =>
-    hcp_grid(A,_,K).
+    subcircuit_grid(A,K,_EMap).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-hcp_grid(G) =>
-    grid_check_matrix(G,hcp_grid,NRows,NCols),
-    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
-    Es = [{(R,C),(R1,C1),_} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs],
-    hcp(Vs,Es,_K).
-
-hcp_grid(G,Es) =>
-    grid_check_matrix(G,hcp_grid,NRows,NCols),
-    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],    
-    (var(Es) ->
-        Es = [{(R,C),(R1,C1),_} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs]
-    ;    
-        hcp_grid_check_es(NRows,NCols,Es,hcp_grid)
-    ),
-    hcp(Vs,Es,_K).
-
-hcp_grid(G,Es,K) =>
-    grid_check_matrix(G,hcp_grid,NRows,NCols),
-    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
-    (var(Es) ->
-        Es = [{(R,C),(R1,C1),_} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs]
-    ;    
-        hcp_grid_check_es(NRows,NCols,Es,hcp_grid)
-    ),
-    hcp(Vs,Es,K).
-
-hcp(Vs,Es) =>
-    hcp(Vs,Es,_).
-
-hcp(Vs,Es,K) =>
-    VNumMap = new_map(),
-    hcp_scc_check_vs(Vs,1,N,VNumMap,Bs,0,NZeros,0,MinK,hcp),
-    AdjMap = new_map(),
-    hcp_check_es(N,Es,VNumMap,AdjMap,hcp),
-    hcp_aux(Bs,Es,N,K,VNumMap,AdjMap,NZeros,MinK).
-
-hcp_scc_check_vs([],I,N,_VNumMap,Bs,CountZeros0,CountZeros,CountOnes0,CountOnes,_Source) =>
-    N = I-1,
-    Bs = [],
-    CountZeros = CountZeros0,
-    CountOnes = CountOnes0.
-hcp_scc_check_vs([{V,B}|Vs],I,N,VNumMap,Bs,CountZeros0,CountZeros,CountOnes0,CountOnes,Source) =>
-    hcp_scc_check_vertex(V,Source),
-    hcp_scc_check_b(B,Source),
-    (VNumMap.has_key(V) ->
-        handle_exception($duplicated_vertex_name(V), Source)
-    ;
-        VNumMap.put(V,I)
-    ),
-    I1 is I+1,
-    Bs = [B|Bs1],
-    hcp_scc_check_vs(Vs,I1,N,VNumMap,Bs1,CountZeros0,CountZeros,CountOnes0,CountOnes,Source).
-hcp_scc_check_vs([VB|_Vs],_I,_N,_VNumMap,_Bs,_CountZeros0,_CountZeros,_CountOnes0,_CountOnes,Source) =>
-    handle_exception($invalid_pair(VB), Source).
-hcp_scc_check_vs(Vs,_I,_N,_VNumMap,_Bs,_CountZeros0,_CountZeros,_CountOnes0,_CountOnes,Source) =>
-    handle_exception($list_expected(Vs), Source).
-
-hcp_scc_check_vertex(V,_Source), ground(V) => true.
-hcp_scc_check_vertex(V,Source) =>
-    handle_exception($ground_expected(V), Source).
-
-hcp_scc_check_b(B,_Source), var(B) => bp.domain(B,0,1).
-hcp_scc_check_b(0,_Source) => true.
-hcp_scc_check_b(1,_Source) => true.
-hcp_scc_check_b(B,Source) =>
-    handle_exception($dvar_expected(B), Source).
-
-hcp_check_es(N,[],_VNumMap,AdjMap,_Source) =>
-    foreach (I in 1..N)
-        Neibs = AdjMap.get(I,[]),
-        Neibs1 = sort_remove_dups(Neibs),
-        AdjMap.put(I,Neibs1)
-    end.
-hcp_check_es(N,[{V1,V2,B}|Es],VNumMap,AdjMap,Source) =>
-    hcp_scc_check_vertex(V1,Source),
-    hcp_scc_check_vertex(V2,Source),
-    I1 = VNumMap.get(V1,0),
-    (I1 == 0 -> handle_exception($unknown_vertex_name(V1), Source); true),
-    I2 = VNumMap.get(V2,0),
-    (I2 == 0 -> handle_exception($unknown_vertex_name(V2), Source); true),
-    Neibs1 = AdjMap.get(I1,[]),
-    AdjMap.put(I1,[I2|Neibs1]),
-    hcp_scc_check_b(B,Source),
-    hcp_check_es(N,Es,VNumMap,AdjMap,Source).
-hcp_check_es(_N,[E|_Es],_VNumMap,_AdjMap,Source) =>
-    handle_exception($invalid_triplet(E), Source).
-hcp_check_es(_N,Es,_VNumMap,_AdjMap,Source) =>
-    handle_exception($list_expected(Es), Source).
-
-hcp_grid_check_es(_NRows,_NCols,[],_Source) => true.
-hcp_grid_check_es(NRows,NCols,[{(R1,C1),(R2,C2),_B}|Es],Source) =>
-    (R1 >= 1, R1 <= NRows, C1 >= 1, C1 <= NCols ->
-        true
-    ;
-        handle_exception($invalid_grid_coordinate(R1,C1), Source)
-    ),
-    (R2 >= 1, R2 <= NRows, C2 >= 1, C2 <= NCols ->
-        true
-    ;
-        handle_exception($invalid_grid_coordinate(R2,C2), Source)
-    ),
-    hcp_grid_check_es(NRows,NCols,Es,Source).
-hcp_grid_check_es(_NRows,_NCols,[E|_Es],Source) =>
-    handle_exception($invalid_triplet(E), Source).
-hcp_grid_check_es(_NRows,_NCols,Es,Source) =>
-    handle_exception($list_expected(Es), Source). 
-
-hcp_aux(_Bs,Es,N,K,VNumMap,AdjMap,_NZeros,MinK), MinK == N =>   % all vertices are in, convert this to circuit
-    K = N,
-    A = new_array(N),
-    A :: 1..N,
-    foreach (I in 1..N)
-        Neibs = AdjMap.get(I),
-        A[I] :: Neibs
-    end,
-    foreach ({V1,V2,B} in Es)
-        I1 = VNumMap.get(V1),
-        I2 = VNumMap.get(V2),
-        A[I1] #= I2 #<=> B
-    end,
-    circuit(A).
-hcp_aux(Bs,Es,N,K,VNumMap,AdjMap,NZeros,MinK) =>
-    A = to_array(Bs),
-    MaxK = max(N-NZeros,1),
-    K :: MinK..MaxK,
-    sum(Bs) #= K,
-    (MinK > 2 ->
-        KGt2 = 1,
-        KGt1 = 1
-    ;
-        KGt2 #<=> (K #> 2),
-        KGt1 #<=> (K #> 1),
-        KGt2 #=> KGt1
-    ),
-    H = new_array(N,N),                             % H[I,J] = 1 iff edge (I,J) is in the cycle
-    foreach ({V1,V2,B} in Es)
-        I1 = VNumMap.get(V1),
-        I2 = VNumMap.get(V2),
-        H[I1,I2] = B,
-        (I1 != I2 ->
-            B #=> A[I1],
-            B #=> A[I2]
+subcircuit_grid({},K,_EMap) => K = 0.
+subcircuit_grid(A,K,EMap) =>
+    (var(EMap) -> true; handle_exception($var_expected(EMap),subcircuit_grid)),
+    subcircuit_grid_check_matrix(A,NRows,NCols),
+    EMap = new_map(),                     % each edge is mapped to a Boolean var
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] !== 0 ->
+            grid_neibs(A,NRows,NCols,R,C,Neibs)
         ;
-            true
-        )
-    end,
-    foreach (I in 1..N, J in 1..N)
-        Cell = H[I,J], 
-        if var(Cell) && not dvar(Cell) then
-            Cell = 0
+            Neibs = []
+        ),
+        foreach ((R1,C1) in Neibs)
+            B :: 0..1,
+            EMap.put({R,C,R1,C1}, B),     % map the edge (directed) (R,C)->(Ri,Ci) to B, which is 1 iff the edge is in the circuit
+            A[R,C] #\/ #~B                % B -> A[R,C]
         end
     end,
-    foreach (I in 1..N)                             % each vertex has exactly one incoming and one outgoing edge
-        TmpB #\/ #~A[I] #\/ #~KGt1,                 
-        TmpB #=> sum([H[I,J] : J in 1..N, J !== I]) #= 1,
-        TmpB #=> sum([H[J,I] : J in 1..N, J !== I]) #= 1        
+    A :: 0..1,
+    NZeros = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 0]),
+    NOnes = sum([1 : R in 1..NRows, C in 1..NCols, A[R,C] == 1]),
+    NCells = max(NRows*NCols-NZeros,1),
+    %
+    K :: NOnes..NCells,
+    sum([A[R,C] : R in 1..NRows, C in 1..NCols, A[R,C] !== 0]) #= K,
+    (NOnes > 2 ->
+        KGtOne = 1,
+        KGtTwo = 1
+    ;
+        KGtOne #<=> (K #> 1),
+        KGtTwo #<=> (K #> 2),
+        KGtTwo #=> KGtOne
+    ),
+    %
+    foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
+        grid_neibs(A,NRows,NCols,R,C,Neibs),
+        OutBs = [B : (R1,C1) in Neibs, B = EMap.get({R,C,R1,C1})],
+        LenOutBs = len(OutBs),
+        bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,OutBs,LenOutBs,1)),   % one outgoing
+        InBs = [B : (R1,C1) in Neibs, B = EMap.get({R1,C1,R,C})],
+        LenInBs = len(InBs),
+        bp.attach_complex_imp([#~A[R,C], #~KGtOne], $ic_bool_sum(eq,InBs,LenInBs,1))      % one incoming
     end,
     % ban sub-cycles
-    hcp_scc_choose_start(A,N,KGt1,MinK,Start),      % Start[I] = 1 iff the cycle starts at vertex I
-    P = new_array(N),                               % each in-cycle vertex is mapped to a unique position
-    P :: 0..MaxK-1,
-    foreach (I in 1..N)
-        Start[I] #=> P[I] #= 0,
-        Neibs = AdjMap.get(I,[]),
-        foreach (J in Neibs, H[I,J] !== 0)
-            if I < J then
-                #~KGt2 #\/ #~H[I,J] #\/ #~H[J,I]   % no cycle of size 2
-            end,
-            #~Start[J] #/\ H[I,J] #=>  P[J] #= P[I]+1
-        end
-    end.
-
-%
-% Start and HasStarted must follow the following pattern:
-%      Start = 0 ... 0 1 0 ... 0
-% HasStarted = 0 ... 0 1 1 ... 1
-%
-hcp_scc_choose_start(A,N,KGt1,MinK,Start) =>
-    Start = new_array(N),                   % Start[I] = 1 iff the cycle starts at vertex I
-    Start :: 0..1,                          
-    foreach (I in 1..N)
-        #~A[I]  #=> #~Start[I]              % I is not in the cycle
+    subcircuit_grid_choose_start(A,NRows,NCols,KGtOne,NCells,Start),
+    %
+    P = new_array(NRows,NCols),                    % each in-circuit cell is mapped to a unique position
+    NB is round(log(2,NCells)+0.5),                % number of bits needed by log encoding
+    Max is 2**NB-1,
+    P :: 0..Max,
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] == 0 ->
+            P[R,C] = 0
+        ;
+            bp.sat_encode_dvar(P[R,C],_)           % get the log encoding
+        )
     end,
-    HasStarted = new_array(N),              % HasStarted[I] iff there exists I1 (I1 =< I) such that Start[I1]
-    HasStarted :: 0..1,
-    (MinK > 1 ->
-        HasStarted[N-MinK+1] #= 1
-    ;
-        KGt1 #=> HasStarted[N]
-    ),
-    A[1] #=> Start[1],
-    HasStarted[1] #<=> Start[1],
-    foreach (I in 2..N)
-        HasStarted[I-1] #=> HasStarted[I],
-        Start[I] #=> #~HasStarted[I-1],
-        Start[I] #=> HasStarted[I],
-        #~A[I] #\/ HasStarted[I-1] #\/ Start[I],               % (A[I] #/\ #~HasStarted[I-1]) #=> Start[I],
-        #~HasStarted[I] #\/ Start[I] #\/ HasStarted[I-1]       % (HasStarted[I] #/\ #~Start[I]) #=> HasStarted[I-1]
-    end.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-scc_grid(G) =>
-    scc_grid(G,_K).
-
-scc_grid(G,K) =>
-    grid_check_matrix(G,scc_grid,NRows,NCols),
-    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
-    Es = [{Pos,Pos1,1} : R in 1..NRows, C in 1..NCols,
-                         Pos = (R,C),
-                         grid_neibs(G,NRows,NCols,R,C,Neibs),
-                         Pos1 in Neibs,
-                         Pos @=< Pos1],
-    scc(Vs,Es,K).
-
-scc(Vs,Es) =>
-    scc(Vs,Es,_).
-
-scc(Vs,Es,K) =>
-    VNumMap = new_map(),
-    hcp_scc_check_vs(Vs,1,N,VNumMap,Bs,0,NZeros,0,MinK,scc),
-    AdjMap = new_map(),
-    scc_check_es(N,Es,VNumMap,AdjMap,scc),
-    scc_aux(Bs,N,K,AdjMap,NZeros,MinK).
-
-scc_check_es(N,[],_VNumMap,AdjMap,_Source) =>
-    foreach (I in 1..N)
-        Neibs = AdjMap.get(I,[]),
-        Neibs1 = sort_remove_dups(Neibs),
-        AdjMap.put(I,Neibs1)
-    end.
-scc_check_es(N,[{V1,V2,B}|Es],VNumMap,AdjMap,Source) =>
-    hcp_scc_check_vertex(V1,Source),
-    hcp_scc_check_vertex(V2,Source),
-    hcp_scc_check_b(B,Source),
-    I1 = VNumMap.get(V1,0),
-    (I1 == 0 -> handle_exception($unknown_vertex_name(V1), Source); true),
-    I2 = VNumMap.get(V2,0),
-    (I2 == 0 -> handle_exception($unknown_vertex_name(V2), Source); true),
-    Neibs1 = AdjMap.get(I1,[]),
-    AdjMap.put(I1,[(I2,B)|Neibs1]),
-    Neibs2 = AdjMap.get(I2,[]),
-    AdjMap.put(I2,[(I1,B)|Neibs2]),
-    scc_check_es(N,Es,VNumMap,AdjMap,Source).
-scc_check_es(_N,[E|_Es],_VNumMap,_AdjMap,Source) =>
-    handle_exception($invalid_triplet(E), Source).
-scc_check_es(_N,Es,_VNumMap,_AdjMap,Source) =>
-    handle_exception($list_expected(Es), Source).
-
-scc_aux(Bs,N,K,AdjMap,NZeros,MinK) =>
-    A = to_array(Bs),
-    MaxK = max(N-NZeros,1),
-    K :: MinK..MaxK,
-    sum(Bs) #= K,
-    (MinK > 1 ->
-        KGt1 = 1
-    ;
-        KGt1 #<=> (K #> 1)
-    ),
-    hcp_scc_choose_start(A,N,KGt1,MinK,Start),    % Start[I] = 1 iff vertex I is the root of the tree
-    DistA = new_array(N),
-    MaxDist = MaxK-1,
-    DistA :: 0..MaxDist,
-    foreach (I in 1..N)
-        if A[I] == 0 then
-            DistA[I] = 0
-        else
-            Start[I] #=> DistA[I] #= 0,
-            Neibs = AdjMap.get(I,[]),
-            NNeibs = len(Neibs),
-            Ps = new_list(NNeibs),
-            Ps :: 0..1,                                                   % Ps[J] = 1 <=> Neib J is I's parent
-            Start[I] #=> sum(Ps) #= 0,
-            #~Start[I] #/\ A[I] #=> sum([P*B : {P,(_,B)} in zip(Ps,Neibs)]) #= 1,
-            foreach ({P,(J,_)} in zip(Ps, Neibs))
-                TmpB #\/ #~A[I] #\/ #~P,            
-                TmpB #=> A[J],
-                TmpB #=> DistA[I] #= DistA[J]+1
-            end
+    foreach (R in 1..NRows, C in 1..NCols, A[R,C] !== 0)
+        grid_neibs(A,NRows,NCols,R,C,Neibs),
+        #~A[R,C] #<=> P[R,C] #= 0,
+        Start[R,C] #<=> P[R,C] #= 1,
+        foreach ((R1,C1) in Neibs)
+            B = EMap.get({R,C,R1,C1}),
+            B1 = EMap.get({R1,C1,R,C}),
+            if (R,C) @=< (R1,C1) then
+                #~KGtTwo #\/ #~B #\/ #~B1              % no cycle of size 2
+            end,
+            entail_lfsr_succ(NB, #~Start[R1,C1], B, P[R,C], P[R1,C1])
         end
     end.
 
-grid_check_matrix(A,Source,NRows,NCols) =>
-    (array(A) -> true; handle_exception($array_expected(A),Source)),
+subcircuit_grid_check_matrix(A,NRows,NCols) =>
+    (array(A) -> true; handle_exception($array_expected(A),subcircuit_grid)),
     NRows = len(A),
     foreach (R in 1..NRows)
-        (array(A[R]) -> true; handle_exception($array_expected(A[R]),Source))
+        (array(A[R]) -> true; handle_exception($array_expected(A[R]),subcircuit_grid))
     end,
     NCols = len(A[1]).
 
@@ -943,7 +714,41 @@ grid_neibs(A,NRows,NCols,R,C,Neibs) =>
         Neibs = [(R1,C1) : (R1,C1) in [(R-1,C), (R+1,C), (R,C-1), (R,C+1)],
                             R1 >= 1, R1 =< NRows, C1 >= 1, C1 =< NCols, A[R1,C1] !== 0].
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+subcircuit_grid_choose_start(A,NRows,NCols,KGtOne,NCells,Start) =>
+    Start = new_array(NRows,NCols),    
+    Start :: 0..1,                          % Start[R,C] = 1 iff the cycle starts at (R,C)
+    foreach (R in 1..NRows, C in 1..NCols)
+        (A[R,C] == 0 ->
+            Start[R,C] = 0
+        ;
+            #~A[R,C]  #=> #~Start[R,C]
+        )
+    end,
+    StartList = [{R,C,Start[R,C]} : R in 1..NRows, C in 1..NCols, A[R,C] !== 0],        
+    HasStartedList = new_list(NCells),    % HasStarted[R,C] iff there exists (R1,C1) in {(1,1) ... (R,C)} such that Start[R1,C1]
+    HasStartedList :: 0..1,
+    subcircuit_grid_constrain_start(A,StartList,HasStartedList,KGtOne).
+
+% Start and HasStarted must follow the following pattern:
+%      Start = 0 ... 0 1 0 ... 0
+% HasStarted = 0 ... 0 1 1 ... 1
+%
+subcircuit_grid_constrain_start(_A,[],_HasStartedList,_KGtOne) => true.
+subcircuit_grid_constrain_start(A,[{R,C,StartB}|StartList],[HasStartedB|HasStartedList],KGtOne) =>
+     A[R,C] #<=> StartB,
+     A[R,C] #<=> HasStartedB,
+     subcircuit_grid_constrain_start(A,HasStartedB,StartList,HasStartedList,KGtOne).
+
+subcircuit_grid_constrain_start(_A,_HasStartedB,[],_HasStartedList,_KGtOne) => true.
+subcircuit_grid_constrain_start(A,PrevHasStartedB,[{R,C,StartB}|StartList],[HasStartedB|HasStartedList],KGtOne) =>
+     PrevHasStartedB #=> HasStartedB,
+     A[R,C] #/\ #~PrevHasStartedB #=> StartB,
+     StartB #=> #~PrevHasStartedB,
+     HasStartedB #/\ #~StartB #=> PrevHasStartedB,
+     StartB #=> HasStartedB,
+     (StartList == [] -> KGtOne #=> HasStartedB; true),
+     subcircuit_grid_constrain_start(A,HasStartedB,StartList,HasStartedList,KGtOne).
+
 % if B, then Y is the successor of X
 entail_lfsr_succ(NB,B1,B2,X,Y) =>
     (var(X) ->
@@ -1132,7 +937,6 @@ entail_xor(B1,B2,Y,X1,X2,X3,X4) =>
     #~B1 #\/ #~B2 #\/ Y #\/ #~X1 #\/ X2 #\/ #~X3 #\/ #~X4,
     #~B1 #\/ #~B2 #\/ Y #\/ X1 #\/ #~X2 #\/ #~X3 #\/ #~X4,
     #~B1 #\/ #~B2 #\/ #~Y #\/ #~X1 #\/ #~X2 #\/ #~X3 #\/ #~X4.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global_cardinality(List,Pairs) =>

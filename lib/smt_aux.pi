@@ -127,6 +127,9 @@ proc_smt_solve_options([tmp(File)|Options],Cmd,Obj,ReportPred,Logic) =>
 proc_smt_solve_options([report(Pred)|Options],Cmd,Obj,ReportPred,Logic) =>
     (ReportPred = Pred -> true; true),
     proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
+proc_smt_solve_options([limit(N)|Options],Cmd,Obj,ReportPred,Logic) =>
+    (integer(N) -> bp.global_set('$n_backtracks',1,N); handle_exception(integer_expected(N), limit)),
+    proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
 proc_smt_solve_options([Option|Options],Cmd,Obj,ReportPred,Logic) =>
     bp.picat_warning($unsupported_option(Option),smt),
     proc_smt_solve_options(Options,Cmd,Obj,ReportPred,Logic).
@@ -153,7 +156,12 @@ smt_solve_aux(solve(Solver,TmpFile,_Fmt),Report,Logic,Obj,Vars) =>   % Solver = 
         smt_solve_maximize(Solver,TmpFileStr,SolFileStr,Report,Logic,ObjVar,Vars)    
     ;
         VarsArr = to_array(Vars),
-        smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[])
+        (bp.global_get('$n_backtracks',1,Limit) ->
+            bp.global_del('$n_backtracks',1),
+            smt_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[],Limit)
+        ;
+            smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[])
+        )
     ).
 
 %%%
@@ -161,12 +169,21 @@ smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,_Table) ?=>
     once smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars),
     bp.assert($smt_last_solution(VarsArr)).
 smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,Table),
-    bp.retract($smt_last_solution(Tuple)),
-    true
+    bp.retract($smt_last_solution(Tuple))
 =>
     bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
     smt_solve_repeat(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[Tuple|Table]).
-    
+
+smt_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,_Table,Limit), Limit > 0 ?=>
+    once smt_call_smt(Solver,TmpFileStr,SolFileStr,Logic,Vars),
+    bp.assert($smt_last_solution(VarsArr)).
+smt_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,Table,Limit),
+    bp.retract($smt_last_solution(Tuple))
+=>
+    Limit1 is Limit-1,
+    bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
+    smt_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,Logic,Vars,VarsArr,[Tuple|Table],Limit1).
+
 %%%
 % binary search:
 %%%

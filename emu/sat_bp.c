@@ -269,8 +269,8 @@ void Cboot_sat() {
 */
 int b_SAT_RETRIEVE_BNUM_cff(BPLONG BV, BPLONG Num, BPLONG MNum) {
 lab_start:
+  //	printf("=> BNUM %x ",BV); write_term(BV); printf("\n");
     DEREF_NONVAR(BV);
-    //  printf("=> BNUM %x ",BV); write_term(BV); printf("\n");
 
     if (ISINT(BV)) {
         if (BV == BP_ONE) {

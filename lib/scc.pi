@@ -1,0 +1,87 @@
+import sat.
+
+test1 =>
+    M = {{_,_},{_,_}},
+    scc_grid(M),
+    solve(M),
+	foreach (R in M)
+	    writeln(R)
+	end,
+	nl,
+    fail.
+
+grid_check_matrix(A,Source,NRows,NCols) =>
+    (array(A) -> true; handle_exception($array_expected(A),Source)),
+    NRows = len(A),
+    foreach (R in 1..NRows)
+        (array(A[R]) -> true; handle_exception($array_expected(A[R]),Source))
+    end,
+    NCols = len(A[1]).
+
+scc_grid(G) =>
+    grid_check_matrix(G,scc_grid,NRows,NCols),
+	Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+	Es = [{(R,C),(R1,C1),_} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs],
+    scc(Vs,Es,_K).
+
+scc_grid(G,Es) =>
+    grid_check_matrix(G,scc_grid,NRows,NCols),
+	Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+    scc(Vs,Es,_K).
+
+scc_grid(G,Es,K) =>
+    grid_check_matrix(G,scc_grid,NRows,NCols),    
+	Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+	scc(Vs,Es,K).
+
+scc(Vs,Es) =>
+    scc(Vs,Es,_).
+
+scc(Vs,Es,K) =>
+    VNumMap = new_map(),
+    hcp_scc_check_vs(Vs,1,N,VNumMap,scc),
+    AdjMap = new_map(),
+    hcp_scc_check_es(Es,VNumMap,AdjMap,scc),
+    scc_aux(Vs,Es,N,K,VNumMap,AdjMap).
+
+scc_aux(Vs,Es,N,K,VNumMap,AdjMap) =>
+    A = {B : {_,B} in Vs},                      % A[I] = 1 iff I is in the graph
+    NZeros = sum([1 : {_,B} in Vs, B == 0]),
+    MinK = sum([1 : {_,B} in Vs, B == 1]),
+    MaxK = max(N-NZeros,1),
+    K :: MinK..MaxK,
+    sum([B : {_,B} in Vs, B !== 0]) #= K,
+    (MinK > 1 ->
+        KGt1 = 1
+    ;
+        KGt1 #<=> (K #> 1)
+    ),
+    foreach ({V1,V2,B} in Es)
+        I1 = VNumMap.get(V1),
+        I2 = VNumMap.get(V2),
+		B #=> A[I1],
+		B #=> A[I2]
+    end,
+    hcp_scc_choose_start(A,N,KGt1,MinK,Start),    % Start[I] = 1 iff the cycle starts at vertex I
+    DistA = new_array(N),
+    MaxDist = MaxK-1,
+    DistA :: 0..MaxDist,
+    foreach (I in 1..N)
+        if A[I] == 0 then
+            DistA[I] = 0
+        else
+            Start[I] #=> DistA[I] #= 0,
+            Neibs = AdjMap.get(I,[]),
+            NNeibs = len(Neibs),
+            Ps = new_list(NNeibs),
+            Ps :: 0..1,                                                   % Ps[I] = 1 <=> Neib I is (R,C)'s parent
+            Start[I] #=> sum(Ps) #= 0,
+            #~Start[I] #/\ A[I] #=> sum(Ps) #= 1,
+            foreach ({P,I1} in zip(Ps, Neibs))
+			    TmpB #\/ #~A[I] #\/ #~P,			
+                TmpB #=> A[I1],
+                TmpB #=> DistA[I] #= DistA[I1]+1
+            end
+        end
+    end.
+

@@ -104,6 +104,9 @@ proc_mip_solve_options([tmp(File)|Options],Cmd,Obj) =>
     Cmd = $solve(_,TmpFile,_Fmt),
     (TmpFile = File -> true; handle_exception($multiple_tmp_files(TmpFile,File),solve)),
     proc_mip_solve_options(Options,Cmd,Obj).
+proc_mip_solve_options([limit(N)|Options],Cmd,Obj) =>
+    (integer(N) -> bp.global_set('$n_backtracks',1,N); handle_exception(integer_expected(N), limit)),
+    proc_mip_solve_options(Options,Cmd,Obj).
 proc_mip_solve_options([Option|Options],Cmd,Obj) =>
     bp.picat_warning($unsupported_option(Option),solve),
     proc_mip_solve_options(Options,Cmd,Obj).
@@ -121,7 +124,12 @@ mip_solve_aux(solve(Solver,TmpFile,_Fmt),ObjExp,Sense,Vars) =>   % Solver = guro
     bp.abolish(mip_last_solution,1),
     (ObjExp == 0, Vars !== [], bp.dvar_or_int_list(Vars) ->
         VarsArr = to_array(Vars),
-        mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[])
+        (bp.global_get('$n_backtracks',1,Limit) ->
+            bp.global_del('$n_backtracks',1),
+            mip_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[],Limit)
+        ;
+            mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[])
+        )
     ;
         mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars)
     ).
@@ -130,12 +138,21 @@ mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,_Table) 
     mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars),
     bp.assert($mip_last_solution(VarsArr)).
 mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,Table),
-    bp.retract($mip_last_solution(Tuple)),
-    true
+    bp.retract($mip_last_solution(Tuple))
 =>
     bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
     mip_solve_repeat(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[Tuple|Table]).
-    
+
+mip_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,_Table,Limit), Limit > 0 ?=>
+    mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars),
+    bp.assert($mip_last_solution(VarsArr)).
+mip_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,Table,Limit),
+    bp.retract($mip_last_solution(Tuple))
+=>
+    bp.'$table_notin'(VarsArr,[Tuple]),            % generated constraints are added into the global store
+    Limit1 is Limit-1,
+    mip_solve_repeat_with_limit(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars,VarsArr,[Tuple|Table],Limit1).
+
 mip_call_mip(Solver,TmpFileStr,SolFileStr,ObjExp,Sense,Vars) =>
     bp.trans_mip_constrs(Vars,ObjExp,ObjTerms,AllVars,Constrs),
     TmpStream = open(TmpFileStr,write),

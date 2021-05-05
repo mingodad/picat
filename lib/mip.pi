@@ -473,7 +473,7 @@ disjunctive_tasks(Tasks) =>
 disjunctive_tasks_aux([]) => true.
 disjunctive_tasks_aux([disj_tasks(S1,D1,S2,D2)|Tasks]) =>
     S1+D1 #=< S2 #\/ S2+D2 #=< S1,
-	disjunctive_tasks_aux(Tasks).
+    disjunctive_tasks_aux(Tasks).
 disjunctive_tasks_aux(Tasks) =>
     handle_exception($invalid_tasks(Tasks),disjunctive_tasks).
 
@@ -652,8 +652,8 @@ neqs(Neqs) =>
     (array(Neqs) -> to_list(Neqs)=List; List=Neqs),    
     check_neqs_args(List,List1),
     foreach ('#\\='(X,Y) in List1)
-	    X #!= Y
-	end.
+        X #!= Y
+    end.
 
 % serialized(Starts,Durations) => serialized(Starts,Durations).
 serialized(Starts,Durations) =>
