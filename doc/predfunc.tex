@@ -45,7 +45,7 @@ A predicate\index{predicate} is said to be \emph{deterministic} if it is defined
 \subsection*{Example}
 \begin{verbatim}
     append(Xs,Ys,Zs) ?=> Xs = [], Ys = Zs.
-    append(Xs,Ys,Zs) => Xs = [X|XsR], append(XsR,Ys,Zs).
+    append(Xs,Ys,Zs) => Xs = [X|XsR], Zs = [X|ZsR], append(XsR,Ys,ZsR).
 
     min_max([H],Min,Max) => Min = H, Max = H.
     min_max([H|T],Min,Max) => 

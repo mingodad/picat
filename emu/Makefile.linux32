@@ -12,6 +12,7 @@ CFLAGS = -O3 -fno-strict-aliasing -finline-functions -fomit-frame-pointer -Dunix
 
 #LGLFLAG = -Wall -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT
 ESPRESSO_FLAGS = -O3 -I. -Iespresso
+KISSAT_FLAGS = -c -O3 -W -Wall -DNEMBEDDED -DNDEBUG -DNMETRICS -DQUIET -DNSTATISTICS
 
 LFLAGS = -lm  -lpthread
 

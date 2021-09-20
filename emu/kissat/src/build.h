@@ -1,0 +1,5 @@
+#define VERSION "1.0.3"
+#define COMPILER "gcc (GCC) 9.2.0 -W -Wall -O3 -DNEMBEDDED -DNDEBUG -DNMETRICS -DQUIET -DNSTATISTICS"
+#define ID "unknown"
+#define BUILD "Sun, Sep 19, 2021 11:57:39 AM CYGWIN_NT-10.0 DESKTOP-A4UEIAT 3.1.4(0.340/5/3) x86_64"
+#define DIR "/cygdrive/c/Picat/emu/kissat_orig/build"

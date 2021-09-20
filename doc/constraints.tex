@@ -124,12 +124,12 @@ where $Exp1$ and $Exp2$ are arithmetic expressions, and $Rel$ is one of the cons
 \begin{itemize}
 \item \texttt{cond($BoolConstr$,$ThenExp$,$ElseExp$)}: This expression is the same as\\ \texttt{$BoolConstr$*$ThenExp$+(1-$BoolConstr$)*$ElseExp$}.
 \item \texttt{count($V$,$DVars$)}: The number of times $V$ occurs in $DVars$, where $DVars$ is a list of domain variables.
-\item \texttt{min($DVars$)}: The minimum of $DVars$, where $DVars$ is a list of domain variables.
 \item \texttt{max($DVars$)}: The maximum of $DVars$, where $DVars$ is a list of domain variables.
-\item \texttt{min($Exp1$,$Exp2$)}: The minimum of $Exp1$ and $Exp2$.
 \item \texttt{max($Exp1$,$Exp2$)}: The maximum of $Exp1$ and $Exp2$.
-\item \texttt{sum($DVars$)}: The sum of $DVars$, where $DVars$ is a list of domain variables.
+\item \texttt{min($DVars$)}: The minimum of $DVars$, where $DVars$ is a list of domain variables.
+\item \texttt{min($Exp1$,$Exp2$)}: The minimum of $Exp1$ and $Exp2$.
 \item \texttt{prod($DVars$)}: The product of $DVars$, where $DVars$ is a list of domain variables.
+\item \texttt{sum($DVars$)}: The sum of $DVars$, where $DVars$ is a list of domain variables.
 \end{itemize}
 When a constraint occurs in an arithmetic expression, it is evaluated to 1 if it is satisfied and 0 if it is not satisfied.
 
@@ -229,7 +229,7 @@ Picat provides the following global constraints.
 
 \item \texttt{at\_most($N$,$L$,$V$)}:\index{\texttt{atmost/3}} This constraint succeeds if there are at most $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
 
-\item \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}: Let $FDVars$ be a list of variables \texttt{[$X_1,X_2,\ldots,X_N$]}, where each \texttt{$X_i$} has the domain $1..N$. A valuation $X_1=v_1$, $X_2=v_2$, $\ldots$, $X_n=v_n$ satisfies the constraint if \texttt{1->$v_1$, 2->$v_2$, ..., n->$v_n$} forms a Hamiltonian cycle. This constraint ensures that each variable has a different value, and that the graph that is formed by the assignment does not contain any sub-cycles. For example, for the constraint\index{\texttt{circuit/1}} 
+\item \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}: Let $FDVars$ be a list of variables \texttt{[$X_1,X_2,\ldots,X_N$]}, where each \texttt{$X_i$} has the domain $1..N$. A valuation $X_1=v_1$, $X_2=v_2$, $\ldots$, $X_n=v_n$ satisfies the constraint if \texttt{1->$v_1$, 2->$v_2$, ..., n->$v_n$} forms a Hamiltonian cycle\index{Hamiltonian cycle}. This constraint ensures that each variable has a different value, and that the graph that is formed by the assignment does not contain any sub-cycles. For example, for the constraint\index{\texttt{circuit/1}} 
 \begin{verbatim}
     circuit([X1,X2,X3,X4])
 \end{verbatim}
@@ -264,6 +264,58 @@ Picat provides the following global constraints.
         end.
 \end{verbatim}
 
+\item \texttt{hcp($Vs$,$Es$)}\index{\texttt{hcp/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ forms a Hamiltonian cycle\index{Hamiltonian cycle}, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. The \texttt{circuit} and \texttt{subcircuit} constraints can be implemented as follows by using \texttt{hcp}:
+\begin{verbatim}
+    circuit(L) =>
+        N = len(L),
+        L :: 1..N,
+        Vs = [{I,1} : I in 1..N],
+        Es = [{I,J,B} : I in 1..N, 
+                        J in fd_dom(L[I]), 
+                        J !== I, 
+                        B #<=> L[I] #= J],
+        hcp(Vs,Es).
+
+    subcircuit(L) =>
+        N = len(L),
+        L :: 1..N,
+        Vs = [{I,B} : I in 1..N, 
+                      B #<=> L[I] #!= I],
+        Es = [{I,J,B} : I in 1..N, 
+                        J in fd_dom(L[I]), 
+                        J !== I, 
+                        B #<=> L[I] #= J],
+        hcp(Vs,Es).
+\end{verbatim}
+
+\item \texttt{hcp($Vs$,$Es$,$K$)}\index{\texttt{hcp/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{hcp($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+
+\item \texttt{hcp\_grid($A$)}\index{\texttt{hcp\_grid/1}} (only available in \texttt{sat}):  This constraint ensures that the \textit{grid}\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{hcp}:
+\begin{verbatim}
+    hcp_grid(A) =>
+        NRows = len(A),
+        NCols = len(A[1]),
+        Vs = [{(R,C), A[R,C]} : 
+                    R in 1..NRows, 
+                    C in 1..NCols],
+        Es = [{(R,C), (R1,C1), _} : 
+                    R in 1..NRows, 
+                    C in 1..NCols,
+                    (R1,C1) in neibs(A,NRows,NCols,R,C)],
+        hcp(Vs,Es).
+
+    neibs(A,NRows,NCols,R,C) = 
+        [(R1,C1) : (R1,C1) in [(R-1,C), (R+1,C), 
+                               (R,C-1), (R,C+1)],
+                    R1 >= 1, R1 =< NRows,
+                    C1 >= 1, C1 =< NCols, 
+                    A[R1,C1] !== 0].
+\end{verbatim}
+
+\item \texttt{hcp\_grid($A$,$Es$)}\index{\texttt{hcp\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \texttt{hcp\_grid($A$)}, except that it also restricts the edges to $Es$, which consists of triplets of the form $\{V_1,V_2,B\}$. In a triplet in $Es$, $V_1$ and $V_2$ take the form $(R,C)$, where $R$ is a row number and $C$ is a column number, and $B$ is a Boolean variable, which denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. If $Es$ is a variable, then it is bound to the edges of the grid graph.  
+
+\item \texttt{hcp\_grid($A$,$Es$,$K$)}\index{\texttt{hcp\_grid/3}} (only available in \texttt{sat}): This constraint is the same as\\ \texttt{hcp\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+
 \item \texttt{increasing($L$)}\index{\texttt{increasing/1}}: The sequence (an array or a list) $L$ is in (non-strictly) increasing order.
 
 \item \texttt{increasing\_strict($L$)}\index{\texttt{increasing\_strict/1}}: The sequence (an array or a list) $L$ is in strictly increasing order.
@@ -284,14 +336,42 @@ Picat provides the following global constraints.
 
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}\index{\texttt{scalar\_product/4}}: The scalar product of $A$ and $X$ has the relation $Rel$ with $Product$, where $Rel$ is one of the following operators: \verb+#=+, \verb+#!=+, \verb+#>=+, \verb+#>+, \verb+#=<+ (\verb+#<=+), and \verb+#<+. 
 
+\item \texttt{scc($Vs$,$Es$)}\index{\texttt{scc/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is strongly connected, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+
+\item \texttt{scc($Vs$,$Es$,$K$)}\index{\texttt{scc/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{scc($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+
+\item \texttt{scc\_grid($A$)}\index{\texttt{scc\_grid/1}} (only available in \texttt{sat}):  This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean variables, forms a strongly connected undirected graph. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{scc}:
+\begin{verbatim}
+    scc_grid(A) =>
+        NRows = len(A),
+        NCols = len(A[1]),
+        Vs = [{(R,C), A[R,C]} : 
+                    R in 1..NRows, 
+                    C in 1..NCols],
+        Es = [{(R,C), (R1,C1), 1} : 
+                    R in 1..NRows, 
+                    C in 1..NCols,
+                    (R1,C1) in neibs(A,NRows,NCols,R,C)],
+        scc(Vs,Es).
+
+    neibs(A,NRows,NCols,R,C) = 
+        [(R1,C1) : (R1,C1) in [(R-1,C), (R+1,C), 
+                               (R,C-1), (R,C+1)],
+                    R1 >= 1, R1 =< NRows,
+                    C1 >= 1, C1 =< NCols, 
+                    A[R1,C1] !== 0].
+\end{verbatim}
+Note that there is an edge between each pair of neighboring cells in the resulting graph as long as the cells are in the graph.
+
+\item \texttt{scc\_grid($A$,$K$)}\index{\texttt{scc\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \texttt{scc\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+
 \item \texttt{serialized($Starts$,$Durations$)}\index{\texttt{serialized/2}}: This constraint describes a set of non-overlapping tasks, where $Starts$ and $Durations$ are lists of integer-domain variables, and the lists have the same length. Let $Os$ be a list of 1s that has the same length as $Starts$. This constraint is equivalent to \texttt{cumulative($Starts$,$Durations$,$Os$,1)}\index{\texttt{cumulative/4}}.
 
 \item \texttt{subcircuit($FDVars$)}\index{\texttt{subcircuit/1}}: This constraint is the same as \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}, except that not all of the vertices are required to be in the circuit. If the $i$th element of $FDVars$ is $i$, then the vertex $i$ is not part of the circuit. 
 
-\item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}}: This constraint ensures that the grid graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph. This constraint is only available in the \texttt{sat} module.
+\item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}} (only available in \texttt{sat}): This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle\index{Hamiltonian cycle}. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph.
 
-\item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}}: This constraint is the same as \texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$. This constraint is only available in the \texttt{sat} module.
-
+\item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \\\texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$, 
 \end{itemize}
 
 \section{Solver Invocation}
@@ -311,8 +391,9 @@ Picat provides the following global constraints.
 \subsection{Common Solving Options}
 The following options are accepted by all four of the solvers.\footnote{Note that the preceding dollar sign indicates that it is followed by a term, not a function call.}
 \begin{itemize}
+\item \texttt{\$limit($N$)}: Search up to $N$ solutions.
+\item \texttt{\$max($Var$)}: Maximize the variable $Var$.
 \item \texttt{\$min($Var$)}: Minimize the variable $Var$.
-\item \texttt{\$max($Exp$)}: Maximize the variable $Var$.
 \item \texttt{\$report($Call$)}: Execute $Call$ each time a better answer is found while searching for an optimal answer. This option cannot be used if the {\tt mip} module is used.
 \end{itemize}
 

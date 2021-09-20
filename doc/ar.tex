@@ -149,8 +149,8 @@ Whenever an inner element \texttt{Ey} is excluded from the domain of \texttt{Y},
    x_add_y_eq_c_ic(X,Y,C), var(X), var(Y),
        {generated,ins(X),ins(Y),bound(X),bound(Y)}
    =>         
-       X :: C-Y.max .. C-Y.min,
-       Y :: C-X.max .. C-X.min.
+       X :: C-fd_max(Y) .. C-fd_min(Y),
+       Y :: C-fd_max(X) .. C-fd_min(X).
    x_add_y_eq_c_ic(X,Y,C), var(X) =>
        X = C-Y.
    x_add_y_eq_c_ic(X,Y,C) =>

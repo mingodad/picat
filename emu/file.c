@@ -3327,6 +3327,7 @@ void c_str_to_picat_str(CHAR_PTR str, BPLONG lst, BPLONG lstr) {
         FOLLOW(heap_top) = (BPLONG)heap_top;
         ASSIGN_v_heap_term(lst, (BPLONG)heap_top);
         ASSIGN_v_heap_term(lstr, (BPLONG)heap_top);
+		heap_top++;
         return;
     }
     while ((*ch_ptr) != '\0') {

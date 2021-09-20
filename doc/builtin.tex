@@ -529,7 +529,7 @@ January 14, 2013 \\
 }
 \end{itemize}
 \end{scriptsize}
-\section*{Modules \texttt{cp}, \texttt{sat}, \texttt{smt}, and \texttt{mip}}
+\section*{Modules \texttt{cp}, \texttt{mip}, \texttt{sat}, and \texttt{smt}}
 \begin{scriptsize}
 \begin{itemize}
     \item {\tt \verb+#~+$X$}
@@ -577,6 +577,11 @@ January 14, 2013 \\
 \item \texttt{fd\_true($FDVar$,$Elm$)}
 \item \texttt{fd\_vector\_min\_max($Min$,$Max$)}
 \item \texttt{global\_cardinality($List$,$Pairs$)}
+\item \texttt{hcp($Vs$,$Es$)} (sat only)
+\item \texttt{hcp($Vs$,$Es$,$K$)} (sat only)
+\item \texttt{hcp\_grid($A$)} (sat only)
+\item \texttt{hcp\_grid($A$,$Es$)} (sat only)
+\item \texttt{hcp\_grid($A$,$Es$,$K$)} (sat only)
 \item \texttt{increasing($L$)}
 \item \texttt{increasing\_strict($L$)}
 \item \texttt{indomain($Var$)} (nondet) (cp only)
@@ -590,6 +595,10 @@ January 14, 2013 \\
 \item \texttt{regular$(X,Q,S,D,Q0,F)$}
 \item \texttt{scalar\_product($A$,$X$,$Product$)} 
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}
+\item \texttt{scc($Vs$,$Es$)} (sat only) 
+\item \texttt{scc($Vs$,$Es$,$K$)} (sat only)
+\item \texttt{scc\_grid($A$)} (sat only) 
+\item \texttt{scc\_grid($A$,$K$)} (sat only) 
 \item \texttt{serialized($Starts$,$Durations$)}
 \item \texttt{solve($Opts$,$Vars$)} (nondet)
 \item \texttt{solve($Vars$)} (nondet)
