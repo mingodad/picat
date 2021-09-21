@@ -477,7 +477,7 @@ parse_options (application * application, int argc, char **argv)
 		ERROR ("multiple '--time=%d' and '%s'",
 		       application->time, arg);
 	      application->time = val;
-	      alarm (val);
+	      //alarm (val);
 	    }
 	  else
 	    ERROR ("invalid argument in '%s' (try '-h')", arg);

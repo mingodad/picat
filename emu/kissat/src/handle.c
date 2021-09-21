@@ -26,18 +26,21 @@ SIGNALS
 const char *
 kissat_signal_name (int sig)
 {
-#define SIGNAL(SIG) \
+  /*
+#define SIGNAL(SIG)							\
   if (sig == SIG) return #SIG;
   SIGNALS
 #undef SIGNAL
   if (sig == SIGALRM)
     return "SIGALRM";
+  */
   return "SIGUNKNOWN";
 }
 
 void
 kissat_reset_signal_handler (void)
 {
+  /*
   if (!handler_set)
     return;
 #define SIGNAL(SIG) \
@@ -46,6 +49,7 @@ kissat_reset_signal_handler (void)
 #undef SIGNAL
   handler_set = false;
   handler = 0;
+  */
 }
 
 // *INDENT-ON*
@@ -53,6 +57,7 @@ kissat_reset_signal_handler (void)
 static void
 catch_signal (int sig)
 {
+  /*
   if (caught_signal)
     return;
   caught_signal = sig;
@@ -61,11 +66,13 @@ catch_signal (int sig)
   handler (sig);
   kissat_reset_signal_handler ();
   raise (sig);
+  */
 }
 
 void
-kissat_init_signal_handler (void (*h) (int sig))
+kissat_init_signal_handler (void (*h) (int sig))  
 {
+  /*
   assert (!handler);
   handler = h;
   handler_set = true;
@@ -73,6 +80,7 @@ kissat_init_signal_handler (void (*h) (int sig))
   SIG ##_handler = signal (SIG, catch_signal);
   SIGNALS
 #undef SIGNAL
+  */
 }
 
 static volatile bool caught_alarm;
@@ -83,6 +91,7 @@ static void (*handle_alarm) ();
 static void
 catch_alarm (int sig)
 {
+  /*
   assert (sig == SIGALRM);
   if (caught_alarm)
     return;
@@ -91,25 +100,30 @@ catch_alarm (int sig)
   assert (handle_alarm);
   caught_alarm = true;
   handle_alarm ();
+  */
 }
 
 void
 kissat_init_alarm (void (*handler) (void))
 {
+  /*
   assert (handler);
   assert (!caught_alarm);
   handle_alarm = handler;
   alarm_handler_set = true;
   assert (!SIGALRM_handler);
   SIGALRM_handler = signal (SIGALRM, catch_alarm);
+  */
 }
 
 void
 kissat_reset_alarm (void)
 {
+  /*
   assert (alarm_handler_set);
   assert (handle_alarm);
   alarm_handler_set = false;
   handle_alarm = 0;
   (void) signal (SIGALRM, SIGALRM_handler);
+  */
 }

@@ -1,0 +1,14 @@
+import os.
+
+main =>
+    Fs = listdir("."),
+	C = 1,
+	print("             "),
+	foreach (F in Fs, append(MainStr,".c",F))
+	    printf(" kis_%s.o",MainStr),
+		C := C+1,
+		if (C mod 5 == 0) then
+		    println("\\"),
+			print("             ")
+		end
+	end.

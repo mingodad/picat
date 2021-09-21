@@ -37,11 +37,14 @@ kissat_getc (file * file)
   assert (file);
   assert (file->file);
   assert (file->reading);
+  /*
 #ifdef _POSIX_C_SOURCE
   int res = getc_unlocked (file->file);
 #else
   int res = getc (file->file);
 #endif
+  */
+  int res = getc (file->file);
   if (res != EOF)
     file->bytes++;
   return res;
@@ -53,11 +56,14 @@ kissat_putc (file * file, int ch)
   assert (file);
   assert (file->file);
   assert (!file->reading);
+  /*
 #ifdef _POSIX_C_SOURCE
   int res = putc_unlocked (ch, file->file);
 #else
   int res = putc (ch, file->file);
 #endif
+  */
+  int res = putc (ch, file->file);
   if (res != EOF)
     file->bytes++;
   return ch;
