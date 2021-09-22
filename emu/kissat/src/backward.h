@@ -3,7 +3,7 @@
 
 #include "reference.h"
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct kissat;
 

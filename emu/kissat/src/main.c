@@ -5,7 +5,7 @@
 #include "print.h"
 
 #include <assert.h>
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 static kissat *solver;
 

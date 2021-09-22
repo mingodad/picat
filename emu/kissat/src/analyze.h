@@ -1,7 +1,7 @@
 #ifndef _analyze_h_INCLUDED
 #define _analyze_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct clause;
 struct kissat;

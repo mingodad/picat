@@ -3,7 +3,7 @@
 
 #include "utilities.h"
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 #include <stdint.h>
 
 #define NUM_FORMAT_STRINGS 4

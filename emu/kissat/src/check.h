@@ -3,7 +3,7 @@
 
 #ifndef NDEBUG
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 #include <stdlib.h>
 
 struct kissat;

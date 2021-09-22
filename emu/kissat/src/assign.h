@@ -1,7 +1,7 @@
 #ifndef _assign_h_INCLUDED
 #define _assign_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 #define DECISION UINT_MAX
 #define UNIT (DECISION - 1)

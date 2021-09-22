@@ -1,7 +1,7 @@
 #ifndef _rephase_h_INCLUDED
 #define _rephase_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 #include <stdint.h>
 
 typedef struct rephased rephased;

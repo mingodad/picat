@@ -5,7 +5,7 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 #define DISCONTAIN UINT_MAX
 #define DISCONTAINED(IDX) ((int)(IDX) < 0)

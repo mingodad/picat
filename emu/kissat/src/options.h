@@ -2,7 +2,7 @@
 #define _options_h_INLCUDED
 
 #include <assert.h>
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 #define OPTIONS \
 OPTION( ands, 1, 0, 1, "extract and eliminate and gates") \

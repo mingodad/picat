@@ -1,7 +1,7 @@
 #ifndef _eliminate_hpp_INCLUDED
 #define _eliminate_hpp_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct kissat;
 struct clause;

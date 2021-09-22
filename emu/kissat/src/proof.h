@@ -3,7 +3,7 @@
 
 #ifndef NPROOFS
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 #include <stdlib.h>
 
 typedef struct proof proof;

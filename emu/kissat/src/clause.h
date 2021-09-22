@@ -5,7 +5,7 @@
 #include "reference.h"
 #include "utilities.h"
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 typedef struct clause clause;
 

@@ -1,7 +1,7 @@
 #ifndef _flags_h_INCLUDED
 #define _flags_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 typedef struct flags flags;
 

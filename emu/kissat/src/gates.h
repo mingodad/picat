@@ -2,7 +2,7 @@
 #define _gates_h_INCLUDED
 
 #include <stdlib.h>
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct kissat;
 struct clause;

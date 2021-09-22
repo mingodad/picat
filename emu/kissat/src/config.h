@@ -2,7 +2,7 @@
 #ifndef _config_h_INCLUDED
 #define _config_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct kissat;
 

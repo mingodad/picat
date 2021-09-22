@@ -1,7 +1,7 @@
 #ifndef _xors_h_INCLUDED
 #define _xors_h_INCLUDED
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 struct kissat;
 

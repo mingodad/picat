@@ -6,7 +6,7 @@
 #include "stack.h"
 #include "vector.h"
 
-#include <stdbool.h>
+#include "kissat_bool.h"
 
 #define INVALID_WATCH INVALID_VECTOR_ELEMENT
 
