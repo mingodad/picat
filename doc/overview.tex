@@ -21,7 +21,7 @@ Once the interpreter is started, users can type a command line after the prompt 
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $OSPrompt$ \texttt{picat $File$ $Arg_1$ $Arg_2$ $\ldots$ $Arg_n$}
 \end{tabbing}
-where $File$ (with or without the extension \texttt{.pi}) is the main file name of the program. The program must define a predicate named \texttt{main/0} or \texttt{main/1}. If the command line contains arguments after the file name, then \texttt{main/1} is executed. Otherwise, if the file name is not followed by any arguments, then \texttt{main/0} is executed. When \texttt{main/1} executed, all of the arguments after the file name are passed to the predicate as a list of strings.
+where $File$ (with or without the extension \texttt{.pi}) is the main file name of the program. The program must define a predicate named \texttt{main/0} or \texttt{main/1}.\footnote{This document occasionally uses the notation $F/N$ when referring to predicates and functions.  When this notation is used, it refers to the predicate or function that is called $F$, which has $N$ arguments.} If the command line contains arguments after the file name, then \texttt{main/1} is executed. Otherwise, if the file name is not followed by any arguments, then \texttt{main/0} is executed. When \texttt{main/1} executed, all of the arguments after the file name are passed to the predicate as a list of strings.
 
 \ignore{
 The OS command \texttt{picatc}\index{\texttt{picatc}} compiles a file (with extension name \texttt{pi}) and all of its dependent files into bytecode files (with extension name \texttt{qi}), and the OS command \texttt{picate}\index{\texttt{picate}} executes a Picat program as a standalone application.\footnote{The executables \texttt{picatc} and \texttt{picate} will be added later.}
@@ -312,7 +312,9 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Goal$ \\
 \>  \texttt{end} 
 \end{tabbing}
-where each iterator\index{iterator}, $E_i\ in\ D_i$, can be followed by an optional condition $Cond_i$.  Within each iterator\index{iterator}, $E_i$ is an iterating pattern\index{iterator}, and $D_i$ is an expression that gives a compound value\index{compound value}. The \texttt{foreach}\index{foreach loop} statement means that $Goal$ is executed for every possible combination of values $E_1 \in D_1$, $\ldots$, $E_n \in D_n$ that satisfies the conditions \texttt{$Cond_1$}, $\ldots$, \texttt{$Cond_n$}. A while\index{while loop} statement takes the form 
+where each iterator\index{iterator}, $E_i\ in\ D_i$, can be followed by an optional condition $Cond_i$.  Within each iterator\index{iterator}, $E_i$ is an iterating pattern\index{iterator}, and $D_i$ is an expression that gives a compound value\index{compound value}. The \texttt{foreach}\index{foreach loop} statement means that $Goal$ is executed for every possible combination of values $E_1 \in D_1$, $\ldots$, $E_n \in D_n$ that satisfies the conditions \texttt{$Cond_1$}, $\ldots$, \texttt{$Cond_n$}.\footnote{The condition \texttt{break($Cond$)} terminates the loop when $Cond$ is true.}\index{\texttt{break}}
+
+A while\index{while loop} statement takes the form 
 \begin{tabbing}
 aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \texttt{while ($Cond$)} \\

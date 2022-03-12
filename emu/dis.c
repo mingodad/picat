@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : dis.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -105,8 +105,8 @@ void print_inst(filedes)
     BPLONG opcode;
     BPLONG i, n;
     SYM_REC_PTR sym_ptr;
-	//    if (num_line)
-	fprintf(filedes, BPULONG_FMT_STR "\t", (BPULONG) cpreg);
+    //    if (num_line)
+    fprintf(filedes, BPULONG_FMT_STR "\t", (BPULONG) cpreg);
     opcode = *cpreg++;
 
     //  printf("dis %s\n",inst_name[opcode]);

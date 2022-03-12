@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : mic.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: miscellaneous functions
  *            Includes MurmurHash by Austin Appleby
 
@@ -1874,6 +1874,7 @@ BPLONG fast_get_attr(sv_ptr, attr)
     BPLONG attrs, pair, attr1;
 
     attrs = DV_attached(sv_ptr);
+    //  printf("attrs "); write_term(attrs); printf("\n");
     ptr = (BPLONG_PTR)UNTAGGED_ADDR(attrs);
     attrs = FOLLOW(ptr+1);  /* $attrs(AttrValueList) */
     DEREF_NONVAR(attrs);

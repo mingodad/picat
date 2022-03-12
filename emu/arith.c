@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : arith.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: arithmetic functions 
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -2901,7 +2901,7 @@ int c_MUL_MOD_cccf() {
     z = ARG(3, 4); DEREF(z);
     res = ARG(4, 4);
 
-	//	printf("MUL_MOD "); write_term(x); printf(" "); write_term(y); printf(" "); write_term(z); printf("\n");
+    //  printf("MUL_MOD "); write_term(x); printf(" "); write_term(y); printf(" "); write_term(z); printf("\n");
     if (ISINT(x) && ISINT(y) && ISINT(z)) {
         x = INTVAL(x); y = INTVAL(y); z = INTVAL(z);
 
@@ -2917,21 +2917,21 @@ int c_MUL_MOD_cccf() {
             res0 = BP_ZERO;
         } else {
 #ifdef M64BITS
-		  if (BP_IN_28B_INT_RANGE(x) && BP_IN_28B_INT_RANGE(y)) {
-			res0 = MAKEINT((x*y)%z);
-		  }
+            if (BP_IN_28B_INT_RANGE(x) && BP_IN_28B_INT_RANGE(y)) {
+                res0 = MAKEINT((x*y)%z);
+            }
 #else
-          if (BP_IN_14B_INT_RANGE(x) && BP_IN_14B_INT_RANGE(x)) {
-			res0 = MAKEINT((x*y)%z);
-		  }
+            if (BP_IN_14B_INT_RANGE(x) && BP_IN_14B_INT_RANGE(x)) {
+                res0 = MAKEINT((x*y)%z);
+            }
 #endif
-		  else {
-			res0 = bp_mul_bigint_bigint(bp_int_to_bigint(x), bp_int_to_bigint(y));
-			if (ISINT(res0)){
-			  res0 = bp_int_to_bigint(INTVAL(res0));
-			}
-			res0 = bp_mod_bigint_bigint(res0, bp_int_to_bigint(z));
-		  }
+            else {
+                res0 = bp_mul_bigint_bigint(bp_int_to_bigint(x), bp_int_to_bigint(y));
+                if (ISINT(res0)){
+                    res0 = bp_int_to_bigint(INTVAL(res0));
+                }
+                res0 = bp_mod_bigint_bigint(res0, bp_int_to_bigint(z));
+            }
         }
     } else {
         if (ISINT(x)) {
@@ -2957,22 +2957,22 @@ int c_MUL_MOD_cccf() {
             bp_exception = integer_expected;
             return BP_ERROR;
         }
-		if (bp_compare_bigint_bigint(x, z) >= 0){
-		  x = bp_mod_bigint_bigint(x, z);
-		  if (ISINT(x)) {
-			x = bp_int_to_bigint(INTVAL(x));
-		  }
-		}
-		if (bp_compare_bigint_bigint(y, z) >= 0){
-		  y = bp_mod_bigint_bigint(y, z);
-		  if (ISINT(y)) {
-			y = bp_int_to_bigint(INTVAL(y));
-		  }
-		}
+        if (bp_compare_bigint_bigint(x, z) >= 0){
+            x = bp_mod_bigint_bigint(x, z);
+            if (ISINT(x)) {
+                x = bp_int_to_bigint(INTVAL(x));
+            }
+        }
+        if (bp_compare_bigint_bigint(y, z) >= 0){
+            y = bp_mod_bigint_bigint(y, z);
+            if (ISINT(y)) {
+                y = bp_int_to_bigint(INTVAL(y));
+            }
+        }
         res0 = bp_mul_bigint_bigint(x, y);
-		if (ISINT(res0)){
-		  res0 = bp_int_to_bigint(INTVAL(res0));
-		}
+        if (ISINT(res0)){
+            res0 = bp_int_to_bigint(INTVAL(res0));
+        }
         res0 = bp_mod_bigint_bigint(res0, z);
     }
     return unify(res, res0);

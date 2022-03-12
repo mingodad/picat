@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : debug.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: debugging primitives
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -102,12 +102,12 @@ int c_add_spy_point() {
     name = ARG(1, 2);
     arity = ARG(2, 2);
     GET_GLOBAL_SYM(name, arity, sym_ptr);
-	dg_flag_word = DG_FLAG_SPY;
+    dg_flag_word = DG_FLAG_SPY;
     if (GET_SPY(sym_ptr) == 0) {
         GET_SPY(sym_ptr) = 1;
         number_of_spy_points++;
         return BP_TRUE;
-    } else
+    } else 
         return BP_FALSE;
 }
 

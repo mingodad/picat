@@ -348,7 +348,7 @@ Picat provides the following global constraints.
         Vs = [{(R,C), A[R,C]} : 
                     R in 1..NRows, 
                     C in 1..NCols],
-        Es = [{(R,C), (R1,C1), 1} : 
+        Es = [{(R,C), (R1,C1), _} : 
                     R in 1..NRows, 
                     C in 1..NCols,
                     (R1,C1) in neibs(A,NRows,NCols,R,C)],
@@ -372,6 +372,10 @@ Note that there is an edge between each pair of neighboring cells in the resulti
 \item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}} (only available in \texttt{sat}): This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle\index{Hamiltonian cycle}. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph.
 
 \item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \\\texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$, 
+
+\item \texttt{tree($Vs$,$Es$)}\index{\texttt{tree/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is a tree, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the tree if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the tree if and only if $B = 1$ and both $V_1$ and $V_2$ are in the tree. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+
+\item \texttt{tree($Vs$,$Es$,$K$)}\index{\texttt{tree/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{tree($Vs$,$Es$)}, except that it also constrains the number of vertices in the tree to be $K$. 
 \end{itemize}
 
 \section{Solver Invocation}

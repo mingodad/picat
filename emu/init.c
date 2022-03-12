@@ -36,15 +36,19 @@ BPLONG stack_size_limit = 1000000000;
 #ifdef BPSOLVER
 BPLONG stack_size = 250000000;
 BPLONG trail_size = 4000000;
+BPLONG parea_size = 2000000;
 #else
 BPLONG stack_size = 8000000;
 BPLONG trail_size = 2000000;
+BPLONG parea_size = 4000000;
 #endif
-BPLONG parea_size = 2000000;
 BPLONG table_size = 1000000;
 
 void print_picat_usage() {
-    printf("Usage: picat [[-path Path]|[-log]|[-g InitGoal]|...] PicatMainFileName A1 A2 ...\n");
+    printf("Usage: picat [[-path Path] | [-p P] | [-s S] | [-b B] | | [-g Goal] | [-d] | [-log] | [--help] | [--version]]* PicatMainFileName A1 A2 ...\n");
+    printf("       P -- size for program area\n");
+    printf("       S -- size for global and local stacks\n");
+    printf("       B -- size for trail stack\n");
 }
 
 #ifdef WIN32
@@ -79,9 +83,11 @@ void init_toam(argc, argv)
     i = 1;
     while (i < argc) {
         str = argv[i];
+        
         if (str[0] == '-') {
             switch (str[1]) {
-#ifdef PICAT
+#ifdef BPSOLVER
+#else
             case 'p':
                 if (strcmp(str+1, "path") == 0) {
                     i++;
@@ -89,94 +95,56 @@ void init_toam(argc, argv)
                         print_picat_usage();
                         exit(0);
                     } else {
-                        /*
-                          int j;
-                          printf("setenv %s\n",argv[i]);
-                          for (j=i+1; j<argc; j++){
-                          printf("      %s\n",argv[j]);
-                          }
-                        */
                         setenv("PICATPATH", argv[i], 1);
+                    }
+                } else if (strcmp(str+1, "p") == 0) {
+                    i++;
+                    if (i > argc) {
+                        print_picat_usage();
+                        exit(0);
+                    } else {
+                        sscanf(argv[i], BPLONG_FMT_STR, &parea_size);
+                        if (parea_size < 1000000) parea_size = 1000000;
                     }
                 }
                 break;
-
+#endif
             case '-':
                 if (strcmp(str+2, "help") == 0) {
                     print_picat_usage();
                     exit(0);
                 } else if (*(str+2) == 'v' || strcmp(str+2, "version") == 0) {
-                    printf("Picat version 3.1#3\n");
+                    printf("Picat version 3.2\n");
                     exit(0);
                 }
-
-            case 'l':
-                if (strcmp(str+1, "log") == 0) {  /* enable log printing */
-                    break;
-                }
-            case 'g':
-                use_gl_getline = 0;
-                break;
+                /*
+                  case 't':
+                  i++;
+                  sscanf(argv[i], BPLONG_FMT_STR, &table_size);
+                  if (table_size < 1000000) table_size = 1000000;
+                  break;
+                */
 
             case 's': i++;
                 sscanf(argv[i], BPLONG_FMT_STR, &stack_size);
                 if (stack_size < 1000000) stack_size = 1000000;
                 break;
 
-#else
-            case 'T':
-            case 't':
-                i++;
-                sscanf(argv[i], "%ld", &table_size);
-                if (table_size < 1000000) table_size = 1000000;
-                break;
-
-            case 'l': use_gl_getline = 0; break;
-
-            case 'c': confirm_copy_right = 0; break;
-
-            case 'n': num_line = 1; break;
-
-            case 'd': disassem = 1; break;
-
-            case 'S':
-            case 's': i++;
-                sscanf(argv[i], "%ld", &stack_size);
-                if (stack_size < 1000000) stack_size = 1000000;
-                break;
-
-            case 'm': i++;
-                sscanf(argv[i], "%ld", &stack_size_limit);
-                break;
-
-            case 'P':
-            case 'p': i++;
-                sscanf(argv[i], "%ld", &parea_size);
-                if (parea_size < 1000000) parea_size = 1000000;
-                break;
-
-            case 'B':
             case 'b': i++;
-                sscanf(argv[i], "%ld", &trail_size);
+                sscanf(argv[i], BPLONG_FMT_STR, &trail_size);
                 if (trail_size < 1000000) trail_size = 1000000;
                 break;
 
-            case 'g':
-                use_gl_getline = 0;
-            case 'i':
-                i++; break;
+            case 'd': disassem = 1; break;
 
-            case 'h':
-                printf("Usage: bp [-p P] [-s S] [-b B] [-t T] [-i File] [-g Goal] [-h] [-l] bytecode_1 ... \n");
-                printf("       P -- size for program area\n");
-                printf("       S -- size for global and local stacks\n");
-                printf("       B -- size for trail stack\n");
-                printf("       T -- size for table area\n");
-                printf("       l -- not use the command line editor\n");
-                printf("       g -- initial goal\n");
-                printf("       h -- help\n");
-                exit(0);
-#endif
+            case 'l':
+                if (strcmp(str+1, "log") == 0) {  /* enable log printing */
+                    break;
+                }
+
+            case 'm': i++;
+                sscanf(argv[i], BPLONG_FMT_STR, &stack_size_limit);
+                break;
             }
         }
         i++;
@@ -323,57 +291,32 @@ int init_loading(argc, argv)
     i = 1;
     while (i < argc) {
         str = argv[i];
-#ifdef PICAT
         if (str[0] == '-') {
             switch (str[1]) {
-            case 'p':
-                if (strcmp(str+1, "path") == 0)
-                    i++;
-                else
-                    add_main_arg(str);
+            case '-':
                 break;
             case 'l':
-                if (strcmp(str+1, "log") == 0) {  /* enable log printing */
-                    b_GLOBAL_SET_ccc(ADDTAG(picat_log_psc, ATM), MAKEINT(0), MAKEINT(1));
-                } else {
-                    use_gl_getline = 0;
-                }
+                b_GLOBAL_SET_ccc(ADDTAG(picat_log_psc, ATM), MAKEINT(0), MAKEINT(1));
                 break;
             case 'v':
+            case 'd':
                 break;
+#ifdef BPSOLVER
+#else
+            case 'p':
+#endif            
             case 's':
-                i++;
-                break;
+            case 'b':
+            case 't':
+            case 'm':
+                i++; break;
+            
             default:
                 add_main_arg(str);
             }
         } else {
             add_main_arg(str);
         }
-#else
-        if (str[0] == '-') {
-            switch (str[1]) {
-            case 'T':
-            case 't':
-            case 'S':
-            case 's':
-            case 'm':
-            case 'P':
-            case 'p':
-            case 'B':
-            case 'b':
-                i++; break;
-            default:
-                add_main_arg(argv[i]);
-            }
-        } else {
-            if (is_bc_file(str)) {
-                if (load_user_bc_file(str) == BP_ERROR) return BP_ERROR;
-            } else {
-                add_main_arg(str);
-            }
-        }
-#endif
         i++;
     }
     return BP_TRUE;

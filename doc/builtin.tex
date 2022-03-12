@@ -426,28 +426,6 @@ January 14, 2013 \\
    \item \texttt{writef($FD$,$Format$,$Args\ldots$)}
    \item \texttt{writeln($FD$,$Term$)}
    \item \texttt{writeln($Term$)}
-\ignore{
-%   \item \texttt{dup($FD$) = $NewFD$}
-%   \item \texttt{dup2($FromFD$,$ToFD$)}
-%   \item \texttt{eof}
-   \item \texttt{peek\_int($FD$) = $Int$}
-   \item \texttt{peek\_real($FD$) = $Real$}
-%   \item \texttt{read\_unicode\_char($FD$) = $Val$}
-%   \item \texttt{read\_unicode\_char($FD$,$N$) = $String$}
-   \item \texttt{getpos($FD$) = $Pos$}
-   \item \texttt{mkfifo($Path$)}
-   \item \texttt{mkfifo($Path$,$Mode$)}
-   \item \texttt{mkpipe() = $FD\_Map$}
-   \item \texttt{mktmp() = $FD$}
-   \item \texttt{peek\_unicode\_char($FD$) = $Val$}
-   \item \texttt{rewind($FD$)}
-   \item \texttt{seek($FD$,$Offset$,$From$)}
-   \item \texttt{setpos($FD$,$Pos$)}
-   \item \texttt{sizeof\_char() = $Size$}
-   \item \texttt{stderr}
-   \item \texttt{stdin}
-   \item \texttt{stdout}
-}
 \end{itemize}
 \end{scriptsize}
 \section*{Module \texttt{ordset}}
@@ -611,6 +589,8 @@ January 14, 2013 \\
 \item \texttt{subcircuit\_grid($A$,$K$)} (sat only) 
 \item \texttt{table\_in($DVars$,$R$)}
 \item \texttt{table\_notin($DVars$,$R$)}
+\item \texttt{tree($Vs$,$Es$)} (sat only) 
+\item \texttt{tree($Vs$,$Es$,$K$)} (sat only)
 \end{itemize}
 \end{scriptsize}
 \section*{Module \texttt{planner}}  

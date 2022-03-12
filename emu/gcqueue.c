@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : gcQueue.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: Queue class and other utilities used by the GC
 
  * This Source Code Form is subject to the terms of the Mozilla Public

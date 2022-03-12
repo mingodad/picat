@@ -53,7 +53,7 @@ KISSAT_OBJ =  kis_allocate.o kis_analyze.o kis_ands.o kis_application.o\
 picat.exe : $(OBJ) $(ESPRESSO_OBJ) $(KISSAT_OBJ) 
 	$(CPP) -o picat.exe $(OBJ) $(ESPRESSO_OBJ) $(KISSAT_OBJ) $(LFLAGS) 
 clean :
-	rm -f *.o picat.exe
+	rm -f $(OBJ) picat.exe
 dis.o   : dis.c term.h inst.h basic.h 
 	$(CC) $(CFLAGS) dis.c 
 init.o  : init.c term.h inst.h basic.h
@@ -416,3 +416,95 @@ fann_train_data.o : fann/src/fann_train_data.c
 	$(CC) $(CFLAGS) -Ifann/src/include fann/src/fann_train_data.c
 fann_interface.o : fann/fann_interface.cpp
 	$(CPP) $(CFLAGS) -Ifann/src/include fann/fann_interface.cpp
+bpx.o : prism/core/bpx.c
+	$(CC) $(PRISM_FLAGS) -o bpx.o prism/core/bpx.c
+error.o : prism/core/error.c
+	$(CC) $(PRISM_FLAGS) -o error.o prism/core/error.c
+fputil.o : prism/core/fputil.c
+	$(CC) $(PRISM_FLAGS) -o fputil.o prism/core/fputil.c
+gamma.o : prism/core/gamma.c
+	$(CC) $(PRISM_FLAGS) -o gamma.o prism/core/gamma.c
+glue.o : prism/core/glue.c
+	$(CC) $(PRISM_FLAGS) -o glue.o prism/core/glue.c
+idtable.o : prism/core/idtable.c
+	$(CC) $(PRISM_FLAGS) -o idtable.o prism/core/idtable.c
+idtable_preds.o : prism/core/idtable_preds.c
+	$(CC) $(PRISM_FLAGS) -o idtable_preds.o prism/core/idtable_preds.c
+random.o : prism/core/random.c
+	$(CC) $(PRISM_FLAGS) -o random.o prism/core/random.c
+termpool.o : prism/core/termpool.c
+	$(CC) $(PRISM_FLAGS) -o termpool.o prism/core/termpool.c
+vector.o : prism/core/vector.c
+	$(CC) $(PRISM_FLAGS) -o vector.o prism/core/vector.c
+xmalloc.o : prism/core/xmalloc.c
+	$(CC) $(PRISM_FLAGS) -o xmalloc.o prism/core/xmalloc.c
+crf_learn.o : prism/up/crf_learn.c
+	$(CC) $(PRISM_FLAGS) -o crf_learn.o prism/up/crf_learn.c
+crf_rank.o : prism/up/crf_rank.c
+	$(CC) $(PRISM_FLAGS) -o crf_rank.o prism/up/crf_rank.c
+crf_viterbi.o : prism/up/crf_viterbi.c
+	$(CC) $(PRISM_FLAGS) -o crf_viterbi.o prism/up/crf_viterbi.c
+cyc_em.o : prism/up/cyc_em.cpp
+	$(CPP) $(PRISM_FLAGS) -o cyc_em.o  prism/up/cyc_em.cpp
+cyc_vt_ml.o : prism/up/cyc_vt_ml.cpp
+	$(CPP) $(PRISM_FLAGS) -o cyc_vt_ml.o prism/up/cyc_vt_ml.cpp
+cyc_vt_preds.o : prism/up/cyc_vt_preds.c
+	$(CC) $(PRISM_FLAGS) -o cyc_vt_preds.o prism/up/cyc_vt_preds.c
+em_aux.o : prism/up/em_aux.c
+	$(CC) $(PRISM_FLAGS) -o em_aux.o prism/up/em_aux.c
+em_aux_ml.o : prism/up/em_aux_ml.c
+	$(CC) $(PRISM_FLAGS) -o em_aux_ml.o prism/up/em_aux_ml.c
+em_aux_vb.o : prism/up/em_aux_vb.c
+	$(CC) $(PRISM_FLAGS) -o em_aux_vb.o prism/up/em_aux_vb.c
+em_ml.o : prism/up/em_ml.c
+	$(CC) $(PRISM_FLAGS) -o em_ml.o prism/up/em_ml.c
+em_preds.o : prism/up/em_preds.c
+	$(CC) $(PRISM_FLAGS) -o em_preds.o prism/up/em_preds.c
+em_vb.o : prism/up/em_vb.c
+	$(CC) $(PRISM_FLAGS) -o em_vb.o prism/up/em_vb.c
+flags.o : prism/up/flags.c
+	$(CC) $(PRISM_FLAGS) -o flags.o prism/up/flags.c
+graph.o : prism/up/graph.c
+	$(CC) $(PRISM_FLAGS) -o graph.o prism/up/graph.c
+graph_aux.o : prism/up/graph_aux.c
+	$(CC) $(PRISM_FLAGS) -o graph_aux.o prism/up/graph_aux.c
+hindsight.o : prism/up/hindsight.c
+	$(CC) $(PRISM_FLAGS) -o hindsight.o prism/up/hindsight.c
+lbfgs.o : prism/up/lbfgs.c
+	$(CC) $(PRISM_FLAGS) -o lbfgs.o prism/up/lbfgs.c
+linear_eq.o : prism/up/linear_eq.cpp
+	$(CPP) $(PRISM_FLAGS) -o linear_eq.o prism/up/linear_eq.cpp
+linear_eq_lapack.o : prism/up/linear_eq_lapack.c
+	$(CC) $(PRISM_FLAGS) -o linear_eq_lapack.o prism/up/linear_eq_lapack.c
+mcmc_eml.o : prism/up/mcmc_eml.c
+	$(CC) $(PRISM_FLAGS) -o mcmc_eml.o prism/up/mcmc_eml.c
+mcmc_exact.o : prism/up/mcmc_exact.c
+	$(CC) $(PRISM_FLAGS) -o mcmc_exact.o prism/up/mcmc_exact.c
+mcmc_predict.o : prism/up/mcmc_predict.c
+	$(CC) $(PRISM_FLAGS) -o mcmc_predict.o prism/up/mcmc_predict.c
+mcmc_preds.o : prism/up/mcmc_preds.c
+	$(CC) $(PRISM_FLAGS) -o mcmc_preds.o prism/up/mcmc_preds.c
+mcmc_sample.o : prism/up/mcmc_sample.c
+	$(CC) $(PRISM_FLAGS) -o mcmc_sample.o prism/up/mcmc_sample.c
+nonlinear_eq.o : prism/up/nonlinear_eq.cpp
+	$(CPP) $(PRISM_FLAGS) -o nonlinear_eq.o prism/up/nonlinear_eq.cpp
+rank.o : prism/up/rank.cpp
+	$(CPP) $(PRISM_FLAGS) -o rank.o prism/up/rank.cpp
+scc.o : prism/up/scc.cpp
+	$(CPP) $(PRISM_FLAGS) -o scc.o prism/up/scc.cpp
+sgd.o : prism/up/sgd.cpp
+	$(CPP) $(PRISM_FLAGS) -o sgd.o prism/up/sgd.cpp
+util.o : prism/up/util.c
+	$(CC) $(PRISM_FLAGS) -o util.o prism/up/util.c
+viterbi.o : prism/up/viterbi.c
+	$(CC) $(PRISM_FLAGS) -o viterbi.o prism/up/viterbi.c
+vt_aux_ml.o : prism/up/vt_aux_ml.c
+	$(CC) $(PRISM_FLAGS) -o vt_aux_ml.o prism/up/vt_aux_ml.c
+vt_aux_vb.o : prism/up/vt_aux_vb.c
+	$(CC) $(PRISM_FLAGS) -o vt_aux_vb.o prism/up/vt_aux_vb.c
+vt_ml.o : prism/up/vt_ml.c
+	$(CC) $(PRISM_FLAGS) -o vt_ml.o prism/up/vt_ml.c
+vt_preds.o : prism/up/vt_preds.c
+	$(CC) $(PRISM_FLAGS) -o vt_preds.o prism/up/vt_preds.c
+vt_vb.o : prism/up/vt_vb.c
+	$(CC) $(PRISM_FLAGS) -o vt_vb.o prism/up/vt_vb.c

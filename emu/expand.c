@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : expand.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: expand data areas (program area, trail stack, table space, and global/local stacks)
 
  * This Source Code Form is subject to the terms of the Mozilla Public

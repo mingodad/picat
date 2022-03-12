@@ -1,5 +1,5 @@
-CPP    = /usr/bin/g++ -std=c++11 -DGC -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
-CC     = /usr/bin/gcc -DGCC -DPICAT -DSAT -DMAPLESAT -DM64BITS
+CPP    = /usr/bin/g++ -std=c++11 -DGC -DGCC -DPICAT -DSAT -DM64BITS
+CC     = /usr/bin/gcc -DGCC -DPICAT -DSAT -DM64BITS
 #CC     = cc
 
 #CFLAGS = -c  -O4 -Dunix -DGC -DBSD             #SunOS
@@ -54,7 +54,7 @@ KISSAT_OBJ =  kis_allocate.o kis_analyze.o kis_ands.o kis_application.o\
 picat : $(OBJ) $(ESPRESSO_OBJ) $(KISSAT_OBJ) 
 	$(CPP) -o picat $(OBJ) $(ESPRESSO_OBJ) $(KISSAT_OBJ) $(LFLAGS) 
 clean :
-	rm -f *.o picat
+	rm -f $(OBJ) picat
 dis.o   : dis.c term.h inst.h basic.h 
 	$(CC) $(CFLAGS) dis.c 
 init.o  : init.c term.h inst.h basic.h

@@ -39,7 +39,7 @@ There are two functions for opening a file.  Both of them are used in the previo
 \end{itemize}
 
 \section{Reading from a File}
-The \texttt{io} module has at least one function for reading data into each primitive data type.  It also has functions for reading \ignore{unicode characters, }tokens, strings, and bytes.  Recall that strings are stored as lists of single-character atoms.
+The \texttt{io} module has at least one function for reading data into each primitive data type.  It also has functions for reading characters, tokens, strings, and bytes.  Recall that strings are stored as lists of single-character atoms.
 
 The \texttt{read} functions in the \texttt{io} module take a file descriptor\index{file descriptor} as the first parameter.  This file descriptor\index{file descriptor} is the same descriptor that the \texttt{open}\index{\texttt{open/1}}\index{\texttt{open/2}} function returns. The parameter can be omitted if it is the standard input file \texttt{stdin}.
 
@@ -80,15 +80,12 @@ The \texttt{read} functions in the \texttt{io} module take a file descriptor\ind
 \item \texttt{read\_file\_terms() = $Lines$}\index{\texttt{read\_file\_terms/0}}: This function reads an entire text file from the console into a list of terms.
 \end{itemize}
 
-There are cases when the \texttt{read\_char($FD$,$N$)}\index{\texttt{read\_char/2}},\ignore{ \texttt{read\_unicode\_char($FD$,$N$)}\index{\texttt{read\_unicode\_char/2}},} and \texttt{read\_byte($FD$,$N$)}\index{\texttt{read\_byte/2}} functions will read fewer than $N$ values.  One case occurs when the end of the file is encountered.  Another case occurs when reading from a pipe.  If a pipe is empty, then the \texttt{read} functions wait until data is written to the pipe.  As soon as the pipe has data, the \texttt{read} functions read the data.  If a pipe has fewer than $N$ values when a read occurs, then these three functions will return a string that contains all of the values that are currently in the pipe, without waiting for more values.  In order to determine the actual number of elements that were read, after the functions return, use \texttt{length($List$)}\index{\texttt{length/1}} to check the length of the list that was returned.
+There are cases when the \texttt{read\_char($FD$,$N$)}\index{\texttt{read\_char/2}}, and \texttt{read\_byte($FD$,$N$)}\index{\texttt{read\_byte/2}} functions will read fewer than $N$ values.  One case occurs when the end of the file is encountered.  Another case occurs when reading from a pipe.  If a pipe is empty, then the \texttt{read} functions wait until data is written to the pipe.  As soon as the pipe has data, the \texttt{read} functions read the data.  If a pipe has fewer than $N$ values when a read occurs, then these three functions will return a string that contains all of the values that are currently in the pipe, without waiting for more values.  In order to determine the actual number of elements that were read, after the functions return, use \texttt{length($List$)}\index{\texttt{length/1}} to check the length of the list that was returned.
 
 The \texttt{io} module also has functions that peek at the next value in the file without changing the current file location.  This means that the next \texttt{read} or \texttt{peek} function will return the same value, unless the read/write pointer is repositioned or the file is modified.
 
 \begin{itemize}
-%\item \texttt{peek\_int($FD$) = $Int$}\index{\texttt{peek\_int/1}}
-%\item \texttt{peek\_real($FD$) = $Real$}\index{\texttt{peek\_real/1}}
 \item \texttt{peek\_char($FD$) = $Val$}\index{\texttt{peek\_char/1}}
-%\item \texttt{peek\_unicode\_char($FD$) = $Val$}\index{\texttt{peek\_unicode\_char/1}}
 \item \texttt{peek\_byte($FD$) = $Val$}\index{\texttt{peek\_byte/1}}
 \end{itemize}
 

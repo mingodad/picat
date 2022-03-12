@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : cpreds.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: Non-inline built-ins in C
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -1088,6 +1088,10 @@ int c_IS_SMALL_INT_c() {
 
 #ifdef FANN
 extern int fann_cpreds();
+#endif
+
+#ifdef PRISM
+extern void bp4p_register_preds();
 #endif
 
 void Cboot() {

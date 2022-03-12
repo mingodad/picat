@@ -37,7 +37,7 @@ line_terminator ->
     the CR character followed by the LF character
 
 input_char ->
-    unicode_input_char but not CR or LF
+    utf8_char but not CR or LF
 
 comment ->
     traditional_comment
@@ -235,19 +235,18 @@ binary_digit ->
     one of "0" "1" 
 
 escape_sequence ->
-    "\b"    /* \u0008: backspace BS */
-    "\t"    /* \u0009: horizontal tab HT */
-    "\n"    /* \u000a: linefeed LF */
-    "\f"    /* \u000c: form feed FF */
-    "\r"    /* \u000d: carriage return CR */
-    "\""    /* \u0022: double quote " */
-    "\'"    /* \u0027: single quote ' */
-    "\\"    /* \u005c: backslash \ */
-    unicode_escape 
-
-unicode_escape ->
-    "\u" hd hd hd hd 
-    "\U" hd hd hd hd hd hd hd hd 
+    "\""             /* double quote " */
+    "\'"             /* single quote ' */
+    "\\"             /* backslash \ */
+    "\`"             /* back quote ` */
+    "\a"             /* alarm */
+    "\b"             /* backspace */
+    "\f"             /* form feed */
+    "\n"             /* line feed */
+    "\r"             /* carriage return */
+    "\t"             /* horizontal tab */
+    "\uhh...h"       /* unicode (utf-8) code point */
+    "\v"             /* vertical tab */
 \end{verbatim}
 \end{scriptsize}
 \ignore{

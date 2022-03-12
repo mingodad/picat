@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : emu_inst.h
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   THIS FILE IS AUTOMATICALLY ASSEMBLED. 
 
  * This Source Code Form is subject to the terms of the Mozilla Public

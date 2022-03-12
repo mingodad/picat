@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : sat_bp.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
  *   Purpose: SAT interface for B-Prolog and Picat
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -269,7 +269,7 @@ void Cboot_sat() {
 */
 int b_SAT_RETRIEVE_BNUM_cff(BPLONG BV, BPLONG Num, BPLONG MNum) {
 lab_start:
-  //	printf("=> BNUM %x ",BV); write_term(BV); printf("\n");
+    //  printf("=> BNUM %x ",BV); write_term(BV); printf("\n");
     DEREF_NONVAR(BV);
 
     if (ISINT(BV)) {

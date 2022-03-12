@@ -74,7 +74,7 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \> \> $Goal$ \\
 \>  \texttt{end} 
 \end{tabbing}
-Each $E_i$ is an \emph{iterating pattern}\index{iterator}.  Each $D_i$ is an expression that gives a \emph{compound value}\index{compound value}.  Each $Cond_i$ is an optional \emph{condition} on iterators\index{iterator} $E_1$ through $E_i$.
+Each $E_i$ is an \emph{iterating pattern}\index{iterator}.  Each $D_i$ is an expression that gives a \emph{compound value}\index{compound value}.  Each $Cond_i$ is an optional \emph{condition} on iterators\index{iterator} $E_1$ through $E_i$. 
 
 Foreach loops\index{foreach loop} can be used to iterate through compound values\index{compound value}, as in the following examples.
 
@@ -155,6 +155,19 @@ loop_ex5 =>
     end.
 \end{verbatim}
 
+\subsection{Foreach Loops with the \texttt{break} Condition}
+When the condition \texttt{break($Cond$)}\index{\texttt{break}} occurs to the right of an iterator in a \texttt{foreach} loop, it terminates the iterator if $Cond$ is true. Note that the loop body is not executed when $Cond$ is true. 
+
+The foreach loop in \texttt{loop\_ex6} prints out the elements of the array \texttt{A}, stopping when it encounters a 0.
+\begin{verbatim}
+loop_ex6 =>
+    A = {2, 3, 5, 0, 10, 4},
+    foreach (I in 1..len(A),  break(A[I] == 0))
+        println(A[I])
+    end.
+\end{verbatim}
+
+
 \subsection{While Loops}
 A \texttt{while} loop\index{while loop} has the form:
 \begin{tabbing}
@@ -166,28 +179,28 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 As long as $Cond$ succeeds, the loop will repeatedly execute $Goal$.  
 \subsection*{Example:}
 \begin{verbatim}
-loop_ex6 =>
+loop_ex7 =>
     I = 1, 
     while (I <= 9)
         println(I),
         I := I + 2
     end.
 
-loop_ex7 =>
+loop_ex8 =>
     J = 6,
     while (J <= 5)
         println(J),
         J := J + 1
     end.
 
-loop_ex8 =>
+loop_ex9 =>
     E = read_int(),
     while (E mod 2 == 0; E mod 5 == 0)
         println(E),
         E := read_int()
     end.
 
-loop_ex9 =>
+loop_ex10 =>
     E = read_int(),
     while (E mod 2 == 0, E mod 5 == 0)
         println(E),
@@ -195,18 +208,18 @@ loop_ex9 =>
     end.
 \end{verbatim}
 
-The while loop\index{while loop} in \texttt{loop\_ex6} prints all of the odd numbers between $1$ and $9$.  It is similar to the foreach loop\index{foreach loop}
+The while loop\index{while loop} in \texttt{loop\_ex7} prints all of the odd numbers between $1$ and $9$.  It is similar to the foreach loop\index{foreach loop}
 \begin{verbatim}
 foreach(I in 1 .. 2 .. 9)
     println(I)
 end.
 \end{verbatim}
 
-The while loop\index{while loop} in \texttt{loop\_ex7} never executes its goal.  \texttt{J} begins at $6$, so the condition \texttt{J <= 5} is never true, meaning that the body of the loop does not execute.
+The while loop\index{while loop} in \texttt{loop\_ex8} never executes its goal.  \texttt{J} begins at $6$, so the condition \texttt{J <= 5} is never true, meaning that the body of the loop does not execute.
 
-The while loop\index{while loop} in \texttt{loop\_ex8} demonstrates a compound condition.  The loop executes as long as the value that is read into \texttt{E} is either a multiple of $2$ or a multiple of $5$.
+The while loop\index{while loop} in \texttt{loop\_ex9} demonstrates a compound condition.  The loop executes as long as the value that is read into \texttt{E} is either a multiple of $2$ or a multiple of $5$.
 
-The while loop\index{while loop} in \texttt{loop\_ex9} also demonstrates a compound condition.  Unlike in \texttt{loop\_ex8}, in which either condition must be true, in \texttt{loop\_ex9}, both conditions must be true.  The loop executes as long as the value that is read into \texttt{E} is both a multiple of $2$ and a multiple of $5$. 
+The while loop\index{while loop} in \texttt{loop\_ex10} also demonstrates a compound condition.  Unlike in \texttt{loop\_ex9}, in which either condition must be true, in \texttt{loop\_ex10}, both conditions must be true.  The loop executes as long as the value that is read into \texttt{E} is both a multiple of $2$ and a multiple of $5$. 
 
 \subsection{Do-while Loops}
 A \texttt{do-while} loop\index{do-while loop} has the form:
@@ -219,7 +232,7 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 A do-while loop\index{do-while loop} is similar to a while loop\index{while loop}, except that a do-while loop\index{do-while loop} executes $Goal$ one time before testing $Cond$.  The following example demonstrates the similarities and differences between do-while loops\index{do-while loop} and while loops\index{while loop}.
 \subsection*{Example}
 \begin{verbatim}
-loop_ex10 =>
+loop_ex11 =>
     J = 6,
     do
         println(J),
@@ -227,7 +240,7 @@ loop_ex10 =>
     while (J <= 5).
 \end{verbatim}
 
-Unlike \texttt{loop\_ex7}, \texttt{loop\_ex10} executes its body once.  Although \texttt{J} begins at $6$, the do-while loop\index{do-while loop} prints \texttt{J}, and increments \texttt{J} before evaluating the condition \texttt{J <= 5}.
+Unlike \texttt{loop\_ex8}, \texttt{loop\_ex11} executes its body once.  Although \texttt{J} begins at $6$, the do-while loop\index{do-while loop} prints \texttt{J}, and increments \texttt{J} before evaluating the condition \texttt{J <= 5}.
 
 \section{List and Array Comprehensions}
 A \emph{list comprehension}\index{list comprehension} is a special functional notation for creating lists.  List comprehensions\index{list comprehension} have a similar format to foreach loops\index{foreach loop}.

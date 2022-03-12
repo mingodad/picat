@@ -615,7 +615,7 @@ int handleEndInQuoted()
  *  two hexadecimal digits long, not three.
  *
  *  Extended by nfz to read UTF-8 characters, including unicode escapes
- *  in the form \uhhhh or \uhhhhhhhh.
+ *  in the form \uhhhh...h
  */
 
 int read_utf8_character(FILE * card, int q) {
@@ -738,7 +738,7 @@ int read_utf8_character(FILE * card, int q) {
             return n;
     }
 
-    case 'u': case 'U':  /* unicode escape */
+    case 'u': case 'U':  /* utf-8 escape */
     {BPLONG n, i;
         n = 0;
         for (i = 1; i <= 4; i++) {  /* \uxxxx */
@@ -789,6 +789,7 @@ int read_utf8_character(FILE * card, int q) {
         return n;
     }
     default:
+        fprintf(stderr, "*** invalid escape character\n");
         bp_exception = c_syntax_error(et_IN_ESCCHARACTER);
         return c;
     }
@@ -908,7 +909,7 @@ int read_utf8_character_string(int q) {
             return n;
     }
 
-    case 'u': case 'U':  /* unicode escape */
+    case 'u': case 'U':  /* unicode (utf-8) escape */
     {BPLONG n, i;
         n = 0;
         for (i = 1; i <= 4; i++) {  /* \uxxxx */
@@ -961,6 +962,7 @@ int read_utf8_character_string(int q) {
         return n;
     }
     default:
+        fprintf(stderr, "*** invalid escape character\n");
         bp_exception = c_syntax_error(et_IN_ESCCHARACTER);
         return c;
     }
@@ -1172,7 +1174,7 @@ START:
             }
             if (d == 0) {  /*  0'c['] is a character code  */
                 d = read_utf8_character(card, '\'');
-                TOKEN_CHECK_EXCEPTION();
+                //                TOKEN_CHECK_EXCEPTION();
                 rad_int = d;
                 BP_GETC(card, d);
                 if (d == intab.radix) {
@@ -1409,7 +1411,7 @@ START:
         while ((d = read_utf8_character(card, c)) >= 0 && bp_exception == (BPLONG)NULL) {
             UTF8_CODEPOINT_TO_STR(d, s, n);
         }
-        //        TOKEN_CHECK_EXCEPTION();
+        //              TOKEN_CHECK_EXCEPTION();
         *s = '\0';
         //    rtnint = (BPLONG) (s - AtomStr);
         c = lastc;
@@ -1433,7 +1435,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-        //        TOKEN_CHECK_EXCEPTION();
+        //              TOKEN_CHECK_EXCEPTION();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {
@@ -1588,7 +1590,7 @@ START:
             }
             if (d == 0) {  /*  0'c['] is a character code  */
                 d = read_utf8_character_string('\'');
-                TOKEN_CHECK_EXCEPTION_STRING();
+                //                TOKEN_CHECK_EXCEPTION_STRING();
                 rad_int = d;
                 BP_GETC_STRING(d);
                 if (d == intab.radix) {
@@ -1822,7 +1824,7 @@ START:
         while ((d = read_utf8_character_string(c)) >= 0 && bp_exception == (BPLONG)NULL) {
             UTF8_CODEPOINT_TO_STR(d, s, n);
         }
-        TOKEN_CHECK_EXCEPTION_STRING();
+        //  TOKEN_CHECK_EXCEPTION_STRING();
         *s = '\0';
         c = lastc;
         goto SYMBOL;
@@ -1845,7 +1847,7 @@ START:
             }
             *newpair++ = ADDTAG(heap_top, LST);
         }
-        //        TOKEN_CHECK_EXCEPTION_STRING();
+        // TOKEN_CHECK_EXCEPTION_STRING();
         if (list_head == heap_top)  /* null string */
             list_p = nil_sym;
         else {

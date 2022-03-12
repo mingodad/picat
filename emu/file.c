@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : file.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2021
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,7 +61,7 @@ extern char *string_in;
 #if defined(WIN32) && defined(M64BITS)
 #define sys_access(a, b) _access(a, b)
 #else
-int access(const char *pathname, int mode);
+    int access(const char *pathname, int mode);
 #define sys_access(a, b) access(a, b)
 #endif
 
@@ -509,7 +509,7 @@ int get_file_name(BPLONG op) {
     if (ISATOM(op)) {
         namestring(GET_SYM_REC(op), s1);
     } else {
-        picat_str_to_c_str(op, s1, MAX_STR_LEN-1);
+        picat_str_to_c_str(op, s1, MAX_STR_LEN);
     }
     get_file_name_aux(s1);
 }
@@ -584,62 +584,18 @@ int single_quote_needed(name_ptr, length)
     /*  printf("single_quote_needed? %s\n",name_ptr);*/
 
     ch = *name_ptr;
-    switch (ch) {
-    case '!': if (ch == '!') {if (length == 1) return 0; else return 1;}
-    case ';': if (ch == ';') {if (length == 1) return 0; else return 1;}
-    case '/':
-        if (length == 2) {
-            if (name_ptr[1] == '/' || name_ptr[1] == '\\')
-                return 0;
-            else
+    if (ch >= 'a' && ch <= 'z') {
+        for (i = 1; i < length; i++) {
+            ch = *(name_ptr+i);
+            if (!((ch >= '0' && ch <= '9') ||
+                  (ch >= 'A' && ch <= 'Z') ||
+                  (ch == '_') ||
+                  (ch >= 'a' && ch <= 'z')))
                 return 1;
-        } else if (length > 2) {
-            return 1;
-        } else {
-            return 0;
         }
-    case '.': if (length == 2, name_ptr[1] == '.') return 0; else return 1;
-    case '#':
-    case '$':
-    case '&':
-    case '*':
-    case '+':
-    case '-':
-    case ':':
-    case '<':
-    case '=':
-    case '>':
-    case '?':
-    case '@':
-    case '^':
-    case '~':
-    case '\\':
-    {for (i = 1; i < length; i++) {
-                if (!graphic_char(*(name_ptr+i))) return 1;
-            };
-            return 0;
+        return 0;
     }
-
-    case '[':
-        if (length == 2 && *(name_ptr+1) == ']') return 0; else return 1;
-
-    case '{':
-        if (length == 2 && *(name_ptr+1) == '}') return 0; else return 1;
-
-    default:
-        if (ch >= 'a' && ch <= 'z') {
-            for (i = 1; i < length; i++) {
-                ch = *(name_ptr+i);
-                if (!((ch >= '0' && ch <= '9') ||
-                      (ch >= 'A' && ch <= 'Z') ||
-                      (ch == '_') ||
-                      (ch >= 'a' && ch <= 'z')))
-                    return 1;
-            }
-            return 0;
-        }
-        return 1;
-    }
+    return 1;
 }
 
 /* copy the str to buf, adding quotes when necessary */
@@ -3327,7 +3283,7 @@ void c_str_to_picat_str(CHAR_PTR str, BPLONG lst, BPLONG lstr) {
         FOLLOW(heap_top) = (BPLONG)heap_top;
         ASSIGN_v_heap_term(lst, (BPLONG)heap_top);
         ASSIGN_v_heap_term(lstr, (BPLONG)heap_top);
-		heap_top++;
+        heap_top++;
         return;
     }
     while ((*ch_ptr) != '\0') {
@@ -3366,9 +3322,9 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size) {
         s = GET_NAME(sym_ptr);
         len = GET_LENGTH(sym_ptr);
         if (i+len >= buf_size) {
-            printf("hreg = " BPULONG_FMT_STR " local_top = " BPULONG_FMT_STR " buf_size = " BPULONG_FMT_STR " \n", heap_top, local_top, buf_size);
-            write_term(lst0); printf("\n");
-            quit("buf overfolow in picat_str_to_c_str");
+		  //		    printf("hreg = " BPULONG_FMT_STR " local_top = " BPULONG_FMT_STR " buf_size = " BPULONG_FMT_STR " \n", heap_top, local_top, buf_size);
+		  //		    write_term(lst0); printf("\n");
+            quit("buff overfolow in picat_str_to_c_str");
         }
         for (j = 0; j < len; j++) {
             *(ch_ptr+i) = *(s+j);
@@ -3446,7 +3402,7 @@ int c_PICAT_FORMAT_TO_STRING_ccff() {
         sprintf(bp_buf, format_str, bp_bigint_to_int(Val));
     } else {  /* Val must be a Picat string */
         char *str = (CHAR_PTR)heap_top+10000;
-        picat_str_to_c_str(Val, str, sizeof(BPULONG)*((BPULONG)local_top-(BPULONG)heap_top)-10000);
+        picat_str_to_c_str(Val, str, MAX_STR_LEN);
         sprintf(bp_buf, format_str, str);
     }
     //  printf("bp_buf=%s\n",bp_buf);
@@ -4222,7 +4178,7 @@ int b_SET_STRING_TO_PARSE_c(BPLONG Str) {
         sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(c);
         if (GET_LENGTH(sym_ptr) != 1) return BP_FALSE;
         *ch_ptr++ = *GET_NAME(sym_ptr);
-        if (ch_ptr >= bp_buf+ MAX_STR_LEN) {
+        if (ch_ptr >= bp_buf + MAX_STR_LEN) {
             bp_exception = et_STRING_TOO_LONG;
             return BP_ERROR;
         }
