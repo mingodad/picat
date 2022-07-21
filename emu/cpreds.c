@@ -1206,6 +1206,7 @@ void Cboot() {
     insert_cpred("c_set_eolcom_flag", 1, c_set_eolcom_flag);
 
     insert_cpred("c_bigint_sign_size", 3, c_bigint_sign_size);
+
     /* insert_cpred("show_susp_frames",0,show_susp_frames); */
 
     Cboot_numbervars();

@@ -126,6 +126,9 @@ SYM_REC_PTR address_psc;
 SYM_REC_PTR socket_psc;
 SYM_REC_PTR stream_psc;
 SYM_REC_PTR bigint_psc;
+#ifdef XCSP_PICAT
+SYM_REC_PTR xcsp_vx_psc;
+#endif
 SYM_REC_PTR timer_psc;
 SYM_REC_PTR enter_dyn_call;
 SYM_REC_PTR enter_catch_call;

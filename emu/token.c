@@ -70,6 +70,10 @@
 #define DOLLAR 18
 #define BIGINT 19  /* bigint $bigint(SignSize,Digits) */
 
+#ifdef XCSP_PICAT
+#define XCSP_VX 20
+#endif
+
 #define InType(c) (intab.chtype+1)[c]
 #define DigVal(c) (digval+1)[c]
 
@@ -1109,6 +1113,7 @@ START:
          * (5) binary (0b|0B)..., octal (0o|0O)..., and hexadecimal (0x|0X)...
          * We allow underscores in numbers too, ignoring them. 
          */
+#ifndef XCSP_PICAT
         if (c == '0') {
             BP_GETC(card, d);
             if (d == 'b' || d == 'B' || d == 'o' || d == 'O' || d == 'x' || d == 'X') {  /* binary, octal, hexadecimal*/
@@ -1159,6 +1164,7 @@ START:
                 *s++ = c; c = d;
             }
         }
+#endif
         while (InType(c) == DIGIT || c == '_') {
             if (c != '_') *s++ = c;
             BP_GETC(card, c);
@@ -1259,6 +1265,13 @@ START:
             } else  /* c has not changed */
                 BP_UNGETC(d, card);
         }
+#ifdef XCSP_PICAT
+		else if (c == 'x'){                       // in XCSP3, vxk denotes k occurrences of v
+		  *s = 0;
+		  lastc = ' ';
+		  return XCSP_VX;
+		}
+#endif
         *s = 0;
         lastc = c;
         return DIGIT;
@@ -1995,12 +2008,14 @@ int b_NEXT_TOKEN_ff(op1, op2)
         ASSIGN_f_atom(op1, MAKEINT(SPECIAL_NUM));
         //    cNUMERO++;
         break;
-
     case RDIGIT:
         //    cNUMERO++;
         ASSIGN_f_atom(op1, MAKEINT(INTEGERO));
         ASSIGN_f_atom(op2, MAKEINT(rad_int));
         break;
+#ifdef XCSP_PICAT
+    case XCSP_VX:
+#endif
     case DIGIT:
         newv = len = 0;
         while (AtomStr[len] != 0) {
@@ -2021,6 +2036,16 @@ int b_NEXT_TOKEN_ff(op1, op2)
                 return BP_TRUE;
             }
         }
+#ifdef XCSP_PICAT
+		if (i == XCSP_VX){
+		  BPLONG_PTR struct_ptr = heap_top;
+		  FOLLOW(heap_top++) = (BPLONG)xcsp_vx_psc;
+		  FOLLOW(heap_top++) = MAKEINT(newv);
+		  ASSIGN_f_atom(op1, MAKEINT(SPECIAL_NUM));
+		  ASSIGN_sv_heap_term(op2, ADDTAG(struct_ptr, STR));
+		  return BP_TRUE;
+		}
+#endif
         ASSIGN_f_atom(op1, MAKEINT(INTEGERO));
         ASSIGN_f_atom(op2, MAKEINT(newv));
         break;

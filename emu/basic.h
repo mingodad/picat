@@ -407,6 +407,9 @@ extern SYM_REC_PTR address_psc;
 extern SYM_REC_PTR socket_psc;
 extern SYM_REC_PTR stream_psc;
 extern SYM_REC_PTR bigint_psc;
+#ifdef XCSP_PICAT
+extern SYM_REC_PTR xcsp_vx_psc;
+#endif
 extern SYM_REC_PTR timer_psc;
 extern SYM_REC_PTR enter_dyn_call;
 extern SYM_REC_PTR enter_catch_call;

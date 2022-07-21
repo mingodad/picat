@@ -41,7 +41,9 @@ void init_sym() {
     call_cleanup_psc = BP_NEW_SYM("_$call_cleanup_call", 0);
     float_psc = insert_sym("$float", 6, 3);
     bigint_psc = insert_sym("$bigint", 7, 2);
-
+#ifdef XCSP_PICAT
+	xcsp_vx_psc = insert_sym("_$xcsp_vx", 9, 1);
+#endif
     address_psc = insert_sym("$address", 8, 2);  //branch
     socket_psc = insert_sym("$socket", 7, 1);  //branch
     stream_psc = insert_sym("$stream", 7, 1);  //branch

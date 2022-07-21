@@ -2729,6 +2729,24 @@ int b_IS_CALLABLE_c(BPLONG term) {
               {return BP_FALSE;});
 }
 
+/* added for XCSP competition 2022 */
+int c_xk_token() {
+    BPLONG term;
+    SYM_REC_PTR sym_ptr;
+    CHAR_PTR char_ptr;
+	char d;
+
+    term = ARG(1,1);
+    DEREF(term);
+    if (!ISATOM(term)) return BP_FALSE;
+    sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(term);
+    if (GET_LENGTH(sym_ptr) < 2) return BP_FALSE;
+    char_ptr = GET_NAME(sym_ptr);
+	d = *(char_ptr+1);
+
+    return (*char_ptr == 'x' && d >= '0' && d <= '9') ? BP_TRUE : BP_FALSE;
+}
+
 /* a name that begins with e$$ is public */
 int c_is_picat_public_name(){
     BPLONG term;
@@ -2824,6 +2842,7 @@ void Cboot_mic()
     less_than_sym = ADDTAG(BP_NEW_SYM("<", 0), ATM);
     equal_sym = ADDTAG(BP_NEW_SYM("=", 0), ATM);
 
+	insert_cpred("c_xk_token", 1, c_xk_token);
     insert_cpred("getpid", 1, c_getpid);
     insert_cpred("c_OS_TYPE_f", 1, c_OS_TYPE_f);
     insert_cpred("c_get_main_args", 1, c_get_main_args);
