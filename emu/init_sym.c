@@ -253,7 +253,7 @@ void init_error_sym() {
 void init_char_sym() {
     int i;
     char c;
-    for (i = 1; i < AlphabetSize; i++) {
+    for (i = 0; i < AlphabetSize; i++) {
         c = (char)i;
         char_sym_table[i] = ADDTAG(insert_sym(&c, 1, 0), ATM);
     }
