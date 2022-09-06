@@ -31,7 +31,7 @@ ESPRESSO_OBJ = black_white.o canonical.o cofactor.o cols.o compl.o contain.o cpu
                set.o setc.o sharp.o sigma.o signature.o signature_exact.o sminterf.o solution.o \
                sparse.o unate.o util_signature.o verify.o
 
-KISSAT_FLAGS = -c -O3 -W -Wall -DNEMBEDDED -DNDEBUG -DNMETRICS -DQUIET -DNSTATISTICS
+KISSAT_FLAGS = -c -O3 -W -Wall -DNEMBEDDED -DNDEBUG -DNMETRICS -DQUIET -DNSTATISTICS  -DNPROOFS
 KISSAT_OBJ =  kis_allocate.o kis_analyze.o kis_ands.o kis_application.o\
               kis_arena.o kis_assign.o kis_autarky.o kis_averages.o kis_backtrack.o\
               kis_backward.o kis_build.o kis_bump.o kis_check.o kis_clause.o\

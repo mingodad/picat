@@ -288,7 +288,7 @@ int loader(file, file_type, load_damon)
             return 1;
 
         /* printf("text_bytes = %lx, index_bytes = %lx psc_bytes = %lx\n", text_bytes, index_bytes, psc_bytes); */
-        total_size = sizeof(BPLONG)*text_bytes + index_bytes + psc_bytes + 10000;
+        total_size = sizeof(BPLONG)*(text_bytes + index_bytes + psc_bytes) + 10000;
         /* printf("total_size = %lx water_mark = %lx\n", (CHAR_PTR)curr_fence+total_size, parea_water_mark); */
         if ((CHAR_PTR)curr_fence+total_size > (CHAR_PTR)parea_water_mark) {
             int success = 0;
