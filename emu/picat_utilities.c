@@ -2,56 +2,64 @@
 #include <stdlib.h>
 #include <string.h>
 
-TERM cstring_to_picat(char* v, int n) {
-    if (v == NULL || n <= 0) {
-        return picat_build_nil();
-    }
+TERM cstring_to_picat(char* ch_ptr, int n) {
+  BPLONG ret_lst;
+  BPLONG_PTR ret_lst_ptr;
+  
+  ret_lst_ptr = &ret_lst;
 
-    TERM ret = picat_build_list(), car, cdr;
-    car = picat_get_car(ret);
-    cdr = picat_get_cdr(ret);
-
-
-    for (int i = 0; i < n - 1; i++) {
-        char c[] = { v[i], '\0' };
-        picat_unify(car, picat_build_atom(c));
-        TERM temp = picat_build_list();
-        picat_unify(cdr, temp);
-
-        car = picat_get_car(temp);
-        cdr = picat_get_cdr(temp);
-    }
-    char c[] = { v[n - 1], '\0' };
-    picat_unify(car, picat_build_atom(c));
-    picat_unify(cdr, picat_build_nil());
-
-    return ret;
+  while (n > 0) {
+	char *ch_ptr0 = ch_ptr;
+	int code_len;
+	
+	utf8_char_to_codepoint(&ch_ptr);
+	code_len = ch_ptr - ch_ptr0;
+	n -= code_len;
+	FOLLOW(heap_top) = 	ADDTAG(insert_sym(ch_ptr0, code_len, 0), ATM);
+	FOLLOW(ret_lst_ptr) = ADDTAG(heap_top, LST);
+	heap_top++;
+	ret_lst_ptr = heap_top;
+	heap_top++;
+	LOCAL_OVERFLOW_CHECK("cstring_to_picat");
+  }
+  FOLLOW(ret_lst_ptr) = nil_sym;
+  return ret_lst;
 }
 
 //Translate Picat String To C-string
 char* picat_string_to_cstring(TERM t) {
-    int mult = 1;
-    char* str = calloc(512, sizeof(char));
+  BPLONG car;
+  CHAR_PTR s0, s;
+  BPLONG_PTR top, ptr;
+  SYM_REC_PTR sym_ptr;
+  BPLONG i, len, n = 0;
 
-    TERM tList = t;
-    TERM x = picat_get_car(tList);
-    int i = 0;
+  s0 = s = (char *)heap_top;
 
-    while (x != picat_build_integer(0)) {
-        i++;
-        if (i >= 512 * mult) {
-            mult++;
-            char *buffer = realloc(str, 512 * mult);
-            str = buffer;
-        }
-        strcat(str, picat_get_atom_name(x));
-        tList = picat_get_cdr(tList);
-        x = picat_get_car(tList);
-    }
-    return str;
+  DEREF(t);
+  while (ISLIST(t)) {
+	CHAR_PTR name_ptr;
+	ptr = (BPLONG_PTR)UNTAGGED_ADDR(t);
+	car = FOLLOW(ptr);
+	DEREF(car);                                             // assume car is an atom, will crash if car is not an atom
+	sym_ptr = (SYM_REC_PTR)UNTAGGED_ADDR(car);
+	name_ptr = GET_NAME(sym_ptr);
+	len = GET_LENGTH(sym_ptr);
+	for (i = 0; i < len; i++){
+	  *s++ = *name_ptr++;
+	}
+	n += len;
+	t = FOLLOW(ptr+1);
+	DEREF(t);
+  }
+  if ((BPLONG_PTR)s >= local_top) {
+	myquit(STACK_OVERFLOW, "to_cstring");
+  }
+  *s = '\0';
+  s = (char *)malloc(n+1);
+  strcpy(s, s0);
+  return s;
 }
-
-
 
 TERM picat_get_list_end(TERM l) {
     if (picat_is_list(l)) {

@@ -2112,8 +2112,11 @@ int b_FLOAT_FLOOR_cf(op1, op2)
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-    ASSIGN_f_atom(op2, bp_float_floor(op1));
-    return 1;
+	op1 = bp_float_floor(op1);
+	if (op1 == BP_ERROR)
+	  return BP_ERROR;
+    ASSIGN_f_atom(op2, op1);
+	return 1;
 }
 
 
