@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : builtins.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
  *   Purpose: Inline built-ins
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -144,6 +144,9 @@ void init_builtins(void) {
     INITIALIZE_BUILTIN2(126, b_IS_CALLABLE_c);
     INITIALIZE_BUILTIN3(127, b_INSERT_ORDERED_NO_DUP_ccf);
     INITIALIZE_BUILTIN3(128, b_INSERT_ORDERED_DOWN_NO_DUP_ccf);
+    INITIALIZE_BUILTIN3(129, b_PICAT_PRINT_PRIMITIVE_cc);
+    INITIALIZE_BUILTIN3(130, b_PICAT_WRITE_PRIMITIVE_cc);
+	
     /* for threads */
     /*
       INITIALIZE_BUILTIN1(127,b_IS_LATEST_CHOICE_POINT_c);

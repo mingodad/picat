@@ -865,6 +865,8 @@ extern int b_READ_FILE_CODES_cf(BPLONG FDIndex, BPLONG Lst);
 extern int b_READ_LINE_cf(BPLONG FDIndex, BPLONG Lst);
 extern int b_WRITE_BYTE_cc(BPLONG FDIndex, BPLONG Byt);
 extern int b_PICAT_PRINT_STRING_cc(BPLONG FDIndex, BPLONG Lst);
+extern int b_PICAT_PRINT_PRIMITIVE_cc(BPLONG FDIndex, BPLONG Term);
+extern int b_PICAT_WRITE_PRIMITIVE_cc(BPLONG FDIndex, BPLONG Term);
 extern int b_SET_STRING_TO_PARSE_c(BPLONG Str);
 extern void c_str_to_picat_str(CHAR_PTR str, BPLONG lst, BPLONG lstr);
 extern BPLONG c_str_to_picat_str0(CHAR_PTR str);

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : init_sym.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -201,6 +201,7 @@ void init_error_sym() {
     et_NON_EMPTY_LIST = ADDTAG(BP_NEW_SYM("non_empty_list", 0), ATM);
     et_NOT_LESS_THAN_ZERO = ADDTAG(BP_NEW_SYM("not_less_than_zero", 0), ATM);
     et_NUMBER = ADDTAG(BP_NEW_SYM("number", 0), ATM);
+    et_NEGATION = ADDTAG(BP_NEW_SYM("negation", 0), ATM);
     et_OPEN = ADDTAG(BP_NEW_SYM("open", 0), ATM);
     et_OPERATOR = ADDTAG(BP_NEW_SYM("operator", 0), ATM);
     et_OPERATOR_PRIORITY = ADDTAG(BP_NEW_SYM("operator_priority", 0), ATM);

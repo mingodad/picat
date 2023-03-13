@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : file.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -325,30 +325,30 @@ int b_STREAM_CHECK_CURRENT_TEXT_OUTPUT() {
 }
 
 /**********************************************************************/
-void bp_trim_trailing_zeros(bp_buf)
-    char *bp_buf;
+void bp_trim_trailing_zeros(loc_bp_buf)
+    char *loc_bp_buf;
 {
     BPLONG len;
 
-    len = strlen(bp_buf)-1;
-    while (bp_buf[len] == '0') len--;
+    len = strlen(loc_bp_buf)-1;
+    while (loc_bp_buf[len] == '0') len--;
 
-    if (bp_buf[len] == '.') {bp_buf[++len] = '0';}
-    bp_buf[len+1] = '\0';
+    if (loc_bp_buf[len] == '.') {loc_bp_buf[++len] = '0';}
+    loc_bp_buf[len+1] = '\0';
 
 }
 
-void bp_write_insert_dot_zero_if_needed(bp_buf)
-    char *bp_buf;
+void bp_write_insert_dot_zero_if_needed(loc_bp_buf)
+    char *loc_bp_buf;
 {
     int i, j, dot_found, len, e_index;
     char c;
     dot_found = 0;
     e_index = 0;
-    len = strlen(bp_buf);
+    len = strlen(loc_bp_buf);
 
     for (i = 0; i < len; i++) {
-        c = bp_buf[i];
+        c = loc_bp_buf[i];
         if (c == '.') dot_found = 1;
         if (c == 'e') {
             e_index = i;
@@ -358,16 +358,16 @@ void bp_write_insert_dot_zero_if_needed(bp_buf)
     if (e_index != 0) {
         if (dot_found == 0) {
             for (j = len; j >= e_index; j--) {
-                bp_buf[j+2] = bp_buf[j];
+                loc_bp_buf[j+2] = loc_bp_buf[j];
             }
-            bp_buf[e_index] = '.';
-            bp_buf[e_index+1] = '0';
+            loc_bp_buf[e_index] = '.';
+            loc_bp_buf[e_index+1] = '0';
         }
     } else {
         if (dot_found == 0) {
-            bp_buf[len] = '.';
-            bp_buf[len+1] = '0';
-            bp_buf[len+2] = '\0';
+            loc_bp_buf[len] = '.';
+            loc_bp_buf[len+1] = '0';
+            loc_bp_buf[len+2] = '\0';
         }
     }
 }
@@ -1092,7 +1092,12 @@ int b_WRITE_QUICK_c(op)
                   if (IS_FLOAT_PSC(op)) {
                       bp_write_double(op);
                   } else if (IS_BIGINT_PSC(op)) {
-                      return bp_write_bigint(op);
+			BPLONG_PTR ptr;
+			BPLONG size;					
+			ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
+			size = FOLLOW(ptr+1); size = INTVAL(size);
+			if (size > 36) return BP_FALSE;
+			return bp_write_bigint(op);
                   } else if (cg_is_component(op)) {
                       cg_print_component(op);
                   } else return BP_FALSE;
@@ -1218,7 +1223,12 @@ int b_WRITEQ_QUICK_c(op)
                   if (IS_FLOAT_PSC(op)) {
                       bp_write_double(op);
                   } else if (IS_BIGINT_PSC(op)) {
-                      return bp_write_bigint(op);
+			BPLONG_PTR ptr;
+			BPLONG size;
+			ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
+			size = FOLLOW(ptr+1); size = INTVAL(size);
+			if (size > 36) return BP_FALSE;
+			return bp_write_bigint(op);
                   } else return BP_FALSE;
               },
               {dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
@@ -3256,10 +3266,10 @@ int print_term_to_buf(BPLONG term) {
                 i++; j++;
             }
         } else {
-            bp_exception = illegal_arguments; return BP_ERROR;
+		  return BP_FALSE;
         }
     } else {
-        bp_exception = illegal_arguments; return BP_ERROR;
+	  return BP_FALSE;
     }
 
     return BP_TRUE;
@@ -3336,9 +3346,9 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size) {
 
 /* term must be one of the following: variable, atom, integer, and real */
 int b_TO_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
-    if (print_term_to_buf(term) == BP_ERROR) return BP_ERROR;
-    c_str_to_picat_str(bp_buf, lst, lstr);
-    return BP_TRUE;
+  if (print_term_to_buf(term) == BP_FALSE) return BP_FALSE;
+  c_str_to_picat_str(bp_buf, lst, lstr);
+  return BP_TRUE;
 }
 
 int b_TO_QUOTED_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
@@ -3346,9 +3356,8 @@ int b_TO_QUOTED_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
 
     DEREF(term);
     if (!ISATOM(term)) {
-        bp_exception = atom_expected;
-        return BP_ERROR;
-    }
+	  return b_TO_STRING_cff(term, lst, lstr);
+	}
     sym_ptr = GET_ATM_SYM_REC(term);
     bp_write_qname_to_bp_buf(GET_NAME(sym_ptr), GET_LENGTH(sym_ptr));
     c_str_to_picat_str(bp_buf, lst, lstr);
@@ -3383,30 +3392,50 @@ int b_TO_CODES_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
     }
 }
 
+/* print a primitive into FD, fails if term is not primitive */
+int b_PICAT_PRINT_PRIMITIVE_cc(BPLONG FDIndex, BPLONG term) {
+  DEREF(FDIndex);
+  out_file_i = INTVAL(FDIndex);
+  //  CHECK_FILE_INDEX(out_file_i);
+  curr_out = file_table[out_file_i].fdes;
+  return b_WRITE_QUICK_c(term);
+}
+
+/* write a primitive into FD, fails if term is not primitive */
+int b_PICAT_WRITE_PRIMITIVE_cc(BPLONG FDIndex, BPLONG term) {
+  DEREF(FDIndex);
+  out_file_i = INTVAL(FDIndex);
+  //  CHECK_FILE_INDEX(out_file_i);
+  curr_out = file_table[out_file_i].fdes;
+
+  return b_WRITEQ_QUICK_c(term);
+}
+
 int c_PICAT_FORMAT_TO_STRING_ccff() {
     BPLONG Format, Val, Str, StrR;
+    char *ch_ptr;
 
-    char format_str[1000];
-
+    char format_str[MAX_STR_LEN];
+	
     Format = ARG(1, 4); DEREF(Format);
     Val = ARG(2, 4); DEREF(Val);
     Str = ARG(3, 4); DEREF(Str);
     StrR = ARG(4, 4); DEREF(StrR);
 
-    picat_str_to_c_str(Format, format_str, 1000);
+    picat_str_to_c_str(Format, format_str, MAX_STR_LEN);
+	ch_ptr = bp_buf;
     if (ISINT(Val)) {
-        sprintf(bp_buf, format_str, INTVAL(Val));
+        sprintf(ch_ptr, format_str, INTVAL(Val));
     } else if (ISFLOAT(Val)) {
-        sprintf(bp_buf, format_str, floatval(Val));
+        sprintf(ch_ptr, format_str, floatval(Val));
     } else if (IS_BIGINT(Val)) {
-        sprintf(bp_buf, format_str, bp_bigint_to_int(Val));
+        sprintf(ch_ptr, format_str, bp_bigint_to_int(Val));
     } else {  /* Val must be a Picat string */
         char *str = (CHAR_PTR)heap_top+10000;
         picat_str_to_c_str(Val, str, MAX_STR_LEN);
-        sprintf(bp_buf, format_str, str);
+        sprintf(ch_ptr, format_str, str);
     }
-    //  printf("bp_buf=%s\n",bp_buf);
-    c_str_to_picat_str(bp_buf, Str, StrR);
+    c_str_to_picat_str(ch_ptr, Str, StrR);
     return BP_TRUE;
 }
 

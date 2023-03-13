@@ -3,7 +3,7 @@
 
 #include "picat.h"
 
-TERM cstring_to_picat(char* ch_ptr);
+TERM cstring_to_picat(char* ch_ptr, int n);
 
 char* picat_string_to_cstring(TERM t);
 

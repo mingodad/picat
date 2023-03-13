@@ -318,30 +318,38 @@ int next_token_index = 0;
         ungetc((char)c, card);                  \
     }
 #else
-#define BP_GETC_STRING(c) {                                             \
-        c = *string_in;                                                 \
-        if (c != 0) {                                                   \
-            string_in++;                                                \
-            if (chars_pool_index < MAX_CHARS_IN_POOL) chars_pool[chars_pool_index++] = (char)c; \
-        }                                                               \
-    }
+#define BP_GETC_STRING(c) {                             \
+	c = *string_in;					\
+	if (c != 0) {					\
+	  string_in++;					\
+	  if (chars_pool_index >= MAX_CHARS_IN_POOL){	\
+		c_init_chars_pool();			\
+	  }						\
+	  chars_pool[chars_pool_index++] = (char)c;	\
+	}						\
+  }
 
-#define BP_UNGETC_STRING {                      \
-        string_in--;                            \
-        chars_pool_index--;                     \
-    }
+#define BP_UNGETC_STRING {				\
+	string_in--;					\
+	chars_pool_index--;				\
+	if (chars_pool_index < 0) chars_pool_index = 0;	\
+  }
 
-#define BP_GETC(card, c) {                                              \
-        c = getc(card);                                                 \
-        if (c >= 0) {                                                   \
-            if (chars_pool_index < MAX_CHARS_IN_POOL) chars_pool[chars_pool_index++] = (char)c; \
-        }                                                               \
-    }
+#define BP_GETC(card, c) {                              \
+	c = getc(card);					\
+	if (c >= 0) {					\
+	  if (chars_pool_index >= MAX_CHARS_IN_POOL){	\
+		c_init_chars_pool();			\
+	  }						\
+	  chars_pool[chars_pool_index++] = (char)c;	\
+	}						\
+  }
 
-#define BP_UNGETC(c, card) {                    \
-        ungetc((char)c, card);                  \
-        chars_pool_index--;                     \
-    }
+#define BP_UNGETC(c, card) {				\
+	ungetc((char)c, card);				\
+	chars_pool_index--;				\
+	if (chars_pool_index < 0) chars_pool_index = 0;	\
+  }
 #endif
 
 /* convert a code point to char array s, which has n remaining slots */
@@ -1933,12 +1941,10 @@ int b_NEXT_TOKEN_ff(op1, op2)
     bp_exception = (BPLONG)NULL;
 #ifdef BPSOLVER
 #else
-    if (next_token_index < MAX_TOKENS_IN_TERM) {
-        if (lastc == ' ')
-            token_start_pos[next_token_index++] = chars_pool_index;
-        else
-            token_start_pos[next_token_index++] = chars_pool_index-1;
-    }
+    if (next_token_index >= MAX_TOKENS_IN_TERM) {
+	  c_init_chars_pool();
+	}
+	token_start_pos[next_token_index++] = chars_pool_index;
 #endif
     if (string_in == NULL) i = GetToken(); else i = GetTokenString();
     if (bp_exception != (BPLONG)NULL) {
@@ -1947,7 +1953,7 @@ int b_NEXT_TOKEN_ff(op1, op2)
             fprintf(stderr, "*** error until line %d\n", (int)curr_line_no);
             if (i == LISQT){
                 picat_str_to_c_str(list_p, chars_pool, MAX_CHARS_IN_POOL);
-                chars_pool[100] = '\0';
+                chars_pool[MAX_CHARS_IN_POOL-1] = '\0';
                 fputs(chars_pool,stderr);
             }
             BP_GETC(card, c);
@@ -1977,9 +1983,10 @@ int b_NEXT_TOKEN_ff(op1, op2)
         //    cFUNC++;
 #ifdef BPSOLVER
 #else
-        if (next_token_index < MAX_TOKENS_IN_TERM) {  /* f( has two tokens, actually */
-            token_start_pos[next_token_index++] = chars_pool_index;
-        }
+	if (next_token_index >= MAX_TOKENS_IN_TERM) {
+	  c_init_chars_pool();
+	}
+	token_start_pos[next_token_index++] = chars_pool_index;  /* f( has two tokens, actually */
 #endif
         break;
     case UPPER:
@@ -2143,10 +2150,14 @@ int c_report_syntax_error() {
     BPLONG char_no = 0;
 
     NTokensBefore = ARG(1, 1); DEREF(NTokensBefore); NTokensBefore = INTVAL(NTokensBefore);
-
-    //  printf("report_syntax_error %d\n", NTokensBefore);
-
-    if (NTokensBefore > MAX_TOKENS_IN_TERM) return BP_TRUE;
+	/*
+	printf("report_syntax_error %d\n", NTokensBefore);
+	printf("term_start_pool_index = %ld\n", term_start_pool_index);
+	printf("chars_pool_index = %ld\n",  chars_pool_index);
+	*/
+    if (NTokensBefore > MAX_TOKENS_IN_TERM){
+	  NTokensBefore = 0;
+	}
 
     here_out = 0;
     if (NTokensBefore == 0) here_out = 1;

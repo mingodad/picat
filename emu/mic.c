@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : mic.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
  *   Purpose: miscellaneous functions
  *            Includes MurmurHash by Austin Appleby
 
@@ -1916,7 +1916,10 @@ int b_GET_ATTR_ccf(var, attr, value)
         DEREF(pair);
         pair_ptr = (BPLONG_PTR)UNTAGGED_ADDR(pair);
         attr1 = FOLLOW(pair_ptr+1); DEREF(attr1);  /* (attr,value) */
-        if (attr == attr1 || (TAG(attr) != ATM && key_identical(attr, attr1))) {ASSIGN_f_atom(value, FOLLOW(pair_ptr+2)); return BP_TRUE;}
+        if (attr == attr1 || (TAG(attr) != ATM && key_identical(attr, attr1))) {
+	  ASSIGN_v_heap_term(value, FOLLOW(pair_ptr+2));
+	  return BP_TRUE;
+	}
         attrs = FOLLOW(ptr+1); DEREF(attrs);
     }
     return BP_FALSE;

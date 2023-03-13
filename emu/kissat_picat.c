@@ -18,7 +18,6 @@ static kissat *sat_solver = (kissat *)NULL;
 #define SAT_ADD_LIT(lit) kissat_add(sat_solver, lit)
 #define SAT_START_SOLVER res = kissat_solve(sat_solver)
 #define SAT_SATISFIABLE res == 10
-#define SAT_GET_BINDING(varNum) ((kissat_value(sat_solver, varNum) > 0) ? BP_ONE : BP_ZERO)
 #endif
 
 static int sat_dump_flag = 0;
@@ -131,7 +130,6 @@ int c_sat_init(){
 int c_sat_start(){
     BPLONG lst,res;
     BPLONG_PTR top;
-
     lst = ARG(1,1);
     DEREF_NONVAR(lst); 
 
@@ -143,7 +141,7 @@ int c_sat_start(){
         
     if (SAT_SATISFIABLE){
         BPLONG_PTR ptr;
-        BPLONG var,varNum;
+        BPLONG var, varNum, bit, negVar;
 
         while (ISLIST(lst)){
             BPLONG_PTR sv_ptr;
@@ -154,7 +152,12 @@ int c_sat_start(){
                 varNum = fast_get_attr(sv_ptr,et_NUMBER);
                 DEREF(varNum);
                 varNum = INTVAL(varNum);
-                unify(var,SAT_GET_BINDING(varNum));
+		if (varNum > 0){
+		  bit = (kissat_value(sat_solver, varNum) > 0) ? BP_ONE : BP_ZERO;
+		} else {
+		  bit = (kissat_value(sat_solver, -varNum) > 0) ? BP_ZERO : BP_ONE;
+		}
+		unify(var, bit);
             }
             lst = FOLLOW(ptr+1); DEREF(lst);
         }

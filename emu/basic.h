@@ -68,9 +68,9 @@
 // #define LARGE_MARGIN 12500
 #define LARGE_MARGIN 125000
 
-/* maximum and minimum integers that are represented in one word */
 #define MAX_CHARS_IN_POOL 10000
 
+/* maximum and minimum integers that are represented in one word */
 #define BP_BIGINT_BASE 268435456
 
 #define BP_IN_1W_INT_RANGE(op) ((op) >= BP_MININT_1W && (op) <= BP_MAXINT_1W)
@@ -572,7 +572,7 @@ str_BUILTIN_ERROR1,
     str_SYNTAX_ERROR;
 
 extern BPLONG
-et_OUT_OF_MEMORY,
+    et_OUT_OF_MEMORY,
     et_OUT_OF_MEMORY_STACK,
     et_OUT_OF_MEMORY_TABLE,
     et_UPDATE,
@@ -606,6 +606,7 @@ et_OUT_OF_MEMORY,
     et_NON_EMPTY_LIST,
     et_NOT_LESS_THAN_ZERO,
     et_NUMBER,
+    et_NEGATION,
     et_OPEN,
     et_OPERATOR,
     et_OPERATOR_PRIORITY,

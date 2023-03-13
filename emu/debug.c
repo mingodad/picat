@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : debug.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
  *   Purpose: debugging primitives
 
  * This Source Code Form is subject to the terms of the Mozilla Public

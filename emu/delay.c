@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : delay.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
  *   Purpose: Primitives for suspension variables and agents
 
  * This Source Code Form is subject to the terms of the Mozilla Public

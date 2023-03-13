@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : table.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2022
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
  *   Purpose: Primitives on table area
 
  * This Source Code Form is subject to the terms of the Mozilla Public

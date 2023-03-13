@@ -8,12 +8,12 @@ CC     = /usr/bin/gcc -DGCC -DPICAT -DSAT -DM64BITS
 #CFLAGS = -c  -O4 -Dunix                        #Solaris,SonyNews
 #CFLAGS = -c  -O4 -DWIN32 -DGC                  #Windows-PC
 #CFLAGS = -c  -O -DDARWIN -DGLPK -DGC -finline-functions -fomit-frame-pointer -arch i386 #x86_64  #MacOS X, Darwin
-CFLAGS = -c  -O3 -DDARWIN -Wall -DGC -fomit-frame-pointer -arch x86_64  #MacOS X, Darwin
+CFLAGS = -c  -O3 -DDARWIN -Wall -DGC -fomit-frame-pointer # -arch x86_64  MacOS X, Darwin
 
 #LGLFLAG = -Wall -DNLGLOG -DNLGLSTATS -DNDEBUG -DNLGLPICOSAT
 ESPRESSO_FLAGS = -c -O3 -I. -Iespresso
 
-LFLAGS = -lm  -lpthread -arch x86_64 # x86_64 -Wall
+LFLAGS = -lm  -lpthread # -arch x86_64 x86_64 -Wall
 
 OBJ = dis.o init.o init_sym.o loader.o inst_inf.o main.o toam.o unify.o \
 	file.o domain.o cfd.o float1.o arith.o token.o global.o \
