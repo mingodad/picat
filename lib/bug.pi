@@ -1,0 +1,24 @@
+path_d(Vs,Es,Src,Dest), list(Dest) =>
+    check_graph_vs(Vs, path_d),
+    check_graph_es(Es, path_d),
+    hcp_scc_check_vertex(Src,path_d),
+    foreach (V in Dest)
+        hcp_scc_check_vertex(V,path_d)
+    end,
+    once member({Src, 1}, Vs),                              % Src is in
+    VMap = new_map(),
+    DistMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B)
+        Dist :: 0..N,
+        DistMap.put(V, Dist)
+    end,
+    AMap = new_map(),
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        register_d_edge(V1,V2,B,VMap,EMap,AMap)
+    end,
+    sum([B : V in Dest, B = VMap.get(V,0)]) #= 1.           % exactly one dest vertex is in
+path_d(Vs,Es,Src,Dest) =>                                   % unique dest
+    hcp_scc_check_vertex(Dest,path_d),
+    path_d(Vs,Es,Src,[Dest]).

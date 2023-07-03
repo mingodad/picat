@@ -1537,6 +1537,8 @@ int b_MOD_CON_ccc(X, Y, Z)
     dv_ptr_x = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(X);
     currX = DV_first(dv_ptr_x);
     maxX = DV_last(dv_ptr_x);
+	if (maxX >= 3000)
+	  return BP_TRUE;
     if (ISINT(Z)) {
         Z = INTVAL(Z);
         while (currX <= maxX) {

@@ -29,7 +29,7 @@
 \vspace*{4cm}
 \begin{center}
 {\Huge\bf A User's Guide to Picat} \\
-{\large\bf Version 3.4} \\
+{\large\bf Version 3.5} \\
 
 
 \vspace*{1cm}
@@ -39,7 +39,7 @@
 \vspace*{1cm}
 {\bf Copyright \copyright \url{picat-lang.org}, 2013-2023.} \\
 %{\bf Under construction}
-{\bf Last updated March 11, 2023} \\
+{\bf Last updated July 1, 2023} \\
 \end{center}
 \thispagestyle{empty}
 \clearpage
@@ -58,7 +58,7 @@ The copyright of Picat is owned by \url{picat-lang.org}. Picat is provided, free
 \section*{Acknowledgements}
 The initial design of Picat was published in December 2012, and the first alpha version was released in May 2013.  Many people have contributed to the project by reviewing the ideas, the design, the implementation, and/or the documentation, including Roman Bart\'{a}k, Nikhil Barthwal, Mike Bionchik, Lei Chen, Veronica Dahl, Claudio Cesar de S\'{a}, Agostino Dovier, Sergii Dymchenko, Julio Di Egidio, Christian Theil Have, H{\aa}kan Kjellerstrand,  Annie Liu, Nuno Lopes, Marcio Minicz, Richard O'Keefe, Lorenz Schiffmann, Paul Tarau, and Jan Wielemaker.  Special thanks to H{\aa}kan Kjellerstrand, who has been programming in Picat and blogging about Picat since May 2013. The system wouldn't have matured so quickly without H{\aa}kan's hundreds of programs (\url{http://hakank.org/}). Thanks also go to Bo Yuan (Bobby) Zhou, who designed the \url{picat-lang.org} web page, Sanders Hernandez, who implemented the interface to the FANN neural network library, and Domingo Alvarez Duarte, who ported Picat to MinGW (\url{https://github.com/mingodad/picat}). The Picat project was supported in part by the NSF under grant numbers CCF1018006 and CCF1618046.
 
-The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Espresso} (by Berkeley); \texttt{FANN} by Steffen Nissen. In addition, Picat also provides interfaces to the SAT solver MapleLCMDiscChronoBT-DL-v3 (\url{http://sat-race-2019.ciirc.cvut.cz/}), \texttt{Gurobi} by Gurobi Optimization, Inc, \texttt{CBC} by John Forrest, \texttt{GLPK} by Andrew Makhorin, and \texttt{Z3} by Microsoft.
+The Picat implementation is based on the B-Prolog engine. It uses the following public domain modules: \ignore{\texttt{prism} by Taisuke Sato and Yoshitaka Kameya; }\texttt{token.c} by Richard O'Keefe; \texttt{getline.c} by Chris Thewalt; \texttt{bigint.c} by Matt McCutchen; \texttt{Espresso} (by Berkeley); \texttt{FANN} by Steffen Nissen. In addition, Picat also provides interfaces to the SAT solver Kissat (\url{https://github.com/arminbiere/kissat}), \texttt{Gurobi} by Gurobi Optimization, Inc, \texttt{CBC} by John Forrest, \texttt{GLPK} by Andrew Makhorin, and \texttt{Z3} by Microsoft.
 
 \tableofcontents
 

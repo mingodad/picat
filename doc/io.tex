@@ -140,14 +140,14 @@ formatted_print =>
     FD = open("birthday.txt",write),
     Format1 = "Hello, %s.  Happy birthday!  ",
     Format2 =  "You are %d years old today.  ", 
-    Format3 =  "That is %.2f%% older than you were last year",
+    Format3 =  "That is %.2f%% older than you were last year.",
     writef(FD, Format1, "Bob"),
     writef(FD, Format2, 7),
-    writef(FD, Format3, 7.0 / 6.0),
+    writef(FD, Format3, ((7.0 - 6.0) / 6.0) * 100),
     close(FD).
 \end{verbatim}
 
-This writes ''\texttt{Hello, Bob.  Happy birthday!  You are 7 years old today.  That is 1.17\% older than you were last year}".
+This writes, ``\texttt{Hello, Bob.  Happy birthday!  You are 7 years old today.  That is 16.67\% older than you were last year.}''
     
 The \texttt{io} module also has the three \texttt{print} predicates.  
 \begin{itemize}

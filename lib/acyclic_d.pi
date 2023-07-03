@@ -1,0 +1,228 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Vs,Es) represents a directed acyclic graph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+acyclic_d(Vs,Es) =>
+    check_graph_vs(Vs, acyclic_d),
+    check_graph_es(Es, acyclic_d),
+    N = len(Vs),
+    VMap = new_map(),
+    DegMap = new_map(),
+    foreach({V,B} in Vs)
+        B :: 0..1,
+        VMap.put(V, B),
+        DegMap.put(V, 0)
+    end,
+    %
+    VEMap = new_map(),
+    EMap = new_map(),
+    foreach({V1,V2,B} in Es)
+        B :: 0..1,    
+        Key = (V1,V2),
+        if V1 == V2 then
+            #~B        
+        end,
+        if not VEMap.has_key(Key) then
+            VEMap.put(Key, B),
+            DegMap.put(V1, DegMap.get(V1)+1),
+            DegMap.put(V2, DegMap.get(V2)+1)
+        end
+    end,
+    RVs = [V : {V,_} in Vs],
+    acyclic_vertex_elimination(VMap, DegMap, VEMap, EMap, N, RVs).
+
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, N, [])  => true.
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, N, [_]) => true.
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, N, Vs@[FirstV|RVs]) =>
+    choose_vertex_to_cut(DegMap, FirstV, DegMap.get(FirstV), RVs, W, DW, RVs1),
+    if 6*DW > N || DW > 41 then
+        VBs = [{V,B} : V in Vs, B = VMap.get(V)],
+        EBs = [{V1,V2,B} : V1 in Vs, V2 in Vs,  Key = (V1,V2), VEMap.has_key(Key), B = VEMap.get(Key)],
+        acyclic_lee_b(VBs,EBs)
+    else
+        InNeibs = [V: V in RVs1, VEMap.has_key((V,W))],
+        OutNeibs = [V: V in RVs1, VEMap.has_key((W,V))],
+
+        foreach(X in InNeibs)
+            DegMap.put(X, DegMap.get(X)-1),
+            Key1 = (X,W),        
+            if not EMap.has_key(Key1) then
+                B = VEMap.get(Key1),
+                B1 :: 0..1,
+                B #=> B1,
+                VEMap.put(Key1, B1),
+                EMap.put(Key1, B)
+            end
+        end,
+
+        foreach(Y in OutNeibs)
+            DegMap.put(Y, DegMap.get(Y)-1),
+            Key1 = (W,Y),
+            if not EMap.has_key(Key1) then
+                B = VEMap.get(Key1),
+                B1 :: 0..1,
+                B #=> B1,
+                VEMap.put(Key1, B1),
+                EMap.put(Key1, B)
+            end,
+            
+            Key2 = (Y,W),
+            if VEMap.has_key(Key2) then            
+                B1 = VEMap.get(Key1),
+                B2 = VEMap.get(Key2),
+                #~B1 #\/ #~B2
+            end
+        end,
+        
+        foreach(X in InNeibs, Y in OutNeibs, X !== Y)
+            if not EMap.has_key((X,Y)) then
+                B1 :: 0..1,
+                if VEMap.has_key((X,Y)) then
+                    B = VEMap.get((X,Y)),
+                    EMap.put((X,Y), B),
+                    B #=> B1
+                else
+                    DegMap.put(X, DegMap.get(X)+1),
+                    DegMap.put(Y, DegMap.get(Y)+1),
+                    EMap.put((X,Y), B1),
+                end,
+                VEMap.put((X,Y), B1)    
+            end,
+            
+            B1 =  VEMap.get((X,Y)),
+            B3 =  VEMap.get((X,W)),
+            B4 =  VEMap.get((W,Y)),
+            (B3 #/\ B4) #=> B1
+        end,
+        N1 = N-1,
+        acyclic_vertex_elimination(VMap, DegMap, VEMap, EMap, N1, RVs1)
+    end.
+
+% choose a vertex with the lowest degree    
+choose_vertex_to_cut(DegMap, U, Du, Vs, W, DW, RVs), Du =< 1 =>
+    W = U, DW = Du, RVs = Vs.
+choose_vertex_to_cut(DegMap, U, Du, [], W, DW, RVs) => W = U, DW = Du, RVs = [].
+choose_vertex_to_cut(DegMap, U, Du, [V|Vs], W, DW, RVs),
+    Dv = DegMap.get(V),
+    Dv < Du
+=>
+    RVs = [U|RVs1],
+    choose_vertex_to_cut(DegMap, V, Dv, Vs, W, DW, RVs1).
+choose_vertex_to_cut(DegMap, U, Du, [V|Vs], W, DW, RVs) =>
+    RVs = [V|RVs1],
+    choose_vertex_to_cut(DegMap, U, Du, Vs, W, DW, RVs1).
+
+% use leaf-elimination encoding
+acyclic_lee_b(Vs,Es) =>
+    acyclic_lee_b(Vs,Es,_).
+
+acyclic_lee_b(Vs,Es,TMap) =>        
+    BaseVs = [V : {V,_} in Vs],
+    BaseEs = [(V1,V2): {V1,V2,_} in Es],
+    base_graph_info(BaseVs,BaseEs,N,RemSet,MaxT),           % A node is put in RemdSet if its removal doesn't affect the cyclicity
+    VMap = new_map(),
+    TMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B),
+        T :: 0..MaxT,                                       % vertex V is eliminated at time T
+        TMap.put(V,T)
+    end,
+    AMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        acyclic_lee_b_register_edge(V1,V2,B,VMap,AMap)
+    end,
+    foreach ({V,B} in Vs)
+        Time = TMap.get(V),
+        if RemSet.has_key(V) then
+            Time = 0
+        else
+            Neibs = AMap.get(V,[]),
+            K #= sum([B1 : (_,B1) in Neibs]),
+            KGe1 #<=> K #>= 1,
+            #~KGe1 #=> Time #= 0,                           % vertex V is eliminated at time 0 if it's a leaf
+            #~B #=> Time #= 0,
+            acyclic_lee_b_constrain_neibs(V,Time,TMap,Neibs)
+        end
+    end,
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        EMap.put((V1,V2), B)
+    end,
+    foreach ({V1,V2,B12} in Es)
+        if EMap.has_key((V2,V1)) && V1 @< V2 then
+            B21 = EMap.get((V2,V1)),
+            #~B12 #\/ #~B21                                 % no cycle of 2
+        end,
+        Neibs = AMap.get(V2,[]),
+        foreach ((V3,B23) in Neibs, V3 !== V1)
+            if EMap.has_key((V3,V1)) then
+                B31 = EMap.get((V3,V1)),
+                #~B12 #\/ #~B23 #\/ #~B31
+            end
+        end
+    end.
+
+% AMap: adjacency map
+acyclic_lee_b_register_edge(V1,V2,B,VMap,AMap) =>
+    Neibs1 = AMap.get(V1,[]),
+    AMap.put(V1,[(V2,B)|Neibs1]),
+    B1 = VMap.get(V1),
+    B2 = VMap.get(V2),
+    B #=> B1,
+    B #=> B2.
+
+acyclic_lee_b_constrain_neibs(V,Time,TMap,[]) => true.
+acyclic_lee_b_constrain_neibs(V,Time,TMap,[(V1,B1)|L]) =>
+    Time1 = TMap.get(V1),
+    B1 #=> Time #> Time1,
+    acyclic_lee_b_constrain_neibs(V,Time,TMap,L).
+
+% extract information about the base graph
+%    N : the number of nodes
+%   RemSet: all the nodes in the base graph that do not occur in any cycles
+%   MaxT: The maximum time (number of iterations) for the leaf-elimination to detect acyclicity
+%        
+base_graph_info(Vs,Es,N,RemSet,MaxT) =>
+    AMap = new_map(),
+    foreach ((V1,V2)in Es)
+        Neibs = AMap.get(V1,[]),
+        AMap.put(V1,[V2|Neibs])
+    end,
+    TransAMap = new_map(),                 % The transpose graph
+    foreach ((V1,V2) in Es)
+        Neibs = AMap.get(V2,[]),
+        TransAMap.put(V2,[V1|Neibs])
+    end,
+    RemSet = new_set(),
+    eliminate_leaves(Vs,AMap,TransAMap,RemSet),
+    N = length(Vs),
+    MaxT = N - size(RemSet) - 1.           % all the nodes in RemSet are removed at time 0
+
+eliminate_leaves(Vs,AMap,TransAMap,RemSet) =>
+    eliminate_leaves(Vs,Vs1,AMap,TransAMap,RemSet,Flag),
+    if Flag == 1 then                     % continue until no leaves exist
+        eliminate_leaves(Vs1,AMap,TransAMap,RemSet)
+    end.
+
+eliminate_leaves([],Vs1,AMap,TransAMap,RemSet,Flag) => Vs1 = [].
+eliminate_leaves([V|Vs],Vs1,AMap,TransAMap,RemSet,Flag),
+    acyclic_lee_leaf(V,AMap,TransAMap,RemSet)
+=>
+    RemSet.put(V),
+    Flag = 1,
+    eliminate_leaves(Vs,Vs1,AMap,TransAMap,RemSet,Flag).
+eliminate_leaves([V|Vs],Vs1,AMap,TransAMap,RemSet,Flag) =>
+    Vs1 = [V|Vs1R],
+    eliminate_leaves(Vs,Vs1R,AMap,TransAMap,RemSet,Flag).
+    
+acyclic_lee_leaf(V,AMap,TransAMap,RemSet) ?=>
+    Neibs = AMap.get(V,[]),
+    foreach (Neib in Neibs)
+        RemSet.has_key(Neib)
+    end,
+    !.
+acyclic_lee_leaf(V,AMap,TransAMap,RemSet) =>
+    Neibs = TransAMap.get(V,[]),
+    foreach (Neib in Neibs)
+        RemSet.has_key(Neib)
+    end.
+        

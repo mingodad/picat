@@ -3948,7 +3948,7 @@ int b_READ_LINE_cf(BPLONG FDIndex, BPLONG Lst) {
         FOLLOW(heap_top) = b;
         FOLLOW(ret_lst_ptr) = ADDTAG(heap_top, LST);
         heap_top++;
-        LOCAL_OVERFLOW_CHECK("read_line");
+        LOCAL_OVERFLOW_CHECK_WITH_MARGIN("read_line", 1000);
         ret_lst_ptr = heap_top++;
         b = getc(in_fptr);
     }
