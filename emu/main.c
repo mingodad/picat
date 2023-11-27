@@ -19,6 +19,7 @@ int bprolog_main(argc, argv)
     if (disassem) {
         dis();
         printf("The byte code file is dumped in the file dump.pil\n");
+        finish_bprolog();
         return (0);
     }
     else {
@@ -29,6 +30,7 @@ int bprolog_main(argc, argv)
 #endif
         bp_call_term(ADDTAG(insert_sym("$bp_first_call", 14, 0), ATM));
         // toam(inst_begin,arreg,local_top);
+        finish_bprolog();
         return (0);
     }
 }

@@ -505,6 +505,13 @@ InterpretedPredBucketPtr new_interpreted_bucket() {
     return bucket_ptr;
 }
 
+static BPLONG_PTR hashtable_to_free;
+
+void interpreted_pred_hashtable_free()
+{
+    free(hashtable_to_free);
+}
+
 BPLONG_PTR new_interpreted_pred_hashtable(size)
     int size;
 {
@@ -522,6 +529,7 @@ BPLONG_PTR new_interpreted_pred_hashtable(size)
             return NULL;
         }
     }
+    hashtable_to_free = hashtable;
     return hashtable;
 }
 

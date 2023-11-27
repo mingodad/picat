@@ -77,6 +77,12 @@ void init_table_area() {
     table_free_cells_ptr = NULL;
 }
 
+void finish_table_area() {
+    free(ta_gterms_htable_ptr->htable);
+    free(ta_record_ptr->low_addr);
+    free(subgoalTable);
+}
+
 BPLONG table_area_size() {
     BPLONG_PTR block_low_addr, subgoal_entry, answerTable;
     BPLONG size, i;

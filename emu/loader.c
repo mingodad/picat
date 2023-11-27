@@ -564,6 +564,12 @@ int load_hashtab()
     return 0;
 }
 
+int unload_hashtab()
+{
+    free(indextab);
+    return 0;
+}
+
 
 int get_index_tab(clause_no, lenptr)
     BPLONG clause_no;

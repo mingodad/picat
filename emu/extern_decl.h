@@ -156,6 +156,7 @@ extern int b_ASSERTA_cc(BPLONG Head, BPLONG Body);
 extern int b_ASSERTZ_cc(BPLONG Head, BPLONG Body);
 extern InterpretedPredBucketPtr new_interpreted_bucket(void);
 extern BPLONG_PTR new_interpreted_pred_hashtable(int size);
+extern void interpreted_pred_hashtable_free();
 extern InterpretedPredPtr new_interpreted_pred_record(BPLONG size);
 extern InterpretedPredPtr initialize_interpreted_pred(SYM_REC_PTR sym_ptr, BPLONG type, BPLONG size);
 extern int rehash_interpreted_pred(InterpretedPredPtr pred_ptr);
@@ -1020,6 +1021,7 @@ extern int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon);
 extern int load_syms(BPLONG file_type);
 extern int load_text(void);
 extern int load_hashtab(void);
+extern int unload_hashtab();
 extern int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr);
 extern BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt);
 extern BPLONG bp_hsize(BPLONG numentry);
@@ -1233,6 +1235,7 @@ extern int c_simple(void);
 //      table.c prototypes
 //[]
 extern void init_table_area();
+extern void finish_table_area();
 extern BPLONG table_area_size();
 extern BPLONG table_area_notin_use();
 extern void subgoal_table_statistics(int *nSubgoals, int *maxGTCollisions, float *aveGTCollisions,
@@ -1319,6 +1322,7 @@ void reset_temp_complete_scc_elms(BPLONG_PTR subgoal_entry);
 extern void exception_handler(int signo);
 extern void init_signals(void);
 extern int initialize_bprolog(int argc, char *argv[]);
+extern int finish_bprolog(void);
 extern int toam(BPLONG_PTR P, BPLONG_PTR AR, BPLONG_PTR LOCAL_TOP);
 extern void roll_tabled_frames(BPLONG_PTR b, BPLONG_PTR end_b);
 

@@ -127,6 +127,20 @@ int initialize_bprolog(argc, argv)
     return BP_TRUE;
 }
 
+int finish_bprolog()
+{
+    interpreted_pred_hashtable_free();
+    unload_hashtab();
+#ifdef GC
+    free(gcQueue);
+#endif
+    finish_table_area();
+    free(trail_low_addr);
+    free(parea_low_addr);
+    free(stack_low_addr);
+    return BP_TRUE;
+}
+
 int toam(P, AR, LOCAL_TOP)
     register BPLONG_PTR P, AR, LOCAL_TOP;
 {
