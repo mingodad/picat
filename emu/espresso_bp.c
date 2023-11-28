@@ -59,7 +59,7 @@ int c_call_espresso()
     n = GET_ARITY(sym_ptr);  /* n bits (Boolean variables) */
     PLA = init_PLA(n);
 
-    //  write_term(Vals);
+	//    printf("=> call_espresso "); write_term(Vals); printf("\n");
 
     setup_PLA(Vals, INTVAL(InFlag), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);
@@ -340,7 +340,7 @@ int c_call_espresso_pb() {
     n = GET_ARITY(sym_ptr);  /* n bits (Boolean variables) */
     PLA = init_PLA(n);
 
-    //  printf("=>espresso_pb n = %d ",n); write_term(Coes); write_term(BNVect);printf("\n");
+	//	printf("=>espresso_pb n = %d ",n); write_term(Coes); write_term(BNVect);printf("\n");
 
     setup_PLA_pb(Coes, INTVAL(Rel), INTVAL(Const), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);

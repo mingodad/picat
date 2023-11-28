@@ -4134,8 +4134,3 @@ int b_SET_STRING_TO_PARSE_c(BPLONG Str) {
     lastc = ' ';
     return BP_TRUE;
 }
-
-void print_cnf_header(int nvars, int ncls) {
-    fseek(curr_out, 0, SEEK_SET);
-    fprintf(curr_out, "p cnf %d %d", nvars, ncls);
-}

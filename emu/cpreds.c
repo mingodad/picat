@@ -1150,10 +1150,6 @@ void Cboot() {
       Cboot_glpk();
       #endif
     */
-    insert_cpred("c_sat_start_dump", 1, c_sat_start_dump);
-    insert_cpred("c_sat_stop_dump", 0, c_sat_stop_dump);
-    insert_cpred("c_sat_start_count", 1, c_sat_start_count);
-    insert_cpred("c_sat_stop_count", 1, c_sat_stop_count);
     insert_cpred("c_sat_propagate_dom_bits", 2, c_sat_propagate_dom_bits);
 
     insert_cpred("c_REDUCE_DOMAINS_IC_EQ", 2, c_REDUCE_DOMAINS_IC_EQ);

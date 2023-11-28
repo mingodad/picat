@@ -1386,10 +1386,6 @@ extern int b_UNIV_cc(BPLONG op1, BPLONG op2);
 //      sat_bp.c prototypes
 //[]
 extern int c_sat_init();
-extern int c_sat_start_dump();
-extern int c_sat_stop_dump();
-extern int c_sat_start_count();
-extern int c_sat_stop_count();
 extern int b_SAT_ADD_CL_c(BPLONG lit);
 extern int b_SAT_RETRIEVE_BNUM_cff(BPLONG BV, BPLONG Num, BPLONG MNum);
 extern int b_SAT_GET_INC_VAR_NUM_f(BPLONG Num);

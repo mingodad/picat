@@ -38,9 +38,6 @@ extern int plgl_start (LGL **ptr_lgl);
 #endif
 #endif
 
-static int sat_dump_flag = 0;
-static int sat_dump_or_count_flag = 0;
-static int num_cls = 0;
 int sat_nvars;
 int sat_nvars_limit;  /* used by plglib, the size of the dynamic arrays */
 static int num_threads = 0;
@@ -96,42 +93,6 @@ int b_SAT_GET_INC_VAR_NUM_f(BPLONG Num) {
     return BP_TRUE;
 }
 
-/* initialize the global variable number, and initialize counters */
-int c_sat_start_count() {
-    BPLONG num = ARG(1, 1);
-    DEREF_NONVAR(num);
-    sat_nvars = sat_nvars_limit = (int)INTVAL(num);
-
-    sat_dump_or_count_flag = 1;
-    num_cls = 0;
-    return BP_TRUE;
-}
-
-int c_sat_stop_count() {
-    sat_dump_or_count_flag = 0;
-    unify(ARG(1, 1), MAKEINT(num_cls));
-    num_cls = 0;
-    return BP_TRUE;
-}
-
-int c_sat_start_dump() {
-    BPLONG num = ARG(1, 1);
-    DEREF_NONVAR(num);
-    sat_nvars = sat_nvars_limit = (int)INTVAL(num);
-
-    sat_dump_flag = 1;
-    sat_dump_or_count_flag = 1;
-    num_cls = 0;
-    return BP_TRUE;
-}
-
-int c_sat_stop_dump() {
-    sat_dump_flag = 0;
-    sat_dump_or_count_flag = 0;
-    print_cnf_header(sat_nvars-1, num_cls);
-    return BP_TRUE;
-}
-
 #ifdef SAT
 /* cl is a list of literals */
 int b_SAT_ADD_CL_c(BPLONG cl) {
@@ -158,30 +119,18 @@ int b_SAT_ADD_CL_c(BPLONG cl) {
         cl = FOLLOW(lst_ptr+1); DEREF_NONVAR(cl);
     }
 
-    if (sat_dump_or_count_flag == 1) {
-        num_cls++;
-        if (sat_dump_flag == 1) {
-            for (ptr = local_top; ptr != lit_ptr; ptr--) {
-                write_term(*ptr);
-                write_space();
-            }
-            write_term(BP_ZERO);
-            b_NL();
-        }
-    } else {
-        if (num_threads > 0) {
-            for (ptr = local_top; ptr != lit_ptr; ptr--) {
-                PSAT_ADD(INTVAL(*ptr));
-            }
-            PSAT_ADD(0);
-        }
-        else {
-            for (ptr = local_top; ptr != lit_ptr; ptr--) {
-                SAT_ADD(INTVAL(*ptr));
-            }
-            SAT_ADD(0);
-        }
-    }
+	if (num_threads > 0) {
+	  for (ptr = local_top; ptr != lit_ptr; ptr--) {
+		PSAT_ADD(INTVAL(*ptr));
+	  }
+	  PSAT_ADD(0);
+	}
+	else {
+	  for (ptr = local_top; ptr != lit_ptr; ptr--) {
+		SAT_ADD(INTVAL(*ptr));
+	  }
+	  SAT_ADD(0);
+	}
 
     return BP_TRUE;
 }
