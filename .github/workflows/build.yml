@@ -94,7 +94,7 @@ jobs:
 
   build-release-osx-arm64:
     name: picat master osx/arm64
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest-large
     steps:
     - uses: actions/checkout@v2
     # see what's available in /usr/bin
