@@ -92,6 +92,36 @@ jobs:
         name: download picat-osx-amd64
         path: picat-osx-amd64
 
+  build-release-osx-arm64:
+    name: picat master osx/arm64
+    runs-on: macos-latest-xlarge
+    steps:
+    - uses: actions/checkout@v2
+    # see what's available in /usr/bin
+    - name: see what's available
+      run: ls -l /usr/bin
+    # build project arm64
+    - name: build arm64
+      run: |
+        cd emu
+        make -f Makefile.mac64
+        mv picat ../picat-osx-arm64
+    # run tests
+    - name: run test_exs arm64
+      run: |
+        cd exs
+        ../picat-osx-arm64 test_exs.pi
+    - name: run test_exs_cp arm64
+      run: |
+        cd exs
+        ../picat-osx-arm64 test_exs_cp.pi
+    # upload artifact, picat binary
+    - name: Upload Picat-osx-arm64 binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: download picat-osx-arm64
+        path: picat-osx-arm64
+
   build-release-windows-i686-amd64:
     name: picat master windows/amd64
     runs-on: ubuntu-20.04
