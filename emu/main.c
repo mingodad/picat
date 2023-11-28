@@ -11,9 +11,7 @@
 int main(int argc, char *argv[]);
 static INLINE int bprolog_main(int argc, char *argv[]);
 
-int bprolog_main(argc, argv)
-    int argc;
-    char *argv[];
+int bprolog_main(int argc, char *argv[])
 {
     initialize_bprolog(argc, argv);
     if (disassem) {
@@ -35,9 +33,7 @@ int bprolog_main(argc, argv)
     }
 }
 
-int main(argc, argv)
-    int argc;
-    char *argv[];
+int main(int argc, char *argv[])
 {
     return bprolog_main(argc, argv);
 }

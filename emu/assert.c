@@ -112,8 +112,7 @@ int c_set_dyn_hashtable_size() {
     return BP_TRUE;
 }
 
-int b_INC_PRED_REF_COUNT_c(PredPtr)
-    BPLONG PredPtr;
+int b_INC_PRED_REF_COUNT_c(BPLONG PredPtr)
 {
     BPLONG_PTR top;
     InterpretedPredPtr pred_ptr;
@@ -124,8 +123,7 @@ int b_INC_PRED_REF_COUNT_c(PredPtr)
     return BP_TRUE;
 }
 
-int b_DEC_PRED_REF_COUNT_c(PredPtr)
-    BPLONG PredPtr;
+int b_DEC_PRED_REF_COUNT_c(BPLONG PredPtr)
 {
     BPLONG_PTR top;
     InterpretedPredPtr pred_ptr;
@@ -137,8 +135,7 @@ int b_DEC_PRED_REF_COUNT_c(PredPtr)
     return BP_TRUE;
 }
 
-int b_INC_PRED_RETR_COUNT_c(PredPtr)
-    BPLONG PredPtr;
+int b_INC_PRED_RETR_COUNT_c(BPLONG PredPtr)
 {
     BPLONG_PTR top;
     InterpretedPredPtr pred_ptr;
@@ -149,8 +146,7 @@ int b_INC_PRED_RETR_COUNT_c(PredPtr)
     return BP_TRUE;
 }
 
-int b_DEC_PRED_RETR_COUNT_c(PredPtr)
-    BPLONG PredPtr;
+int b_DEC_PRED_RETR_COUNT_c(BPLONG PredPtr)
 {
     BPLONG_PTR top;
     InterpretedPredPtr pred_ptr;
@@ -163,8 +159,7 @@ int b_DEC_PRED_RETR_COUNT_c(PredPtr)
 }
 
 /***************************************************************************/
-int b_ABOLISH_cc(f, n)
-    BPLONG f, n;
+int b_ABOLISH_cc(BPLONG f, BPLONG n)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top;
@@ -190,8 +185,7 @@ int b_ABOLISH_cc(f, n)
     return BP_TRUE;
 }
 
-void abolish_pred(pred_ptr)
-    InterpretedPredPtr pred_ptr;
+void abolish_pred(InterpretedPredPtr pred_ptr)
 {
     BPLONG_PTR hashtable, cell_ptr;
     InterpretedClausePtr clause_record_ptr;
@@ -266,8 +260,7 @@ start:
 }
 
 /***************************************************************************/
-int b_REMOVE_CLAUSE_c(clause_record)
-    BPLONG clause_record;
+int b_REMOVE_CLAUSE_c(BPLONG clause_record)
 {
     BPLONG_PTR top;
     InterpretedClausePtr clause_record_ptr;
@@ -295,9 +288,7 @@ int b_REMOVE_CLAUSE_c(clause_record)
     return BP_TRUE;
 }
 
-void locate_and_free_clause_record(pred_ptr, clause_record)
-    InterpretedPredPtr pred_ptr;
-    BPLONG clause_record;
+void locate_and_free_clause_record(InterpretedPredPtr pred_ptr, BPLONG clause_record)
 {
     int hashval, i;
     BPLONG_PTR cell_ptr, hashtable;
@@ -328,10 +319,10 @@ void locate_and_free_clause_record(pred_ptr, clause_record)
 }
 
 /* locate the wrapper cell of the clause record and then disconnect it */
-void free_cell_of_removed_in_bucket(pred_ptr, bucket_ptr, removed_clause_record)
-    InterpretedPredPtr pred_ptr;
-    InterpretedPredBucketPtr bucket_ptr;
-    BPLONG removed_clause_record;
+void free_cell_of_removed_in_bucket(
+    InterpretedPredPtr pred_ptr,
+    InterpretedPredBucketPtr bucket_ptr,
+    BPLONG removed_clause_record)
 {
     BPLONG clause_record, list;
     BPLONG_PTR cell_ptr;
@@ -352,9 +343,9 @@ void free_cell_of_removed_in_bucket(pred_ptr, bucket_ptr, removed_clause_record)
 }
 
 /* disconnect the wrapper cell of the clause record from the chain */
-void disconnect_cell_of_removed_clause(bucket_ptr, cell_ptr)
-    InterpretedPredBucketPtr bucket_ptr;
-    BPLONG_PTR cell_ptr;
+void disconnect_cell_of_removed_clause(
+    InterpretedPredBucketPtr bucket_ptr,
+    BPLONG_PTR cell_ptr)
 {
     BPLONG list;
     BPLONG_PTR prev_ptr, ptr;
@@ -512,8 +503,7 @@ void interpreted_pred_hashtable_free()
     free(hashtable_to_free);
 }
 
-BPLONG_PTR new_interpreted_pred_hashtable(size)
-    int size;
+BPLONG_PTR new_interpreted_pred_hashtable(int size)
 {
     BPLONG_PTR hashtable;
     int i;
@@ -534,8 +524,7 @@ BPLONG_PTR new_interpreted_pred_hashtable(size)
 }
 
 
-InterpretedPredPtr new_interpreted_pred_record(size)
-    BPLONG size;
+InterpretedPredPtr new_interpreted_pred_record(BPLONG size)
 {
     BPLONG_PTR ptr;
     InterpretedPredPtr pred_ptr;
@@ -556,9 +545,7 @@ InterpretedPredPtr new_interpreted_pred_record(size)
     return pred_ptr;
 }
 
-InterpretedPredPtr initialize_interpreted_pred(sym_ptr, type, size)
-    SYM_REC_PTR sym_ptr;
-BPLONG type, size;
+InterpretedPredPtr initialize_interpreted_pred(SYM_REC_PTR sym_ptr, BPLONG type, BPLONG size)
 {
     InterpretedPredPtr pred_ptr;
     BPLONG_PTR ptr;
@@ -597,8 +584,7 @@ BPLONG type, size;
   5. The list structures are kept the same. Let (C1,C2) be a list. If C1 is deleted, 
   C2 is the next clause after C1 after copy.
 */
-int rehash_interpreted_pred(pred_ptr)
-    InterpretedPredPtr pred_ptr;
+int rehash_interpreted_pred(InterpretedPredPtr pred_ptr)
 {
     InterpretedPredBucketPtr bucket_ptr;
     BPLONG old_size, new_size;
@@ -666,9 +652,7 @@ int rehash_interpreted_pred(pred_ptr)
 
 /* Recall that a clause record is a Prolog structure in the form struct(CellRef,Head,Body,Birth,Death)
    where CellRef is used to reference the enclosing d-list cell */
-BPLONG create_clause_record(pred_ptr, head, body)
-    InterpretedPredPtr pred_ptr;
-BPLONG head, body;
+BPLONG create_clause_record(InterpretedPredPtr pred_ptr, BPLONG head, BPLONG body)
 {
     BPLONG clause_record, tmp;
     InterpretedClausePtr clause_record_ptr;
@@ -691,9 +675,7 @@ BPLONG head, body;
     return clause_record;
 }
 
-BPLONG_PTR asserta_clause_record(bucket_ptr, clause_record)
-    InterpretedPredBucketPtr bucket_ptr;
-    BPLONG clause_record;
+BPLONG_PTR asserta_clause_record(InterpretedPredBucketPtr bucket_ptr, BPLONG clause_record)
 {
     BPLONG_PTR cell_ptr, ptr;
 
@@ -719,9 +701,7 @@ BPLONG_PTR asserta_clause_record(bucket_ptr, clause_record)
     return ptr;
 }
 
-int asserta_interpreted_pred(pred_ptr, head, body)
-    InterpretedPredPtr pred_ptr;
-BPLONG head, body;
+int asserta_interpreted_pred(InterpretedPredPtr pred_ptr, BPLONG head, BPLONG body)
 {
     BPLONG clause_record;
     BPLONG_PTR hashtable, cell_ptr;
@@ -755,9 +735,7 @@ BPLONG head, body;
     return BP_TRUE;
 }
 
-BPLONG_PTR assertz_clause_record(bucket_ptr, clause_record)
-    InterpretedPredBucketPtr bucket_ptr;
-    BPLONG clause_record;
+BPLONG_PTR assertz_clause_record(InterpretedPredBucketPtr bucket_ptr, BPLONG clause_record)
 {
     BPLONG_PTR cell_ptr, ptr;
 
@@ -784,9 +762,7 @@ BPLONG_PTR assertz_clause_record(bucket_ptr, clause_record)
     return ptr;
 }
 
-int assertz_interpreted_pred(pred_ptr, head, body)
-    InterpretedPredPtr pred_ptr;
-BPLONG head, body;
+int assertz_interpreted_pred(InterpretedPredPtr pred_ptr, BPLONG head, BPLONG body)
 {
     BPLONG clause_record;
     BPLONG_PTR hashtable;
@@ -823,8 +799,7 @@ BPLONG head, body;
     return BP_TRUE;
 }
 
-BPLONG hashval_in_assert(clause_record_ptr)
-    InterpretedClausePtr clause_record_ptr;
+BPLONG hashval_in_assert(InterpretedClausePtr clause_record_ptr)
 {
     BPLONG head, arg1, hashcode;
 
@@ -836,8 +811,7 @@ BPLONG hashval_in_assert(clause_record_ptr)
     return hashcode;
 }
 
-int b_ASSERTABLE_c(Head)
-    BPLONG Head;
+int b_ASSERTABLE_c(BPLONG Head)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top;
@@ -853,8 +827,7 @@ int b_ASSERTABLE_c(Head)
     return (GET_ETYPE(sym_ptr) == T_ORDI || GET_ETYPE(sym_ptr) == T_DYNA) ? BP_TRUE : BP_FALSE;
 }
 
-int b_RETRACTABLE_c(Head)
-    BPLONG Head;
+int b_RETRACTABLE_c(BPLONG Head)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top;
@@ -870,8 +843,7 @@ int b_RETRACTABLE_c(Head)
 
 
 /***************************************************************************/
-int b_GET_PRED_PTR_cff(Head, PredPtr, IsDynamic)
-    BPLONG Head, PredPtr, IsDynamic;
+int b_GET_PRED_PTR_cff(BPLONG Head, BPLONG PredPtr, BPLONG IsDynamic)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top;
@@ -919,8 +891,7 @@ int b_GET_PRED_PTR_cff(Head, PredPtr, IsDynamic)
 
 
 /* The predicate of Head is known to be either T_DYNA or T_INT */
-int b_GET_CLAUSES_cfff(Head, Clauses, Key, TimeStamp)
-    BPLONG Clauses, Head, Key, TimeStamp;
+int b_GET_CLAUSES_cfff(BPLONG Head, BPLONG Clauses, BPLONG Key, BPLONG TimeStamp)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG_PTR top;
@@ -956,9 +927,7 @@ void Cboot_assert() {
 }
 
 /***************************************************************************/
-BPLONG numberVarCopyToParea(term, varno)
-    BPLONG term;
-    BPLONG *varno;
+BPLONG numberVarCopyToParea(BPLONG term, BPLONG *varno)
 {
     BPLONG_PTR term_ptr, ptr;
     BPLONG_PTR top;
@@ -1002,9 +971,7 @@ BPLONG numberVarCopyToParea(term, varno)
 }
 
 /* term in the form of [a,b,...] */
-BPLONG numberVarCopyListToParea(term, varno)
-    BPLONG term;
-    BPLONG *varno;
+BPLONG numberVarCopyListToParea(BPLONG term, BPLONG *varno)
 {
     BPLONG_PTR ret_term_ptr, ptr, top;
     BPLONG ret_term, tmp;
@@ -1032,9 +999,7 @@ BPLONG numberVarCopyListToParea(term, varno)
 }
 
 /* term in the form of (a,b,...) */
-BPLONG numberVarCopyCommaToParea(term, varno)
-    BPLONG term;
-    BPLONG *varno;
+BPLONG numberVarCopyCommaToParea(BPLONG term, BPLONG *varno)
 {
     BPLONG_PTR term_ptr, ptr, ret_term_ptr, top;
     BPLONG ret_term, tmp;

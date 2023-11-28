@@ -165,8 +165,7 @@ void replace_str_char(char *buf, char och, char nch) {
   }
   }
 */
-int b_STREAM_IS_OPEN_c(Index)
-    BPLONG Index;
+int b_STREAM_IS_OPEN_c(BPLONG Index)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -174,8 +173,7 @@ int b_STREAM_IS_OPEN_c(Index)
     if (file_table[Index].fdes == NULL) return BP_FALSE; else return BP_TRUE;
 }
 
-int b_STREAM_SET_TYPE_cc(Index, Type)
-    BPLONG Index, Type;
+int b_STREAM_SET_TYPE_cc(BPLONG Index, BPLONG Type)
 {
     DEREF(Index); DEREF(Type);
     Index = INTVAL(Index);
@@ -184,8 +182,7 @@ int b_STREAM_SET_TYPE_cc(Index, Type)
     return BP_TRUE;
 }
 
-int b_STREAM_SET_EOF_ACTION_cc(Index, Action)
-    BPLONG Index, Action;
+int b_STREAM_SET_EOF_ACTION_cc(BPLONG Index, BPLONG Action)
 {
     DEREF(Index); DEREF(Action);
     Index = INTVAL(Index);
@@ -194,8 +191,7 @@ int b_STREAM_SET_EOF_ACTION_cc(Index, Action)
     return BP_TRUE;
 }
 
-int b_STREAM_ADD_ALIAS_cc(Index, Atom)
-    BPLONG Index, Atom;
+int b_STREAM_ADD_ALIAS_cc(BPLONG Index, BPLONG Atom)
 {
     BPLONG_PTR ptr;
     DEREF(Index); DEREF(Atom);
@@ -222,8 +218,7 @@ int b_STREAM_UPDATE_EOS() {
     return BP_TRUE;
 }
 
-int b_STREAM_GET_FILE_NAME_cf(Index, Name)
-    BPLONG Index, Name;
+int b_STREAM_GET_FILE_NAME_cf(BPLONG Index, BPLONG Name)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -232,8 +227,7 @@ int b_STREAM_GET_FILE_NAME_cf(Index, Name)
     return BP_TRUE;
 }
 
-int b_STREAM_GET_MODE_cf(Index, Mode)
-    BPLONG Index, Mode;
+int b_STREAM_GET_MODE_cf(BPLONG Index, BPLONG Mode)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -242,8 +236,7 @@ int b_STREAM_GET_MODE_cf(Index, Mode)
     return BP_TRUE;
 }
 
-int b_STREAM_GET_ALIASES_cf(Index, Aliases)
-    BPLONG Index, Aliases;
+int b_STREAM_GET_ALIASES_cf(BPLONG Index, BPLONG Aliases)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -252,8 +245,7 @@ int b_STREAM_GET_ALIASES_cf(Index, Aliases)
     return BP_TRUE;
 }
 
-int b_STREAM_GET_EOS_cf(Index, Eos)
-    BPLONG Index, Eos;
+int b_STREAM_GET_EOS_cf(BPLONG Index, BPLONG Eos)
 {
     BPLONG res;
     DEREF(Index);
@@ -284,8 +276,7 @@ int b_STREAM_GET_EOS_cf(Index, Eos)
     return BP_TRUE;
 }
 
-int b_STREAM_GET_EOF_ACTION_cf(Index, EofAction)
-    BPLONG Index, EofAction;
+int b_STREAM_GET_EOF_ACTION_cf(BPLONG Index, BPLONG EofAction)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -295,8 +286,7 @@ int b_STREAM_GET_EOF_ACTION_cf(Index, EofAction)
     return BP_TRUE;
 }
 
-int b_STREAM_GET_TYPE_cf(Index, Type)
-    BPLONG Index, Type;
+int b_STREAM_GET_TYPE_cf(BPLONG Index, BPLONG Type)
 {
     DEREF(Index);
     Index = INTVAL(Index);
@@ -325,8 +315,7 @@ int b_STREAM_CHECK_CURRENT_TEXT_OUTPUT() {
 }
 
 /**********************************************************************/
-void bp_trim_trailing_zeros(loc_bp_buf)
-    char *loc_bp_buf;
+void bp_trim_trailing_zeros(char *loc_bp_buf)
 {
     BPLONG len;
 
@@ -338,8 +327,7 @@ void bp_trim_trailing_zeros(loc_bp_buf)
 
 }
 
-void bp_write_insert_dot_zero_if_needed(loc_bp_buf)
-    char *loc_bp_buf;
+void bp_write_insert_dot_zero_if_needed(char *loc_bp_buf)
 {
     int i, j, dot_found, len, e_index;
     char c;
@@ -372,8 +360,7 @@ void bp_write_insert_dot_zero_if_needed(loc_bp_buf)
     }
 }
 
-void bp_write_double(op)
-    BPLONG op;
+void bp_write_double(BPLONG op)
 {
     double d;
 
@@ -387,8 +374,7 @@ void bp_write_double(op)
     fprintf(curr_out, "%s", bp_buf);
 }
 
-int bp_write_double_update_pos(op)
-    BPLONG op;
+int bp_write_double_update_pos(BPLONG op)
 {
     double d;
     BPLONG len;
@@ -413,8 +399,7 @@ int bp_write_double_update_pos(op)
     return BP_TRUE;
 }
 
-int bp_write_bigint(op)
-    BPLONG op;
+int bp_write_bigint(BPLONG op)
 {
     int i = bp_write_bigint_to_str(op, bp_buf, MAX_STR_LEN);
     if (i == BP_ERROR) return BP_ERROR;
@@ -423,8 +408,7 @@ int bp_write_bigint(op)
 }
 
 
-int bp_write_bigint_update_pos(op)
-    BPLONG op;
+int bp_write_bigint_update_pos(BPLONG op)
 {
     int i, len;
 
@@ -444,8 +428,7 @@ int bp_write_bigint_update_pos(op)
 }
 
 #ifdef PICAT
-int check_file_term(term)
-    BPLONG term;
+int check_file_term(BPLONG term)
 {
     DEREF(term);
     if (ISATOM(term) || b_IS_STRING_c(term)) {
@@ -456,8 +439,7 @@ int check_file_term(term)
     }
 }
 #else
-int check_file_term(term)
-    BPLONG term;
+int check_file_term(BPLONG term)
 {
     SYM_REC_PTR sym_ptr;
 
@@ -511,30 +493,26 @@ int get_file_name(BPLONG op) {
     } else {
         picat_str_to_c_str(op, s1, MAX_STR_LEN);
     }
-    get_file_name_aux(s1);
+    return get_file_name_aux(s1);
 }
 #else
-int get_file_name(op)
-    BPLONG op;
+int get_file_name(BPLONG op)
 {
     CHAR s1[MAX_STR_LEN];
 
     DEREF(op);
     namestring(GET_SYM_REC(op), s1);
-    get_file_name_aux(s1);
+    return get_file_name_aux(s1);
 }
 #endif
 
-void bp_write_pname(name_ptr)
-    CHAR_PTR name_ptr;
+void bp_write_pname(CHAR_PTR name_ptr)
 {
     fputs(name_ptr, curr_out);
     fflush(curr_out);
 }
 
-int bp_write_pname_update_pos(name_ptr, length)
-    CHAR_PTR name_ptr;
-    BPLONG length;
+int bp_write_pname_update_pos(CHAR_PTR name_ptr, BPLONG length)
 {
     line_position += length;
     if (format_output_dest == 0) {
@@ -548,8 +526,7 @@ int bp_write_pname_update_pos(name_ptr, length)
     return BP_TRUE;
 }
 
-int graphic_char(ch)
-    char ch;
+int graphic_char(char ch)
 {
     switch (ch) {
     case '/':
@@ -574,9 +551,7 @@ int graphic_char(ch)
     }
 }
 
-int single_quote_needed(name_ptr, length)
-    CHAR_PTR name_ptr;
-    BPLONG length;
+int single_quote_needed(CHAR_PTR name_ptr, BPLONG length)
 {
     CHAR ch;
     BPLONG i;
@@ -599,9 +574,7 @@ int single_quote_needed(name_ptr, length)
 }
 
 /* copy the str to buf, adding quotes when necessary */
-int strcpy_add_quote(buf, str, len)
-    CHAR_PTR buf, str;
-BPLONG len;
+int strcpy_add_quote(CHAR_PTR buf, CHAR_PTR str, BPLONG len)
 {
     int i, new_len = len+2;
     *buf++ = '\'';
@@ -625,9 +598,7 @@ BPLONG len;
     return new_len;
 }
 
-void bp_write_qname_to_bp_buf(name_ptr, length)
-    CHAR_PTR name_ptr;
-    UW16 length;
+void bp_write_qname_to_bp_buf(CHAR_PTR name_ptr, UW16 length)
 {
     UW16 i, need_to_quote;
     int c;
@@ -662,18 +633,14 @@ void bp_write_qname_to_bp_buf(name_ptr, length)
     }
 }
 
-void bp_write_qname(name_ptr, length)
-    CHAR_PTR name_ptr;
-    BPLONG length;
+void bp_write_qname(CHAR_PTR name_ptr, BPLONG length)
 {
     bp_write_qname_to_bp_buf(name_ptr, length);
     fputs(bp_buf, curr_out);
     fflush(curr_out);
 }
 
-int bp_write_qname_update_pos(name_ptr, length)
-    CHAR_PTR name_ptr;
-    BPLONG length;
+int bp_write_qname_update_pos(CHAR_PTR name_ptr, BPLONG length)
 {
     BPLONG len;
 
@@ -691,8 +658,7 @@ int bp_write_qname_update_pos(name_ptr, length)
 }
 
 
-int bp_write_var_update_pos(op)
-    BPLONG op;
+int bp_write_var_update_pos(BPLONG op)
 {
     BPLONG len;
 
@@ -709,8 +675,7 @@ int bp_write_var_update_pos(op)
     return BP_TRUE;
 }
 
-int bp_write_domain_update_pos(dv_ptr)
-    BPLONG_PTR dv_ptr;
+int bp_write_domain_update_pos(BPLONG_PTR dv_ptr)
 {
     BPLONG i, first, last;
     BPLONG low, high;
@@ -758,8 +723,7 @@ int bp_write_domain_update_pos(dv_ptr)
     }
 }
 
-int bp_write_suspvar_update_pos(op)
-    BPLONG op;
+int bp_write_suspvar_update_pos(BPLONG op)
 {
     BPLONG len;
     BPLONG_PTR dv_ptr;
@@ -784,8 +748,7 @@ int bp_write_suspvar_update_pos(op)
 
 
 /* op is untagged */
-int bp_write_int_update_pos(op)
-    BPLONG op;
+int bp_write_int_update_pos(BPLONG op)
 {
     BPLONG len;
 
@@ -803,8 +766,7 @@ int bp_write_int_update_pos(op)
     return BP_TRUE;
 }
 
-int bp_write_char_update_pos(c)
-    char c;
+int bp_write_char_update_pos(char c)
 {
     line_position++;
     if (format_output_dest == 0) {
@@ -817,9 +779,7 @@ int bp_write_char_update_pos(c)
     return BP_TRUE;
 }
 
-int get_file_index(cword, mode)
-    BPLONG cword;
-    BPLONG mode;
+int get_file_index(BPLONG cword, BPLONG mode)
 {
     int i;
 
@@ -847,8 +807,7 @@ int next_file_index()
     return file_tab_end;
 }
 
-void release_file_index(i)
-    int i;
+void release_file_index(int i)
 {
     file_table[i].fdes = NULL;
     file_table[i].name_atom = nil_sym;
@@ -861,8 +820,7 @@ void release_file_index(i)
   %   Context = 0b010 for other
   %   Context = 0b100 for punct
 */
-int b_ATOM_MODE_cf(op1, op2)
-    BPLONG op1, op2;
+int b_ATOM_MODE_cf(BPLONG op1, BPLONG op2)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG i, length;
@@ -932,8 +890,7 @@ atom_mode_end:
 }
 
 
-int b_NORMAL_ATOM_c(op)
-    BPLONG op;
+int b_NORMAL_ATOM_c(BPLONG op)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG length;
@@ -949,8 +906,7 @@ int b_NORMAL_ATOM_c(op)
     return BP_TRUE;
 }
 
-int b_WRITENAME_c(op)
-    BPLONG op;
+int b_WRITENAME_c(BPLONG op)
 {
     BPLONG_PTR top, dv_ptr;
     /*
@@ -1066,8 +1022,7 @@ int c_fmt_writename() {
     return BP_TRUE;
 }
 
-int b_WRITE_QUICK_c(op)
-    BPLONG op;
+int b_WRITE_QUICK_c(BPLONG op)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1139,8 +1094,7 @@ int c_fmt_write_quick() {
     return BP_TRUE;
 }
 
-int b_WRITEQNAME_c(op)
-    BPLONG op;
+int b_WRITEQNAME_c(BPLONG op)
 {
     BPLONG_PTR top;
     BPLONG_PTR dv_ptr;
@@ -1201,8 +1155,7 @@ int c_fmt_writeqname() {
     return BP_TRUE;
 }
 
-int b_WRITEQ_QUICK_c(op)
-    BPLONG op;
+int b_WRITEQ_QUICK_c(BPLONG op)
 {
     BPLONG_PTR top;
     BPLONG_PTR dv_ptr;
@@ -1286,8 +1239,7 @@ void write_space() {
 
 
 /* deprecated */
-int b_PUT_BYTE_c(op)
-    BPLONG op;
+int b_PUT_BYTE_c(BPLONG op)
 {
     BPLONG_PTR top;
 
@@ -1315,8 +1267,7 @@ int b_PUT_BYTE_c(op)
 }
 
 /* deprecated */
-int b_PUT_CODE_c(op)
-    BPLONG op;
+int b_PUT_CODE_c(BPLONG op)
 {
     BPLONG_PTR top;
 
@@ -1353,8 +1304,7 @@ int b_PUT_CODE_c(op)
     return BP_TRUE;
 }
 
-int b_PUT_c(op)
-    BPLONG op;
+int b_PUT_c(BPLONG op)
 {
     BPLONG res;
     BPLONG_PTR top;
@@ -1402,8 +1352,7 @@ b_put:
     return BP_TRUE;
 }
 
-int b_TAB_c(op)
-    BPLONG op;
+int b_TAB_c(BPLONG op)
 {
     register BPLONG_PTR top;
     BPLONG res;
@@ -1427,8 +1376,7 @@ b_tab:
 }
 
 /* deprecated */
-int b_GET_BYTE_f(op)
-    BPLONG op;
+int b_GET_BYTE_f(BPLONG op)
 {
     BPLONG n;
     BPLONG_PTR top;
@@ -1455,8 +1403,7 @@ int b_GET_BYTE_f(op)
 }
 
 /* deprecated */
-int b_GET_CODE_f(op)
-    BPLONG op;
+int b_GET_CODE_f(BPLONG op)
 {
     BPLONG n;
     BPLONG_PTR top;
@@ -1489,8 +1436,7 @@ int b_GET_CODE_f(op)
     return 1;
 }
 
-int b_GET0_f(op)
-    BPLONG op;
+int b_GET0_f(BPLONG op)
 {
     BPLONG n;
 
@@ -1504,8 +1450,7 @@ int b_GET0_f(op)
 }
 
 /* deprecated */
-int b_PEEK_BYTE_f(op)
-    BPLONG op;
+int b_PEEK_BYTE_f(BPLONG op)
 {
     BPLONG n;
 
@@ -1531,8 +1476,7 @@ int b_PEEK_BYTE_f(op)
 }
 
 /* deprecated */
-int b_PEEK_CODE_f(op)
-    BPLONG op;
+int b_PEEK_CODE_f(BPLONG op)
 {
     BPLONG n;
 
@@ -1582,8 +1526,7 @@ int c_UNGETC()
     return 1;
 }
 
-int b_GET_f(op)
-    BPLONG op;
+int b_GET_f(BPLONG op)
 {
     BPLONG_PTR top;
     BPLONG n;
@@ -1667,8 +1610,7 @@ int c_CP_FILE_cc() {
     return BP_TRUE;
 }
 
-int b_SEE_c(fop)
-    BPLONG fop;
+int b_SEE_c(BPLONG fop)
 {
     register BPLONG_PTR top;
     BPLONG temp_in_file_i;
@@ -1727,8 +1669,7 @@ int b_SEEN()
     return 1;
 }
 
-int b_SEEING_f(temp)
-    BPLONG temp;
+int b_SEEING_f(BPLONG temp)
 {
     if (in_file_i == 0) {
         ASSIGN_f_atom(temp, user_word);
@@ -1740,8 +1681,7 @@ int b_SEEING_f(temp)
 
 /* fop: file name */
 /* sop: 0 -> open `w'-write; 1 -> open `a'-append */
-int b_TELL_cc(fop, mode)
-    BPLONG mode, fop;
+int b_TELL_cc(BPLONG fop, BPLONG mode)
 {
 
     BPLONG_PTR top;
@@ -1814,8 +1754,7 @@ int b_TOLD()
     return 1;
 }
 
-int b_TELLING_f(temp)  /* arg1: unified with the current out put file name */
-    BPLONG temp;
+int b_TELLING_f(BPLONG temp)  /* arg1: unified with the current out put file name */
 {
     if (out_file_i == 1) {
         ASSIGN_f_atom(temp, user_word);
@@ -1827,8 +1766,7 @@ int b_TELLING_f(temp)  /* arg1: unified with the current out put file name */
 
 /* fop: file name */
 /* sop: 0 -> read; 1 -> write; 2 -> append*/
-int b_OPEN_ccf(fop, sop, Index)
-    BPLONG sop, fop, Index;
+int b_OPEN_ccf(BPLONG fop, BPLONG sop, BPLONG Index)
 {
     register BPLONG_PTR top;
     BPLONG index, mode;
@@ -1910,7 +1848,12 @@ int get_socket_fd(int index) {
 #ifdef ANDROID
     return(file_table[index].fdes->_file);
 #else
+#ifdef __EMSCRIPTEN__
+    printf("get_socket_fd not supported for wasm platforms\n");
+    return 0;
+#else
     return(file_table[index].fdes->_fileno);
+#endif
 #endif
 #endif
 #endif
@@ -1939,8 +1882,7 @@ int allocate_socket_file(FILE *file, char *name)
     return(index);
 }
 
-int b_CLOSE_c(Index)
-    BPLONG Index;
+int b_CLOSE_c(BPLONG Index)
 {
     BPLONG_PTR top;
     BPLONG i;
@@ -2040,8 +1982,7 @@ void file_init() {
     }
 }
 
-int b_ACCESS_ccf(op1, op2, op3)
-    BPLONG op1, op2, op3;
+int b_ACCESS_ccf(BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG mode, r;
     register BPLONG_PTR top;
@@ -2466,9 +2407,7 @@ int c_write_term() {
     return 1;
 }
 
-void write_term1(op, fp)
-    BPLONG op;
-    FILE *fp;
+void write_term1(BPLONG op, FILE *fp)
 {
     FILE *tmp;
     tmp = curr_out;
@@ -2477,8 +2416,7 @@ void write_term1(op, fp)
     curr_out = tmp;
 }
 
-void write_list(op)
-    BPLONG op;
+void write_list(BPLONG op)
 {
     BPLONG_PTR top, list_ptr;
 
@@ -2502,8 +2440,7 @@ lab_start:
     }
 }
 
-int write_term(op)
-    BPLONG op;
+int write_term(BPLONG op)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG op1;
@@ -2554,14 +2491,12 @@ int write_term(op)
 }
 
 
-int b_WRITE_IMAGE_c(op)
-    BPLONG op;
+int b_WRITE_IMAGE_c(BPLONG op)
 {
     return write_image(op);
 }
 
-int write_image(op)
-    BPLONG op;
+int write_image(BPLONG op)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG op1;
@@ -2617,23 +2552,20 @@ int write_image(op)
 
 
 /**************** for ISO Prolog *********************/
-int b_CURRENT_INPUT_f(Index)
-    BPLONG Index;
+int b_CURRENT_INPUT_f(BPLONG Index)
 {
 
     ASSIGN_f_atom(Index, MAKEINT(in_file_i));
     return 1;
 }
 
-int b_CURRENT_OUTPUT_f(Index)
-    BPLONG Index;
+int b_CURRENT_OUTPUT_f(BPLONG Index)
 {
     ASSIGN_f_atom(Index, MAKEINT(out_file_i));
     return 1;
 }
 
-int b_SET_BINARY_INPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_BINARY_INPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_in_file_i;
@@ -2657,8 +2589,7 @@ int b_SET_BINARY_INPUT_cc(Index, Source)
     return cc_set_input(temp_in_file_i);
 }
 
-int b_SET_TEXT_INPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_TEXT_INPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_in_file_i;
@@ -2681,8 +2612,7 @@ int b_SET_TEXT_INPUT_cc(Index, Source)
     return cc_set_input(temp_in_file_i);
 }
 
-int b_SET_INPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_INPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_in_file_i;
@@ -2700,8 +2630,7 @@ int b_SET_INPUT_cc(Index, Source)
     return cc_set_input(temp_in_file_i);
 }
 
-int cc_set_input(temp_in_file_i)
-    BPLONG temp_in_file_i;
+int cc_set_input(BPLONG temp_in_file_i)
 {
     file_table[in_file_i].lastc = lastc;
     file_table[in_file_i].line_no = curr_line_no;
@@ -2713,8 +2642,7 @@ int cc_set_input(temp_in_file_i)
     return 1;
 }
 
-int b_SET_BINARY_OUTPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_BINARY_OUTPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_out_file_i;
@@ -2738,8 +2666,7 @@ int b_SET_BINARY_OUTPUT_cc(Index, Source)
     return cc_set_output(temp_out_file_i);
 }
 
-int b_SET_TEXT_OUTPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_TEXT_OUTPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_out_file_i;
@@ -2763,8 +2690,7 @@ int b_SET_TEXT_OUTPUT_cc(Index, Source)
     return cc_set_output(temp_out_file_i);
 }
 
-int b_SET_OUTPUT_cc(Index, Source)
-    BPLONG Index, Source;
+int b_SET_OUTPUT_cc(BPLONG Index, BPLONG Source)
 {
     BPLONG_PTR top;
     BPLONG temp_out_file_i;
@@ -2784,8 +2710,7 @@ int b_SET_OUTPUT_cc(Index, Source)
     return cc_set_output(temp_out_file_i);
 }
 
-int cc_set_output(temp_out_file_i)
-    BPLONG temp_out_file_i;
+int cc_set_output(BPLONG temp_out_file_i)
 {
     file_table[out_file_i].line_no = out_line_no;
     file_table[out_file_i].line_position = line_position;
@@ -2807,8 +2732,7 @@ int b_FLUSH_OUTPUT() {
 
 /********* functions called by asm.pl *********/
 #ifdef M64BITS
-int b_ASPN_i(op1)
-    BPLONG op1;
+int b_ASPN_i(BPLONG op1)
 {
     int op;
     BYTE b1, b2, b3, b4;
@@ -2836,8 +2760,7 @@ int c_ASPN_i()
     return 1;
 }
 #else
-int b_ASPN_i(op1)
-    BPLONG op1;
+int b_ASPN_i(BPLONG op1)
 {
     BYTE b1, b2, b3, b4;
     BPLONG_PTR top;
@@ -2860,8 +2783,7 @@ int c_ASPN_i()
 }
 #endif
 
-int b_ASPN_c(op1)
-    BPLONG op1;
+int b_ASPN_c(BPLONG op1)
 {
     BPLONG op;
     BYTE b1, b2, b3, b4;
@@ -2873,8 +2795,7 @@ int b_ASPN_c(op1)
     return 1;
 }
 
-int b_ASPN2_cc(op1, op2)
-    BPLONG op1, op2;
+int b_ASPN2_cc(BPLONG op1, BPLONG op2)
 {
     BPLONG op;
     BYTE b1, b2, b3, b4;
@@ -2889,8 +2810,7 @@ int b_ASPN2_cc(op1, op2)
     return 1;
 }
 
-int b_ASPN3_ccc(op1, op2, op3)
-    BPLONG op1, op2, op3;
+int b_ASPN3_ccc(BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG op;
     BYTE b1, b2, b3, b4;
@@ -2908,8 +2828,7 @@ int b_ASPN3_ccc(op1, op2, op3)
     return 1;
 }
 
-int b_ASPN4_cccc(op1, op2, op3, op4)
-    BPLONG op1, op2, op3, op4;
+int b_ASPN4_cccc(BPLONG op1, BPLONG op2, BPLONG op3, BPLONG op4)
 {
     BPLONG op;
     BYTE b1, b2, b3, b4;
@@ -2942,8 +2861,7 @@ int aspn() {
     return 1;
 }
 
-int b_GET_LINE_NO_cf(Index, no)
-    BPLONG Index, no;
+int b_GET_LINE_NO_cf(BPLONG Index, BPLONG no)
 {
     BPLONG_PTR top;
 
@@ -2954,8 +2872,7 @@ int b_GET_LINE_NO_cf(Index, no)
     return 1;
 }
 
-int b_GET_LINE_POS_cf(Index, pos)
-    BPLONG Index, pos;
+int b_GET_LINE_POS_cf(BPLONG Index, BPLONG pos)
 {
     BPLONG_PTR top;
 
@@ -3050,8 +2967,7 @@ char *format_comma_separated_int(BPLONG amt) {
 }
 
 
-int b_NAME0_cf(op1, op2)  /* op2 is made to be the string of the name of op1*/
-    BPLONG op1, op2;
+int b_NAME0_cf(BPLONG op1, BPLONG op2)  /* op2 is made to be the string of the name of op1*/
 {
     SYM_REC_PTR psc_ptr;
     CHAR_PTR name;

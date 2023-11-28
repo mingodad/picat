@@ -230,7 +230,7 @@ int SP_get_integer(SP_term_ref t, long *l) {
   Assigns to *d the C double corresponding to a Prolog number.
 */
 int SP_get_float(SP_term_ref t, double *d) {
-    double temp_d, floatval();
+    double temp_d, floatval(BPLONG);
     BPLONG_PTR top;
     DEREF(t);
     if (ISINT(t)) {
@@ -368,7 +368,7 @@ BPLONG SP_list_len(SP_term_ref t) {
 int SP_get_number_chars(SP_term_ref t, char **s) {
     BPLONG_PTR top;
     char buf[80];
-    double floatval();
+    extern double floatval(BPLONG);
     char *ptr;
     DEREF(t);
     if (ISINT(t)) {
@@ -550,7 +550,6 @@ void * SP_malloc(BPULONG size) {
 }
 
 void * SP_calloc(BPULONG nmemb, BPULONG size) {
-    void * calloc();
     return calloc(nmemb, size);
 }
 

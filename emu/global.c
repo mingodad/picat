@@ -12,8 +12,7 @@
 #include "dynamic.h"
 /* extern char *malloc(); */
 
-int b_IS_CONSULTED_c(goal)
-    BPLONG goal;
+int b_IS_CONSULTED_c(BPLONG goal)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -32,8 +31,7 @@ is_consulted:
     return (GET_ETYPE(sym_ptr) == T_DYNA || GET_ETYPE(sym_ptr) == T_INTP);
 }
 
-int b_SET_DYNAMIC_cc(name, arity)
-    BPLONG name, arity;
+int b_SET_DYNAMIC_cc(BPLONG name, BPLONG arity)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -43,8 +41,7 @@ int b_SET_DYNAMIC_cc(name, arity)
     return 1;
 }
 
-int b_GET_SYM_TYPE_ccf(name, arity, type)
-    BPLONG name, arity, type;
+int b_GET_SYM_TYPE_ccf(BPLONG name, BPLONG arity, BPLONG type)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -54,8 +51,7 @@ int b_GET_SYM_TYPE_ccf(name, arity, type)
     return 1;
 }
 
-int b_IS_DYNAMIC_cc(name, arity)
-    BPLONG name, arity;
+int b_IS_DYNAMIC_cc(BPLONG name, BPLONG arity)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -64,8 +60,7 @@ int b_IS_DYNAMIC_cc(name, arity)
     return (GET_ETYPE(sym_ptr) == T_DYNA) ? BP_TRUE : BP_FALSE;
 }
 
-int b_IS_ORDINARY_cc(name, arity)
-    BPLONG name, arity;
+int b_IS_ORDINARY_cc(BPLONG name, BPLONG arity)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -74,14 +69,12 @@ int b_IS_ORDINARY_cc(name, arity)
     return (GET_ETYPE(sym_ptr) == T_ORDI) ? 1 : 0;
 }
 
-int b_GLOBAL_SET_cccc(name, arity, value, part)
-    BPLONG name, arity, value, part;
+int b_GLOBAL_SET_cccc(BPLONG name, BPLONG arity, BPLONG value, BPLONG part)
 {
     return b_GLOBAL_SET_ccc(name, arity, value);
 }
 
-int b_GLOBAL_SET_ccc(name, arity, value)
-    BPLONG name, arity, value;
+int b_GLOBAL_SET_ccc(BPLONG name, BPLONG arity, BPLONG value)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -140,8 +133,7 @@ int c_OLD_GLOBAL_GET() {
     }
 }
 
-int b_GLOBAL_GET_ccf(name, arity, value)
-    BPLONG name, arity, value;
+int b_GLOBAL_GET_ccf(BPLONG name, BPLONG arity, BPLONG value)
 {
     BPLONG_PTR top, varVector;
     SYM_REC_PTR sym_ptr;
@@ -163,8 +155,7 @@ int b_GLOBAL_GET_ccf(name, arity, value)
     return 1;
 }
 
-int b_ISGLOBAL_cc(name, arity)
-    BPLONG name, arity;
+int b_ISGLOBAL_cc(BPLONG name, BPLONG arity)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -173,8 +164,7 @@ int b_ISGLOBAL_cc(name, arity)
     return (GET_ETYPE(sym_ptr) != T_DYNA) ? BP_FALSE : BP_TRUE;
 }
 
-int b_GLOBAL_DEL_cc(name, arity)
-    BPLONG name, arity;
+int b_GLOBAL_DEL_cc(BPLONG name, BPLONG arity)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -196,8 +186,7 @@ int c_SET_ARG_PAREA() {
     return b_DESTRUCTIVE_SET_ARG_ccc(no, s, parea_arg);
 }
 
-int b_GLOBAL_INSERT_HEAD_cccc(name, arity, value, part)
-    BPLONG name, arity, value, part;
+int b_GLOBAL_INSERT_HEAD_cccc(BPLONG name, BPLONG arity, BPLONG value, BPLONG part)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -212,8 +201,7 @@ int b_GLOBAL_INSERT_HEAD_cccc(name, arity, value, part)
     return BP_TRUE;
 }
 
-int b_GLOBAL_INSERT_TAIL_ccc(name, arity, value)
-    BPLONG name, arity, value;
+int b_GLOBAL_INSERT_TAIL_ccc(BPLONG name, BPLONG arity, BPLONG value)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -228,9 +216,7 @@ int b_GLOBAL_INSERT_TAIL_ccc(name, arity, value)
     return BP_TRUE;
 }
 
-void assert_tail(sym_ptr, term)
-    SYM_REC_PTR sym_ptr;
-    BPLONG term;
+void assert_tail(SYM_REC_PTR sym_ptr, BPLONG term)
 {
     BPLONG_PTR top, ptr;
     BPLONG op;
@@ -250,8 +236,7 @@ void assert_tail(sym_ptr, term)
     }
 }
 
-BPLONG make_cons_in_parea(car, cdr)
-    BPLONG car, cdr;
+BPLONG make_cons_in_parea(BPLONG car, BPLONG cdr)
 {
     BPLONG temp;
     BPLONG_PTR ptr;
@@ -267,8 +252,7 @@ BPLONG make_cons_in_parea(car, cdr)
     return temp;
 }
 
-BPLONG copy_term_heap_to_parea(value)
-    BPLONG value;
+BPLONG copy_term_heap_to_parea(BPLONG value)
 {
     BPLONG_PTR trail_top0;
     BPLONG initial_diff0;
@@ -284,9 +268,7 @@ BPLONG copy_term_heap_to_parea(value)
     return temp;
 }
 
-BPLONG copy_term_heap_to_parea_with_varno(value, varno)
-    BPLONG value;
-    BPLONG *varno;
+BPLONG copy_term_heap_to_parea_with_varno(BPLONG value, BPLONG *varno)
 {
     BPLONG_PTR trail_top0;
     BPLONG temp;

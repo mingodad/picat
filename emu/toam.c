@@ -45,8 +45,7 @@ BPLONG table_allocate_code = table_allocate;
 void **jmp_table;
 #endif
 
-void exception_handler(signo)
-    int signo;
+void exception_handler(int signo)
 {
     switch (signo) {
 #ifdef BPSOLVER
@@ -97,9 +96,7 @@ void init_signals() {
 #endif
 }
 
-int initialize_bprolog(argc, argv)
-    int argc;
-    char *argv[];
+int initialize_bprolog(int argc, char *argv[])
 {
     BPLONG_PTR inst_begin0;
     if (bprolog_initialized == 1) return BP_TRUE;
@@ -141,8 +138,7 @@ int finish_bprolog()
     return BP_TRUE;
 }
 
-int toam(P, AR, LOCAL_TOP)
-    register BPLONG_PTR P, AR, LOCAL_TOP;
+int toam(BPLONG_PTR P, BPLONG_PTR AR, BPLONG_PTR LOCAL_TOP)
 {
     register BPLONG op1;
     register BPLONG_PTR top, sreg = NULL;
@@ -542,8 +538,7 @@ trigger_on_handler:{
 
 /**************************************************/
 /*
-  printEntrance(p)
-  BPLONG_PTR p;
+  printEntrance(BPLONG_PTR p)
   {
   SYM_REC_PTR sym_ptr;
 

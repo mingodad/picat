@@ -110,8 +110,7 @@ int c_UNDERSCORE_NAME() {
     return *name == '_';
 }
 
-BPLONG time_t_2_prolog(t)
-    time_t *t;
+BPLONG time_t_2_prolog(time_t *t)
 {
 
     BPLONG time_in_prolog;
@@ -231,8 +230,7 @@ int b_PICAT_COMPARE_fcc(BPLONG res, BPLONG term1, BPLONG term2) {
     return BP_TRUE;
 }
 
-int b_COMPARE_fcc(res, t1, t2)
-    BPLONG res, t1, t2;
+int b_COMPARE_fcc(BPLONG res, BPLONG t1, BPLONG t2)
 {
     /* t1, t2: two terms to be compared;
        res = '<' if t1<t2;
@@ -252,8 +250,7 @@ int b_COMPARE_fcc(res, t1, t2)
     return BP_TRUE;
 }
 
-int compare(val1, val2)
-    BPLONG val1, val2;
+int compare(BPLONG val1, BPLONG val2)
 {
     return bp_compare(val1, val2);
 }
@@ -436,8 +433,7 @@ int bp_compare_array_array(BPLONG_PTR ptr1, BPLONG_PTR ptr2, BPLONG size1, BPLON
 
 
 
-int comalpha(sym_ptr1, sym_ptr2)
-    SYM_REC_PTR sym_ptr1, sym_ptr2;
+int comalpha(SYM_REC_PTR sym_ptr1, SYM_REC_PTR sym_ptr2)
 {
     if (sym_ptr1 == sym_ptr2)
         return 0;
@@ -521,8 +517,7 @@ int c_DECREMENTARG() {
     bp_exception = structure_expected; return BP_ERROR;
 }
 
-int b_DESTRUCTIVE_SET_ARG_ccc(op1, op2, op3)
-    register BPLONG op1, op2, op3;
+int b_DESTRUCTIVE_SET_ARG_ccc(BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG old_op3, op3_copy;
     BPLONG_PTR top;
@@ -560,8 +555,7 @@ int b_DESTRUCTIVE_SET_ARG_ccc(op1, op2, op3)
     return BP_TRUE;
 }
 
-int b_CHAR_CODE_cf(ch, code)  /* the code of op1 is op2 */
-    BPLONG ch, code;
+int b_CHAR_CODE_cf(BPLONG ch, BPLONG code)  /* the code of op1 is op2 */
 {
     SYM_REC_PTR sym_ptr;
     CHAR_PTR name;
@@ -591,8 +585,7 @@ int b_CHAR_CODE_cf(ch, code)  /* the code of op1 is op2 */
     return BP_ERROR;
 }
 
-int b_CHAR_CODE_fc(ch, code)  /* the code of op1 is op2 */
-    BPLONG ch, code;
+int b_CHAR_CODE_fc(BPLONG ch, BPLONG code)  /* the code of op1 is op2 */
 {
     BPLONG_PTR top;
     char s[5], *ch_ptr;
@@ -606,9 +599,7 @@ int b_CHAR_CODE_fc(ch, code)  /* the code of op1 is op2 */
     return BP_TRUE;
 }
 
-int string2codes(str, list)
-    char *str;
-    BPLONG list;
+int string2codes(char *str, BPLONG list)
 {
     BPLONG temp, code;
     BPLONG_PTR tail;
@@ -630,8 +621,7 @@ int string2codes(str, list)
     return unify(list, temp);
 }
 
-int var_or_atomic(op)
-    BPLONG op;
+int var_or_atomic(BPLONG op)
 {
     BPLONG_PTR top;
 
@@ -645,8 +635,7 @@ int var_or_atomic(op)
     return 0;
 }
 
-int b_BLDATOM_fc(op1, op2)
-    BPLONG op1, op2;
+int b_BLDATOM_fc(BPLONG op1, BPLONG op2)
 {  /* make op1 to be an atom with name string op2       */
 
     BPLONG a, n;
@@ -703,8 +692,7 @@ int b_BLDATOM_fc(op1, op2)
     return BP_TRUE;
 }  /* b_BLDATOM */
 
-int b_BLDNUM_fc(op1, op2)
-    BPLONG op1, op2;
+int b_BLDNUM_fc(BPLONG op1, BPLONG op2)
 {  /* make op1 the number with name string op2       */
     BPLONG a, n;
     CHAR_PTR s, name;
@@ -803,8 +791,7 @@ int b_BLDNUM_fc(op1, op2)
 }  /* b_BLDNUM */
 
 
-int b_SYSTEM0_cf(op1, op2)  /* op1: a list of int (string) for CShell commands */
-    BPLONG op1, op2;
+int b_SYSTEM0_cf(BPLONG op1, BPLONG op2)  /* op1: a list of int (string) for CShell commands */
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -859,8 +846,7 @@ int c_LOAD_cfc() {
     return BP_TRUE;
 }
 
-int b_LOAD_cfc(op1, op2, op3)
-    register BPLONG op1, op2, op3;
+int b_LOAD_cfc(BPLONG op1, BPLONG op2, BPLONG op3)
 {  /* arg1: the byte code file to be loaded
     * arg2: the return code, 0 => success
     * arg3: file type
@@ -997,8 +983,7 @@ int c_STATISTICS0()
     return BP_TRUE;
 }
 
-int b_HASHVAL_cf(op1, op2)  /* op1 a term, op2 the hash value of op1 */
-    BPLONG op1, op2;
+int b_HASHVAL_cf(BPLONG op1, BPLONG op2)  /* op1 a term, op2 the hash value of op1 */
 {
     ASSIGN_f_atom(op2, MAKEINT(bp_hashval(op1)));
     return BP_TRUE;
@@ -1093,8 +1078,7 @@ BPLONG bp_hashval(BPLONG op) {
               {return 0;});
 }
 
-int b_HASHVAL1_cf(op1, op2)  /* op1 a term, op2 the hash value of the main functor of op1*/
-    BPLONG op1, op2;
+int b_HASHVAL1_cf(BPLONG op1, BPLONG op2)  /* op1 a term, op2 the hash value of the main functor of op1*/
 {
     BPLONG hashcode;
 
@@ -1103,8 +1087,7 @@ int b_HASHVAL1_cf(op1, op2)  /* op1 a term, op2 the hash value of the main funct
     return BP_TRUE;
 }
 
-int b_HASHTABLE_GET_ccf(table, key, value)
-    BPLONG table, key, value;
+int b_HASHTABLE_GET_ccf(BPLONG table, BPLONG key, BPLONG value)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG res, buckets;
@@ -1145,8 +1128,7 @@ int b_HASHTABLE_GET_ccf(table, key, value)
     return BP_TRUE;
 }
 
-int hashtable_contains_key(table, key)
-    BPLONG table, key;
+int hashtable_contains_key(BPLONG table, BPLONG key)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG res, buckets;
@@ -1168,8 +1150,7 @@ int hashtable_contains_key(table, key)
     return 1;
 }
 
-int bp_is_hashtable(term)
-    BPLONG term;
+int bp_is_hashtable(BPLONG term)
 {
     BPLONG_PTR ptr;
     DEREF(term);
@@ -1178,8 +1159,7 @@ int bp_is_hashtable(term)
     return FOLLOW(ptr) == (BPLONG)hashtable_psc;
 }
 
-BPLONG bp_hashtable_get(table, key)
-    BPLONG table, key;
+BPLONG bp_hashtable_get(BPLONG table, BPLONG key)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG buckets;
@@ -1198,8 +1178,7 @@ BPLONG bp_hashtable_get(table, key)
     return hashtable_lookup_chain(FOLLOW(ptr+index), key);
 }
 
-BPLONG hashtable_lookup_chain(chain, key)
-    BPLONG chain, key;
+BPLONG hashtable_lookup_chain(BPLONG chain, BPLONG key)
 {
     BPLONG_PTR top, ptr, str_ptr;
     BPLONG car, key1;
@@ -1219,9 +1198,7 @@ BPLONG hashtable_lookup_chain(chain, key)
     return 0;
 }
 
-BPLONG make_struct1(f, op1)
-    char *f;
-    BPLONG op1;
+BPLONG make_struct1(char *f, BPLONG op1)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG return_value;
@@ -1234,9 +1211,7 @@ BPLONG make_struct1(f, op1)
     return return_value;
 }
 
-BPLONG make_struct2(f, op1, op2)
-    char *f;
-BPLONG op1, op2;
+BPLONG make_struct2(char *f, BPLONG op1, BPLONG op2)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG return_value;
@@ -1250,9 +1225,7 @@ BPLONG op1, op2;
     return return_value;
 }
 
-BPLONG make_struct3(f, op1, op2, op3)
-    char *f;
-BPLONG op1, op2, op3;
+BPLONG make_struct3(char *f, BPLONG op1, BPLONG op2, BPLONG op3)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG return_value;
@@ -1267,9 +1240,7 @@ BPLONG op1, op2, op3;
     return return_value;
 }
 
-BPLONG make_struct4(f, op1, op2, op3, op4)
-    char *f;
-BPLONG op1, op2, op3, op4;
+BPLONG make_struct4(char *f, BPLONG op1, BPLONG op2, BPLONG op3, BPLONG op4)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG return_value;
@@ -1285,9 +1256,7 @@ BPLONG op1, op2, op3, op4;
     return return_value;
 }
 
-BPLONG make_struct5(f, op1, op2, op3, op4, op5)
-    char *f;
-BPLONG op1, op2, op3, op4, op5;
+BPLONG make_struct5(char *f, BPLONG op1, BPLONG op2, BPLONG op3, BPLONG op4, BPLONG op5)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG return_value;
@@ -1304,8 +1273,7 @@ BPLONG op1, op2, op3, op4, op5;
     return return_value;
 }
 
-BPLONG make_struct_dummy(sym_ptr)
-    SYM_REC_PTR sym_ptr;
+BPLONG make_struct_dummy(SYM_REC_PTR sym_ptr)
 {
     BPLONG arity, i;
     BPLONG return_value;
@@ -1319,9 +1287,7 @@ BPLONG make_struct_dummy(sym_ptr)
     return return_value;
 }
 
-BPLONG make_struct_holders(sym_ptr, init_val)
-    SYM_REC_PTR sym_ptr;
-    BPLONG init_val;
+BPLONG make_struct_holders(SYM_REC_PTR sym_ptr, BPLONG init_val)
 {
     BPLONG arity, i;
     BPLONG return_value;
@@ -1344,9 +1310,7 @@ BPLONG make_cons_dummy() {
     return return_value;
 }
 
-BPLONG make_struct_with_args(fp, sym_ptr)
-    BPLONG_PTR fp;
-    SYM_REC_PTR sym_ptr;
+BPLONG make_struct_with_args(BPLONG_PTR fp, SYM_REC_PTR sym_ptr)
 {
     BPLONG arity, i;
     BPLONG return_value;
@@ -1368,8 +1332,7 @@ BPLONG make_struct_with_args(fp, sym_ptr)
 }
 
 /* return the number of bytes in an atom */
-int b_GET_LENGTH_cf(op1, op2)
-    BPLONG op1, op2;
+int b_GET_LENGTH_cf(BPLONG op1, BPLONG op2)
 {
     BPLONG_PTR top;
 
@@ -1379,8 +1342,7 @@ int b_GET_LENGTH_cf(op1, op2)
 }
 
 /* return the number of utf-8 chars in an atom */
-int b_GET_UTF8_NCHARS_cf(op1, op2)
-    BPLONG op1, op2;
+int b_GET_UTF8_NCHARS_cf(BPLONG op1, BPLONG op2)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -1423,8 +1385,7 @@ int c_SHOW_NONDET_FRAME() {
     return BP_TRUE;
 }
 
-int b_CPUTIME_f(op1)
-    BPLONG op1;
+int b_CPUTIME_f(BPLONG op1)
 {
     BPLONG msec;
 
@@ -1443,8 +1404,7 @@ int membchk()
     return membchk2(op1, op2);
 }
 
-int membchk2(x, list)
-    BPLONG x, list;
+int membchk2(BPLONG x, BPLONG list)
 {
     BPLONG car;
     BPLONG_PTR top;
@@ -1461,8 +1421,7 @@ int membchk2(x, list)
 }
 
 
-void quit(s)
-    CHAR_PTR s;
+void quit(CHAR_PTR s)
 {
 #ifdef BPSOLVER
     //  fprintf(stdout,"%% UNKNOWN\n");
@@ -1477,8 +1436,7 @@ void quit(s)
 
 /* concatinate s1 and s2 into s3 */
 
-void scat(s1, s2, s3)
-    CHAR_PTR s1, s2, s3;
+void scat(CHAR_PTR s1, CHAR_PTR s2, CHAR_PTR s3)
 {
     while (*s1)  /* copy s1 into s3, without the EOS */
         *s3++ = *s1++;
@@ -1496,8 +1454,7 @@ int c_functor() {
     return cfunctor1(op1, op2, op3);
 }
 
-int cfunctor1(op1, op2, op3)
-    BPLONG op1, op2, op3;
+int cfunctor1(BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG i;
     BPLONG top1, top2;
@@ -1593,8 +1550,7 @@ int c_arg() {
     return carg1(op1, op2, op3);
 }
 
-int b_GEN_ARG_ccf(Index, Comp, Arg)
-    BPLONG Index, Comp, Arg;
+int b_GEN_ARG_ccf(BPLONG Index, BPLONG Comp, BPLONG Arg)
 {
     BPLONG res;
 
@@ -1604,8 +1560,7 @@ int b_GEN_ARG_ccf(Index, Comp, Arg)
     return BP_TRUE;
 }
 
-int carg1(op1, op2, op3)
-    BPLONG op1, op2, op3;
+int carg1(BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG_PTR top;
 
@@ -1683,8 +1638,7 @@ int c_set_gc_threshold() {
 }
 #endif
 
-int b_NTH_ELM_ccf(i, l, v)
-    BPLONG i, l, v;
+int b_NTH_ELM_ccf(BPLONG i, BPLONG l, BPLONG v)
 {
     BPLONG_PTR ptr, top;
     BPLONG elm;
@@ -1704,9 +1658,7 @@ int b_NTH_ELM_ccf(i, l, v)
 }
 
 
-void myquit(overflow_type, src)
-    BPLONG overflow_type;
-    const char *src;
+void myquit(BPLONG  overflow_type, const char *src)
 {
 #ifdef BPSOLVER
     // fprintf(stdout,"%% UNKNOWN\n");
@@ -1783,9 +1735,7 @@ int c_HTABLE_HCODE() {
 }
 
 /* n and arity is untagged, args of tuple_ptr are dereferenced */
-int htable_contains_tuple(htable_ptr, n, tuple_ptr, arity)
-    BPLONG n, arity;
-BPLONG_PTR htable_ptr, tuple_ptr;
+int htable_contains_tuple(BPLONG_PTR htable_ptr, BPLONG n, BPLONG_PTR tuple_ptr, BPLONG arity)
 {
     BPLONG hcode, tuple, i, lst;
     BPLONG_PTR ptr, another_tuple_ptr;
@@ -1815,8 +1765,7 @@ loop1: while (ISLIST(lst)) {
     return BP_FALSE;
 }
 
-int b_HTABLE_CONTAINS_TUPLE(Htable, Tuple)
-    BPLONG Htable, Tuple;
+int b_HTABLE_CONTAINS_TUPLE(BPLONG Htable, BPLONG Tuple)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG arity, htable_size;
@@ -1835,15 +1784,13 @@ int b_HTABLE_CONTAINS_TUPLE(Htable, Tuple)
     return htable_contains_tuple(htable_ptr, htable_size, tuple_ptr, arity);
 }
 
-int b_GLOBAL_HEAP_VTABLE_REF_f(op)
-    BPLONG op;
+int b_GLOBAL_HEAP_VTABLE_REF_f(BPLONG op)
 {
     ASSIGN_sv_heap_term(op, FOLLOW(breg0+NUM_CG_GLOBALS+1));
     return BP_TRUE;
 }
 
-int b_GLOBAL_HEAP_GET_cf(key, value)
-    BPLONG key, value;
+int b_GLOBAL_HEAP_GET_cf(BPLONG key, BPLONG value)
 {
     int res;
     BPLONG table = FOLLOW(breg0+NUM_CG_GLOBALS+1);
@@ -1866,9 +1813,7 @@ int c_SET_REDEFINE_WARNING() {
 }
 
 /* attr must be an atom or integer, and it must exist */
-BPLONG fast_get_attr(sv_ptr, attr)
-    BPLONG_PTR sv_ptr;
-    BPLONG attr;
+BPLONG fast_get_attr(BPLONG_PTR sv_ptr, BPLONG attr)
 {
     BPLONG_PTR ptr, pair_ptr;
     BPLONG attrs, pair, attr1;
@@ -1890,8 +1835,7 @@ BPLONG fast_get_attr(sv_ptr, attr)
     return BP_FALSE;
 }
 
-int b_GET_ATTR_ccf(var, attr, value)
-    BPLONG var, attr, value;
+int b_GET_ATTR_ccf(BPLONG var, BPLONG attr, BPLONG value)
 {
     BPLONG_PTR ptr, pair_ptr;
     BPLONG attrs, pair, attr1;
@@ -1925,8 +1869,7 @@ int b_GET_ATTR_ccf(var, attr, value)
     return BP_FALSE;
 }
 
-BPLONG c_domain_error(type, term)
-    BPLONG type, term;
+BPLONG c_domain_error(BPLONG type, BPLONG term)
 {
     BPLONG err;
 
@@ -1938,8 +1881,7 @@ BPLONG c_domain_error(type, term)
     return err;
 }
 
-BPLONG c_evaluation_error(type, obj)
-    BPLONG type, obj;
+BPLONG c_evaluation_error(BPLONG type, BPLONG obj)
 {
     BPLONG err = ADDTAG(heap_top, STR);
     FOLLOW(heap_top++) = (BPLONG)str_EVALUATION_ERROR;
@@ -1948,8 +1890,7 @@ BPLONG c_evaluation_error(type, obj)
     return err;
 }
 
-BPLONG c_update_error(type)
-    BPLONG type;
+BPLONG c_update_error(BPLONG type)
 {
     BPLONG err = ADDTAG(heap_top, STR);
     FOLLOW(heap_top++) = (BPLONG)str_UPDATE_ERROR;
@@ -1957,8 +1898,7 @@ BPLONG c_update_error(type)
     return err;
 }
 
-BPLONG c_existence_error(type, term)
-    BPLONG type, term;
+BPLONG c_existence_error(BPLONG type, BPLONG term)
 {
     BPLONG err;
 
@@ -1970,8 +1910,7 @@ BPLONG c_existence_error(type, term)
     return err;
 }
 
-BPLONG c_permission_error(type1, type2, term)
-    BPLONG type1, type2, term;
+BPLONG c_permission_error(BPLONG type1, BPLONG type2, BPLONG term)
 {
     BPLONG err;
 
@@ -1984,8 +1923,7 @@ BPLONG c_permission_error(type1, type2, term)
     return err;
 }
 
-BPLONG c_representation_error(type)
-    BPLONG type;
+BPLONG c_representation_error(BPLONG type)
 {
     BPLONG err;
 
@@ -1995,16 +1933,14 @@ BPLONG c_representation_error(type)
     return err;
 }
 
-BPLONG is_iso_exception(exception)
-    BPLONG exception;
+BPLONG is_iso_exception(BPLONG exception)
 {
     DEREF(exception);
     return (exception == et_INSTANTIATION_ERROR ||
             !ISATOM(exception));
 }
 
-BPLONG c_builtin_error1(type, op1)
-    BPLONG type, op1;
+BPLONG c_builtin_error1(BPLONG type, BPLONG op1)
 {
     BPLONG err;
 
@@ -2016,8 +1952,7 @@ BPLONG c_builtin_error1(type, op1)
     return err;
 }
 
-BPLONG c_builtin_error2(type, op1, op2)
-    BPLONG type, op1, op2;
+BPLONG c_builtin_error2(BPLONG type, BPLONG op1, BPLONG op2)
 {
     BPLONG err;
 
@@ -2031,8 +1966,7 @@ BPLONG c_builtin_error2(type, op1, op2)
     return err;
 }
 
-BPLONG c_builtin_error3(type, op1, op2, op3)
-    BPLONG type, op1, op2, op3;
+BPLONG c_builtin_error3(BPLONG type, BPLONG op1, BPLONG op2, BPLONG op3)
 {
     BPLONG err;
 
@@ -2048,8 +1982,7 @@ BPLONG c_builtin_error3(type, op1, op2, op3)
     return err;
 }
 
-BPLONG c_builtin_error4(type, op1, op2, op3, op4)
-    BPLONG type, op1, op2, op3, op4;
+BPLONG c_builtin_error4(BPLONG type, BPLONG op1, BPLONG op2, BPLONG op3, BPLONG op4)
 {
     BPLONG err;
 
@@ -2067,8 +2000,7 @@ BPLONG c_builtin_error4(type, op1, op2, op3, op4)
     return err;
 }
 
-BPLONG c_type_error(type, term)
-    BPLONG type, term;
+BPLONG c_type_error(BPLONG type, BPLONG term)
 {
     BPLONG err;
     SYM_REC_PTR sym_ptr;
@@ -2100,8 +2032,7 @@ BPLONG c_type_error(type, term)
     return err;
 }
 
-BPLONG c_syntax_error(term)
-    BPLONG term;
+BPLONG c_syntax_error(BPLONG term)
 {
     BPLONG err;
 
@@ -2112,8 +2043,7 @@ BPLONG c_syntax_error(term)
     return err;
 }
 
-BPLONG c_stream_struct(Index)
-    BPLONG Index;
+BPLONG c_stream_struct(BPLONG Index)
 {
     BPLONG src;
 
@@ -2123,9 +2053,7 @@ BPLONG c_stream_struct(Index)
     return src;
 }
 
-BPLONG c_error_src(str, arity)
-    char *str;
-    int arity;
+BPLONG c_error_src(char *str, int arity)
 {
     BPLONG src;
 
@@ -2137,8 +2065,7 @@ BPLONG c_error_src(str, arity)
     return src;
 }
 
-int b_LIST_LENGTH_cff(lst, lstr, len)
-    BPLONG lst, lstr, len;
+int b_LIST_LENGTH_cff(BPLONG lst, BPLONG lstr, BPLONG len)
 {
     BPLONG_PTR top;
     int i = 0;
@@ -2154,8 +2081,7 @@ restart:
     return BP_TRUE;
 }
 
-int b_PICAT_LENGTH_cf(term, len)
-    BPLONG term, len;
+int b_PICAT_LENGTH_cf(BPLONG term, BPLONG len)
 {
     BPLONG_PTR top;
     BPLONG i;
@@ -2205,9 +2131,7 @@ start:
 }
 
 /* len > 0 */
-BPLONG intarray_to_intlist(array, len)
-    BPLONG_PTR array;
-    BPLONG len;
+BPLONG intarray_to_intlist(BPLONG_PTR array, BPLONG len)
 {
     BPLONG i, lst0;
     BPLONG_PTR ptr;
@@ -2224,9 +2148,7 @@ BPLONG intarray_to_intlist(array, len)
     return lst0;
 }
 
-BPLONG termarray_to_termlist(array, len)
-    BPLONG_PTR array;
-    BPLONG len;
+BPLONG termarray_to_termlist(BPLONG_PTR array, BPLONG len)
 {
     BPLONG i, lst0;
     BPLONG_PTR ptr;
@@ -2433,8 +2355,7 @@ void qsort_term_array(BPLONG_PTR arr, BPLONG len) {
 }
 
 
-BPLONG bp_reverse_list(lst)
-    BPLONG lst;
+BPLONG bp_reverse_list(BPLONG lst)
 {
     BPLONG_PTR top, ptr;
     BPLONG elm, rev_lst;
@@ -2458,8 +2379,7 @@ BPLONG bp_reverse_list(lst)
    If the given list is an integer list that is not too long (depending on the available stack space),
    then use qsort; otherwise fail, doing nothing.
 */
-int b_sort_int_list(lst, sorted_lst)
-    BPLONG lst, sorted_lst;
+int b_sort_int_list(BPLONG lst, BPLONG sorted_lst)
 {
     BPLONG len;
     BPLONG_PTR arr;
@@ -2523,8 +2443,7 @@ int c_sort_term_list() {
 }
 
 
-int b_DEREF_c(T)
-    BPLONG T;
+int b_DEREF_c(BPLONG T)
 {
     BPLONG_PTR ptr, top;
     BPLONG e;

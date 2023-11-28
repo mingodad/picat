@@ -15,8 +15,8 @@
 /*
   #define ToamProfile 
 */
-extern BPLONG_PTR expand_trail();
-extern BPLONG next_alive_susp_call();
+extern BPLONG_PTR expand_trail(BPLONG_PTR trail_top, BPLONG_PTR breg);
+extern BPLONG next_alive_susp_call(BPLONG cs_list, BPLONG_PTR breg);
 
 void (*user_signal_action[NSIG])(int, void *);
 void *user_signal_data[NSIG];

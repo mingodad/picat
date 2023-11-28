@@ -33,8 +33,7 @@
     }
 
 
-int unify(op1, op2)
-    register BPLONG op1, op2;
+int unify(BPLONG op1, BPLONG op2)
 {
     register BPLONG_PTR top;
     register BPLONG arity, i;
@@ -154,8 +153,7 @@ bind_susp_value:
   op1: non-stack var
   op2: a var 
 */
-void unify_nsv_v(op1, op2)
-    register BPLONG op1, op2;
+void unify_nsv_v(BPLONG op1, BPLONG op2)
 {
     if (op1 != op2) {
         if ((BPULONG)op1 < (BPULONG)op2) {
@@ -171,8 +169,7 @@ void unify_nsv_v(op1, op2)
 /*
   op1,op2 are both lists
 */
-int unify_lst_lst(op1, op2)
-    register BPLONG op1, op2;
+int unify_lst_lst(BPLONG op1, BPLONG op2)
 {
     if (op1 == op2) return 1;
     UNTAG_ADDR(op1);
@@ -186,8 +183,7 @@ int unify_lst_lst(op1, op2)
 /*
   op1,op2 are both structures
 */
-int unify_str_str(op1, op2)
-    register BPLONG op1, op2;
+int unify_str_str(BPLONG op1, BPLONG op2)
 {
     register BPLONG arity, i;
 
@@ -207,14 +203,12 @@ int unify_str_str(op1, op2)
     return unify(op1, op2);
 }
 
-int is_IDENTICAL(op1, op2)
-    BPLONG op1, op2;
+int is_IDENTICAL(BPLONG op1, BPLONG op2)
 {
     return bp_identical(op1, op2);
 }
 
-int bp_identical(op1, op2)
-    register BPLONG op1, op2;
+int bp_identical(BPLONG op1, BPLONG op2)
 {
     register BPLONG_PTR top;
     register BPLONG arity, i;
@@ -255,8 +249,7 @@ int bp_identical(op1, op2)
     return 0;
 }
 
-int is_UNIFIABLE(t1, t2)
-    BPLONG t1, t2;
+int is_UNIFIABLE(BPLONG t1, BPLONG t2)
 {
     BPLONG_PTR trail_top0, hbreg0;
     BPLONG initial_diff0, trigger_no0;
@@ -287,8 +280,7 @@ int c_UNIFIABLE() {
     return is_UNIFIABLE(op1, op2);
 }
 
-int unify_suspvar_suspvar(op1, op2)
-    BPLONG op1, op2;
+int unify_suspvar_suspvar(BPLONG op1, BPLONG op2)
 {
     BPLONG_PTR dv_ptr1, dv_ptr2;
 
@@ -319,8 +311,7 @@ int unify_suspvar_suspvar(op1, op2)
         }
 }
 
-int unify_dvar_dvar(dv_ptr1, dv_ptr2)
-    BPLONG_PTR dv_ptr1, dv_ptr2;
+int unify_dvar_dvar(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
 {
     BPLONG first, last, count;
     BPLONG_PTR top;
@@ -440,8 +431,7 @@ itdvar_bvdvar:
 }
 
 /* let dv_ptr2 point to dv_ptr1 */
-int bind_susp_susp(dv_ptr1, dv_ptr2)
-    BPLONG_PTR dv_ptr1, dv_ptr2;
+int bind_susp_susp(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
 {
     /*
       printf("bind_susp_susp dv_ptr1=%x dv_ptr2=%x %d\n",(BPULONG)dv_ptr1-(BPULONG)stack_low_addr,(BPULONG)dv_ptr2-(BPULONG)stack_low_addr,dv_ptr2>dv_ptr1);
@@ -469,9 +459,7 @@ int bind_susp_susp(dv_ptr1, dv_ptr2)
 
 /* No dereference needed,
    Linear-time merger */
-void merge_cs(addr_head_cs1, cs2)
-    BPLONG_PTR addr_head_cs1;
-    BPLONG cs2;
+void merge_cs(BPLONG_PTR addr_head_cs1, BPLONG cs2)
 {
     BPLONG elm, lst, cs1, new_cs2;
     BPLONG_PTR ptr, constr_ar;
@@ -527,8 +515,7 @@ void merge_cs(addr_head_cs1, cs2)
 
 
 /* same as identical(op1,op2) except that variables are not compared */
-int key_identical(op1, op2)
-    BPLONG op1, op2;
+int key_identical(BPLONG op1, BPLONG op2)
 {
     register BPLONG_PTR top;
     register BPLONG arity, i;

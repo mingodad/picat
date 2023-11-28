@@ -567,8 +567,7 @@ int utf8_nchars(char *s) {
     return count;
 }
 
-void SyntaxError(message)
-    CHAR_PTR message;
+void SyntaxError(CHAR_PTR message)
 {
     //  Fprintf(stderr, "Syntax error: %s\n", message);
     bp_exception = c_syntax_error(ADDTAG(insert_sym(message, strlen(message), 0), ATM));
@@ -1000,9 +999,8 @@ int read_utf8_character_string(int q) {
  *  "FOLLOWing" character.
  */
 
-int com0plain(card, endeol)
-    FILE *card;  /* source file */
-    int endeol;  /* The closing character "!" */
+int com0plain(FILE *card, /* source file */
+        int endeol) /* The closing character "!" */
 {
     int c;
 
@@ -1016,8 +1014,7 @@ int com0plain(card, endeol)
     return c;
 }
 
-int com0plain_string(endeol)
-    int endeol;  /* The closing character "!" */
+int com0plain_string(int endeol)  /* The closing character "!" */
 {
     int c;
 
@@ -1054,10 +1051,10 @@ int com0plain_string(endeol)
  *  When this is called, the initial <begcom><astcom> has been consumed.
  */
 
-int com2plain(card, astcom, endcom)
-    FILE *card;  /* source file */
-    int astcom;  /* The asterisk character "*" */
-    int endcom;  /* The closing character "/" */
+int com2plain(
+    FILE *card,  /* source file */
+    int astcom,  /* The asterisk character "*" */
+    int endcom)  /* The closing character "/" */
 {
     int c;
     int state;
@@ -1077,9 +1074,9 @@ int com2plain(card, astcom, endcom)
     return BP_TRUE;
 }
 
-int com2plain_string(astcom, endcom)
-    int astcom;  /* The asterisk character "*" */
-    int endcom;  /* The closing character "/" */
+int com2plain_string(
+    int astcom,  /* The asterisk character "*" */
+    int endcom)  /* The closing character "/" */
 {
     int c;
     int state;
@@ -1517,8 +1514,7 @@ end_of_clause:
     /*NOTREACHED*/
 }
 
-void printAtomStr(message)
-    char *message;
+void printAtomStr(char *message)
 {
     /*  AtomStr[100] = '.';AtomStr[101] = '.';AtomStr[102] = '.';AtomStr[103] = '\0'; */
     Fprintf(stderr, "%s\n", AtomStr);
@@ -1928,8 +1924,7 @@ end_of_clause:
     AtomStr[0] = '.'; AtomStr[1] = '\0'; lastc = ' '; return ENDCL;
 }
 
-int b_NEXT_TOKEN_ff(op1, op2)
-    BPLONG op1, op2;
+int b_NEXT_TOKEN_ff(BPLONG op1, BPLONG op2)
 {
     FILE *card = curr_in;
     BPLONG i;
@@ -2093,8 +2088,7 @@ int b_NEXT_TOKEN_ff(op1, op2)
     return BP_TRUE;
 }
 
-int b_SET_FLAG_DOUBLE_QUOTES_c(FlagVal)
-    BPLONG FlagVal;
+int b_SET_FLAG_DOUBLE_QUOTES_c(BPLONG FlagVal)
 {
     DEREF(FlagVal);
     double_quotes_flag = INTVAL(FlagVal);
@@ -2102,8 +2096,7 @@ int b_SET_FLAG_DOUBLE_QUOTES_c(FlagVal)
 }
 
 
-int b_GET_FLAG_DOUBLE_QUOTES_f(FlagVal)
-    BPLONG FlagVal;
+int b_GET_FLAG_DOUBLE_QUOTES_f(BPLONG FlagVal)
 {
     ASSIGN_f_atom(FlagVal, MAKEINT(double_quotes_flag));
     return BP_TRUE;

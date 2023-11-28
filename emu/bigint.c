@@ -280,7 +280,7 @@ double bp_bigint_to_double(BPLONG op) {
 
 
 BPLONG bp_double_to_bigint(double a) {
-    double f, modf();
+    double f;
     int sign, i, size;
     BPLONG op;
     UBIGINT x;

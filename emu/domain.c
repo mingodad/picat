@@ -53,8 +53,7 @@ int c_DM_CREATE_DVAR() {
     return b_DM_CREATE_DVAR(Var, From, To);
 }
 
-int b_DM_CREATE_DVAR(Var, From, To)
-    BPLONG Var, From, To;
+int b_DM_CREATE_DVAR(BPLONG Var, BPLONG From, BPLONG To)
 {
     BPLONG_PTR top;
 
@@ -117,9 +116,7 @@ int c_DM_CREATE_DVARS() {
     return BP_ERROR;
 }
 
-int aux_create_domain_var(Var, from, to)
-    BPLONG Var;
-BPLONG from, to;
+int aux_create_domain_var(BPLONG Var, BPLONG from, BPLONG to)
 {
     BPLONG_PTR dv_ptr;
 
@@ -151,9 +148,7 @@ BPLONG from, to;
     }
 }
 
-int aux_create_bv_domain_var(Var, from, to)
-    BPLONG Var;
-BPLONG from, to;
+int aux_create_bv_domain_var(BPLONG Var, BPLONG from, BPLONG to)
 {
     BPLONG_PTR dv_ptr;
 
@@ -184,8 +179,7 @@ BPLONG from, to;
 }
 
 /* make a copy of the fd var pointed to by dv_ptr, without copying cs lists */
-BPLONG_PTR dm_clone(dv_ptr)
-    BPLONG_PTR dv_ptr;
+BPLONG_PTR dm_clone(BPLONG_PTR dv_ptr)
 {
     BPLONG_PTR dv_ptr_cp;
 
@@ -211,8 +205,7 @@ int c_create_susp_var() {
     return create_susp_var(Var);
 }
 
-int create_susp_var(Var)
-    BPLONG Var;
+int create_susp_var(BPLONG Var)
 {
     BPLONG_PTR dv_ptr;
 
@@ -246,8 +239,7 @@ int fd_vector_min_max() {
     return 1;
 }
 
-void it_to_bv(dv_ptr)
-    BPLONG_PTR dv_ptr;
+void it_to_bv(BPLONG_PTR dv_ptr)
 {
     BPLONG from, to, i, size;
     BPLONG_PTR top;
@@ -283,9 +275,7 @@ void it_to_bv(dv_ptr)
 }
 
 
-void it_to_bv_with_hole(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+void it_to_bv_with_hole(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG from, to, i, size;
     BPLONG_PTR top;
@@ -333,9 +323,7 @@ void it_to_bv_with_hole(dv_ptr, elm)
 }
 
 /* interval_start > DV_first(dv_ptr) && interval_end<DV_last(dv_ptr) */
-void it_to_bv_with_interval_holes(dv_ptr, interval_start, interval_end)
-    BPLONG_PTR dv_ptr;
-BPLONG interval_start, interval_end;
+void it_to_bv_with_interval_holes(BPLONG_PTR dv_ptr, BPLONG interval_start, BPLONG interval_end)
 {
     BPLONG from, to, i, size;
     BPLONG_PTR top;
@@ -381,8 +369,7 @@ BPLONG interval_start, interval_end;
     UPDATE_SIZE(dv_ptr, size, size-(interval_end-interval_start+1));
 }
 
-int b_DM_DISJOINT_cc(Var1, Var2)
-    BPLONG Var1, Var2;
+int b_DM_DISJOINT_cc(BPLONG Var1, BPLONG Var2)
 {
     BPLONG_PTR dv_ptr1, dv_ptr2;
 
@@ -418,8 +405,7 @@ int c_DM_INCLUDE() {
 }
 
 /* Var1's domain is a superset of Var2's domain */
-int b_DM_INCLUDE(Var1, Var2)
-    BPLONG Var1, Var2;
+int b_DM_INCLUDE(BPLONG Var1, BPLONG Var2)
 {
     BPLONG_PTR dv_ptr1, dv_ptr2;
 
@@ -442,8 +428,7 @@ int b_DM_INCLUDE(Var1, Var2)
    (2) dv_ptr1 has at least the same range as dv_ptr2; and
    (3) dv_ptr1 is a bit vector 
 */
-int domain_include_bv(dv_ptr1, dv_ptr2)
-    BPLONG_PTR dv_ptr1, dv_ptr2;
+int domain_include_bv(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
 {
     BPLONG elm, last;
     BPLONG_PTR w_ptr1, bv_ptr1, w_ptr2, bv_ptr2, last_w_ptr2;
@@ -496,8 +481,7 @@ int domain_include_bv(dv_ptr1, dv_ptr2)
 
 /******** set_false *************/
 /* X must be either int or dvar */
-int varorint_set_false(X, elm)
-    BPLONG X, elm;
+int varorint_set_false(BPLONG X, BPLONG elm)
 {
     BPLONG_PTR dv_ptr;
     DEREF_NONVAR(X);
@@ -511,9 +495,7 @@ int varorint_set_false(X, elm)
 
 
 /* Precondition: dv_ptr is not bound */
-void domain_set_false_noint(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+void domain_set_false_noint(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG first, last, count;
     BPLONG_PTR top;
@@ -562,9 +544,7 @@ void domain_set_false_noint(dv_ptr, elm)
 }
 
 /* dv_ptr may be bound */
-int domain_set_false_aux(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+int domain_set_false_aux(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG first, last, count;
     BPLONG_PTR top;
@@ -617,9 +597,7 @@ int domain_set_false_aux(dv_ptr, elm)
 }
 
 /* dv_ptr is a bit vector, and may be bound */
-int domain_set_false_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+int domain_set_false_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG first, last, count;
     BPLONG_PTR top;
@@ -668,8 +646,7 @@ int domain_set_false_bv(dv_ptr, elm)
 
 
 /* precondition: dv_ptr is not instantiated yet */
-void domain_exclude_first_bv(dv_ptr)
-    BPLONG_PTR dv_ptr;
+void domain_exclude_first_bv(BPLONG_PTR dv_ptr)
 {
     BPLONG count, elm, first;
     BPULONG w, mask, offset;
@@ -689,8 +666,7 @@ void domain_exclude_first_bv(dv_ptr)
 }
 
 /* precondition: dv_ptr is not instantiated yet */
-void domain_exclude_last_bv(dv_ptr)
-    BPLONG_PTR dv_ptr;
+void domain_exclude_last_bv(BPLONG_PTR dv_ptr)
 {
     BPLONG count, elm, last;
     BPLONG_PTR top, bv_ptr, w_ptr;
@@ -709,9 +685,7 @@ void domain_exclude_last_bv(dv_ptr)
     UPDATE_LAST_SIZE(dv_ptr, last, elm, count-1);
 }
 
-void exclude_inner_elm_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+void exclude_inner_elm_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG count;
     BPLONG_PTR w_ptr, bv_ptr;
@@ -730,8 +704,7 @@ void exclude_inner_elm_bv(dv_ptr, elm)
 }
 
 /* for each element y in dev_ptr_y, if y is included in dv_ptr_x then exclude y */
-int exclude_dom_aux(dv_ptr_x, dv_ptr_y)
-    BPLONG_PTR dv_ptr_x, dv_ptr_y;
+int exclude_dom_aux(BPLONG_PTR dv_ptr_x, BPLONG_PTR dv_ptr_y)
 {
     BPLONG first, last, first_y, last_y;
 
@@ -753,8 +726,7 @@ int exclude_dom_aux(dv_ptr_x, dv_ptr_y)
 }
 
 /* for each element y in dev_ptr_y, if y is NOT included in dv_ptr_x then exclude y */
-int exclude_dom_comp_aux(dv_ptr_x, dv_ptr_y)
-    BPLONG_PTR dv_ptr_x, dv_ptr_y;
+int exclude_dom_comp_aux(BPLONG_PTR dv_ptr_x, BPLONG_PTR dv_ptr_y)
 {
     BPLONG first, last;
     /*  write_term(dv_ptr_x); write_term(dv_ptr_y); */
@@ -770,8 +742,7 @@ int exclude_dom_comp_aux(dv_ptr_x, dv_ptr_y)
 }
 
 /******** next *************/
-int b_DM_NEXT_ccf(DVar, E, NextE)
-    BPLONG DVar, E, NextE;
+int b_DM_NEXT_ccf(BPLONG DVar, BPLONG E, BPLONG NextE)
 {
     BPLONG_PTR dv_ptr;
     BPLONG elm;
@@ -800,9 +771,7 @@ int b_DM_NEXT_ccf(DVar, E, NextE)
     return 1;
 }
 
-BPLONG domain_next_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+BPLONG domain_next_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG_PTR bv_ptr, w_ptr;
     BPULONG w, mask, offset;
@@ -818,15 +787,13 @@ BPLONG domain_next_bv(dv_ptr, elm)
 }
 
 /******** prev *************/
-int b_DM_PREV0_ccf(DVar, E, PrevE)
-    BPLONG DVar, E, PrevE;
+int b_DM_PREV0_ccf(BPLONG DVar, BPLONG E, BPLONG PrevE)
 {
     n_backtracks++;
     return b_DM_PREV_ccf(DVar, E, PrevE);
 }
 
-int b_DM_PREV_ccf(DVar, E, PrevE)
-    BPLONG DVar, E, PrevE;
+int b_DM_PREV_ccf(BPLONG DVar, BPLONG E, BPLONG PrevE)
 {
     BPLONG_PTR dv_ptr;
     BPLONG elm;
@@ -850,9 +817,7 @@ int b_DM_PREV_ccf(DVar, E, PrevE)
     return BP_TRUE;
 }
 
-BPLONG domain_prev_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+BPLONG domain_prev_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -865,8 +830,7 @@ BPLONG domain_prev_bv(dv_ptr, elm)
 }
 
 /******** true *************/
-int b_DM_TRUE_cc(Var, E)
-    BPLONG Var, E;
+int b_DM_TRUE_cc(BPLONG Var, BPLONG E)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -880,8 +844,7 @@ int b_DM_TRUE_cc(Var, E)
     return dm_true(dv_ptr, INTVAL(E));
 }
 
-int b_DM_FALSE_cc(Var, E)
-    BPLONG Var, E;
+int b_DM_FALSE_cc(BPLONG Var, BPLONG E)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -896,8 +859,7 @@ int b_DM_FALSE_cc(Var, E)
 }
 
 /* an inner element that is true used in clpset.pl */
-int b_DM_INNER_TRUE_cc(Var, E)
-    BPLONG Var, E;
+int b_DM_INNER_TRUE_cc(BPLONG Var, BPLONG E)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -913,8 +875,7 @@ int b_DM_INNER_TRUE_cc(Var, E)
 }
 
 /* X must be either an int or fd var */
-int varorint_dm_true(X, elm)
-    BPLONG X, elm;
+int varorint_dm_true(BPLONG X, BPLONG elm)
 {
     BPLONG_PTR dv_ptr;
 
@@ -927,9 +888,7 @@ int varorint_dm_true(X, elm)
 }
 
 
-int dm_true(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+int dm_true(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -952,9 +911,7 @@ int dm_true(dv_ptr, elm)
     return ((w & mask) != 0);
 }
 
-int dm_true_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+int dm_true_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -975,9 +932,7 @@ int dm_true_bv(dv_ptr, elm)
 
 
 /* same as dm_true_bv but with no bound test */
-int dm_true_bv_nbt(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+int dm_true_bv_nbt(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -989,8 +944,7 @@ int dm_true_bv_nbt(dv_ptr, elm)
 }
 
 /******** min_max *************/
-int b_DM_MIN_MAX_cff(Var, Min, Max)
-    BPLONG Var, Min, Max;
+int b_DM_MIN_MAX_cff(BPLONG Var, BPLONG Min, BPLONG Max)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1014,8 +968,7 @@ int b_DM_MIN_MAX_cff(Var, Min, Max)
 }
 
 /******** min *************/
-int b_DM_MIN_cf(Var, Min)
-    BPLONG Var, Min;
+int b_DM_MIN_cf(BPLONG Var, BPLONG Min)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1037,8 +990,7 @@ int b_DM_MIN_cf(Var, Min)
 }
 
 /******** max *************/
-int b_DM_MAX_cf(Var, Max)
-    BPLONG Var, Max;
+int b_DM_MAX_cf(BPLONG Var, BPLONG Max)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1060,8 +1012,7 @@ int b_DM_MAX_cf(Var, Max)
 }
 
 /******** count *************/
-int b_DM_COUNT_cf(Var, Count)
-    BPLONG Var, Count;
+int b_DM_COUNT_cf(BPLONG Var, BPLONG Count)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1081,9 +1032,7 @@ int b_DM_COUNT_cf(Var, Count)
     return BP_TRUE;
 }
 
-int count_domain_elms(dv_ptr, from, to)
-    BPLONG_PTR dv_ptr;
-BPLONG from, to;
+int count_domain_elms(BPLONG_PTR dv_ptr, BPLONG from, BPLONG to)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -1105,9 +1054,7 @@ BPLONG from, to;
 }
 
 /* same as count_domain_elms but post dom_any(X,E) events */
-int exclude_domain_elms(dv_ptr, from, to)
-    BPLONG_PTR dv_ptr;
-BPLONG from, to;
+int exclude_domain_elms(BPLONG_PTR dv_ptr, BPLONG from, BPLONG to)
 {
     BPLONG_PTR w_ptr, bv_ptr;
     BPULONG w, mask, offset;
@@ -1280,9 +1227,7 @@ int c_path_from_to_reachability_test() {
     return path_from_to_reachable(from, to, var_vector, visited);
 }
 
-int path_from_to_reachable(from, to, var_vector, visited)
-    BPLONG from, to;
-BPLONG_PTR var_vector, visited;
+int path_from_to_reachable(BPLONG from, BPLONG to, BPLONG_PTR var_vector, BPLONG_PTR visited)
 {
     BPLONG var, next, last;
     BPLONG_PTR dv_ptr;
@@ -1398,9 +1343,9 @@ int b_PATH_FROM_TO_REACHABLE()
 }
 
 
-int check_reach_cuts_in_one_connection(n, Start, End, Lab, TaggedLab, LabVarArray, SuccVarArray, VisitedArray)
-    BPLONG n, Start, End, Lab, TaggedLab;
-BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
+int check_reach_cuts_in_one_connection(BPLONG n, BPLONG Start, BPLONG End,
+        BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, 
+        BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG i;
 
@@ -1456,9 +1401,8 @@ BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
     return BP_TRUE;
 }
 
-int path_from_to_node_degree(n, NodeNum, Lab, TaggedLab, LabVarArray, SuccVarArray)
-    BPLONG NodeNum, Lab, TaggedLab, n;
-BPLONG_PTR LabVarArray, SuccVarArray;
+int path_from_to_node_degree(BPLONG n, BPLONG NodeNum, BPLONG Lab, BPLONG TaggedLab,
+        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray)
 {
     BPLONG LabVar, SuccVar;
 
@@ -1508,9 +1452,8 @@ BPLONG_PTR LabVarArray, SuccVarArray;
     }
 }
 
-void check_reach_withno_cut(Start, Lab, TaggedLab, LabVarArray, SuccVarArray, VisitedArray)
-    BPLONG Start, Lab, TaggedLab;
-BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
+void check_reach_withno_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, 
+        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -1573,9 +1516,9 @@ BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
     }
 }
 
-void check_reach_with_one_cut(Start, Lab, TaggedLab, LabVarArray, SuccVarArray, VisitedArray, cutNodeNum)
-    BPLONG Start, Lab, TaggedLab, cutNodeNum;
-BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
+void check_reach_with_one_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, 
+        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, 
+        BPLONG_PTR VisitedArray, BPLONG cutNodeNum)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -1639,9 +1582,10 @@ BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
 }
 
 /* consider firstCon connection */
-void check_two_cuts_in_two_connections(n, firstCon, nConnections, ConStartArray, ConEndArray, ConLabArray, ConFlagArray, LabVarArray, SuccVarArray, VisitedArray)
-    BPLONG n, firstCon, nConnections;
-BPLONG_PTR ConStartArray, ConEndArray, ConLabArray, ConFlagArray, LabVarArray, SuccVarArray, VisitedArray;
+void check_two_cuts_in_two_connections(BPLONG n, BPLONG firstCon, BPLONG nConnections,
+        BPLONG_PTR ConStartArray, BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray,
+        BPLONG_PTR ConFlagArray, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray,
+        BPLONG_PTR VisitedArray)
 {
     BPLONG Start, End, Lab, TaggedLab, LabVar, v1, v2;
     BPLONG_PTR dv_ptr;
@@ -1685,9 +1629,10 @@ BPLONG_PTR ConStartArray, ConEndArray, ConLabArray, ConFlagArray, LabVarArray, S
    check if they are cutting nodes for another connection with label l2. If so, 
    then no labels other than l1 and l2 are allowed for v1 and v2.
 */
-void check_cuts_in_another_connection(v1, v2, n, firstCon, firstLab, nConnections, ConStartArray, ConEndArray, ConLabArray, LabVarArray, SuccVarArray, VisitedArray)
-    BPLONG v1, v2, n, firstCon, firstLab, nConnections;
-BPLONG_PTR ConStartArray, ConEndArray, ConLabArray, LabVarArray, SuccVarArray, VisitedArray;
+void check_cuts_in_another_connection(BPLONG v1, BPLONG v2, BPLONG n, BPLONG firstCon,
+        BPLONG firstLab, BPLONG nConnections, BPLONG_PTR ConStartArray,
+        BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray, BPLONG_PTR LabVarArray,
+        BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG secondCon, LabVar, Start, End, Lab, TaggedLab, Flag;
     BPLONG_PTR dv_ptr1, dv_ptr2;
@@ -1727,9 +1672,9 @@ BPLONG_PTR ConStartArray, ConEndArray, ConLabArray, LabVarArray, SuccVarArray, V
 }
 
 
-void check_reach_with_two_cuts(Start, Lab, TaggedLab, LabVarArray, SuccVarArray, VisitedArray, cutNodeNum1, cutNodeNum2)
-    BPLONG Start, Lab, TaggedLab, cutNodeNum1, cutNodeNum2;
-BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
+void check_reach_with_two_cuts(BPLONG Start, BPLONG Lab, BPLONG TaggedLab,
+        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray,
+        BPLONG cutNodeNum1, BPLONG cutNodeNum2)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -1793,9 +1738,7 @@ BPLONG_PTR LabVarArray, SuccVarArray, VisitedArray;
 }
 
 /* exclude all elements but val1 and val2 (val1\=val2) */
-void domain_reduce_to_two(dv_ptr, val1, val2)
-    BPLONG_PTR dv_ptr;
-BPLONG val1, val2;
+void domain_reduce_to_two(BPLONG_PTR dv_ptr, BPLONG val1, BPLONG val2)
 {
     BPLONG t;
     // printf("reduce_to_two %d %d ",val1,val2); write_term1(dv_ptr,stderr); printf("\n");
@@ -1832,8 +1775,7 @@ BPLONG val1, val2;
   $alldistinct_exclude_hall_set(X,[_|Ys]):-true : 
   $alldistinct_exclude_hall_set(X,Ys).
 */
-int b_ALLDISTINCT_CHECK_HALL_VAR_cccc(X, NumElmsLeft, L, R)
-    BPLONG X, NumElmsLeft, L, R;
+int b_ALLDISTINCT_CHECK_HALL_VAR_cccc(BPLONG X, BPLONG NumElmsLeft, BPLONG L, BPLONG R)
 {
     BPLONG L0, NumElmsLeft0;
     BPLONG_PTR dv_ptr1, dv_ptr2, ptr, flag_ptr;
@@ -1910,8 +1852,7 @@ start_exclude:
 }
 
 /******** misc *************/
-void print_domain_var(op)
-    BPLONG op;
+void print_domain_var(BPLONG op)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR top;
@@ -1924,8 +1865,7 @@ void print_domain_var(op)
     }
 }
 
-void print_domain(dv_ptr)
-    BPLONG_PTR dv_ptr;
+void print_domain(BPLONG_PTR dv_ptr)
 {
     BPLONG i, first, last;
     BPLONG low, high;
@@ -1956,8 +1896,7 @@ void print_domain(dv_ptr)
 }
 
 /* X := (X intersect Y), either one could be a normal var */
-int b_DM_INTERSECT(X, Y)
-    BPLONG X, Y;
+int b_DM_INTERSECT(BPLONG X, BPLONG Y)
 {
     DEREF(Y); DEREF(X);
     if (ISINT(X)) {
@@ -1983,8 +1922,7 @@ int b_DM_INTERSECT(X, Y)
 }
 
 /* X := (X /\ Y) */
-int dm_intersect(dv_ptr_x, dv_ptr_y)
-    BPLONG_PTR dv_ptr_x, dv_ptr_y;
+int dm_intersect(BPLONG_PTR dv_ptr_x, BPLONG_PTR dv_ptr_y)
 {
     BPLONG first, last;
 
@@ -2007,8 +1945,7 @@ int dm_intersect(dv_ptr_x, dv_ptr_y)
 }
 
 /* X in [Low,Up], X must be a domain variable, Low<=Up. */
-int b_DM_INTERSECT2(X, Low, Up)
-    BPLONG X, Low, Up;
+int b_DM_INTERSECT2(BPLONG X, BPLONG Low, BPLONG Up)
 {
     BPLONG_PTR dv_ptr;
     DEREF_NONVAR(Low);
@@ -2050,8 +1987,7 @@ int b_DM_INTERSECT2(X, Low, Up)
 }
 
 /* dv_ptr1 and dv_ptr2 are both domain variables */
-int dm_disjoint(dv_ptr1, dv_ptr2)
-    BPLONG_PTR dv_ptr1, dv_ptr2;
+int dm_disjoint(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
 {
     BPLONG min, max, min2, max2;
     BPLONG_PTR w_ptr1, bv_ptr1, w_ptr2, bv_ptr2, last_w_ptr1;
@@ -2110,8 +2046,7 @@ int c_var_notin_ints() {
   Exclude elements in List from the domain of X
   where List is a list of integers or integer intervals
 */
-int b_VAR_NOTIN_D_cc(X, List)
-    BPLONG X, List;
+int b_VAR_NOTIN_D_cc(BPLONG X, BPLONG List)
 {
     BPLONG elm, low, up, minX;
     BPLONG_PTR lst_ptr, interval_ptr, dv_ptr;
@@ -2147,8 +2082,7 @@ int b_VAR_NOTIN_D_cc(X, List)
     return BP_TRUE;
 }
 
-int check_var_notin_d(x, List)
-    BPLONG x, List;
+int check_var_notin_d(BPLONG x, BPLONG List)
 {
     BPLONG elm, low, up;
     BPLONG_PTR lst_ptr, interval_ptr;
@@ -2197,8 +2131,7 @@ int check_var_notin_d(x, List)
         }                                                               \
     }
 
-int b_TASKS_EXCLUDE_NOGOOD_INTERVAL_ccc(start, duration, tasks)
-    BPLONG start, duration, tasks;
+int b_TASKS_EXCLUDE_NOGOOD_INTERVAL_ccc(BPLONG start, BPLONG duration, BPLONG tasks)
 {
     BPLONG_PTR dv_ptr, ptr;
     BPLONG est0, lst0, task, duration0;
@@ -2231,8 +2164,7 @@ int b_TASKS_EXCLUDE_NOGOOD_INTERVAL_ccc(start, duration, tasks)
   The tasks (S0,D0),...,(Sn,Dn) are mutually disjunctive.
   Triggered when the bound of S0 is updated.
 */
-int b_DISJUNCTIVE_TASKS_AC(n)
-    BPLONG n;
+int b_DISJUNCTIVE_TASKS_AC(BPLONG n)
 {
     BPLONG_PTR dv_ptr, starts_ptr;
     BPLONG start, duration, est0, lst0, duration0;
@@ -2364,8 +2296,7 @@ int b_DISJUNCTIVE_TASKS_AC(n)
         }                                                               \
     }
 
-int b_DISJUNCTIVE_TASKS_EF(n)
-    BPLONG n;
+int b_DISJUNCTIVE_TASKS_EF(BPLONG n)
 {
     BPLONG_PTR dv_ptr;
     BPLONG i, j, m, h, est, lct, start, duration, acc_est, acc_lct, acc_duration, est0, lst0, lct0, duration0, est1, lct1, duration1;
@@ -2478,8 +2409,7 @@ int b_DISJUNCTIVE_TASKS_EF(n)
     return BP_TRUE;
 }
 
-int b_EXCLUDE_NOGOOD_INTERVAL_ccc(Var, Low, Up)
-    BPLONG Var, Low, Up;
+int b_EXCLUDE_NOGOOD_INTERVAL_ccc(BPLONG Var, BPLONG Low, BPLONG Up)
 {
     BPLONG_PTR dv_ptr;
     BPLONG val;
@@ -2588,8 +2518,7 @@ int c_integers_intervals_list() {
     return BP_TRUE;
 }
 
-int b_VAR_IN_D_cc(X, List)
-    BPLONG X, List;
+int b_VAR_IN_D_cc(BPLONG X, BPLONG List)
 {
     BPLONG elm, low, up, Min;
     BPLONG_PTR lst_ptr, interval_ptr, dv_ptr;
@@ -2628,8 +2557,7 @@ int b_VAR_IN_D_cc(X, List)
     return BP_TRUE;
 }
 
-int check_var_in_d(x, List)
-    BPLONG x, List;
+int check_var_in_d(BPLONG x, BPLONG List)
 {
     BPLONG elm, low, up;
     BPLONG_PTR lst_ptr, interval_ptr;
@@ -2652,9 +2580,7 @@ int check_var_in_d(x, List)
     return BP_FALSE;
 }
 
-void exclude_inner_interval_bv(dv_ptr, from, to)
-    BPLONG_PTR dv_ptr;
-BPLONG from, to;
+void exclude_inner_interval_bv(BPLONG_PTR dv_ptr, BPLONG from, BPLONG to)
 {
     BPULONG w, mask, offset;
     BPLONG_PTR w_ptr, bv_ptr, last_trailed_addr;
@@ -2683,9 +2609,7 @@ BPLONG from, to;
     }
 }
 
-int domain_exclude_interval_aux(dv_ptr, from, to)
-    BPLONG_PTR dv_ptr;
-BPLONG from, to;
+int domain_exclude_interval_aux(BPLONG_PTR dv_ptr, BPLONG from, BPLONG to)
 {
     BPLONG val;
 
@@ -2710,9 +2634,7 @@ BPLONG from, to;
 }
 
 /* from must be le to */
-int domain_exclude_interval_noint(dv_ptr, from, to)
-    BPLONG_PTR dv_ptr;
-BPLONG from, to;
+int domain_exclude_interval_noint(BPLONG_PTR dv_ptr, BPLONG from, BPLONG to)
 {
 
     // printf("exclude_interval  %x %d %d\n",dv_ptr,from,to);
@@ -3045,8 +2967,7 @@ int c_CLPFD_SUB_AC_ccc() {
 }
 
 /* X*Y = Z */
-int b_CLPFD_MULTIPLY_INT_ccc(X, Y, Z)
-    BPLONG X, Y, Z;
+int b_CLPFD_MULTIPLY_INT_ccc(BPLONG X, BPLONG Y, BPLONG Z)
 {
     BPLONG_PTR dv_ptr_x, dv_ptr_y, dv_ptr_z;
     BPLONG minX, maxX, minY, maxY, minZ, maxZ, lowX, upX, lowY, upY, lowZ, upZ, tmp;
@@ -3199,8 +3120,7 @@ x_is_int:
 
 /******************************************************************/
 /* For the CP solver competition                                  */
-BPLONG con05_hashtable_get(table, key)
-    BPLONG table, key;
+BPLONG con05_hashtable_get(BPLONG table, BPLONG key)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG buckets;
@@ -3265,9 +3185,7 @@ int c_cpcon_decrement_counters() {
     return BP_TRUE;
 }
 
-int cpcon_decrement_counter(Counters, J, elm, dv_ptr)
-    BPLONG Counters, J, elm;
-BPLONG_PTR dv_ptr;
+int cpcon_decrement_counter(BPLONG Counters, BPLONG J, BPLONG elm, BPLONG_PTR dv_ptr)
 {
     BPLONG counter, count, p_key;
     BPLONG_PTR struct_ptr;

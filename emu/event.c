@@ -115,8 +115,7 @@ int c_post_event() {
     return b_POST_EVENT_ccc(x, no, e);
 }
 
-int b_POST_EVENT_ccc(x, no, e)
-    BPLONG x, no, e;
+int b_POST_EVENT_ccc(BPLONG x, BPLONG no, BPLONG e)
 {
     BPLONG_PTR dv_ptr;
 
@@ -208,8 +207,7 @@ int c_cg_is_component() {
 }
 #endif
 
-int cg_is_component(op)
-    BPLONG op;
+int cg_is_component(BPLONG op)
 {
     BPLONG_PTR ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
     SYM_REC_PTR sym_ptr = (SYM_REC_PTR)FOLLOW(ptr);
@@ -282,9 +280,7 @@ void cg_init_sym() {  /* called init_sym */
     adjustment_event_psc = BP_NEW_SYM("$adjustment_event", 3);
 }
 
-int is_correct_event_source(event_no, source)
-    BPLONG event_no;
-    BPLONG source;
+int is_correct_event_source(BPLONG event_no, BPLONG source)
 {
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
@@ -345,8 +341,7 @@ int is_correct_event_source(event_no, source)
     }
 }
 
-BPLONG event_handler_type(frame)
-    BPLONG_PTR frame;
+BPLONG event_handler_type(BPLONG_PTR frame)
 {
     BPLONG_PTR ptr = (BPLONG_PTR)AR_REEP(frame)+4;  /* size of delay inst - 1*/
     if (FOLLOW(ptr) == trigger_cg_event_handler)
@@ -364,8 +359,7 @@ BPLONG event_handler_type(frame)
   breg0 -> |                            |
 *****************************************************************************/
 /**look up the event handler**/
-BPLONG cg_get_component_event_handler(comp)
-    BPLONG comp;
+BPLONG cg_get_component_event_handler(BPLONG comp)
 {
     BPLONG_PTR ptr;
     BPLONG_PTR top;
@@ -387,9 +381,7 @@ BPLONG cg_get_component_event_handler(comp)
     }
 }
 
-BPLONG cg_lookup_event_handler(type, comp_no)
-    BPLONG type;
-    BPLONG comp_no;
+BPLONG cg_lookup_event_handler(BPLONG type, BPLONG comp_no)
 {
     BPLONG_PTR top, ptr;
     BPLONG comp;
@@ -412,9 +404,7 @@ BPLONG cg_lookup_event_handler(type, comp_no)
     return 0;
 }
 
-BPLONG cg_lookup_component(type, comp_no)
-    BPLONG type;
-    BPLONG comp_no;
+BPLONG cg_lookup_component(BPLONG type, BPLONG comp_no)
 {
     BPLONG_PTR top, ptr;
     BPLONG comp;
@@ -439,9 +429,7 @@ BPLONG cg_lookup_component(type, comp_no)
     return 0;
 }
 
-BPLONG register_event_source(event_no, source)
-    BPLONG event_no;
-    BPLONG source;
+BPLONG register_event_source(BPLONG event_no, BPLONG source)
 {
     BPLONG comp_no;
     BPLONG res;
@@ -461,8 +449,7 @@ BPLONG register_event_source(event_no, source)
     return res;
 }
 
-void attach_event_source(list, source, source_no, event_no)
-    BPLONG list, source, source_no, event_no;
+void attach_event_source(BPLONG list, BPLONG source, BPLONG source_no, BPLONG event_no)
 {
     BPLONG_PTR top, ptr;
     BPLONG comp, tmp;
@@ -502,8 +489,7 @@ int c_cg_print_component() {
     return BP_TRUE;
 }
 
-void cg_print_component(op)
-    BPLONG op;
+void cg_print_component(BPLONG op)
 {
     BPLONG_PTR ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
     SYM_REC_PTR sym_ptr = (SYM_REC_PTR)FOLLOW(ptr);
@@ -514,8 +500,7 @@ void cg_print_component(op)
 }
 
 /* the event handler is a domain variable in the component */
-BPLONG cg_get_component_no(comp)
-    BPLONG comp;
+BPLONG cg_get_component_no(BPLONG comp)
 {
     BPLONG_PTR ptr;
     BPLONG_PTR top;
@@ -698,10 +683,7 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
         return 1;
     }
 
-    void add_to_event_pool(no, type, event_object)
-        BPLONG no;
-    BPLONG type;
-    void *event_object;
+    void add_to_event_pool(BPLONG no, BPLONG type, void *event_object)
     {
         if (event_count == EVENT_POOL_SIZE) {
             /* printf("event ignored %x\n",event_object); */
@@ -738,10 +720,7 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
         LEAVE_CRITICAL_SECTION;
     }
 
-    void post_cg_event(handler, type, eo)
-        BPLONG handler;
-    BPLONG type;
-    void *eo;
+    void post_cg_event(BPLONG handler, BPLONG type, void *eo)
     {
         BPLONG_PTR sv_ptr = (BPLONG_PTR)UNTAGGED_ADDR(handler);
 
@@ -768,8 +747,7 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
         return unify(op, bpp_java_obj);
     }
 
-    int b_GET_ATTACHED_AGENTS_ccf(var, port, lists)
-        BPLONG var, port, lists;
+    int b_GET_ATTACHED_AGENTS_ccf(BPLONG var, BPLONG port, BPLONG lists)
     {
         BPLONG_PTR dv_ptr;
 
@@ -800,8 +778,7 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
         }
     }
 
-    int b_AGENT_OCCUR_IN_CONJUNCTIVE_CHANNELS_cc(frame_offset, lists)
-        BPLONG frame_offset, lists;
+    int b_AGENT_OCCUR_IN_CONJUNCTIVE_CHANNELS_cc(BPLONG frame_offset, BPLONG lists)
     {
         BPLONG_PTR ptr1, ptr2;
         BPLONG lst;
@@ -827,8 +804,7 @@ DWORD WINAPI timerThread(LPVOID timer_no) {
     }
 
 
-    int b_AGENT_OCCUR_IN_DISJUNCTIVE_CHANNELS_cc(frame_offset, lists)
-        BPLONG frame_offset, lists;
+    int b_AGENT_OCCUR_IN_DISJUNCTIVE_CHANNELS_cc(BPLONG frame_offset, BPLONG lists)
     {
         BPLONG_PTR ptr1, ptr2;
         BPLONG lst;

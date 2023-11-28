@@ -263,10 +263,7 @@ int load_bytecode_header() {
     return BP_TRUE;
 }
 
-int loader(file, file_type, load_damon)
-    CHAR_PTR file;
-    BPLONG file_type;
-    BPLONG load_damon;
+int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon)
 {
     BPLONG err_msg;
     BPLONG total_size;
@@ -339,8 +336,7 @@ int loader(file, file_type, load_damon)
 }  /* end of loader */
 
 /*************************************************************************/
-int load_syms(file_type)
-    BPLONG file_type;
+int load_syms(BPLONG file_type)
 {
     CHAR name[256];
     BPLONG ep_offset;
@@ -556,7 +552,7 @@ int load_hashtab()
             return 1;
         alt = BB4(buf_for_read);
         alt = (BPLONG)RELOC_ADDR(alt);
-        if (eof_flag = get_index_tab(clause_no, &temp_len))
+        if ((eof_flag = get_index_tab(clause_no, &temp_len)))
             return eof_flag;
         inst_addr = gen_index(hash_inst_addr, clause_no, alt);
         count += (16 + temp_len);
@@ -571,9 +567,7 @@ int unload_hashtab()
 }
 
 
-int get_index_tab(clause_no, lenptr)
-    BPLONG clause_no;
-    BPLONG_PTR lenptr;
+int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr)
 {
     BPLONG hashval, size, j;
     BPLONG count = 0;
@@ -727,10 +721,7 @@ BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt)
     return ep2;
 }
 
-static void inserth(ttype, val, label, bucket)
-    BPLONG ttype, val;
-BPLONG_PTR label;
-struct hrec *bucket;
+static void inserth(BPLONG ttype, BPLONG val, BPLONG_PTR label, struct hrec *bucket)
 {
     BPLONG_PTR temp;
 
@@ -754,8 +745,7 @@ struct hrec *bucket;
     *hptr++ = *temp + sizeof(BPLONG)*3;  /* *hptr++ = (BPLONG)hptr; */
 }
 
-BPLONG bp_prime(numentry)
-    BPLONG numentry;
+BPLONG bp_prime(BPLONG numentry)
 {
     BPLONG i, j, temp;
 
@@ -774,8 +764,7 @@ hashsod:
 }
 
 /* return a prime-look number */
-BPLONG bp_hsize(numentry)
-    BPLONG numentry;
+BPLONG bp_hsize(BPLONG numentry)
 {
     BPLONG i, j, temp;
 
@@ -794,10 +783,7 @@ hashsod:
 }
 
 
-int dyn_loader(sym_ptr, file_type, load_damon)
-    SYM_REC_PTR sym_ptr;
-    BPLONG file_type;
-    BPLONG load_damon;
+int dyn_loader(SYM_REC_PTR sym_ptr, BPLONG file_type, BPLONG load_damon)
 {
     CHAR s[256], s1[256], s3[256];
     CHAR_PTR s2;
@@ -1184,11 +1170,7 @@ UW32 bp_str_hash( const char *key, int length, UW32 initval)
 #endif
 
 /****************************************************************************/
-INLINE SYM_REC_PTR search(name, length, arity, sym_ptr)
-    CHAR_PTR name;
-    BPLONG arity;
-    BPLONG length;
-    SYM_REC_PTR sym_ptr;
+INLINE SYM_REC_PTR search(CHAR_PTR name, BPLONG length, BPLONG arity, SYM_REC_PTR sym_ptr)
 {
     unsigned short i;
     CHAR_PTR nameptr;
@@ -1207,18 +1189,12 @@ INLINE SYM_REC_PTR search(name, length, arity, sym_ptr)
 }  /* end of search */
 
 /****************************************************************************/
-SYM_REC_PTR insert(name, length, arity)
-    const char *name;
-    BPLONG length;
-    BPLONG arity;
+SYM_REC_PTR insert(const char *name, BPLONG length, BPLONG arity)
 {
     return insert_sym(name, length, arity);
 }
 
-SYM_REC_PTR insert_sym(name, length, arity)
-    const char *name;
-    BPLONG length;
-    BPLONG arity;
+SYM_REC_PTR insert_sym(const char *name, BPLONG length, BPLONG arity)
 {
     BPLONG bucket_no;
     BPLONG i;
@@ -1270,10 +1246,7 @@ SYM_REC_PTR insert_sym(name, length, arity)
 }  /* end of insert */
 
 /*********************************************/
-SYM_REC_PTR insert_cpred(name, arity, func)
-    CHAR_PTR name;
-    BPLONG arity;
-    int (*func)(void);
+SYM_REC_PTR insert_cpred(CHAR_PTR name, BPLONG arity, int (*func)(void))
 {
     BPLONG length;
     SYM_REC_PTR sym_ptr;
@@ -1285,9 +1258,7 @@ SYM_REC_PTR insert_cpred(name, arity, func)
     return sym_ptr;
 }
 
-int set_temp_ep(sym_ptr, ep)
-    SYM_REC_PTR sym_ptr;
-    BPLONG ep;
+int set_temp_ep(SYM_REC_PTR sym_ptr, BPLONG ep)
 {
     if (ep >= 0) {
         GET_ETYPE(sym_ptr) = T_TEMP_PRED;
@@ -1297,9 +1268,7 @@ int set_temp_ep(sym_ptr, ep)
 }
 
 /*********************************************/
-void set_real_ep(sym_ptr, base)
-    SYM_REC_PTR sym_ptr;
-    CHAR_PTR base;
+void set_real_ep(SYM_REC_PTR sym_ptr, CHAR_PTR base)
 {
     if (GET_ETYPE(sym_ptr) == T_TEMP_PRED) {
         GET_EP(sym_ptr) = (int (*)(void))(base + (BPLONG)GET_EP(sym_ptr));  /*???*/
@@ -1310,8 +1279,7 @@ void set_real_ep(sym_ptr, base)
 
 /************************************?????????????????????*********/
 /*
-  unset_file_ptr(sym_ptr)
-  SYM_REC_PTR sym_ptr;
+  unset_file_ptr(SYM_REC_PTR sym_ptr)
   {
   GET_ETYPE(sym_ptr) = T_ORDI;
   (BPLONG)GET_EP(sym_ptr) = 0;
@@ -1319,9 +1287,7 @@ void set_real_ep(sym_ptr, base)
 */
 
 /************************************?????????????????????*********/
-CHAR_PTR namestring(sym_ptr, s)
-    SYM_REC_PTR sym_ptr;
-    CHAR_PTR s;
+CHAR_PTR namestring(SYM_REC_PTR sym_ptr, CHAR_PTR s)
 {
     BPLONG i, len;
     CHAR_PTR st;
@@ -1402,8 +1368,7 @@ int c_CURRENT_PREDICATES() {
     return unify(list, temp1);
 }
 
-SYM_REC_PTR look_for_sym_with_entrance(p)
-    BPLONG_PTR p;
+SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 {
     BPLONG i;
     SYM_REC_PTR sym_ptr;
@@ -1507,14 +1472,14 @@ SYM_REC_PTR look_for_sym_with_entrance(p)
         }                                       \
     }
 
+void load_syms_fromlist(BPLONG BCSyms);
+void load_text_fromlist(BPLONG BCInsts);
+void load_hashtab_fromlist(BPLONG BCHashTabs);
+
 /* Load in-memory byte codes */
 int c_LOAD_BYTE_CODE_FROM_BPLISTS() {
     BPLONG BCSyms, BCInsts, BCHashTabs;
     BPLONG total_size;
-
-    void load_syms_fromlist();
-    void load_text_fromlist();
-    void load_hashtab_fromlist();
 
     psc_bytes = ARG(1, 6); DEREF(psc_bytes); psc_bytes = INTVAL(psc_bytes);
     text_bytes = ARG(2, 6); DEREF(text_bytes); text_bytes = INTVAL(text_bytes);
@@ -1555,8 +1520,7 @@ int c_LOAD_BYTE_CODE_FROM_BPLISTS() {
 /* Create symbols
    Each BCSym takes the form sym(EpOffset,Arity,Len,Sym).
 */
-void load_syms_fromlist(BCSyms)
-    BPLONG BCSyms;
+void load_syms_fromlist(BPLONG BCSyms)
 {
     BPLONG i, j;
 
@@ -1590,8 +1554,7 @@ void load_syms_fromlist(BCSyms)
         set_real_ep(reloc_table[j], curr_fence);
 }
 
-void load_text_fromlist(BCInsts)
-    BPLONG BCInsts;
+void load_text_fromlist(BPLONG BCInsts)
 {
     BPLONG n;
     SYM_REC_PTR sym_ptr;
@@ -1622,15 +1585,14 @@ void load_text_fromlist(BCInsts)
     }
 }
 
+void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no);
+
 /* load hash tables used by hash instructions in text
    BCHashTabs takes the form after_hash(Lab1,Op,Num,Lab2,HashArgs)
    where each HashArg takes the form hash_arg(Type,Nval,Lab)
 */
-void load_hashtab_fromlist(BCHashTabs)
-    BPLONG BCHashTabs;
+void load_hashtab_fromlist(BPLONG BCHashTabs)
 {
-    void get_index_tab_fromlist();
-
     CHECK_PCODE((CHAR_PTR)inst_addr, index_bytes);
     while (ISLIST(BCHashTabs)) {
         BPLONG hashtab, hash_inst_addr, hash_reg, alt, clause_no, HashArgs;
@@ -1659,8 +1621,7 @@ void load_hashtab_fromlist(BCHashTabs)
 }
 
 /* Recall that each HashArg takes the form hash_arg(Type,Nval,Lab) */
-void get_index_tab_fromlist(HashArgs, clause_no)
-    BPLONG HashArgs, clause_no;
+void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 {
     BPLONG hashval, size, j;
     BPLONG val, ttype;
@@ -1904,7 +1865,7 @@ void load_hashtab_from_c_array() {
         n_hashtabs++;
         hash_inst_addr = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
         //        hash_reg = bc_indecies[count++];
-        bc_indecies[count++];
+        ++count;
         clause_no = bc_indecies[count++];
         alt = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
 

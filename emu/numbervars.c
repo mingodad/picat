@@ -28,8 +28,7 @@ void Cboot_numbervars()
 }
 
 /************ Primitives on numbered terms *********/
-void numberVarTermOpt(term)
-    BPLONG term;
+void numberVarTermOpt(BPLONG term)
 {
     BPLONG_PTR top, ptr;
     BPLONG arity, i;
@@ -60,8 +59,7 @@ void numberVarTermOpt(term)
 }
 
 /* make sure there is enough space on the heap befor calling this function */
-BPLONG unnumberVarTermOpt(term)
-    BPLONG term;
+BPLONG unnumberVarTermOpt(BPLONG term)
 {
     BPLONG_PTR ptr;
     BPLONG varNo;
@@ -121,8 +119,7 @@ unnumberVarTermSwitch:
 }
 
 /* term in the form of [a,b,...] */
-BPLONG unnumberVarListOpt(term)
-    BPLONG term;
+BPLONG unnumberVarListOpt(BPLONG term)
 {
     BPLONG_PTR term_ptr, ret_term_ptr, ptr;
     BPLONG ret_term;
@@ -155,8 +152,7 @@ BPLONG unnumberVarListOpt(term)
 }
 
 /* term in the form of (a,b,...) */
-BPLONG unnumberVarCommaOpt(term)
-    BPLONG term;
+BPLONG unnumberVarCommaOpt(BPLONG term)
 {
     BPLONG_PTR term_ptr, ptr, ret_term_ptr;
     BPLONG ret_term;
@@ -188,10 +184,7 @@ loop:
     return ret_term;
 }
 
-BPLONG unnumberVarTerm(term, varVector, maxVarNo)
-    BPLONG term;
-    BPLONG_PTR varVector;
-    BPLONG_PTR maxVarNo;
+BPLONG unnumberVarTerm(BPLONG term, BPLONG_PTR varVector, BPLONG_PTR maxVarNo)
 {
     BPLONG res;
 
@@ -226,9 +219,7 @@ int c_NUMBER_VARS() {
     return unify(op3, MAKEINT(op1));
 }
 
-int aux_number_vars__3(op1, n0)
-    BPLONG op1;
-    BPLONG n0;
+int aux_number_vars__3(BPLONG op1, BPLONG n0)
 {
     BPLONG_PTR sreg;
     BPLONG op4;
@@ -336,8 +327,7 @@ copy_term_shallow:
     }
 }
 
-BPLONG copy_term(term)
-    BPLONG term;
+BPLONG copy_term(BPLONG term)
 {
     BPLONG_PTR varVector, trail_top0;
     BPLONG initial_diff0;
@@ -437,8 +427,7 @@ int c_VARS_SET_INTERSECT() {
 }
 
 /* extract the variables in term but not ex_term */
-void vars_set_extract_vars(term, ex_term)
-    BPLONG term, ex_term;
+void vars_set_extract_vars(BPLONG term, BPLONG ex_term)
 {
 start:
     if (term == ex_term || TAG(term) == ATM ) return;
@@ -483,8 +472,7 @@ start:
 }
 
 /* collect the variables that are already extracted in local_top0..local_top and that also occur in term */
-BPLONG collect_shared_vars(term, list0)
-    BPLONG term, list0;
+BPLONG collect_shared_vars(BPLONG term, BPLONG list0)
 {
 start:
     if (TAG(term) == ATM ) return list0;
@@ -567,8 +555,7 @@ int c_SINGLETON_VARS() {
 }
 
 /* extract the variables in term but not ex_term */
-void vars_set_extract_singleton_vars(term)
-    BPLONG term;
+void vars_set_extract_singleton_vars(BPLONG term)
 {
     //  printf("local_top=%x heap_top=%x\n",local_top,heap_top);
 
@@ -613,8 +600,7 @@ start:
 
 
 /* a variable is marked as singleton if it refers to local_top-1..local_top0 and the content is not nil_sym */
-int is_marked_as_singleton(var)
-    BPLONG var;
+int is_marked_as_singleton(BPLONG var)
 {
     while (ISREF(var)) {
         if ((BPULONG)var < (BPULONG)arreg && (BPULONG)var > (BPULONG)heap_top)

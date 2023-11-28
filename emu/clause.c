@@ -11,8 +11,7 @@
 #include "dynamic.h"
 #include "gc.h" /* borrow gcQueue to use as a stack to implement recursion */
 
-int aux_copy_clause(ref, head, body)
-    BPLONG ref, head, body;
+int aux_copy_clause(BPLONG ref, BPLONG head, BPLONG body)
 {
     InterpretedClausePtr clause_record_ptr;
     BPLONG cl_head, cl_body;

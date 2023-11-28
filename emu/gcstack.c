@@ -149,8 +149,7 @@ void mark_stack_references_sf_chain() {
     }
 }
 
-void mark_stack_references_frame(f)
-    BPLONG_PTR f;
+void mark_stack_references_frame(BPLONG_PTR f)
 {
     BPLONG size, term;
     BPLONG_PTR sp, top;
@@ -176,9 +175,7 @@ void mark_stack_references_frame(f)
     }
 }
 
-void globalize_stack_vars_in_frame(f, size)
-    BPLONG_PTR f;
-    BPLONG size;
+void globalize_stack_vars_in_frame(BPLONG_PTR f, BPLONG size)
 {
     BPLONG_PTR sp, top;
 
@@ -204,8 +201,7 @@ void globalize_stack_vars_in_frame(f, size)
     }
 }
 
-int allocateCopyArea(size)
-    BPLONG size;
+int allocateCopyArea(BPLONG size)
 {
     if (copy_area_allocated == 0) {
         size = (size > 1000000 ? size : 1000000);
@@ -273,9 +269,7 @@ void copyStackBack() {
 }
 
 /* move a frame slot into temp area */
-void gcMoveFrameSlotOut(term, des)
-    BPLONG term;
-    BPLONG_PTR des;
+void gcMoveFrameSlotOut(BPLONG term, BPLONG_PTR des)
 {
 
 start:
@@ -319,9 +313,7 @@ start:
 }
 
 /* move src_f to the copy area */
-BPLONG_PTR gcMoveFrameOut(src_f, nReservedSlots)
-    BPLONG_PTR src_f;
-    BPLONG nReservedSlots;
+BPLONG_PTR gcMoveFrameOut(BPLONG_PTR src_f, BPLONG nReservedSlots)
 {
     BPLONG_PTR src_sp, des_sp, des_f, top;
     BPLONG frame_type;
@@ -393,8 +385,7 @@ BPLONG_PTR gcMoveAliveFramesOutSf()
 }
 
 /* reverse AR chain */
-BPLONG_PTR gcReverseArChain(f, prev)
-    BPLONG_PTR f, prev;
+BPLONG_PTR gcReverseArChain(BPLONG_PTR f, BPLONG_PTR prev)
 {
     BPLONG_PTR tmp;
 
@@ -415,8 +406,7 @@ BPLONG_PTR gcReverseArChain(f, prev)
   copy area.
 */
 
-BPLONG_PTR gcMoveAliveFramesOutReversedAr(prev, f)
-    BPLONG_PTR prev, f;
+BPLONG_PTR gcMoveAliveFramesOutReversedAr(BPLONG_PTR prev, BPLONG_PTR f)
 {
     BPLONG_PTR f1, new_f, new_prev;
     BPLONG no;
@@ -518,8 +508,7 @@ void gcTrailMarkSuspVars() {
     }
 }
 
-void gcMarkSuspVarsTerm(term)
-    BPLONG term;
+void gcMarkSuspVarsTerm(BPLONG term)
 {
     BPLONG_PTR dv_ptr;
     BPLONG_PTR ptr;
@@ -561,8 +550,7 @@ cont:
     }
 }
 
-void gcMarkSuspVarsCs(cs)
-    BPLONG cs;
+void gcMarkSuspVarsCs(BPLONG cs)
 {
     BPLONG_PTR sf, ptr;
     BPLONG constr;
@@ -599,9 +587,7 @@ void gcResetTriggeredCs()
     }
 }
 
-void gcResetCs(addr, list)
-    BPLONG_PTR addr;
-    BPLONG list;
+void gcResetCs(BPLONG_PTR addr, BPLONG list)
 {
     BPLONG_PTR sf, des_sf, ptr;
     BPLONG constr;

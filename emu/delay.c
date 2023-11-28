@@ -14,8 +14,7 @@
 
 BPLONG true;
 
-BPLONG build_delayed_call_on_the_heap(frame)
-    BPLONG_PTR frame;
+BPLONG build_delayed_call_on_the_heap(BPLONG_PTR frame)
 {
     SYM_REC_PTR sym_ptr;
     BPLONG arity, i;
@@ -89,8 +88,7 @@ int c_frozen_cf() {
     else return unify(return_goal, true);
 }
 
-BPLONG_PTR frozen_cs(cs, Plist)
-    BPLONG_PTR cs, Plist;
+BPLONG_PTR frozen_cs(BPLONG_PTR cs, BPLONG_PTR Plist)
 {
     BPLONG tmp;
     BPLONG_PTR frame;
@@ -145,8 +143,7 @@ int c_frozen_f() {
   attach T to the suspension variable Var.
   Exception if Var is non-variable
 */
-int b_SUSP_ATTACH_TERM_cc(Var, Term)
-    BPLONG Var, Term;
+int b_SUSP_ATTACH_TERM_cc(BPLONG Var, BPLONG Term)
 {
 
     BPLONG_PTR top, dv_ptr;
@@ -178,8 +175,7 @@ int b_SUSP_ATTACH_TERM_cc(Var, Term)
   the attached term to Var is Term
   Exception if Var is not a suspension variable
 */
-int b_SUSP_ATTACHED_TERM_cf(Var, Term)
-    BPLONG Var, Term;
+int b_SUSP_ATTACHED_TERM_cf(BPLONG Var, BPLONG Term)
 {
     BPLONG_PTR top, dv_ptr;
 
@@ -194,8 +190,7 @@ int b_SUSP_ATTACHED_TERM_cf(Var, Term)
     }
 }
 
-int b_SUSP_VAR_c(var)
-    BPLONG var;
+int b_SUSP_VAR_c(BPLONG var)
 {
     BPLONG_PTR top;
 
@@ -204,9 +199,7 @@ int b_SUSP_VAR_c(var)
 }
 
 /* skip all the dead constraints in the list */
-BPLONG next_alive_susp_call(cs_list, breg)
-    BPLONG cs_list;
-    BPLONG_PTR breg;
+BPLONG next_alive_susp_call(BPLONG cs_list, BPLONG_PTR breg)
 {
     BPLONG_PTR constr_ar, ptr;
 
@@ -224,8 +217,7 @@ BPLONG next_alive_susp_call(cs_list, breg)
     return cs_list;
 }
 
-void print_cs(cs_list)
-    BPLONG cs_list;
+void print_cs(BPLONG cs_list)
 {
     BPLONG_PTR constr_ar, ptr;
 

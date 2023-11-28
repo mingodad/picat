@@ -178,8 +178,7 @@ void packEntireTrail() {
 }
 
 /* check whether addr is already trailed */
-int alreadyTrailed(addr, from_ptr, to_ptr)
-    BPLONG_PTR addr, from_ptr, to_ptr;
+int alreadyTrailed(BPLONG_PTR addr, BPLONG_PTR from_ptr, BPLONG_PTR to_ptr)
 {
     while (from_ptr > to_ptr) {
         if ((BPLONG_PTR)UNTAGGED3(FOLLOW(to_ptr)) == addr) return 1;
@@ -209,8 +208,7 @@ void gcRescueFreeVars() {
     }
 }
 
-void gcRescueBFrame(ar)
-    BPLONG_PTR ar;
+void gcRescueBFrame(BPLONG_PTR ar)
 {
     BPLONG no;
     BPLONG_PTR ptr, top;
@@ -223,8 +221,7 @@ void gcRescueBFrame(ar)
     }
 }
 
-void gcRescueArFrames(ar)
-    BPLONG_PTR ar;
+void gcRescueArFrames(BPLONG_PTR ar)
 {
     BPLONG no;
 
@@ -244,8 +241,7 @@ void gcRescueArFrames(ar)
     }
 }
 
-void gcRescueSfFrames(sf)
-    BPLONG_PTR sf;
+void gcRescueSfFrames(BPLONG_PTR sf)
 {
 
     while (sf < breg) {
@@ -257,9 +253,7 @@ void gcRescueSfFrames(sf)
     }
 }
 
-void gcRescueFrame(f, noReservedSlots)
-    BPLONG_PTR f;
-    BPLONG noReservedSlots;
+void gcRescueFrame(BPLONG_PTR f, BPLONG noReservedSlots)
 {
     BPLONG_PTR sp, top;
 
@@ -302,9 +296,7 @@ void gcRescueTrail() {
     }
 }
 
-void gcRescueFreeVar(addr, term)
-    BPLONG_PTR addr;
-    BPLONG term;
+void gcRescueFreeVar(BPLONG_PTR addr, BPLONG term)
 {
     if (GC_IS_MOVED(term)) {
         FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(FOLLOW(term));
@@ -326,8 +318,7 @@ void gcRescueTriggeredCs() {
     }
 }
 
-BPLONG gcRescueBitVector(bv_ptr)
-    BPLONG_PTR bv_ptr;
+BPLONG gcRescueBitVector(BPLONG_PTR bv_ptr)
 {
     BPLONG_PTR ptr;
     BPLONG from, to;
@@ -345,9 +336,7 @@ BPLONG gcRescueBitVector(bv_ptr)
     return (BPLONG)ADDR_AFTER_GC(des_ptr);
 }
 
-void gcRescueTerm(addr, term)
-    BPLONG_PTR addr;
-    BPLONG term;
+void gcRescueTerm(BPLONG_PTR addr, BPLONG term)
 {
     BPLONG_PTR ptr, des_ptr;
     BPLONG arity, i;

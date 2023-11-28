@@ -24,9 +24,8 @@
   be added to the domain later. This is unusual but convenient.
 */
 
-BPLONG_PTR new_bv_domain_var(from, to, first, last, size, bv_word)
-    BPLONG from, to, first, last, size;
-BPULONG bv_word;
+BPLONG_PTR new_bv_domain_var(BPLONG from, BPLONG to, BPLONG first, BPLONG last,
+        BPLONG size, BPULONG bv_word)
 {
     BPLONG_PTR dv_ptr, top;
     BPLONG i;
@@ -69,9 +68,7 @@ BPULONG bv_word;
   no choice point has been created since creation of 
   the domain variable
 */
-void domain_set_true_bv(dv_ptr, elm)
-    BPLONG_PTR dv_ptr;
-    BPLONG elm;
+void domain_set_true_bv(BPLONG_PTR dv_ptr, BPLONG elm)
 {
     BPULONG w, mask, offset;
     BPLONG_PTR w_ptr, bv_ptr;
@@ -91,8 +88,7 @@ void domain_set_true_bv(dv_ptr, elm)
 }
 
 /* no bit-vector is used if last = first+1 */
-BPLONG_PTR new_it_domain_var(first, last)
-    BPLONG first, last;
+BPLONG_PTR new_it_domain_var(BPLONG first, BPLONG last)
 {
     BPLONG_PTR dv_ptr;
 
@@ -117,8 +113,7 @@ BPLONG_PTR new_it_domain_var(first, last)
     return dv_ptr;
 }
 
-int b_CFD_COMPUTE_MINS_MAXS(Arity, Tuples, Mins, Maxs)
-    BPLONG Arity, Tuples, Mins, Maxs;
+int b_CFD_COMPUTE_MINS_MAXS(BPLONG Arity, BPLONG Tuples, BPLONG Mins, BPLONG Maxs)
 {
     BPLONG_PTR MinArray, MaxArray, HasStarArray, mins_ptr, maxs_ptr, ptr, tuple_ptr;
     BPLONG i, n, tuple;
@@ -179,9 +174,7 @@ int b_CFD_COMPUTE_MINS_MAXS(Arity, Tuples, Mins, Maxs)
 }
 
 /*  Normalize the tuples so that the minimum element in every column is 0 */
-void cfd_transform_tuples(n, Tuples, MinArray)
-    BPLONG n, Tuples;
-BPLONG_PTR MinArray;
+void cfd_transform_tuples(BPLONG n, BPLONG Tuples, BPLONG_PTR MinArray)
 {
     BPLONG tuple, i, e;
     BPLONG_PTR ptr;
@@ -206,8 +199,7 @@ BPLONG_PTR MinArray;
     }
 }
 
-int b_CFD_TRANSFORM_TUPLES(Arity, Tuples, Mins)
-    BPLONG Arity, Tuples, Mins;
+int b_CFD_TRANSFORM_TUPLES(BPLONG Arity, BPLONG Tuples, BPLONG Mins)
 {
     BPLONG_PTR MinArray, ptr;
     BPLONG i, n;
@@ -249,8 +241,7 @@ int b_CFD_TRANSFORM_TUPLES(Arity, Tuples, Mins)
 
    Note that the tuples have been normalized such that the minimum is 0.
 */
-int b_CFD_BUILD_TRIES_IN(Maxs, Tuples, A2Tries)
-    BPLONG Maxs, Tuples, A2Tries;
+int b_CFD_BUILD_TRIES_IN(BPLONG Maxs, BPLONG Tuples, BPLONG A2Tries)
 {
     BPLONG_PTR local_top0;
     BPLONG_PTR MinArray, MaxArray, CompVarMaxArray, tries_ptr, maxs_ptr;
@@ -312,8 +303,7 @@ int b_CFD_BUILD_TRIES_IN(Maxs, Tuples, A2Tries)
    for each tuple (a1,...,an) that is not in HTable and for each pair (i j) (1=<i<j<=n), 
    add aj as a support of ai in i and add ai as a support of aj in j.
 */
-int b_CFD_BUILD_TRIES_NOTIN(CompVars, HTable, A2Tries)
-    BPLONG CompVars, HTable, A2Tries;
+int b_CFD_BUILD_TRIES_NOTIN(BPLONG CompVars, BPLONG HTable, BPLONG A2Tries)
 {
     BPLONG_PTR comp_vars_ptr, local_top0;
     BPLONG_PTR MinArray, MaxArray, CompVarArray, CompVarMaxArray, tries_ptr, tuple_ptr, htable_ptr;
@@ -395,9 +385,7 @@ int b_CFD_BUILD_TRIES_NOTIN(CompVars, HTable, A2Tries)
 }
 
 /* initialize the arrays */
-void initialize_min_max_arrays(n, nk, MinArray, MaxArray)
-    BPLONG n, nk;
-BPLONG_PTR MinArray, MaxArray;
+void initialize_min_max_arrays(BPLONG n, BPLONG nk, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j, k;
 
@@ -414,10 +402,7 @@ BPLONG_PTR MinArray, MaxArray;
 }
 
 /* for i in 0..n-2, j in i+1..n-1, compute supports[i,j,_] and supports[j,i,_] */
-void compute_mins_maxs_in(n, nk, Tuples, MinArray, MaxArray)
-    BPLONG n, nk;
-BPLONG Tuples;
-BPLONG_PTR MinArray, MaxArray;
+void compute_mins_maxs_in(BPLONG n, BPLONG nk, BPLONG Tuples, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j;
 
@@ -448,9 +433,9 @@ BPLONG_PTR MinArray, MaxArray;
 }
 
 /* iterate through all possible tuples from V1*V2*...*Vn that are not in hashtable */
-void compute_mins_maxs_notin(arg_no, n, nk, htable_ptr, htable_size, tuple_ptr, CompVarArray, MinArray, MaxArray)
-    BPLONG arg_no, n, nk, htable_size;
-BPLONG_PTR tuple_ptr, CompVarArray, MinArray, MaxArray, htable_ptr;
+void compute_mins_maxs_notin(BPLONG arg_no, BPLONG n, BPLONG nk, BPLONG_PTR htable_ptr,
+        BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray,
+        BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG compvar, i, j;
 
@@ -493,9 +478,8 @@ BPLONG_PTR tuple_ptr, CompVarArray, MinArray, MaxArray, htable_ptr;
 }
 
 /* initialize supports Sijk (supports in Vj of k in Vi)  */
-void initialize_supports(n, nk, tries_ptr, CompVarMaxArray, MinArray, MaxArray)
-    BPLONG n, nk;
-BPLONG_PTR tries_ptr, MinArray, MaxArray, CompVarMaxArray;
+void initialize_supports(BPLONG n, BPLONG nk, BPLONG_PTR tries_ptr,
+        BPLONG_PTR CompVarMaxArray, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j, k, tries_ij, min, max;
     BPLONG_PTR tries_ij_ptr;
@@ -529,10 +513,7 @@ BPLONG_PTR tries_ptr, MinArray, MaxArray, CompVarMaxArray;
     }
 }
 
-void compute_supports_in(n, Tuples, tries_ptr, MinArray, MaxArray)
-    BPLONG n;
-    BPLONG Tuples;
-BPLONG_PTR tries_ptr, MinArray, MaxArray;
+void compute_supports_in(BPLONG n, BPLONG Tuples, BPLONG_PTR tries_ptr, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
 
     BPLONG i, j;
@@ -576,10 +557,9 @@ BPLONG_PTR tries_ptr, MinArray, MaxArray;
     }
 }
 
-void compute_supports_notin(arg_no, n, htable_ptr, htable_size, tuple_ptr, CompVarArray, tries_ptr, MinArray, MaxArray)
-    BPLONG arg_no, n;
-BPLONG htable_size;
-BPLONG_PTR tuple_ptr, CompVarArray, tries_ptr, MinArray, MaxArray, htable_ptr;
+void compute_supports_notin(BPLONG arg_no, BPLONG n, BPLONG_PTR htable_ptr,
+        BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray,
+        BPLONG_PTR tries_ptr, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j;
 
@@ -637,9 +617,7 @@ BPLONG_PTR tuple_ptr, CompVarArray, tries_ptr, MinArray, MaxArray, htable_ptr;
 }
 
 /* exclude those elements that have no support */
-int exclude_ac_unsupported_from_fd(X, Y, trie_xy_ptr)
-    BPLONG X, Y;
-BPLONG_PTR trie_xy_ptr;
+int exclude_ac_unsupported_from_fd(BPLONG X, BPLONG Y, BPLONG_PTR trie_xy_ptr)
 {
     BPLONG k, Sk, max;
     SYM_REC_PTR sym_ptr;
@@ -677,8 +655,7 @@ BPLONG_PTR trie_xy_ptr;
 
 /* For each element in each domain, exclude the element from the domain
    if it has no support in the domain of any of the connected variables. */
-int b_CFD_REMOVE_AC_UNSUPPORTED(CompVars, Tries)
-    BPLONG CompVars, Tries;
+int b_CFD_REMOVE_AC_UNSUPPORTED(BPLONG CompVars, BPLONG Tries)
 {
     BPLONG i, j, n, trie, X, Y;
     BPLONG_PTR comp_vars_ptr, tries_ptr;
@@ -729,8 +706,7 @@ int b_CFD_REMOVE_AC_UNSUPPORTED(CompVars, Tries)
 
    Dy := Dy /\ Sx
 */
-int b_CFD_INS(X, Constr)
-    BPLONG X, Constr;
+int b_CFD_INS(BPLONG X, BPLONG Constr)
 {
     BPLONG Y, TrieXY, Sx;
     BPLONG_PTR ptr, trie_ptr, dv_ptr_sx, dv_ptr_y;
@@ -771,8 +747,7 @@ int b_CFD_INS(X, Constr)
    Let Dy be Y's domain and Sx be X's supports. For each element y in Sx/\Dy, 
    exclude y from Dy if y is not supported by any value in X's domain.
 */
-int b_CFD_DOM(X, Ex, Constr)
-    BPLONG X, Ex, Constr;
+int b_CFD_DOM(BPLONG X, BPLONG Ex, BPLONG Constr)
 {
     BPLONG y, Y, Sx, Sy, last, TrieXY, TrieYX;
     BPLONG_PTR ptr, trie_ptr, dv_ptr_sx, dv_ptr_sy, dv_ptr_x, dv_ptr_y;
@@ -826,8 +801,7 @@ int b_CFD_DOM(X, Ex, Constr)
     return BP_TRUE;
 }
 
-int b_CFD_DIFF_TUPLE(Tuple, CompVars)
-    BPLONG Tuple, CompVars;
+int b_CFD_DIFF_TUPLE(BPLONG Tuple, BPLONG CompVars)
 {
     BPLONG n, i, compvar0, e0;
     BPLONG_PTR comp_vars_ptr, tuple_ptr, dv_ptr;
@@ -863,8 +837,7 @@ int b_CFD_DIFF_TUPLE(Tuple, CompVars)
    Eor each element k in the domain of V, if t(a1,...,a(i-1),k,a(i+1),...,an) is not in the 
    hash table, then exclude k from the domain of V.
 */
-int b_CFD_IN_FORWARD_CHECKING(HTable, CompVars)
-    BPLONG CompVars, HTable;
+int b_CFD_IN_FORWARD_CHECKING(BPLONG HTable, BPLONG CompVars)
 {
     BPLONG i, j, k, last, n, compvar, htable_size;
     BPLONG_PTR tuple_ptr, comp_vars_ptr, htable_ptr, dv_ptr;
@@ -925,8 +898,7 @@ int b_CFD_IN_FORWARD_CHECKING(HTable, CompVars)
    Eor each element k in the domain of V, if t(a1,...,a(i-1),k,a(i+1),...,an) is in the negative 
    table, then exclude k from the domain of V.
 */
-int b_CFD_NOTIN_FORWARD_CHECKING(HTable, CompVars)
-    BPLONG CompVars, HTable;
+int b_CFD_NOTIN_FORWARD_CHECKING(BPLONG HTable, BPLONG CompVars)
 {
     BPLONG i, j, k, last, n, compvar, htable_size;
     BPLONG_PTR tuple_ptr, comp_vars_ptr, htable_ptr, dv_ptr;

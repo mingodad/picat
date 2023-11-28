@@ -375,8 +375,7 @@ static char *arch_string = "unix";
 #endif
 
 //branch b_GET_ARCH_f(arch)
-int b_GET_ARCH_f(arch)
-    BPLONG arch;
+int b_GET_ARCH_f(BPLONG arch)
 {
     SYM_REC_PTR sym_ptr;
 

@@ -68,9 +68,7 @@ int setenv(const char *name, const char *value, int flag) {
 #endif
 
 /****************************************************************************/
-void init_toam(argc, argv)
-    int argc;
-    char *argv[];
+void init_toam(int argc, char *argv[])
 {
     BPLONG i;
     CHAR_PTR str;
@@ -227,8 +225,7 @@ void init_toam(argc, argv)
 }  /* end of init_toam */
 
 /*****************************************************************************/
-void init_stack(bsize)
-    BPLONG bsize;
+void init_stack(BPLONG bsize)
 {
     BPLONG_PTR old_sfreg, old_arreg, old_breg;
     int i;
@@ -277,9 +274,7 @@ void init_stack(bsize)
     local_top = arreg-FLAT_FRAME_SIZE;
 }
 
-int init_loading(argc, argv)
-    int argc;
-    char *argv[];
+int init_loading(int argc, char *argv[])
 {
     CHAR_PTR str;
     BPLONG i;
@@ -342,8 +337,7 @@ int load_bp_out() {
     return BP_TRUE;
 }
 
-int is_bc_file(main_arg)
-    CHAR_PTR main_arg;
+int is_bc_file(CHAR_PTR main_arg)
 {
     FILE *fp;
     BYTE magic;
@@ -375,8 +369,7 @@ int is_bc_file(main_arg)
     return BP_FALSE;
 }
 
-int load_user_bc_file(name)
-    char *name;
+int load_user_bc_file(char *name)
 {
     BPLONG loaded_ok = loader(name, 1, 1);
     if (loaded_ok == 10) {
@@ -389,8 +382,7 @@ int load_user_bc_file(name)
     return BP_TRUE;
 }
 
-void add_main_arg(main_arg)
-    CHAR_PTR main_arg;
+void add_main_arg(CHAR_PTR main_arg)
 {
     BPLONG tmp;
     BPLONG parg;
