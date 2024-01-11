@@ -1,0 +1,1300 @@
+% common definitions of built-ins shared by cp, sat, mip, and smt.
+
+% fd_disjoint(DVar1,DVar2) => fd_disjoint(DVar1,DVar2).
+fd_disjoint(DVar1,DVar2), dvar_or_int(DVar1), dvar_or_int(DVar2) => bp.b_DM_DISJOINT_cc(DVar1,DVar2).
+fd_disjoint(DVar1,DVar2) =>
+    Source = fd_disjoint,
+    (dvar_or_int(DVar1) -> handle_exception($dvar_expected(DVar2), Source); handle_exception($dvar_expected(DVar1), Source)).
+
+% new_fd_var() = new_fd_var().
+new_fd_var() = FDVar =>
+    bp.fd_new_var(FDVar).
+
+new_dvar() = FDVar =>
+    bp.fd_new_var(FDVar).
+
+% fd_dom(FDVar) = fd_dom(FDVar).
+fd_dom(FDVar) = List, integer(FDVar) => List = [FDVar].
+fd_dom(FDVar) = List, dvar(FDVar) => bp.domain_min_max(FDVar,Min,Max), bp.fd_domain(FDVar,List,Min,Max).
+fd_dom(FDVar) = _List => 
+    handle_exception($dvar_expected(FDVar), fd_dom).
+
+% fd_false(FDVar,Elm) => fd_false(FDVar,Elm).
+fd_false(FDVar,Elm),
+    dvar_or_int(FDVar),
+    integer(Elm)
+ =>
+    bp.b_DM_FALSE_cc(FDVar,Elm).
+fd_false(FDVar,Elm) =>
+    bp.expect_dvar_int(FDVar,Elm,fd_false).
+
+% fd_max(FDVar) = fd_max(FDVar).
+fd_max(VarOrVars) = Max =>
+    bp.fd_min_max(VarOrVars,_,Max).
+
+% fd_min(FDVar) = fd_min(FDVar).
+fd_min(VarOrVars) = Min =>
+    bp.fd_min_max(VarOrVars,Min,_).    
+
+% fd_min_max(FDVar,Min,Max) => fd_min_max(FDVar,Min,Max).
+fd_min_max(VarOrVars,Min,Max) =>
+    bp.fd_min_max(VarOrVars,Min,Max).
+
+% fd_next(FDVar,Elm) = fd_next(FDVar,Elm).
+fd_next(FDVar,Elm) = NextElm, 
+    dvar(FDVar), integer(Elm) 
+ =>
+    (bp.domain_next_inst(FDVar,Elm, NextElm) -> true; handle_exception(failed,fd_next)).
+fd_next(FDVar,Elm) = _NextElm =>
+    bp.expect_dvar_int(FDVar,Elm,fd_next).
+
+% fd_prev(FDVar,Elm) = fd_prev(FDVar,Elm).
+fd_prev(FDVar,Elm) = PrevElm,
+    dvar(FDVar), integer(Elm) 
+ =>
+    (bp.b_DM_PREV_ccf(FDVar,Elm, PrevElm) -> true; handle_exception(failed,fd_prev)).
+fd_prev(FDVar,Elm) = _PrevElm =>
+    bp.expect_dvar_int(FDVar,Elm,fd_prev).
+
+% fd_size(FDVar) = fd_size(FDVar).
+fd_size(FDVar) = Size =>
+    (dvar(FDVar) -> 
+    bp.b_DM_COUNT_cf(FDVar,Size)
+    ; integer(FDVar) ->
+        Size = 1
+    ;
+        handle_exception($dvar_expected(FDVar), fd_size)
+    ).
+    
+% fd_true(FDVar,Elm) => fd_true(FDVar,Elm).
+fd_true(FDVar,Elm),
+    dvar_or_int(FDVar),
+    integer(Elm)
+ =>
+    bp.b_DM_TRUE_cc(FDVar,Elm).
+fd_true(FDVar,Elm) =>
+    bp.expect_dvar_int(FDVar,Elm,fd_true).
+
+fd_vector_min_max(Min,Max) =>
+    bp.fd_vector_min_max(Min,Max).
+
+%
+all_equal(A), array(A) =>
+    all_equal(to_list(A)).
+all_equal([X|Xs]) =>
+    all_equal(X,Xs).
+all_equal([X]) => true.
+all_equal([]) => true.    
+    
+    
+all_equal(X,[]) => true.
+all_equal(X,[Y|Ys]) =>
+    X #= Y,
+    all_equal(X,Ys).
+
+% Ensure that L[Z] the first maximum element of L.
+argmax(L,Z), list(L) =>
+    argmax(to_array(L), Z).
+argmax(A,Z), array(A) =>
+    N = length(A),
+    Z :: 1..N,
+    Xs = new_list(N),
+    foreach (I in 1..N)
+        Xs[I] #= N*A[I]+N-I-1
+    end,
+    M #= max(Xs),
+    foreach (I in 1..N)
+        B #<=> Z #= I,
+        B #<=> Xs[I] #= M
+    end.
+argmax(A,Z) =>
+    handle_exception($dvar_or_int_collection_expected(A), argmax).
+
+%
+% The sum of the weights of the items in each bin does not exceed the capacity C.
+% For each item I, Bin[I] indicates the bin to which item I is put, and W[i] is the weight of item I.
+%
+bin_packing(C,Bin,W) =>
+    fd_min_max(Bin,BinMin,BinMax),
+    N = Bin.len,
+    foreach(BN in BinMin..BinMax) 
+        sum([W[I] * (Bin[I] #= BN) : I in 1..N]) #=< C
+    end.
+
+%
+% The sum of the weights of the items in each bin BN is equal to Load[BN].
+% For each item I, Bin[I] indicates the bin to which item I is put, and W[i] is the weight of item I.
+%
+bin_packing_load(Load, Bin, W) =>
+    sum(Load) #= sum(W),
+    LoadLen = Load.len,
+    BinLen = Bin.len,
+    Bin :: 1..LoadLen,
+    foreach(B in 1..LoadLen) 
+        Load[B] #= sum([W[I] * (Bin[I] #= B) : I in 1..BinLen])
+    end.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A is a two-dimensional array. All the non-zero cells of A form a Hamiltonian cycle
+% A[R,C] is filled with 0 if it's known to be not in the cycle.
+% The total number of non-zero cells is K
+%
+subcircuit_grid(A) =>
+    hcp_grid(A,_,_).
+
+subcircuit_grid(A,K) =>
+    hcp_grid(A,_,K).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+hcp_grid(G) =>
+    grid_check_matrix(G,hcp_grid,NRows,NCols),
+    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+    Es = [{(R,C), (R1,C1), _} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs],
+    hcp(Vs,Es,_K).
+
+hcp_grid(G,Es) =>
+    grid_check_matrix(G,hcp_grid,NRows,NCols),
+    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],    
+    (var(Es) ->
+        Es = [{(R,C), (R1,C1), _} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs]
+    ;    
+        hcp_grid_check_es(NRows,NCols,Es,hcp_grid)
+    ),
+    hcp(Vs,Es,_K).
+
+hcp_grid(G,Es,K) =>
+    grid_check_matrix(G,hcp_grid,NRows,NCols),
+    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+    (var(Es) ->
+        Es = [{(R,C), (R1,C1), _} : R in 1..NRows, C in 1..NCols, grid_neibs(G,NRows,NCols,R,C,Neibs), (R1,C1) in Neibs]
+    ;    
+        hcp_grid_check_es(NRows,NCols,Es,hcp_grid)
+    ),
+    hcp(Vs,Es,K).
+
+hcp(Vs,Es) =>
+    hcp(Vs,Es,_).
+
+hcp(Vs,Es,K) =>
+    VNumMap = new_map(),
+    hcp_scc_check_vs(Vs,1,N,VNumMap,Bs,0,NZeros,0,MinK,hcp),
+    AdjMap = new_map(),
+    hcp_check_es(N,Es,VNumMap,AdjMap,hcp),
+    hcp_aux(Bs,Es,N,K,VNumMap,AdjMap,NZeros,MinK).
+
+hcp_scc_check_vs([],I,N,_VNumMap,Bs,CountZeros0,CountZeros,CountOnes0,CountOnes,_Source) =>
+    N = I-1,
+    Bs = [],
+    CountZeros = CountZeros0,
+    CountOnes = CountOnes0.
+hcp_scc_check_vs([{V,B}|Vs],I,N,VNumMap,Bs,CountZeros0,CountZeros,CountOnes0,CountOnes,Source) =>
+    hcp_scc_check_vertex(V,Source),
+    hcp_scc_check_b(B,Source),
+    (B == 0 ->
+        CountZeros1 = CountZeros0+1,
+        CountOnes1 = CountOnes0
+    ; B == 1 ->
+        CountZeros1 = CountZeros0,
+        CountOnes1 = CountOnes0+1
+    ;
+        CountZeros1 = CountZeros0,
+        CountOnes1 = CountOnes0
+    ),
+    (VNumMap.has_key(V) ->
+        handle_exception($duplicated_vertex_name(V), Source)
+    ;
+        VNumMap.put(V,I)
+    ),
+    I1 is I+1,
+    Bs = [B|Bs1],
+    hcp_scc_check_vs(Vs,I1,N,VNumMap,Bs1,CountZeros1,CountZeros,CountOnes1,CountOnes,Source).
+hcp_scc_check_vs([VB|_Vs],_I,_N,_VNumMap,_Bs,_CountZeros0,_CountZeros,_CountOnes0,_CountOnes,Source) =>
+    handle_exception($invalid_pair(VB), Source).
+hcp_scc_check_vs(Vs,_I,_N,_VNumMap,_Bs,_CountZeros0,_CountZeros,_CountOnes0,_CountOnes,Source) =>
+    handle_exception($list_expected(Vs), Source).
+
+hcp_scc_check_vertex(V,_Source), ground(V) => true.
+hcp_scc_check_vertex(V,Source) =>
+    handle_exception($ground_expected(V), Source).
+
+hcp_scc_check_b(B,_Source), var(B) => bp.domain(B,0,1).
+hcp_scc_check_b(0,_Source) => true.
+hcp_scc_check_b(1,_Source) => true.
+hcp_scc_check_b(B,Source) =>
+    handle_exception($dvar_expected(B), Source).
+
+hcp_check_es(N,[],_VNumMap,AdjMap,_Source) =>
+    foreach (I in 1..N)
+        Neibs = AdjMap.get(I,[]),
+        Neibs1 = sort_remove_dups(Neibs),
+        AdjMap.put(I,Neibs1)
+    end.
+hcp_check_es(N,[{V1,V2,B}|Es],VNumMap,AdjMap,Source) =>
+    hcp_scc_check_vertex(V1,Source),
+    hcp_scc_check_vertex(V2,Source),
+    I1 = VNumMap.get(V1,0),
+    (I1 == 0 -> handle_exception($unknown_vertex_name(V1), Source); true),
+    I2 = VNumMap.get(V2,0),
+    (I2 == 0 -> handle_exception($unknown_vertex_name(V2), Source); true),
+    Neibs1 = AdjMap.get(I1,[]),
+    AdjMap.put(I1,[I2|Neibs1]),
+    hcp_scc_check_b(B,Source),
+    hcp_check_es(N,Es,VNumMap,AdjMap,Source).
+hcp_check_es(_N,[E|_Es],_VNumMap,_AdjMap,Source) =>
+    handle_exception($invalid_triplet(E), Source).
+hcp_check_es(_N,Es,_VNumMap,_AdjMap,Source) =>
+    handle_exception($list_expected(Es), Source).
+
+hcp_grid_check_es(_NRows,_NCols,[],_Source) => true.
+hcp_grid_check_es(NRows,NCols, [{(R1,C1), (R2,C2), _B}|Es],Source) =>
+    (R1 >= 1, R1 <= NRows, C1 >= 1, C1 <= NCols ->
+        true
+    ;
+        handle_exception($invalid_grid_coordinate(R1,C1), Source)
+    ),
+    (R2 >= 1, R2 <= NRows, C2 >= 1, C2 <= NCols ->
+        true
+    ;
+        handle_exception($invalid_grid_coordinate(R2,C2), Source)
+    ),
+    hcp_grid_check_es(NRows,NCols,Es,Source).
+hcp_grid_check_es(_NRows,_NCols,[E|_Es],Source) =>
+    handle_exception($invalid_triplet(E), Source).
+hcp_grid_check_es(_NRows,_NCols,Es,Source) =>
+    handle_exception($list_expected(Es), Source). 
+
+hcp_aux(_Bs,Es,N,K,VNumMap,AdjMap,_NZeros,MinK), MinK == N =>    % all vertices are in, convert this to circuit
+    K = N,
+    A = new_array(N),
+    A :: 1..N,
+    foreach (I in 1..N)
+        Neibs = AdjMap.get(I),
+        A[I] :: Neibs
+    end,
+    foreach ({V1,V2,B} in Es)
+        I1 = VNumMap.get(V1),
+        I2 = VNumMap.get(V2),
+        A[I1] #= I2 #<=> B
+    end,
+    circuit(A).
+hcp_aux(Bs,Es,N,K,VNumMap,AdjMap,NZeros,MinK) =>
+    A = to_array(Bs),
+    MaxK = max(N-NZeros,1),
+    K :: MinK..MaxK,
+    sum(Bs) #= K,
+    (MinK > 2 ->
+        KGt2 = 1,
+        KGt1 = 1
+    ;
+        KGt2 #<=> (K #> 2),
+        KGt1 #<=> (K #> 1),
+        KGt2 #=> KGt1
+    ),
+    H = new_array(N,N),                              % H[I,J] = 1 iff edge (I,J) is in the cycle
+    foreach ({V1,V2,B} in Es)
+        I1 = VNumMap.get(V1),
+        I2 = VNumMap.get(V2),
+        H[I1,I2] = B,
+        (I1 != I2 ->
+            B #=> A[I1],
+            B #=> A[I2]
+        ;
+            true
+        )
+    end,
+    foreach (I in 1..N, J in 1..N)
+        Cell = H[I,J], 
+        if var(Cell) && not dvar(Cell) then
+            Cell = 0
+        end
+    end,
+    foreach (I in 1..N)                              % each vertex has exactly one incoming and one outgoing edge
+        TmpB #\/ #~A[I] #\/ #~KGt1,                 
+        TmpB #=> sum([H[I,J] : J in 1..N, J !== I]) #= 1,
+        TmpB #=> sum([H[J,I] : J in 1..N, J !== I]) #= 1        
+    end,
+     % ban sub-cycles
+    hcp_scc_choose_start(A,N,KGt1,MinK,Start),       % Start[I] = 1 iff the cycle starts at vertex I
+    DistA = new_array(N),                             % each in-cycle vertex has a unique distance from the start
+    DistA :: 0..MaxK-1,
+    foreach (I in 1..N)
+        Start[I] #=> DistA[I] #= 0,
+        Neibs = AdjMap.get(I,[]),
+        foreach (J in Neibs, H[I,J] !== 0)
+            if I < J then
+                #~KGt2 #\/ #~H[I,J] #\/ #~H[J,I]    % no cycle of size 2
+            end,
+            #~Start[J] #/\ H[I,J] #=>  DistA[J] #= DistA[I]+1
+        end
+    end.
+
+%
+% Start and HasStarted must follow the following pattern:
+%      Start = 0 ... 0 1 0 ... 0
+% HasStarted = 0 ... 0 1 1 ... 1
+%
+hcp_scc_choose_start(A,N,_KGt1,_MinK,Start),
+    between(1,N,StartI),
+    A[StartI] == 1                          % choose the first index that is known to be in
+=>
+    Start = new_array(N),
+    Start[StartI] = 1,
+    foreach (I in 1..N, I !== StartI)
+        Start[I] = 0
+    end.
+hcp_scc_choose_start(A,N,KGt1,MinK,Start) =>
+    Start = new_array(N),                    % Start[I] = 1 iff the cycle starts at vertex I
+    Start :: 0..1,                          
+    foreach (I in 1..N)
+        #~A[I]  #=> #~Start[I]               % I is not in the cycle
+    end,
+    HasStarted = new_array(N),               % HasStarted[I] iff there exists I1 (I1 =< I) such that Start[I1]
+    HasStarted :: 0..1,
+    (MinK > 1 ->
+        HasStarted[N-MinK+1] #= 1
+    ;
+        KGt1 #=> HasStarted[N]
+    ),
+    A[1] #=> Start[1],
+    HasStarted[1] #<=> Start[1],
+    foreach (I in 2..N)
+        HasStarted[I-1] #=> HasStarted[I],
+        Start[I] #=> #~HasStarted[I-1],
+        Start[I] #=> HasStarted[I],
+        #~A[I] #\/ HasStarted[I-1] #\/ Start[I],                % (A[I] #/\ #~HasStarted[I-1]) #=> Start[I],
+        #~HasStarted[I] #\/ Start[I] #\/ HasStarted[I-1]        % (HasStarted[I] #/\ #~Start[I]) #=> HasStarted[I-1]
+    end.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+scc_grid(G) =>
+    scc_grid(G,_K).
+
+scc_grid(G,K) =>
+    grid_check_matrix(G,scc_grid,NRows,NCols),
+    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+    Es = [{Pos,Pos1,_} : R in 1..NRows, C in 1..NCols,
+                         Pos = (R,C),
+                         grid_neibs(G,NRows,NCols,R,C,Neibs),
+                         Pos1 in Neibs,
+                         Pos @=< Pos1],
+    scc(Vs,Es,K).
+
+scc(Vs,Es) =>
+    scc(Vs,Es,_).
+
+scc(Vs,Es,K) =>
+    VNumMap = new_map(),
+    hcp_scc_check_vs(Vs,1,N,VNumMap,Bs,0,NZeros,0,MinK,scc),
+    AdjMap = new_map(),
+    EMap = new_map(),
+    A = to_array(Bs),
+    sum(Bs) #= K,
+    scc_check_es(A,N,Es,VNumMap,AdjMap,EMap,scc),
+    scc_aux(A,N,K,AdjMap,NZeros,MinK).
+
+scc_check_es(_A,_N,[],_VNumMap,_AdjMap,EMap,_Source) => true.
+scc_check_es(A,N,[{V1,V2,B}|Es],VNumMap,AdjMap,EMap,Source) =>
+    hcp_scc_check_vertex(V1,Source),
+    hcp_scc_check_vertex(V2,Source),
+    hcp_scc_check_b(B,Source),
+    if EMap.has_key((V1,V2)) then
+        EMap.get((V1,V2)) = B
+    else
+        EMap.put((V1,V2),B),                                % undirected
+        EMap.put((V2,V1),B),
+        I1 = VNumMap.get(V1,0),
+        (I1 == 0 -> handle_exception($unknown_vertex_name(V1), Source); true),
+        I2 = VNumMap.get(V2,0),
+        (I2 == 0 -> handle_exception($unknown_vertex_name(V2), Source); true),
+        Neibs1 = AdjMap.get(I1,[]),
+        bp.domain(P21,0,1),    % I2 is I1's parent
+        AdjMap.put(I1, [{I2,B,P21}|Neibs1]),
+        Neibs2 = AdjMap.get(I2,[]),
+        bp.domain(P12,0,1),    % I1 is I2's parent
+        AdjMap.put(I2, [{I1,B,P12}|Neibs2]),
+        #~P12 #\/ #~P21,                                   % parent is a one-way relation
+        #~P12 #\/ B,
+        #~P21 #\/ B,                                       % if I1 and I2 are parent-child, then the edge must be in
+        #~B #\/ A[I1], #~B #\/ A[I2]                       % if the edge (V1,V2) is in, then both V1 and V2 are in
+    end,
+    scc_check_es(A,N,Es,VNumMap,AdjMap,EMap,Source).
+scc_check_es(_A,_N,[E|_Es],_VNumMap,_AdjMap,EMap,Source) =>
+    handle_exception($invalid_triplet(E), Source).
+scc_check_es(_A,_N,Es,_VNumMap,_AdjMap,EMap,Source) =>
+    handle_exception($list_expected(Es), Source).
+
+scc_aux(A,N,K,AdjMap,NZeros,MinK) =>
+    MaxK = max(N-NZeros,1),
+    K :: MinK..MaxK,
+    (MinK > 1 ->
+        KGt1 = 1
+    ;
+        KGt1 #<=> (K #> 1)
+    ),
+    hcp_scc_choose_start(A,N,KGt1,MinK,Start),     % Start[I] = 1 iff vertex I is the root of the tree
+    DistA = new_array(N),
+    MaxDist = MaxK-1,
+    DistA :: 0..MaxDist,
+    foreach (I in 1..N)
+        if A[I] == 0 then
+            DistA[I] = 0
+        else
+            Neibs = AdjMap.get(I,[]),
+            if Start[I] == 1 then                  % I has been set to be the root
+                DistA[I] = 0,
+                foreach ({J,B,P} in Neibs)
+                    B #=> DistA[J] #= 1,
+                    B #=> A[J],
+                    P = 0
+                end
+            else
+                Start[I] #=> DistA[I] #= 0,
+                Start[I] #=> sum([P : {_,_,P} in Neibs]) #= 0,
+                #~Start[I] #/\ A[I] #=> sum([P : {_,_,P} in Neibs]) #= 1,
+                foreach ({J,_B,P} in Neibs)
+                    P #=> DistA[I] #= DistA[J]+1
+                end
+            end
+        end
+    end.
+
+grid_check_matrix(A,Source,NRows,NCols) =>
+    (array(A) -> true; handle_exception($array_expected(A), Source)),
+    NRows = len(A),
+    foreach (R in 1..NRows)
+        (array(A[R]) -> true; handle_exception($array_expected(A[R]), Source))
+    end,
+    NCols = len(A[1]).
+
+grid_neibs(A,NRows,NCols,R,C,Neibs) =>
+        Neibs = [(R1, C1) : (R1, C1) in [(R-1,C), (R+1,C), (R,C-1), (R,C+1)],
+                            R1 >= 1, R1 =< NRows, C1 >= 1, C1 =< NCols, A[R1,C1] !== 0].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+scc_d_grid(G) =>
+    scc_d_grid(G,_K).
+
+scc_d_grid(G,K) =>
+    grid_check_matrix(G,scc_grid,NRows,NCols),
+    Vs = [{(R,C), G[R,C]} : R in 1..NRows, C in 1..NCols],
+    Es = [{Pos,Pos1,_} : R in 1..NRows, C in 1..NCols,
+                         Pos = (R,C),
+                         grid_neibs(G,NRows,NCols,R,C,Neibs),
+                         Pos1 in Neibs],
+    scc_d(Vs,Es,K).
+
+scc_d(Vs,Es) =>
+    scc_d(Vs,Es,_).
+
+scc_d(Vs,Es,K) =>
+    VMap = new_map(),
+    DegMap = new_map(),
+    foreach({V,B} in Vs)
+        B :: 0..1,
+        VMap.put(V, B),
+        DegMap.put(V, 0)
+    end,
+    K #= sum([B : {_,B} in Vs]),
+    %
+    foreach ({V1,V2,B} in Es)
+        B :: 0..1,
+        B1 = VMap.get(V1),
+        B2 = VMap.get(V2),
+        B #=> B1,
+        B #=> B2
+    end,
+    %    
+    VEMap = new_map(),
+    foreach({V1,V2,B} in Es)
+        Key = (V1,V2),
+        VEMap.put(Key,[B]),
+        DegMap.put(V1, DegMap.get(V1)+1),
+        DegMap.put(V2, DegMap.get(V2)+1)
+    end,
+    RVs = [V : {V,_} in Vs],
+    scc_d_vertex_elimination(VMap, DegMap, VEMap, 0, RVs).      % GEmpty = 0, initial graph is not empty
+
+scc_d_vertex_elimination(VMap, DegMap,  VEMap, GEmpty, [])  => GEmpty = 1.            
+scc_d_vertex_elimination(VMap, DegMap,  VEMap, GEmpty, [FV|RVs]) =>
+    choose_vertex_to_cut(DegMap, FV, DegMap.get(FV), RVs, W, RVs1),
+    GEmpty1 :: 0..1,
+    #~GEmpty #\/ GEmpty1,
+    BW = VMap.get(W),
+    #~GEmpty #\/ #~BW,                                           % GEmpty -> ~BW
+    InNeibs = [(V,Bvw) : V in RVs1, V !== W, Key = (V,W), VEMap.has_key(Key), Bs = VEMap.get(Key), Bvw #= max(Bs)],
+    OutNeibs = [(V,Bwv) : V in RVs1, V !== W, Key = (W,V), VEMap.has_key(Key), Bs = VEMap.get(Key), Bwv #= max(Bs)],    
+    foreach((V,_) in InNeibs)
+        DegMap.put(V, DegMap.get(V)-1)
+    end,
+    foreach((V,_) in OutNeibs)
+        DegMap.put(V, DegMap.get(V)-1)
+    end,
+    BInNeibs = [B : (_,B) in InNeibs],
+    BOutNeibs = [B : (_,B) in OutNeibs],
+    sum([BW|BInNeibs]) #= 1 #=> GEmpty1 #= 1,        % if W has no incoming arcs, G becomes empty after W is eliminated
+    sum([BW|BOutNeibs]) #= 1 #=> GEmpty1 #= 1,       % if W has no outgoing arcs, G becomes empty after W is eliminated    
+    foreach ((U,Buw) in InNeibs, (V,Bwv) in OutNeibs)
+        Key = (U,V),
+        if not VEMap.has_key(Key) then
+            DegMap.put(U, DegMap.get(U)+1),
+            DegMap.put(V, DegMap.get(V)+1)
+        end,
+        Buw #/\ Bwv #<=> Buv,
+        VEMap.put(Key, [Buv|VEMap.get(Key,[])])
+    end,
+    scc_d_vertex_elimination(VMap, DegMap, VEMap, GEmpty1, RVs1).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+tree(Vs,Es) =>
+    tree(Vs,Es,_).
+
+tree(Vs,Es,K) =>
+    scc(Vs,Es,K),    
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        if V1 @< V2 then
+            EMap.put((V1,V2),B)
+        else
+            EMap.put((V2,V1),B)
+        end
+    end,
+    L = values(EMap),
+    KGe2 #<=> K #>= 2,
+    KGe2 #=> K #= sum(L)+1.
+
+register_edge(V1,V2,B,VMap,EMap,AMap) =>
+    Key = (V1,V2),
+    if EMap.has_key(Key) then
+        B = EMap.get(Key)
+    else
+        EMap.put(Key, B),
+        Neibs1 = AMap.get(V1,[]),
+        AMap.put(V1,[(V2,B)|Neibs1]),
+        if V1 @< V2 then
+            B1 = VMap.get(V1),
+            B2 = VMap.get(V2),
+            B #=> B1,
+            B #=> B2
+        end
+    end.
+
+check_graph_vs([], Source) => true.
+check_graph_vs([{V,B}|Vs], Source) =>
+    hcp_scc_check_vertex(V,Source),
+    hcp_scc_check_b(B,Source),
+    check_graph_vs(Vs, Source).
+check_graph_vs([E|_], Source) =>
+    handle_exception($invalid_pair(E), Source).
+check_graph_vs(Vs, Source) =>
+    handle_exception($list_expected(Vs), Source).
+
+check_graph_es([], Source) => true.
+check_graph_es([{V1,V2,B}|Es], Source) =>
+    hcp_scc_check_vertex(V1,Source),
+    hcp_scc_check_vertex(V2,Source),    
+    hcp_scc_check_b(B,Source),
+    check_graph_es(Es, Source).
+check_graph_es([E|_], Source) =>
+    handle_exception($invalid_triplet(E), Source).
+check_graph_es(Es, Source) =>
+    handle_exception($list_expected(Es), Source).
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+acyclic(Vs,Es) =>
+    check_graph_vs(Vs, acyclic),
+    check_graph_es(Es, acyclic),
+    N = len(Vs),
+    TmpT is N div 2,
+    (N mod 2 == 0 ->  MaxT is TmpT-1; MaxT is TmpT),
+    VMap = new_map(),
+    TMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B),
+        T :: 0..MaxT,
+        TMap.put(V,T)
+    end,
+    AMap = new_map(),
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        register_edge(V1,V2,B,VMap,EMap,AMap),
+        register_edge(V2,V1,B,VMap,EMap,AMap)
+    end,
+    ReifMap = new_map(),
+    foreach ({V,B} in Vs)
+        Time = TMap.get(V),
+        Neibs = AMap.get(V,[]),
+        K #= sum([B1 : (_,B1) in Neibs]),
+        KGe2 #<=> K #>= 2,
+        #~KGe2 #=> Time #= 0,
+        constrain_neibs(V,Time,TMap,Neibs,ReifMap)
+    end.
+
+constrain_neibs(V,Time,TMap,[],ReifMap) => true.
+constrain_neibs(V,Time,TMap,[_],ReifMap) => true.
+constrain_neibs(V,Time,TMap,[(V1,B1)|L],ReifMap) =>
+    Time1 = TMap.get(V1),
+    Key = (V,V1),
+    BGT1 #<=> Time #> Time1,
+    ReifMap.put(Key,BGT1),
+    RKey = (V1,V),
+    if ReifMap.has_key(RKey) then
+        TmpBGT = ReifMap.get(RKey),
+        #~BGT1 #\/ #~TmpBGT                            % redundant but could be helpful
+    end,
+    constrain_neibs_aux(V,Time,BGT1,B1,TMap,L,ReifMap),
+    constrain_neibs(V,Time,TMap,L,ReifMap).
+
+constrain_neibs_aux(V,Time,BGT1,B1,TMap,[],ReifMap) => true.
+constrain_neibs_aux(V,Time,BGT1,B1,TMap,[(V2,B2)|L],ReifMap) =>
+    Time2 = TMap.get(V2),
+    Key = (V,V2),
+    BGT2 #<=> Time #> Time2,
+    ReifMap.put(Key,BGT2),
+    RKey = (V2,V),
+    if ReifMap.has_key(RKey) then
+        TmpBGT = ReifMap.get(RKey),
+        #~BGT2 #\/ #~TmpBGT                            % redundant but could be helpful
+    end,
+    #~B1 #\/ #~B2 #\/ BGT1 #\/ BGT2,
+    constrain_neibs_aux(V,Time,BGT1,B1,TMap,L,ReifMap).
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Vs,Es) represents a directed acyclic graph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+acyclic_d(Vs,Es) =>
+    check_graph_vs(Vs, acyclic_d),
+    check_graph_es(Es, acyclic_d),
+    N = len(Vs),
+    VMap = new_map(),
+    DegMap = new_map(),
+    foreach({V,B} in Vs)
+        B :: 0..1,
+        VMap.put(V, B),
+        DegMap.put(V, 0)
+    end,
+    %
+    VEMap = new_map(),
+    EMap = new_map(),
+    foreach({V1,V2,B} in Es)
+        B :: 0..1,    
+        Key = (V1,V2),
+        if V1 == V2 then
+            #~B        
+        end,
+        if not VEMap.has_key(Key) then
+            VEMap.put(Key, B),
+            DegMap.put(V1, DegMap.get(V1)+1),
+            DegMap.put(V2, DegMap.get(V2)+1)
+        end
+    end,
+    RVs = [V : {V,_} in Vs],
+    Tmp = to_int(2.3*size(VEMap)),
+    if Tmp > 30*N then
+        Threshold = 30*N
+    else
+        Threshold = Tmp
+    end,
+    acyclic_vertex_elimination(VMap, DegMap, VEMap, EMap, Threshold, RVs).
+
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, Threshold, [])  => true.
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, Threshold, [_]) => true.
+acyclic_vertex_elimination(VMap, DegMap,  VEMap, EMap, Threshold, Vs@[FirstV|RVs]) =>
+    choose_vertex_to_cut(DegMap, FirstV, DegMap.get(FirstV), RVs, W, RVs1),
+    if  size(VEMap) > Threshold then
+        VBs = [{V,B} : V in Vs, B = VMap.get(V)],
+        EBs = [{V1,V2,B} : V1 in Vs, V2 in Vs,  Key = (V1,V2), VEMap.has_key(Key), B = VEMap.get(Key)],
+        acyclic_lee_b(VBs,EBs)
+    else
+        InNeibs = [V: V in RVs1, VEMap.has_key((V,W))],
+        OutNeibs = [V: V in RVs1, VEMap.has_key((W,V))],
+
+        foreach(X in InNeibs)
+            DegMap.put(X, DegMap.get(X)-1)
+        end,
+
+        foreach(Y in OutNeibs)
+            DegMap.put(Y, DegMap.get(Y)-1),
+            Key1 = (W,Y),            
+            Key2 = (Y,W),
+
+            if VEMap.has_key(Key2) then            
+                B1 = VEMap.get(Key1),
+                B2 = VEMap.get(Key2),
+                #~B1 #\/ #~B2
+            end
+        end,
+        
+        foreach(X in InNeibs, Y in OutNeibs, X !== Y)
+            if not VEMap.has_key((X,Y)) then
+                B1 :: 0..1,
+                DegMap.put(X, DegMap.get(X)+1),
+                DegMap.put(Y, DegMap.get(Y)+1),
+                VEMap.put((X,Y), B1)
+            end,
+            B1 =  VEMap.get((X,Y)),
+            B3 =  VEMap.get((X,W)),
+            B4 =  VEMap.get((W,Y)),
+            (B3 #/\ B4) #=> B1
+        end,
+        acyclic_vertex_elimination(VMap, DegMap, VEMap, EMap, Threshold, RVs1)
+    end.
+
+% choose a vertex with the lowest degree    
+choose_vertex_to_cut(DegMap, U, Du, Vs, W, RVs), Du =< 1 =>
+    W = U, RVs = Vs.
+choose_vertex_to_cut(DegMap, U, Du, [], W, RVs) => W = U, RVs = [].
+choose_vertex_to_cut(DegMap, U, Du, [V|Vs], W, RVs),
+    Dv = DegMap.get(V),
+    Dv < Du
+=>
+    RVs = [U|RVs1],
+    choose_vertex_to_cut(DegMap, V, Dv, Vs, W, RVs1).
+choose_vertex_to_cut(DegMap, U, Du, [V|Vs], W, RVs) =>
+    RVs = [V|RVs1],
+    choose_vertex_to_cut(DegMap, U, Du, Vs, W, RVs1).
+
+% use leaf-elimination encoding
+acyclic_lee_b(Vs,Es) =>
+    acyclic_lee_b(Vs,Es,_).
+
+acyclic_lee_b(Vs,Es,TMap) =>        
+    BaseVs = [V : {V,_} in Vs],
+    BaseEs = [(V1,V2): {V1,V2,_} in Es],
+    base_graph_info(BaseVs,BaseEs,N,RemSet,MaxT),           % A node is put in RemdSet if its removal doesn't affect the cyclicity
+    VMap = new_map(),
+    TMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B),
+        T :: 0..MaxT,                                       % vertex V is eliminated at time T
+        TMap.put(V,T)
+    end,
+    AMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        acyclic_lee_b_register_edge(V1,V2,B,VMap,AMap)
+    end,
+    foreach ({V,B} in Vs)
+        Time = TMap.get(V),
+        if RemSet.has_key(V) then
+            Time = 0
+        else
+            Neibs = AMap.get(V,[]),
+            K #= sum([B1 : (_,B1) in Neibs]),
+            KGe1 #<=> K #>= 1,
+            #~KGe1 #=> Time #= 0,                           % vertex V is eliminated at time 0 if it's a leaf
+            #~B #=> Time #= 0,
+            acyclic_lee_b_constrain_neibs(V,Time,TMap,Neibs)
+        end
+    end,
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        EMap.put((V1,V2), B)
+    end,
+    foreach ({V1,V2,B12} in Es)
+        if EMap.has_key((V2,V1)) && V1 @< V2 then
+            B21 = EMap.get((V2,V1)),
+            #~B12 #\/ #~B21                                 % no cycle of 2
+        end,
+        Neibs = AMap.get(V2,[]),
+        foreach ((V3,B23) in Neibs, V3 !== V1)
+            if EMap.has_key((V3,V1)) then
+                B31 = EMap.get((V3,V1)),
+                #~B12 #\/ #~B23 #\/ #~B31
+            end
+        end
+    end.
+
+% AMap: adjacency map
+acyclic_lee_b_register_edge(V1,V2,B,VMap,AMap) =>
+    Neibs1 = AMap.get(V1,[]),
+    AMap.put(V1,[(V2,B)|Neibs1]),
+    B1 = VMap.get(V1),
+    B2 = VMap.get(V2),
+    B #=> B1,
+    B #=> B2.
+
+acyclic_lee_b_constrain_neibs(V,Time,TMap,[]) => true.
+acyclic_lee_b_constrain_neibs(V,Time,TMap,[(V1,B1)|L]) =>
+    Time1 = TMap.get(V1),
+    B1 #=> Time #> Time1,
+    acyclic_lee_b_constrain_neibs(V,Time,TMap,L).
+
+% extract information about the base graph
+%    N : the number of nodes
+%   RemSet: all the nodes in the base graph that do not occur in any cycles
+%   MaxT: The maximum time (number of iterations) for the leaf-elimination to detect acyclicity
+%        
+base_graph_info(Vs,Es,N,RemSet,MaxT) =>
+    AMap = new_map(),
+    foreach ((V1,V2)in Es)
+        Neibs = AMap.get(V1,[]),
+        AMap.put(V1,[V2|Neibs])
+    end,
+    TransAMap = new_map(),                 % The transpose graph
+    foreach ((V1,V2) in Es)
+        Neibs = AMap.get(V2,[]),
+        TransAMap.put(V2,[V1|Neibs])
+    end,
+    RemSet = new_set(),
+    eliminate_leaves(Vs,AMap,TransAMap,RemSet),
+    N = length(Vs),
+    MaxT = N - size(RemSet) - 1.           % all the nodes in RemSet are removed at time 0
+
+eliminate_leaves(Vs,AMap,TransAMap,RemSet) =>
+    eliminate_leaves(Vs,Vs1,AMap,TransAMap,RemSet,Flag),
+    if Flag == 1 then                     % continue until no leaves exist
+        eliminate_leaves(Vs1,AMap,TransAMap,RemSet)
+    end.
+
+eliminate_leaves([],Vs1,AMap,TransAMap,RemSet,Flag) => Vs1 = [].
+eliminate_leaves([V|Vs],Vs1,AMap,TransAMap,RemSet,Flag),
+    acyclic_lee_leaf(V,AMap,TransAMap,RemSet)
+=>
+    RemSet.put(V),
+    Flag = 1,
+    eliminate_leaves(Vs,Vs1,AMap,TransAMap,RemSet,Flag).
+eliminate_leaves([V|Vs],Vs1,AMap,TransAMap,RemSet,Flag) =>
+    Vs1 = [V|Vs1R],
+    eliminate_leaves(Vs,Vs1R,AMap,TransAMap,RemSet,Flag).
+    
+acyclic_lee_leaf(V,AMap,TransAMap,RemSet) ?=>
+    Neibs = AMap.get(V,[]),
+    foreach (Neib in Neibs)
+        RemSet.has_key(Neib)
+    end,
+    !.
+acyclic_lee_leaf(V,AMap,TransAMap,RemSet) =>
+    Neibs = TransAMap.get(V,[]),
+    foreach (Neib in Neibs)
+        RemSet.has_key(Neib)
+    end.
+        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Vs,Es) represents a path from Src to Dest
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+path(Vs,Es,Src,Dest), list(Dest) =>
+    scc(Vs,Es),
+    check_graph_vs(Vs, path),
+    check_graph_es(Es, path),
+    hcp_scc_check_vertex(Src,path),
+    foreach (V in Dest)
+        hcp_scc_check_vertex(V,path)
+    end,
+    once member({Src, 1}, Vs),                              % Src is in
+    VMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B)
+    end,
+    AMap = new_map(),
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        register_edge(V1,V2,B,VMap,EMap,AMap),
+        register_edge(V2,V1,B,VMap,EMap,AMap)
+    end,
+    sum([B : V in Dest, B = VMap.get(V,0)]) #= 1,           % exactly one dest vertex is in
+    if member(Src, Dest) then                               % Src is in Dest
+        foreach ({V,B} in Vs, V != Src)                     % only Src is in the graph
+            B = 0
+        end,
+        foreach ({_,_,B} in Es)
+            B = 0
+        end
+    else                                                    
+        Neibs = AMap.get(Src,[]),
+        sum([B1 : (_,B1) in Neibs]) #= 1,
+        foreach (V in Dest)
+            Bv = VMap.get(V),
+            VNeibs = AMap.get(V,[]),
+            Bv #=> sum([B1 : (_,B1) in VNeibs]) #= 1        % exactly one of the neibs of V is in if V is in
+        end,
+        foreach ({V,Bv} in Vs, V != Src, not member(V,Dest))
+            VNeibs = AMap.get(V,[]),
+            Bv #=> sum([B1 : (_,B1) in VNeibs]) #= 2
+        end
+    end.
+path(Vs,Es,Src,Dest) =>                                     % unique dest
+    hcp_scc_check_vertex(Dest,path),
+    path(Vs,Es,Src,[Dest]).
+        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the directed graph (Vs,Es) represents a path from Src to Dest
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+path_d(Vs,Es,Src,Dest), list(Dest) =>
+    check_graph_vs(Vs, path_d),
+    check_graph_es(Es, path_d),
+    hcp_scc_check_vertex(Src,path_d),
+    foreach (V in Dest)
+        hcp_scc_check_vertex(V,path_d)
+    end,
+    once member({Src, 1}, Vs),                              % Src is in
+    N = len(Vs),
+    VMap = new_map(),
+    DistMap = new_map(),
+    foreach ({V,B} in Vs)
+        VMap.put(V,B),
+        Dist :: 0..N,
+        DistMap.put(V, Dist)
+    end,
+    AMap = new_map(),
+    EMap = new_map(),
+    foreach ({V1,V2,B} in Es)
+        register_d_edge(V1,V2,B,VMap,EMap,AMap)
+    end,
+    sum([B : V in Dest, B = VMap.get(V,0)]) #= 1,           % exactly one dest vertex is in
+    if member(Src, Dest) then                               % Src is in Dest
+        foreach ({V,B} in Vs, V != Src)                     % only Src is in the graph
+            B = 0
+        end,
+        foreach ({_,_,B} in Es)
+            B = 0
+        end
+    else                                                    
+        Neibs = AMap.get(Src,[]),
+        sum([B1 : (_,B1) in Neibs]) #= 1,                   % exactly one outgoing
+        DistMap.get(Src) = 0,
+        foreach (V in Dest)
+            Bv = VMap.get(V),
+            BInNeibs = [Buv : {U,_} in Vs, Key = (U,V), EMap.has_key(Key), Buv = EMap.get(Key)],
+            Bv #=> sum(BInNeibs) #= 1                       % exactly one incomming
+        end,
+        foreach ({V,Bv} in Vs, V != Src, not member(V,Dest))
+            BInNeibs = [Buv : {U,_} in Vs, Key = (U,V), EMap.has_key(Key), Buv = EMap.get(Key)],
+            BOutNeibs = [Bvu : {U,_} in Vs, Key = (V,U), EMap.has_key(Key), Bvu = EMap.get(Key)],    
+            Bv #=> sum(BInNeibs) #= 1,
+            Bv #=> sum(BOutNeibs) #= 1,
+            DistOfV = DistMap.get(V),
+            foreach ({U,_} in Vs, Key = (V,U), EMap.has_key(Key), Bvu = EMap.get(Key))
+                DistOfU = DistMap.get(U),
+                Bvu #=> DistOfU #= DistOfV+1
+            end
+        end
+    end.
+path_d(Vs,Es,Src,Dest) =>                                   % unique dest
+    hcp_scc_check_vertex(Dest,path_d),
+    path_d(Vs,Es,Src,[Dest]).
+
+register_d_edge(V1,V2,B,VMap,EMap,AMap) =>
+    Key = (V1,V2),
+    if EMap.has_key(Key) then
+        B = EMap.get(Key)
+    else
+        EMap.put(Key, B),
+        Neibs1 = AMap.get(V1,[]),
+        AMap.put(V1,[(V2,B)|Neibs1]),
+        B1 = VMap.get(V1),
+        B2 = VMap.get(V2),
+        B #=> B1,
+        B #=> B2
+    end.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+global_cardinality(List,Keys,Cards) =>
+    N = len(List),
+    foreach (Card in Cards)
+        Card :: 0..N
+    end,
+    LB = sum([fd_min(Card) : Card in Cards]),
+    SumCards :: LB..N,
+    SumCards #= sum(Cards),
+    (LB == N, ground(Keys) ->
+        List :: Keys
+    ;
+        true
+    ),
+    foreach ({Key,Card} in zip(Keys,Cards))
+      count(Key,List, #= ,Card)
+    end.
+
+global_cardinality_closed(List,Keys,Cards) =>
+    global_cardinality(List,Keys,Cards),
+    foreach (X in List)
+        fd_member(X,Keys)
+    end.
+
+fd_member(X,L), ground(L) =>
+    X :: L.
+fd_member(X,L) =>
+    sum([X #= E : E in L]) #>= 1.
+    
+global_cardinality(List,Keys,Lows,Ups) =>
+    N = len(List),
+    M = len(Keys),
+    Cards = new_list(M),
+    global_cardinality(List,Keys,Cards),
+    foreach ({Low,Up,Card} in zip(Lows,Ups,Cards))
+        Low :: 0..N,
+	Up :: 0..N,
+        Low #=< Card,
+        Card #=< Up
+    end.
+        
+global_cardinality_closed(List,Keys,Lows,Ups) =>
+    global_cardinality(List,Keys,Lows,Ups),
+    foreach (X in List)
+        fd_member(X,Keys)
+    end.
+
+global_cardinality_low_up(X,Cover,LBound,UBound) =>
+    N = len(Cover),
+    T = new_array(N),
+    foreach(I in 1..N)
+        T[I] :: LBound[I]..UBound[I],
+        count(Cover[I], X, #=, T[I])
+    end.
+
+global_cardinality_low_up_closed(X,Cover,LBound,UBound) =>
+    N = len(X),
+    CoverList = to_list(Cover),
+    X :: CoverList,
+    global_cardinality_low_up(X, Cover, LBound, UBound),
+    % Implied condition
+    N #>= sum(LBound),
+    N #=< sum(UBound).
+    
+%
+% Scalar product of the list A and X
+%
+scalar_product(A, X, Product) => 
+    scalar_product(A, X, '#=', Product).
+
+%
+% scalar product of List A and X, with one of the relations: 
+% 
+%   #=, #<, #>, #<=, #>=, #!=
+%
+scalar_product(A, X, '#=', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #= Product.
+
+scalar_product(A, X, '#!=', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #!= Product.
+
+scalar_product(A, X, '#>=', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #>= Product.
+
+scalar_product(A, X, '#>', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #> Product.
+
+scalar_product(A, X, '#<=', Product) => 
+   check_scalars(A,X),
+    scalar_product(A, X, '#=<', Product).
+
+scalar_product(A, X, '#=<', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #=< Product.
+
+scalar_product(A, X, '#<', Product) => 
+   check_scalars(A,X),
+   sum([A[I]*X[I] : I in 1..A.length]) #< Product.
+
+%
+% exactly(?N,?X,?V)
+%
+% Requires that exactly N variables in X take the value V.
+%
+exactly(N, X, V) =>
+  count(V,X, #= ,N).
+
+%
+% at_most(?N,?X,?V)
+%
+% Requires that atmost N variables in X take the value V.
+%
+at_most(N,X,V) => 
+  count(V,X, #=< ,N).
+
+%
+% at_least(?N,?X,?V)
+%
+% Requires that atleast N variables in X take the value V.
+%
+at_least(N,X,V) => 
+  count(V,X, #>= ,N).
+
+% count(V,FDVars,Rel,N) => count(V,FDVars,Rel,N).
+count(V,FDVars,Rel,N) =>
+    (array(FDVars) -> to_list(FDVars) = List; List = FDVars),
+    bp.domain_min_max(N,MinN,_),
+    (MinN > 0, Rel == '#=' ->
+        bp.fd_min_max(List,LB,UB),
+        bp.domain(V,LB,UB)
+    ;
+        true
+    ),    
+    reified_bool_vars(List,V,Bs),
+    count_aux(Bs,Rel,N).
+
+reified_bool_vars([],_V,Bs) => Bs = [].
+reified_bool_vars([E|List],V,Bs) =>
+    Bs = [B|BsR],
+    B #<=> (V #= E),
+    reified_bool_vars(List,V,BsR).
+
+count_aux(Bs,'#=', N) => sum(Bs) #= N.
+count_aux(Bs,'#!=', N) => sum(Bs) #!= N.
+count_aux(Bs,'#\\=', N) => sum(Bs) #!= N.
+count_aux(Bs,'#>', N) => sum(Bs) #> N.
+count_aux(Bs,'#>=', N) => sum(Bs) #>= N.
+count_aux(Bs,'#<', N) => sum(Bs) #< N.
+count_aux(Bs,'#=<', N) => sum(Bs) #=< N.
+count_aux(Bs,'#<=', N) => sum(Bs) #=< N.
+
+count(V,FDVars,N) =>
+    count(V,FDVars,'#=',N).
+
+count_eq_reif(List,V,N,B) =>
+    Ni :: 0..length(List),
+    count(V,List,#=,Ni),
+    B #<=> (N #= Ni).
+    
+%
+% Ensure that List is increasing
+%
+increasing(FDVars), array(FDVars) =>
+   foreach(I in 2..length(FDVars)) FDVars[I-1] #=< FDVars[I] end.
+increasing(FDVars), list(FDVars) =>
+   increasing_list(FDVars).
+increasing(FDVars) =>
+   handle_exception($list_or_array_expected(FDVars), increasing).
+
+increasing_list([]) => true.
+increasing_list([_]) => true.
+increasing_list([X|T@[Y|_]]) => 
+    X #=< Y,
+    increasing_list(T).
+
+increasing_strict(FDVars), array(FDVars) =>
+   foreach(I in 2..length(FDVars)) FDVars[I-1] #< FDVars[I] end.
+increasing_strict(FDVars), list(FDVars) =>
+   increasing_strict_list(FDVars).
+increasing_strict(FDVars) =>
+   handle_exception($list_or_array_expected(FDVars), increasing_strict).
+
+increasing_strict_list([]) => true.
+increasing_strict_list([_]) => true.
+increasing_strict_list([X|T@[Y|_]]) => 
+    X #< Y,
+    increasing_strict_list(T).
+
+%
+% Ensure that FDVars is decreasing
+%
+decreasing(FDVars), array(FDVars) =>
+   foreach(I in 2..length(FDVars)) FDVars[I-1] #>= FDVars[I] end.
+decreasing(FDVars), list(FDVars) =>
+   decreasing_list(FDVars).
+decreasing(FDVars) =>
+   handle_exception($list_or_array_expected(FDVars), decreasing).
+
+decreasing_list([]) => true.
+decreasing_list([_]) => true.
+decreasing_list([X|T@[Y|_]]) => 
+    X #>= Y,
+    decreasing_list(T).
+
+decreasing_strict(FDVars), array(FDVars) =>
+   foreach(I in 2..length(FDVars)) FDVars[I-1] #> FDVars[I] end.
+decreasing_strict(FDVars), list(FDVars) =>
+   decreasing_strict_list(FDVars).
+decreasing_strict(FDVars) =>
+   handle_exception($list_or_array_expected(FDVars), decreasing_strict).
+
+decreasing_strict_list([]) => true.
+decreasing_strict_list([_]) => true.
+decreasing_strict_list([X|T@[Y|_]]) => 
+    X #> Y,
+    decreasing_strict_list(T).
+    
+%
+% A network flow constraint with cost.
+% Arcc = [(Source1,Sink1), ... ]
+% balance[j] is the balance of node j.
+% weight[i] is the weight of arc i.
+% assert: |arc| = |weight| = |flow|, 
+%
+network_flow_cost(Arcs,Balance,Weight,Flow, Cost) =>
+    N_arcs = length(Flow),
+    N_nodes = length(Balance),
+    Cost #=  sum([Flow[I]*Weight[I] : I in 1..N_arcs]),
+    foreach (I in 1..N_nodes)
+        Inflow = [Flow[J] : J in 1..N_arcs, Arcs[J,1] == I],
+        Outflow = [Flow[J] : J in 1..N_arcs, Arcs[J,2] == I],
+        sum(Inflow) - sum(Outflow) #= Balance[I]
+    end.
+
+knapsack(WVec, PVec, XVec, W, P) =>    
+    N = XVec.len,
+    foreach(I in 1..N)
+      XVec[I] #>= 0
+    end,
+    W #>= 0,
+    P #>= 0,
+    P #= sum([XVec[I]*PVec[I] : I in 1..N]),
+    W #= sum([XVec[I]*WVec[I] : I in 1..N]).
+
+%
+% For each subsequence vs[i],..., vs[i+seq-1], the sum of the values belongs to the interval [low,up].
+%
+sliding_sum(Low,Up,Seq,Vs) =>
+    N = length(Vs),
+    S = new_array(N),
+    S[1] = Vs[1],
+    foreach (I in 2..N)
+        S[I] #= S[I-1] + Vs[I]
+    end,
+    Low #=< S[Seq],
+    S[Seq] #=< Up,
+    foreach (I in (Seq+1)..(N-Seq+1))
+        T #= S[I] - S[I-Seq],
+        Low #=< T,
+        T #=< Up
+    end.
+
+value_precede(S,T,X), list(X) =>
+    value_precede(S,T,to_array(X)).
+value_precede(S,T,X), array(X) =>
+    XLen = X.length,
+    B = new_array(XLen+1),
+    B :: 0..1,
+    foreach(I in 1..XLen)
+        Xis #= (X[I] #= S),
+        Xis #=> (B[I+1] #= 1),
+        #~ Xis #=> (B[I] #= B[I+1]),
+        #~ B[I] #=> (X[I] #!= T)
+    end,
+    B[1] #= 0.
+value_precede(S,T,X) =>
+   handle_exception($list_or_array_expected(X), value_precede).
+
+value_precede_chain(C, X), array(C) =>
+    foreach(I in 2..C.length)
+        value_precede(C[I-1], C[I], X)
+    end.
+value_precede_chain(C, X), list(C) =>
+    A = to_array(C),
+    value_precede_chain(A, X).
+value_precede_chain(C, X) =>
+   handle_exception($list_or_array_expected(X), value_precede_chain).
+        
+seq_precede_chain(X), list(X) =>
+    seq_precede_chain(to_array(X)).
+seq_precede_chain(X), array(X) =>    
+    N = len(X),
+    fd_min_max(X,Low,Up),
+    F = 1, % min ( index_set (X ))
+    H = new_array(N),
+    H :: Low..Up,    
+    H[F] #<= 1,
+    H[F] #= max(X[F], 0),
+    foreach(I in 1..N, I !== F) 
+       H[I] #<= H[I-1] + 1,
+       H[I] #= max(X[I], H[I-1])
+    end.
+seq_precede_chain(X) =>
+   handle_exception($list_or_array_expected(X), seq_precede_chain).
+
+
+

@@ -1,0 +1,16 @@
+/* for each file with the extension name ".pi", generate a command line to execute the file */
+/* by Neng-Fa Zhou, 2015                                                                    */
+
+import os.
+
+main =>
+    gen(".").
+
+gen(Dir) =>
+    Files = listdir(Dir).sort(),
+	foreach (File in Files, append(_,".xml",File))
+	    printf("echo solving %s\n",File),
+		printf("time timeout -k 300 300 ~/BProlog/Emulator/xcsp_picat -log %s\n",File)
+	end.
+
+		

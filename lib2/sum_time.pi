@@ -1,0 +1,22 @@
+import util.
+
+main([File]),string(File) =>
+    proc_file(File).
+    
+main =>
+    proc_file("trace").
+
+proc_file(File) =>
+    Lines = read_file_lines(File),
+    proc_lines0(Lines,0,Time),
+	printf("Total real time %fs\n", Time).
+
+proc_lines0([],Time0,Time) => Time = Time0.
+proc_lines0([Line|Lines],Time0,Time),
+   append("real",Rem,Line)
+=>
+   [M,S] = split(Rem,"ms"),
+   Time1 is Time0+to_number(M)*3600+to_number(S),
+   proc_lines0(Lines,Time1,Time).
+proc_lines0([_Line|Lines],Time0,Time) =>
+   proc_lines0(Lines,Time0,Time).

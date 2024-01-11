@@ -57,7 +57,7 @@ An \emph{attributed variable}\index{attributed variable} is a variable that has 
 \item \texttt{get\_attr($X$,$Key$) = $Val$}\index{\texttt{get\_attr/2}}: This function returns the \texttt{$Val$} of the key-value pair \texttt{$Key$$=$$Val$} that is attached to \texttt{$X$}. It throws an error if \texttt{$X$} has no attribute named $Key$.
 \item \texttt{get\_attr($X$,$Key$,$DefaultVal$) = $Val$}\index{\texttt{get\_attr/3}}: This function returns \texttt{$Val$} of the key-value pair \texttt{$Key$$=$$Val$} that is attached to \texttt{$X$}. It returns $DefaultVal$ if $X$ does not have the attribute named $Key$.
 \item \texttt{put\_attr($X$,$Key$,$Val$)}\index{\texttt{put\_attr/3}}: This predicate attaches the key-value pair \texttt{$Key$$=$$Val$} to \texttt{$X$}, where \texttt{$Key$} is a non-variable term, and \texttt{$Val$} is any term. 
-\item \texttt{put\_attr($X$,$Key$)}\index{\texttt{put/2}}: This predicate call is the same as \texttt{put\_attr($X$,$Key$,not\_a\_value)}.
+\item \texttt{put\_attr($X$,$Key$)}\index{\texttt{put/2}}: The same as \texttt{put\_attr($X$,$Key$,not\_a\_value)}.
 \end{itemize}
 
 \section{Atoms}
@@ -208,7 +208,7 @@ The \texttt{basic} module provides the following built-ins on lists, most of whi
 \item \texttt{nth($Index$,$List$,$Elem$)}\index{\texttt{nth/3}} (nondet): This predicate is true when $Elem$ is the $Index$'th element of $List$.  Counting starts at 1. When $Index$ is a variable, this predicate may backtrack, instantiating $Index$ to a different integer between 1 and \texttt{len($List$)}.
 
 \item \texttt{prod($List$) = $Val$}\index{\texttt{prod/1}}: This function returns the product of all of the values in $List$. 
-\item \texttt{remove\_dups($List$) = $ResList$}\index{\texttt{remove\_dups/1}}: This function removes all duplicate values from $List$, retaining only the first occurrence of each value.  The result is returned in $ResList$. Note that an $O(n^2)$ algorithm is used in the implementation. If $List$ is large, then \texttt{sort\_remove\_dups($List$)} may be faster than this function.
+\item \texttt{remove\_dups($List$) = $ResList$}\index{\texttt{remove\_dups/1}}: This function removes all duplicate values from $List$, retaining only the first occurrence of each value.  The result is returned in $ResList$. Note that an $O(n^2)$ algorithm is used in the implementation. For long lists, \texttt{sort\_remove\_dups} is faster than this function.
 \item \texttt{reverse($List$) = $ResList$}\index{\texttt{reverse/1}}: This function reverses the order of the elements in $List$, returning the result in $ResList$. 
 \item \texttt{select($X$,$List$,$ResList$)}\index{\texttt{select/3}} (nondet): This predicate nondeterministically selects an element $X$ from $List$, and binds $ResList$ to the list after $X$ is removed. On backtracking, it selects the next element.
 \item \texttt{sort($List$) = $SList$}\index{\texttt{sort/1}}: This function sorts the elements of $List$ in ascending order, returning the result in $SList$. 
@@ -354,6 +354,7 @@ Note that many of the overloaded built-ins for arrays are not implemented effici
 A \emph{map}\index{map} is a hash-table that is represented as a structure\index{structure} that contains a set of key-value pairs. The functor\index{functor} of the structure\index{structure} that is used for a map\index{map} is not important.  An implementation may ban access to the name and the arity\index{arity} of the structure\index{structure} of a map\index{map}. Maps\index{map} must be created with the built-in function \texttt{new\_map}\index{\texttt{new\_map/1}}, unless they are prebuilt (see Section \ref{prebuiltmaps}). In addition to the built-ins for structures\index{structure}, the following built-ins are provided for maps\index{map}:
 \begin{itemize}
 \item \texttt{clear($Map$)}\index{\texttt{clear/1}}: This predicate clears the map $Map$. It throws an error if $Map$ is not a map.
+\item \texttt{del($Map$,$Key$)}\index{\texttt{del/2}}: This predicate deletes from $Map$ the pair that has the key $Key$. It throws an error if $Map$ is not a map. It does nothing if $Map$ does not contain a pair with $Key$.
 \item \texttt{get($Map$,$Key$) = $Val$}\index{\texttt{get/2}}: This function returns \texttt{$Val$} of the key-value pair \texttt{$Key$$=$$Val$} in \texttt{$Map$}. It throws an error if $Map$ does not contain the key $Key$.
 \item \texttt{get($Map$,$Key$,$DefaultVal$) = $Val$}\index{\texttt{get/3}}: This function returns \texttt{$Val$} of the key-value pair \texttt{$Key$$=$$Val$} in \texttt{$Map$}. It returns $DefaultVal$ if $Map$ does not contain $Key$.
 \item \texttt{has\_key($Map$,$Key$)}\index{\texttt{has\_key/2}}: This predicate is true if $Map$ contains a pair with $Key$. 
@@ -487,7 +488,12 @@ A predicate\index{predicate} or function\index{function} is said to be \emph{hig
 \item \texttt{find\_all($Template$,$Call$) = $Answers$}\index{\texttt{find\_all/2}}: This function is the same as the above function.
 \item \texttt{freeze($X$,$Call$)}\index{\texttt{freeze/2}}: This predicate delays the evaluation of $Call$ until $X$ becomes a non-variable term.
 \item \texttt{map($FuncOrList$,$ListOrFunc$) = $ResList$}\index{\texttt{map/2}}: This function applies a given function to every element of a given list and returns a list of the results. One of the arguments is a function, and the other is a list. The order of the arguments is not important. 
-\item \texttt{map($Func$,$List1$,$List2$) = $ResList$}\index{\texttt{map/3}}: Let $List1$ be \texttt{[$A_1$,$\ldots$,$A_n$]} and $List2$ be \texttt{[$B_1$,$\ldots$,$B_n$]}. This function applies the function $Func$ to every pair of elements $(A_i,B_i)$ by calling \texttt{apply($Func$,$A_i$,$B_i$)}, and returns a list of the results.
+\item \texttt{map($Func$,$List1$,$List2$) = $ResList$}\index{\texttt{map/3}}: Let
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> $List1$ = \texttt{[$A_1$,$\ldots$,$A_n$]} and $List2$ = \texttt{[$B_1$,$\ldots$,$B_n$]}.
+\end{tabbing}
+This function applies the function $Func$ to every pair of elements $(A_i,B_i)$ by calling \texttt{apply($Func$,$A_i$,$B_i$)}, and returns a list of the results.
 \item \texttt{maxof($Call$,$Objective$)}\index{\texttt{maxof/2}}: This predicate finds a satisfiable instance of $Call$, such that $Objective$ has the maximum value. Here, $Call$ is used as a generator, and $Objective$ is an expression to be maximized. For every satisfiable instance of $Call$, $Objective$ must be a ground expression. For \texttt{maxof}, search is restarted with a new bound each time that a better answer is found.
 \item \texttt{maxof($Call$,$Objective$,$ReportCall$)}\index{\texttt{maxof/3}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that \texttt{call($ReportCall$)} is executed each time that an answer is found.
 \item \texttt{maxof\_inc($Call$,$Objective$)}\index{\texttt{maxof\_inc/2}}: This is the same as \texttt{maxof($Call$,$Objective$)}, except that search continues rather than being restarted each time that a better solution is found.

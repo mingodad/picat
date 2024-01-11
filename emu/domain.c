@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : domain.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Primitives on finite domains
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -1086,8 +1086,8 @@ int c_reachability_test() {
     BPLONG N, VarsVect, i, count, var, elm, last;
     BPLONG_PTR var_vect_ptr, scc_nodes, front, rear, dv_ptr;
     SYM_REC_PTR sym_ptr;
-
     VarsVect = ARG(1, 1);
+    //    printf("=>reachability"); write_term(VarsVect); printf("\n");
     DEREF_NONVAR(VarsVect);
     var_vect_ptr = (BPLONG_PTR)UNTAGGED_ADDR(VarsVect);
     sym_ptr = (SYM_REC_PTR)FOLLOW(var_vect_ptr);
@@ -1127,6 +1127,7 @@ int c_reachability_test() {
             }
         }
     }
+    //    printf("<=reachability %ld\n", count);
     if (count == N) return BP_TRUE; else return BP_FALSE;
 }
 
@@ -1343,9 +1344,7 @@ int b_PATH_FROM_TO_REACHABLE()
 }
 
 
-int check_reach_cuts_in_one_connection(BPLONG n, BPLONG Start, BPLONG End,
-        BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, 
-        BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
+int check_reach_cuts_in_one_connection(BPLONG n, BPLONG Start, BPLONG End, BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG i;
 
@@ -1401,8 +1400,7 @@ int check_reach_cuts_in_one_connection(BPLONG n, BPLONG Start, BPLONG End,
     return BP_TRUE;
 }
 
-int path_from_to_node_degree(BPLONG n, BPLONG NodeNum, BPLONG Lab, BPLONG TaggedLab,
-        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray)
+int path_from_to_node_degree(BPLONG n, BPLONG NodeNum, BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray)
 {
     BPLONG LabVar, SuccVar;
 
@@ -1452,8 +1450,7 @@ int path_from_to_node_degree(BPLONG n, BPLONG NodeNum, BPLONG Lab, BPLONG Tagged
     }
 }
 
-void check_reach_withno_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, 
-        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
+void check_reach_withno_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -1516,9 +1513,7 @@ void check_reach_withno_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab,
     }
 }
 
-void check_reach_with_one_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, 
-        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, 
-        BPLONG_PTR VisitedArray, BPLONG cutNodeNum)
+void check_reach_with_one_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray, BPLONG cutNodeNum)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -1582,10 +1577,7 @@ void check_reach_with_one_cut(BPLONG Start, BPLONG Lab, BPLONG TaggedLab,
 }
 
 /* consider firstCon connection */
-void check_two_cuts_in_two_connections(BPLONG n, BPLONG firstCon, BPLONG nConnections,
-        BPLONG_PTR ConStartArray, BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray,
-        BPLONG_PTR ConFlagArray, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray,
-        BPLONG_PTR VisitedArray)
+void check_two_cuts_in_two_connections(BPLONG n, BPLONG firstCon, BPLONG nConnections, BPLONG_PTR ConStartArray, BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray, BPLONG_PTR ConFlagArray, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG Start, End, Lab, TaggedLab, LabVar, v1, v2;
     BPLONG_PTR dv_ptr;
@@ -1629,10 +1621,7 @@ void check_two_cuts_in_two_connections(BPLONG n, BPLONG firstCon, BPLONG nConnec
    check if they are cutting nodes for another connection with label l2. If so, 
    then no labels other than l1 and l2 are allowed for v1 and v2.
 */
-void check_cuts_in_another_connection(BPLONG v1, BPLONG v2, BPLONG n, BPLONG firstCon,
-        BPLONG firstLab, BPLONG nConnections, BPLONG_PTR ConStartArray,
-        BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray, BPLONG_PTR LabVarArray,
-        BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
+void check_cuts_in_another_connection(BPLONG v1, BPLONG v2, BPLONG n, BPLONG firstCon, BPLONG firstLab, BPLONG nConnections, BPLONG_PTR ConStartArray, BPLONG_PTR ConEndArray, BPLONG_PTR ConLabArray, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray)
 {
     BPLONG secondCon, LabVar, Start, End, Lab, TaggedLab, Flag;
     BPLONG_PTR dv_ptr1, dv_ptr2;
@@ -1672,9 +1661,7 @@ void check_cuts_in_another_connection(BPLONG v1, BPLONG v2, BPLONG n, BPLONG fir
 }
 
 
-void check_reach_with_two_cuts(BPLONG Start, BPLONG Lab, BPLONG TaggedLab,
-        BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray,
-        BPLONG cutNodeNum1, BPLONG cutNodeNum2)
+void check_reach_with_two_cuts(BPLONG Start, BPLONG Lab, BPLONG TaggedLab, BPLONG_PTR LabVarArray, BPLONG_PTR SuccVarArray, BPLONG_PTR VisitedArray, BPLONG cutNodeNum1, BPLONG cutNodeNum2)
 {
     BPLONG curNodeNum, LabVar, SuccVar;
     BPLONG_PTR q_front, q_rear;
@@ -2970,7 +2957,7 @@ int c_CLPFD_SUB_AC_ccc() {
 int b_CLPFD_MULTIPLY_INT_ccc(BPLONG X, BPLONG Y, BPLONG Z)
 {
     BPLONG_PTR dv_ptr_x, dv_ptr_y, dv_ptr_z;
-    BPLONG minX, maxX, minY, maxY, minZ, maxZ, lowX, upX, lowY, upY, lowZ, upZ, tmp;
+    BPLONG minX, maxX, minY, maxY, minZ, maxZ, lowX, upX, lowY, upY, lowZ, upZ;
     int z_includes_0 = 1;
 
     DEREF_NONVAR(X); DEREF_NONVAR(Y); DEREF_NONVAR(Z);
@@ -3075,14 +3062,14 @@ x_is_int:
         if (ISINT(FOLLOW(dv_ptr_y))) return BP_TRUE;
         maxY = DV_last(dv_ptr_y);
     }
-    if (minX > 0 && maxX < BP_MAXINT_1W || maxX < 0 && minX > BP_MININT_1W) {
+    if ((minX > 0 && maxX < BP_MAXINT_1W) || (maxX < 0 && minX > BP_MININT_1W)) {
         lowY = min4(sound_low_div(minZ, minX), sound_low_div(minZ, maxX), sound_low_div(maxZ, minX), sound_low_div(maxZ, maxX));
         upY = max4(sound_up_div(minZ, minX), sound_up_div(minZ, maxX), sound_up_div(maxZ, minX), sound_up_div(maxZ, maxX));
         if (domain_region_noint(dv_ptr_y, lowY, upY) == BP_FALSE) return BP_FALSE;
         if (ISINT(FOLLOW(dv_ptr_y))) return BP_TRUE;
         minY = DV_first(dv_ptr_y); maxY = DV_last(dv_ptr_y);
     }
-    if (minY > 0 && maxY < BP_MAXINT_1W || maxY < 0 && minY > BP_MININT_1W) {
+    if ((minY > 0 && maxY < BP_MAXINT_1W) || (maxY < 0 && minY > BP_MININT_1W)) {
         lowX = min4(sound_low_div(minZ, minY), sound_low_div(minZ, maxY), sound_low_div(maxZ, minY), sound_low_div(maxZ, maxY));
         upX = max4(sound_up_div(minZ, minY), sound_up_div(minZ, maxY), sound_up_div(maxZ, minY), sound_up_div(maxZ, maxY));
         if (domain_region_noint(dv_ptr_x, lowX, upX) == BP_FALSE) return BP_FALSE;

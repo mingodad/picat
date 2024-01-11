@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : clpfd_libs.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Primitives on linear constraints
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -801,7 +801,7 @@ void print_linear_constr(BPLONG n)
 int b_CONSTR_COES_TYPE(BPLONG n)
 {
     BPLONG_PTR dv_ptr, var_ptr, coe_ptr;
-    BPLONG a, c, x, coesType, first, last;
+    BPLONG a, c, x, first, last;
     int property, type, term_lb, term_ub, all_bool_vars, i;
 
     n = INTVAL(n);
@@ -1014,11 +1014,9 @@ int b_BOOL_OR_c(BPLONG n) {
     x1 = FOLLOW(var_ptr); DEREF_NONVAR(x1);
     if (IS_SUSP_VAR(x1)) {
         int num_of_vars = 0;
-        BPLONG last_var;
         for (i = 1; i < n; i++) {
             x = FOLLOW(var_ptr-i); DEREF_NONVAR(x);
             if (IS_SUSP_VAR(x)) {
-                last_var = x;
                 num_of_vars++;
             } else if (x == BP_ONE) {  /* if x=1, then assign x1 to 1 and kill this propagator */
                 dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(x1);
@@ -1089,11 +1087,9 @@ int b_BOOL_AND_c(BPLONG n) {
     x1 = FOLLOW(var_ptr); DEREF_NONVAR(x1);
     if (IS_SUSP_VAR(x1)) {
         int num_of_vars = 0;
-        BPLONG last_var;
         for (i = 1; i < n; i++) {
             x = FOLLOW(var_ptr-i); DEREF_NONVAR(x);
             if (IS_SUSP_VAR(x)) {
-                last_var = x;
                 num_of_vars++;
             } else if (x == BP_ZERO) {  /* if x=0, then assign x1 to 0, and kill this propagator */
                 dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(x1);
@@ -1149,7 +1145,7 @@ int b_BOOL_AND_c(BPLONG n) {
 /* X1 = max(X2, ..., Xn), n<=15, Xi's are in the current frame */
 int b_PROP_MAX_c(BPLONG n) {
     BPLONG_PTR dv_ptr1, dv_ptr, var_ptr;
-    BPLONG x1, x, first1, last1, first, last, num_of_vars, acc_min, acc_max, last_var;
+    BPLONG x1, x, first1, last1, first, last, num_of_vars, acc_min, acc_max;
     int i;
 
     //  printf("=> prop_max\n");

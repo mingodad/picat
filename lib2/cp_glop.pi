@@ -1,0 +1,204 @@
+import os, util.
+
+test =>
+    _ = command("rm GLP/*.cc"),
+    _ = command("rm GLP/*.h"),
+    _ = command("rm GLP/*.c"),    
+    _ = command("rm GLP/*.inc"),
+    _ = command("rm GLP/*.d"),
+    _ = command("rm GLP/*.o"),
+    _ = command("rm GLP/*~"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_fixed.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_if.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_impl.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_libc.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_posix.h").
+    
+
+main =>
+    _ = command("rm GLP/*.cc"),
+    _ = command("rm GLP/*.h"),
+    _ = command("rm GLP/*.c"),    
+    _ = command("rm GLP/*.inc"),
+    _ = command("rm GLP/*.d"),
+    _ = command("rm GLP/*.o"),
+    _ = command("rm GLP/*~"),
+%    cp("/Users/nzhou/or-tools/install_make/include/absl/time/internal/cctz/include/cctz/*.h ../..")
+    Fs = listdir("ortools/glop"),
+    foreach (F in Fs, (append(_,".cc",F); append(_,".h",F)))
+        cp_glop(F)
+    end,
+    cp_glop_depend("google/protobuf/io/gzip_stream.h"),
+    cp_dep_dir("", "/Users/nzhou/or-tools/build_make/_deps/zlib-src"),
+    cp_glop_depend("ortools/linear_solver/glop_interface.cc"),
+    cp_glop_depend("google/protobuf/generated_message_tctable_lite.cc"),
+    cp_glop_depend("absl/base/config.h"),
+    cp_glop_depend("absl/crc/internal/crc_x86_arm_combined.cc"),
+    cp_glop_depend("absl/crc/internal/crc_memcpy_fallback.cc"),
+    cp_glop_depend("absl/random/internal/randen_round_keys.cc"),
+    true.
+/*    
+    cp_glop_depend("absl/time/time.h"),
+    cp_glop_depend("absl/time/civil_time.h"),
+    cp_glop_depend("absl/time/format.cc"),
+    cp_glop_depend("absl/time/clock.h"),
+    cp_glop_depend("absl/time/duration.cc"),    
+    cp_glop_depend("absl/time/internal/cctz/civil_time.h"),
+    cp_glop_depend("absl/time/internal/cctz/civil_time_detail.h"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone.h"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_fixed.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_format.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_if.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_impl.cc"),    
+    cp_glop_depend("absl/time/internal/cctz/time_zone_info.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_libc.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_lookup.cc"),
+    cp_glop_depend("absl/time/internal/cctz/time_zone_posix.cc"),
+    cp_glop_depend("absl/time/internal/cctz/zone_info_source.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_fixed.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_if.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_impl.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_libc.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_posix.h"),
+    cp_base("/Users/nzhou/or-tools/build_make/_deps/absl-src/absl/time/internal/cctz/src/time_zone_info.h")
+*/    
+
+
+
+cp_dep_dir(Pre, Dir) =>
+    Fs = listdir(Dir),
+    foreach (F in Fs, (append(_,".h",F); append(_,".c",F); append(_,".cc",F); append(_,".pc",F)))
+        println(F),
+        cp_glop_depend(Pre ++ F)
+    end.
+        
+cp_glop(F) =>
+    InF = "ortools/glop/" ++ F,
+    Lines = read_file_lines(InF),
+    OutF = "GLP/ortools_glop_"++F,
+    if not exists(OutF) then
+        OS = open(OutF, write),
+        cp_glop_lines(Lines,OS,Ds),
+        close(OS),
+        foreach (D in Ds)
+            cp_glop_depend(D)
+        end
+    end.
+    
+cp_glop_depend(Dep),
+    dep_dirs(DepDirs),
+    member(Dir, DepDirs),
+    F = Dir ++ Dep,
+    exists(F),
+    UnderscoreName = [C : C1 in Dep, C = cond(C1=='/', '_', C1)],
+    not ignored(UnderscoreName)
+=>    
+    OutF = "GLP/" ++ UnderscoreName,
+    println($outf(OutF,Dep)),
+    if not exists(OutF) then
+        Lines = read_file_lines(F),
+        OS = open(OutF, write),
+        cp_glop_lines(Lines,OS,Ds),
+        close(OS),
+        foreach (D in Ds)
+            cp_glop_depend(D)
+        end
+    end,
+    if append(Pre,['.',h],_,Dep) then
+        cp_glop_depend(Pre ++ ".cc"),
+        cp_glop_depend(Pre ++ ".pc"),    
+        cp_glop_depend(Pre ++ ".c")    
+    end,
+    printf("<=outf(%s)\n",OutF).
+cp_glop_depend(Dep) => true.
+
+cp_base(F) =>
+    append(_,['/'|BaseF],F),
+    not member('/',BaseF),!,
+    Lines = read_file_lines(F),
+    OutF = "GLP/"++BaseF,
+    if not exists(OutF) then
+        OS = open(OutF, write),
+        cp_glop_lines(Lines,OS,Ds),
+        close(OS),
+        foreach (D in Ds)
+            cp_glop_depend(D)
+        end
+    end.
+    
+cp_glop_lines([],OS,Ds) => Ds = [].
+cp_glop_lines([Line|Lines],OS,Ds) =>
+    cp_glop_line(Line,OS,Ds,Ds1),
+    cp_glop_lines(Lines,OS,Ds1).
+    
+cp_glop_line(['#',i,n,c,l,u,d,e,' ','"'|Line],OS,Ds,DsR)
+=>
+    cp_glop_include(Line,OS,Ds,DsR).
+cp_glop_line(['#',' ',i,n,c,l,u,d,e,' ','"'|Line],OS,Ds,DsR)
+=>
+    cp_glop_include(Line,OS,Ds,DsR).
+cp_glop_line(['#',' ',' ',i,n,c,l,u,d,e,' ','"'|Line],OS,Ds,DsR)
+=>
+    cp_glop_include(Line,OS,Ds,DsR).
+cp_glop_line(['#',' ',' ',' ',i,n,c,l,u,d,e,' ','"'|Line],OS,Ds,DsR)
+=>
+    cp_glop_include(Line,OS,Ds,DsR).
+cp_glop_line([],OS,Ds,DsR) =>
+    nl(OS),
+    Ds = DsR.
+cp_glop_line(Line,OS,Ds,DsR) =>
+    println(OS,Line),
+    Ds = DsR.
+
+cp_glop_include(Line,OS,Ds,DsR), ignored_include(Line) =>
+    Ds = DsR.
+cp_glop_include(Line,OS,Ds,DsR) =>
+    printf("glop_include %s\n",Line),
+    (append(Str,['"'|_],Line); Str = Line),!,
+    Str1 = [C : C1 in Str, C = cond(C1=='/', '_', C1)],
+    printf(OS,"#include \"%s\"\n", Str1),
+    Ds = [Str|DsR].
+
+dep_dirs(DepDirs) =>
+    DepDirs = ["./",
+               "/Users/nzhou/or-tools/install_make/include/",
+               "/Users/nzhou/or-tools/build_make/_deps/absl-src/",
+               "/Users/nzhou/or-tools/build_make/_deps/zlib-src/",
+               "/Users/nzhou/or-tools/build_make/_deps/protobuf-src/src/",
+               "/Users/nzhou/or-tools/build_make/",
+               "/Users/nzhou/or-tools/build_make/_deps/protobuf-src/third_party/utf8_range/"
+               ].
+
+ignored_include([a,b,s,l,'/',t,i,m,e|_]) => true.
+ignored_include(Line) =>
+    (append(Str,['"'|_],Line); Str = Line),!,
+    UnderscoreName = [C : C1 in Str, C = cond(C1=='/', '_', C1)],
+    printf("ignored? %s\n", UnderscoreName),
+    ignored(UnderscoreName).
+        
+ignored("absl_synchronization_internal_kernel_timeout.h").
+ignored("absl_log_log_entry.h").
+ignored("absl_synchronization_mutex.h").
+ignored("absl_strings_internal_cordz_info.h").
+ignored("absl_log_internal_log_message.h").
+ignored("ortools_base_timer.h").            
+ignored("ortools_util_time_limit.h").
+ignored("absl_profiling_internal_sample_recorder.h").
+ignored("absl_strings_internal_cordz_update_scope.h").
+ignored("absl_flags_internal_flag.h").
+ignored("ortools_util_stats.h").
+ignored("google_protobuf_thread_safe_arena.h").
+ignored("google_protobuf_serial_arena.h").
+ignored("google_protobuf_string_block.h").
+ignored("google_protobuf_arena_cleanup.h").
+%ignored("absl_strings_cord.h").
+%ignored("absl_strings_internal_cordz_update_scope.h").
+ignored("absl_status_internal_status_internal.h").
+ignored("absl_status_status.h").
+ignored("absl_flags_flag.h").
+ignored("absl_container_internal_hashtablez_sampler.h").
+ignored("absl_synchronization_notification.h").
+        
+    
+    
+    

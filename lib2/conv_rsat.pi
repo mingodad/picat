@@ -1,0 +1,323 @@
+import os, util.
+
+main =>
+    Fs = listdir(".").sort(),
+    foreach (F in Fs, append(_,".jl",F))
+        conv(F)
+    end.
+
+conv(F) =>
+    Lines = read_file_lines(F),
+    OS = open("tmp/"++F, write),
+    println(OS, "using CSP2SAT"),
+    println(OS, "using Test"),
+    foreach (Line in Lines)
+        conv(OS,Line)
+    end,
+    close(OS).
+
+%conv(OS,Line)?=> println(Line),fail.
+conv(OS,Line), append(Pre,"@variable(csp.jump_model,",Post,Line) =>
+    print_str(OS,Pre),
+    ((append(_,"Bin",_,Post); append(_,"binary",_,Post)) ->
+        print(OS,"CSP2SAT.bvar(csp,")
+    ;
+        print(OS,"CSP2SAT.var(csp,")
+    ),
+    print_str(OS,Post),
+    nl(OS).
+conv(OS,Line), append(Pre,Keyword,Post,Line), fun(Keyword) =>
+    print_str(OS,Pre),
+    printf(OS,"CSP2SAT.%s",Keyword),
+    print_str(OS,Post),
+    nl(OS).
+conv(OS,[]) => nl(OS).
+conv(OS,Line) => println(OS,Line).
+
+print_str(OS,[]) => nl(OS).
+print_str(OS,Str) => print(OS,Str).    
+    
+    /*
+conv_var(OS,[],Post) =>
+    extract_name(Post,Name),
+    conv_var(OS,"Name = ", Post).
+conv_var(OS,Pre,Post) =>
+    printf(OS,"%s",Pre),
+    extract_dom(Post,Dom),
+    (Dom == $':'(0,1) ->
+        printf(OS,"%s = bvar("),
+        extract_write_dims(OS,Post),
+        println(")")
+    ;
+        printf("%s = var("),
+        extract_write_dims(OS,Post),
+        (nonvar(Dom) -> write_dom(OS,Dom); true)
+    ).
+    
+extract_name(Str,Name) =>
+    [_,Token2,_] = Str.split(","),
+    (append(Pre,['['|_],Token2) ->
+        Name = strip(Pre)
+    ; apapend(_,['<','='|Str1], ['<','='|_], Token2) -> 
+        Name = strip(Str1)
+    ;
+        Name = strip(Str)
+    ).
+
+extract_write_dims(OS,Str) =>
+    [_,Token2,_] = Str.split(","),
+        
+*/    
+    
+fun("abs_eq") => true.
+fun("abs_eq") => true.
+fun("add_eq") => true.
+fun("add_eq") => true.
+fun("add_eq") => true.
+fun("all_different_except_0") => true.
+fun("all_equal") => true.
+fun("alldiff") => true.
+fun("argmax") => true.
+fun("assignment") => true.
+fun("at_most") => true.
+fun("bin_packing") => true.
+fun("bin_packing_load") => true.
+fun("bool_all") => true.
+fun("bool_and") => true.
+fun("bool_and") => true.
+fun("bool_and") => true.
+fun("bool_and") => true.
+fun("bool_and") => true.
+fun("bool_any") => true.
+fun("bool_clause") => true.
+fun("bool_clause") => true.
+fun("bool_eq_or_and") => true.
+fun("bool_not") => true.
+fun("bool_not") => true.
+fun("bool_or") => true.
+fun("bool_or") => true.
+fun("bool_or") => true.
+fun("bool_or") => true.
+fun("bool_or") => true.
+fun("bool_or_and") => true.
+fun("bool_or_imp") => true.
+fun("bool_or_imp") => true.
+fun("bool_xor") => true.
+fun("bool_xor") => true.
+fun("bool_xor") => true.
+fun("bool_xor") => true.
+fun("bool_xor_imp") => true.
+fun("circuit") => true.
+fun("constrain_subcircuit_start") => true.
+fun("count") => true.
+fun("count") => true.
+fun("count_eq_reif") => true.
+fun("cumulative") => true.
+fun("cumulative") => true.
+fun("cumulative_aux") => true.
+fun("decreasing") => true.
+fun("diffn") => true.
+fun("diffn") => true.
+fun("diffn") => true.
+fun("diffn_nonstrict") => true.
+fun("disjunctive") => true.
+fun("div_eq") => true.
+fun("div_eq") => true.
+fun("div_eq") => true.
+fun("div_eq") => true.
+fun("div_eq") => true.
+fun("div_eq") => true.
+fun("div_eq_aux") => true.
+fun("domain") => true.
+fun("domain") => true.
+fun("domain") => true.
+fun("domain") => true.
+fun("domain") => true.
+fun("domain") => true.
+fun("domain_notin") => true.
+fun("domain_notin") => true.
+fun("domain_notin") => true.
+fun("domain_notin") => true.
+fun("element") => true.
+fun("element") => true.
+fun("element") => true.
+fun("element0") => true.
+fun("element0") => true.
+fun("element0") => true.
+fun("eq") => true.
+fun("eq") => true.
+fun("fzn_circuit") => true.
+fun("ge") => true.
+fun("ge") => true.
+fun("global_cardinality") => true.
+fun("global_cardinality_closed") => true.
+fun("global_cardinality_low_up") => true.
+fun("global_cardinality_low_up_closed") => true.
+fun("gt") => true.
+fun("gt") => true.
+fun("imp_domain") => true.
+fun("imp_domain") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq") => true.
+fun("imp_eq_if_not") => true.
+fun("imp_eq_if_not") => true.
+fun("imp_eq_if_not") => true.
+fun("imp_eq_if_not") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_ge") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_gt") => true.
+fun("imp_le") => true.
+fun("imp_le") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq") => true.
+fun("imp_neq_if_not") => true.
+fun("imp_neq_if_not") => true.
+fun("imp_neq_if_not") => true.
+fun("imp_neq_if_not") => true.
+fun("imp_neq_if_not") => true.
+fun("imp_table_in") => true.
+fun("imp_table_notin") => true.
+fun("increasing") => true.
+fun("inverse") => true.
+fun("knapsack") => true.
+fun("lex_le") => true.
+fun("lex_lelt") => true.
+fun("lex_lesseq") => true.
+fun("lex_lt") => true.
+fun("matrix_element") => true.
+fun("matrix_element0") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("max_eq") => true.
+fun("member") => true.
+fun("member") => true.
+fun("min_eq") => true.
+fun("min_eq") => true.
+fun("min_eq") => true.
+fun("min_eq") => true.
+fun("min_eq") => true.
+fun("min_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq") => true.
+fun("mod_eq_aux") => true.
+fun("mul_eq") => true.
+fun("mul_eq") => true.
+fun("mul_eq") => true.
+fun("mul_eq") => true.
+fun("neq") => true.
+fun("neq") => true.
+fun("neq") => true.
+fun("network_flow_cost") => true.
+fun("nvalue") => true.
+fun("register_reif_eq") => true.
+fun("register_reif_eq") => true.
+fun("regular") => true.
+fun("reif_bool_all") => true.
+fun("reif_bool_any") => true.
+fun("reif_bool_imp") => true.
+fun("reif_domain") => true.
+fun("reif_domain") => true.
+fun("reif_domain") => true.
+fun("reif_domain") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_eq") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_ge") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_gt") => true.
+fun("reif_le") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_neq") => true.
+fun("reif_table_in") => true.
+fun("reif_table_in") => true.
+fun("reif_table_notin") => true.
+fun("reif_table_notin") => true.
+fun("seq_precede_chain") => true.
+fun("sliding_sum") => true.
+fun("strictly_decreasing") => true.
+fun("strictly_increasing") => true.
+fun("subcircuit") => true.
+fun("table_in") => true.
+fun("table_in") => true.
+fun("table_in_support_encoding") => true.
+fun("table_notin") => true.
+fun("table_notin") => true.
+fun("table_to_trie") => true.
+fun("tuple_to_trie") => true.
+fun("value_precede") => true.
+fun("value_precede_chain") => true.
+fun("Model") => true.    
+fun("solve!") => true.
+fun("solve_all") => true.
+fun("minimize!") => true.
+fun("maximize!") => true.            
+    
+    
+    
+    
+    
+    

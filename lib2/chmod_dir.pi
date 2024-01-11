@@ -1,0 +1,23 @@
+/* change the access mode of every file/directory to "rw" */
+
+import os.
+
+main =>
+    Wd = pwd(),
+    chmod_dir(Wd).
+
+chmod_dir(Dir) =>
+    Items = listdir(Dir),
+    foreach (Item in Items, Item !== ".", Item !== "..")
+       FullName = full_path(Dir, Item),
+       command("chmod +rw " ++ FullName) = _,
+	   println("chmod +rw " ++ FullName),
+       (directory(FullName) ->
+           chmod_dir(FullName)
+        ;
+           true
+        )
+    end.
+         
+full_path(Dir,Name) =
+    Dir ++ [separator()] ++ Name.

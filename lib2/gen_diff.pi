@@ -1,0 +1,11 @@
+import os.
+
+main([D1,D2]) =>
+    Fs1 = listdir(D1),
+	Fs2 = listdir(D2),
+	foreach (F in Fs1, membchk(F,Fs2), not directory(F))
+		printf("echo %s\n", F),
+        printf("diff %s %s\n", D1++"/"++F, D2++"/"++F)
+	end.
+	
+    

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : dis.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -98,7 +98,7 @@ void dis_text()
     } while ((cpreg = (BPLONG_PTR)*cpreg));
 }
 
-void print_inst(FILE *filedes)
+void print_inst(FILE* filedes)
 {
 
     BPLONG opcode;

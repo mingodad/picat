@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : unify.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -185,7 +185,7 @@ int unify_lst_lst(BPLONG op1, BPLONG op2)
 */
 int unify_str_str(BPLONG op1, BPLONG op2)
 {
-    register BPLONG arity, i;
+    BPLONG arity, i;
 
     if (op1 == op2) return 1;
     UNTAG_ADDR(op1);
@@ -333,7 +333,7 @@ int unify_dvar_dvar(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
         goto itdvar_bvdvar;
     }
 
-bvdvar_bvdvar:
+    //bvdvar_bvdvar:
     {
         BPLONG elm, updated;
         updated = 1;
@@ -629,6 +629,7 @@ beginning:
                          }
                          return 1;
                      });
+    return 0;   /* unreachable */
 }
 
 int c_SAME_ADDR() {

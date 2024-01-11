@@ -1,0 +1,21 @@
+main([File,OFile]) =>
+	printf("%s %s\n",File, OFile),
+    FD = open(File),			 
+    FD.read_line() = Line,
+	OFD = open(OFile, write),
+	proc(Line,FD,OFD).
+
+proc(end_of_file,FD,OFD) =>
+	close(FD),
+	close(OFD).
+proc([c,' '|_],FD,OFD) =>
+	FD.read_line() = Line,
+	proc(Line,FD,OFD).
+proc([],FD,OFD) =>
+	nl(OFD),
+	FD.read_line() = Line,
+	proc(Line,FD,OFD).
+proc(Line,FD,OFD) =>
+	OFD.println(Line),
+	FD.read_line() = NLine,
+	proc(NLine,FD,OFD).

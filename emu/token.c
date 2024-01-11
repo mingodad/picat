@@ -319,37 +319,37 @@ int next_token_index = 0;
     }
 #else
 #define BP_GETC_STRING(c) {                             \
-	c = *string_in;					\
-	if (c != 0) {					\
-	  string_in++;					\
-	  if (chars_pool_index >= MAX_CHARS_IN_POOL){	\
-		c_init_chars_pool();			\
-	  }						\
-	  chars_pool[chars_pool_index++] = (char)c;	\
-	}						\
-  }
+        c = *string_in;                                 \
+        if (c != 0) {                                   \
+            string_in++;                                \
+            if (chars_pool_index >= MAX_CHARS_IN_POOL){ \
+                c_init_chars_pool();                    \
+            }                                           \
+            chars_pool[chars_pool_index++] = (char)c;   \
+        }                                               \
+    }
 
-#define BP_UNGETC_STRING {				\
-	string_in--;					\
-	chars_pool_index--;				\
-	if (chars_pool_index < 0) chars_pool_index = 0;	\
-  }
+#define BP_UNGETC_STRING {                              \
+        string_in--;                                    \
+        chars_pool_index--;                             \
+        if (chars_pool_index < 0) chars_pool_index = 0; \
+    }
 
 #define BP_GETC(card, c) {                              \
-	c = getc(card);					\
-	if (c >= 0) {					\
-	  if (chars_pool_index >= MAX_CHARS_IN_POOL){	\
-		c_init_chars_pool();			\
-	  }						\
-	  chars_pool[chars_pool_index++] = (char)c;	\
-	}						\
-  }
+        c = getc(card);                                 \
+        if (c >= 0) {                                   \
+            if (chars_pool_index >= MAX_CHARS_IN_POOL){ \
+                c_init_chars_pool();                    \
+            }                                           \
+            chars_pool[chars_pool_index++] = (char)c;   \
+        }                                               \
+    }
 
-#define BP_UNGETC(c, card) {				\
-	ungetc((char)c, card);				\
-	chars_pool_index--;				\
-	if (chars_pool_index < 0) chars_pool_index = 0;	\
-  }
+#define BP_UNGETC(c, card) {                            \
+        ungetc((char)c, card);                          \
+        chars_pool_index--;                             \
+        if (chars_pool_index < 0) chars_pool_index = 0; \
+    }
 #endif
 
 /* convert a code point to char array s, which has n remaining slots */
@@ -999,8 +999,7 @@ int read_utf8_character_string(int q) {
  *  "FOLLOWing" character.
  */
 
-int com0plain(FILE *card, /* source file */
-        int endeol) /* The closing character "!" */
+int com0plain(FILE * card, int endeol)
 {
     int c;
 
@@ -1014,7 +1013,7 @@ int com0plain(FILE *card, /* source file */
     return c;
 }
 
-int com0plain_string(int endeol)  /* The closing character "!" */
+int com0plain_string(int endeol) /* The closing character "!" */
 {
     int c;
 
@@ -1051,10 +1050,10 @@ int com0plain_string(int endeol)  /* The closing character "!" */
  *  When this is called, the initial <begcom><astcom> has been consumed.
  */
 
-int com2plain(
-    FILE *card,  /* source file */
-    int astcom,  /* The asterisk character "*" */
-    int endcom)  /* The closing character "/" */
+int com2plain(FILE *card, int astcom, int endcom)
+//    card;  /* source file */
+//    int astcom;  /* The asterisk character "*" */
+//    int endcom;  /* The closing character "/" */
 {
     int c;
     int state;
@@ -1074,9 +1073,9 @@ int com2plain(
     return BP_TRUE;
 }
 
-int com2plain_string(
-    int astcom,  /* The asterisk character "*" */
-    int endcom)  /* The closing character "/" */
+int com2plain_string(int astcom, int endcom)
+//    int astcom;  /* The asterisk character "*" */
+//    int endcom;  /* The closing character "/" */
 {
     int c;
     int state;
@@ -1236,7 +1235,7 @@ START:
                 BP_GETC(card, c);
             lastc = c;
             return RDIGIT;
-        } else if (c == intab.dpoint) {  /* . */
+        } else  if (c == intab.dpoint) {  /* . */
             BP_GETC(card, d);
             if (InType(d) == DIGIT) {
                 *s++ = '.';
@@ -1267,15 +1266,16 @@ START:
                 *s = 0;
                 lastc = c;
                 return REALO;
-            } else  /* c has not changed */
+            } else {  /* c has not changed */
                 BP_UNGETC(d, card);
+            }
         }
 #ifdef XCSP_PICAT
-		else if (c == 'x'){                       // in XCSP3, vxk denotes k occurrences of v
-		  *s = 0;
-		  lastc = ' ';
-		  return XCSP_VX;
-		}
+        else if (c == 'x'){                       // in XCSP3, vxk denotes k occurrences of v
+            *s = 0;
+            lastc = ' ';
+            return XCSP_VX;
+        }
 #endif
         *s = 0;
         lastc = c;
@@ -1546,9 +1546,12 @@ START:
             BP_GETC_STRING(d);
             if (d == 'b' || d == 'B' || d == 'o' || d == 'O' || d == 'x' || d == 'X') {  /* binary, octal, hexadecimal*/
                 int base;
-                if (d == 'b' || d == 'B') base = 2;
-                else if (d == 'o' || d == 'O') base = 8;
-                else base = 16;
+                if (d == 'b' || d == 'B')
+                    base = 2;
+                else if (d == 'o' || d == 'O')
+                    base = 8;
+                else
+                    base = 16;
                 BP_GETC_STRING(c);  /* first char right after must be a valid digit of the base */
                 if (DigVal(c) < 0 || DigVal(c) >= base || c == '_') {
                     bp_exception = c_syntax_error(et_INTEGER);
@@ -1937,9 +1940,9 @@ int b_NEXT_TOKEN_ff(BPLONG op1, BPLONG op2)
 #ifdef BPSOLVER
 #else
     if (next_token_index >= MAX_TOKENS_IN_TERM) {
-	  c_init_chars_pool();
-	}
-	token_start_pos[next_token_index++] = chars_pool_index;
+        c_init_chars_pool();
+    }
+    token_start_pos[next_token_index++] = chars_pool_index;
 #endif
     if (string_in == NULL) i = GetToken(); else i = GetTokenString();
     if (bp_exception != (BPLONG)NULL) {
@@ -1978,10 +1981,10 @@ int b_NEXT_TOKEN_ff(BPLONG op1, BPLONG op2)
         //    cFUNC++;
 #ifdef BPSOLVER
 #else
-	if (next_token_index >= MAX_TOKENS_IN_TERM) {
-	  c_init_chars_pool();
-	}
-	token_start_pos[next_token_index++] = chars_pool_index;  /* f( has two tokens, actually */
+        if (next_token_index >= MAX_TOKENS_IN_TERM) {
+            c_init_chars_pool();
+        }
+        token_start_pos[next_token_index++] = chars_pool_index;  /* f( has two tokens, actually */
 #endif
         break;
     case UPPER:
@@ -2039,14 +2042,14 @@ int b_NEXT_TOKEN_ff(BPLONG op1, BPLONG op2)
             }
         }
 #ifdef XCSP_PICAT
-		if (i == XCSP_VX){
-		  BPLONG_PTR struct_ptr = heap_top;
-		  FOLLOW(heap_top++) = (BPLONG)xcsp_vx_psc;
-		  FOLLOW(heap_top++) = MAKEINT(newv);
-		  ASSIGN_f_atom(op1, MAKEINT(SPECIAL_NUM));
-		  ASSIGN_sv_heap_term(op2, ADDTAG(struct_ptr, STR));
-		  return BP_TRUE;
-		}
+        if (i == XCSP_VX){
+            BPLONG_PTR struct_ptr = heap_top;
+            FOLLOW(heap_top++) = (BPLONG)xcsp_vx_psc;
+            FOLLOW(heap_top++) = MAKEINT(newv);
+            ASSIGN_f_atom(op1, MAKEINT(SPECIAL_NUM));
+            ASSIGN_sv_heap_term(op2, ADDTAG(struct_ptr, STR));
+            return BP_TRUE;
+        }
 #endif
         ASSIGN_f_atom(op1, MAKEINT(INTEGERO));
         ASSIGN_f_atom(op2, MAKEINT(newv));
@@ -2143,14 +2146,14 @@ int c_report_syntax_error() {
     BPLONG char_no = 0;
 
     NTokensBefore = ARG(1, 1); DEREF(NTokensBefore); NTokensBefore = INTVAL(NTokensBefore);
-	/*
-	printf("report_syntax_error %d\n", NTokensBefore);
-	printf("term_start_pool_index = %ld\n", term_start_pool_index);
-	printf("chars_pool_index = %ld\n",  chars_pool_index);
-	*/
+    /*
+      printf("report_syntax_error %d\n", NTokensBefore);
+      printf("term_start_pool_index = %ld\n", term_start_pool_index);
+      printf("chars_pool_index = %ld\n",  chars_pool_index);
+    */
     if (NTokensBefore > MAX_TOKENS_IN_TERM){
-	  NTokensBefore = 0;
-	}
+        NTokensBefore = 0;
+    }
 
     here_out = 0;
     if (NTokensBefore == 0) here_out = 1;

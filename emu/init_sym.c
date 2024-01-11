@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : init_sym.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,7 +42,7 @@ void init_sym() {
     float_psc = insert_sym("$float", 6, 3);
     bigint_psc = insert_sym("$bigint", 7, 2);
 #ifdef XCSP_PICAT
-	xcsp_vx_psc = insert_sym("_$xcsp_vx", 9, 1);
+    xcsp_vx_psc = insert_sym("_$xcsp_vx", 9, 1);
 #endif
     address_psc = insert_sym("$address", 8, 2);  //branch
     socket_psc = insert_sym("$socket", 7, 1);  //branch

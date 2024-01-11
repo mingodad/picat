@@ -1,59 +1,59 @@
 module prism.
 
 fix_sw(Switch) => bp.fix_sw(Switch).
-get_prism_flag(Flag,Val) => bp.get_prism_flag(Flag,Val).
-get_samples(N,G,Gs) => get_samples_aux(N,G,Gs).
-get_samples_c(N,G,C,Gs,NSFs) => get_samples_c_aux(N,G,C,Gs,NSFs).
-get_sw(Switch,Info) => bp.get_sw(Switch,Info).
-get_values(Swi,Os) => bp.get_values(Swi,Os).
-learn(Goals) => NGoals=[NGoal : Goal in Goals, bp.prism_dyna_change_goal(Goal,NGoal)],bp.learn(NGoals).
-msw(Switch,Value) => bp.msw(Switch,Value).
+get_prism_flag(Flag, Val) => bp.get_prism_flag(Flag,Val).
+get_samples(N,G, Gs) => get_samples_aux(N,G,Gs).
+get_samples_c(N,G,C,Gs, NSFs) => get_samples_c_aux(N,G,C,Gs,NSFs).
+get_sw(Switch, Info) => bp.get_sw(Switch,Info).
+get_values(Swi, Os) => bp.get_values(Swi,Os).
+learn(Goals) => NGoals = [NGoal : Goal in Goals, bp.prism_dyna_change_goal(Goal,NGoal)], bp.learn(NGoals).
+msw(Switch, Value) => bp.msw(Switch,Value).
 print_graph(E) => bp.print_graph(E).
 prism_help => bp.prism_help.
 prob(Goal) => prob_aux(Goal).
-prob(Goal,P) => prob_aux(Goal,P).
+prob(Goal, P) => prob_aux(Goal,P).
 probf(Goal) => probf_aux(Goal).
-probf(Goal,Exp) => probf_aux(Goal,Exp).
-random_select(Os,Ds,O) => bp.random_select(Os,Ds,O).
+probf(Goal, Exp) => probf_aux(Goal,Exp).
+random_select(Os,Ds, O) => bp.random_select(Os,Ds,O).
 random_set_seed(Seed) => bp.random_set_seed(Seed).
 sample(Goal) => bp.prism_dyna_change_goal(Goal,NGoal), bp.sample(NGoal).
-set_prism_flag(Flag,Val) => bp.set_prism_flag(Flag,Val).
+set_prism_flag(Flag, Val) => bp.set_prism_flag(Flag,Val).
 set_sw(Switch) => bp.set_sw(Switch).
-set_sw(Switch,Distribution) => bp.set_sw(Switch,Distribution).
+set_sw(Switch, Distribution) => bp.set_sw(Switch,Distribution).
 show_sw => bp.show_sw.
-soft_msw(Switch,Value) => bp.soft_msw(Switch,Value).
+soft_msw(Switch, Value) => bp.soft_msw(Switch,Value).
 unfix_sw(Switch) => bp.unfix_sw(Switch).
 viterbi(Goal) => bp.prism_dyna_change_goal(Goal,NGoal), bp.viterbi(NGoal).
-viterbi(Goal,P) => bp.prism_dyna_change_goal(Goal,NGoal), bp.viterbi(NGoal,P).
+viterbi(Goal, P) => bp.prism_dyna_change_goal(Goal,NGoal), bp.viterbi(NGoal,P).
 viterbif(Goal) => viterbif(Goal,Prob,Nodes), print_viterbif(Prob,Nodes).
-viterbif(Goal,Prob,Nodes) => bp.prism_dyna_change_goal(Goal,NGoal),    bp.viterbif(NGoal,Prob,Nodes0), trans_expls(Nodes0,Nodes). 
+viterbif(Goal,Prob, Nodes) => bp.prism_dyna_change_goal(Goal,NGoal),    bp.viterbif(NGoal,Prob,Nodes0), trans_expls(Nodes0,Nodes). 
 viterbit(Goal) => viterbit(Goal,Prob,Nodes), print_viterbit(Prob,Nodes).
-viterbit(Goal,Prob,Nodes) => bp.prism_dyna_change_goal(Goal,NGoal),    bp.viterbit(NGoal,Prob,Nodes0), trans_expls(Nodes0,Nodes). 
+viterbit(Goal,Prob, Nodes) => bp.prism_dyna_change_goal(Goal,NGoal),    bp.viterbit(NGoal,Prob,Nodes0), trans_expls(Nodes0,Nodes). 
 
 prob_aux(Goal) =>
     prob_aux(Goal,P),
-	print_prob(Goal,P).
+    print_prob(Goal,P).
 
 prob_aux(Goal,P) =>
     bp.prism_dyna_change_goal(Goal,NGoal),
-	bp.prob(NGoal,P).
+    bp.prob(NGoal,P).
 
 probf_aux(Goal) =>
     probf(Goal,Exp),
-	not not bp.print_graph(Exp,$[lr('<=>')]).
+    not not bp.print_graph(Exp, $[lr('<=>')]).
 
 probf_aux(Goal,Exp) =>
     bp.prism_dyna_change_goal(Goal,NGoal),
-	bp.probf(NGoal,Exp1),
-	trans_expls(Exp1,Exp).
+    bp.probf(NGoal,Exp1),
+    trans_expls(Exp1,Exp).
 
-get_samples_aux(N,G,Gs) =>           % G assumed to never fail
-    bp.'$pp_require_positive_integer'(N,$'$msg'(1203),$(get_samples/3)),
+get_samples_aux(N,G,Gs) =>            % G assumed to never fail
+    bp.'$pp_require_positive_integer'(N,$'$msg'(1203), $(get_samples/3)),
     bp.prism_dyna_change_goal(G,ProbG),
-    bp.'$pp_require_probabilistic_atom'(ProbG,$'$msg'(1201),$(get_samples/3)),    
+    bp.'$pp_require_probabilistic_atom'(ProbG,$'$msg'(1201), $(get_samples/3)),    
     picat_get_samples(N,G,Gs).
 
-picat_get_samples(0,_,Gs) => Gs=[].
+picat_get_samples(0,_,Gs) => Gs = [].
 picat_get_samples(N,G,Gs) =>
     Gs = [G1|GsR],
     copy_term(G) = G1,
@@ -63,14 +63,14 @@ picat_get_samples(N,G,Gs) =>
 
 get_samples_c_aux(N,G,C,Gs,NSFs) =>
     bp.prism_dyna_change_goal(G,ProbG),
-	NC = $call(C),
+    NC = $call(C),
     bp.get_samples_c(N,ProbG,NC,Gs0,NSFs),
     trans_expls(Gs0,Gs).
 
 trans_expls(Nodes,NNodes) => 
     NNodes = [trans_root(Node) : Node in Nodes].
 
-trans_root(node(L,Paths)) = $node(NL,NPaths) =>
+trans_root(node(L, Paths)) = $node(NL,NPaths) =>
     bp.'$picat_strip_module'(L,_,_,NL),
     NPaths = [trans_path(Path) : Path in Paths].
 trans_root(List@[_|_]) = [trans_path(Path) : Path in List].
@@ -78,7 +78,7 @@ trans_root(Label) = Label, atomic(Label) => true.
 trans_root(Label) = NLabel =>
     bp.'$picat_strip_module'(Label,_,_,NLabel).      
 
-trans_path(path(TNodes,SNodes)) = $path(NTNodes,NSNodes) =>
+trans_path(path(TNodes, SNodes)) = $path(NTNodes,NSNodes) =>
     NTNodes = [trans_node(TNode) : TNode in TNodes],
     NSNodes = [trans_node(SNode) : SNode in SNodes].
 trans_path(List@[_|_]) = [trans_node(Node) : Node in List].
@@ -86,9 +86,9 @@ trans_path(Label) = Label, atomic(Label) => true.
 trans_path(Label) = NLabel =>
     bp.'$picat_strip_module'(Label,_,_,NLabel).      
 
-trans_node(gnode(Label,Value)) = $gnode(NLabel,Value) =>
+trans_node(gnode(Label, Value)) = $gnode(NLabel,Value) =>
     bp.'$picat_strip_module'(Label,_,_,NLabel).   
-trans_node(snode(Label,Value)) = $snode(NLabel,Value) =>
+trans_node(snode(Label, Value)) = $snode(NLabel,Value) =>
     bp.'$picat_strip_module'(Label,_,_,NLabel).   
 trans_node(List@[_|_]) = [trans_node(Node) : Node in List].
 trans_node(Label) = Label, atomic(Label) => true.
@@ -97,7 +97,7 @@ trans_node(Label) = NLabel =>
 
 print_viterbif(Prob,Nodes) =>
     nl,
-    bp.print_graph(Nodes,[$lr('<=')]),
+    bp.print_graph(Nodes, [$lr('<=')]),
     bp.'$pp_print_viterbi_prob'(Prob).
 
 print_viterbit(Prob,Nodes) =>

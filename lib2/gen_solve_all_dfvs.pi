@@ -1,0 +1,13 @@
+/* for each file with the extension name ".pi", generate a command line to execute the file */
+/* by Neng-Fa Zhou, 2015                                                                    */
+
+import os.
+
+main =>
+    Files = listdir(".").sort(),
+    foreach (File in Files, append(MainStr, ".bz2", File))
+        printf("echo solving %s\n",MainStr),
+        printf("time timeout -k 600 600 picat dfvs %s\n",MainStr)
+    end.
+
+        

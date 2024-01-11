@@ -1,0 +1,72 @@
+import util.
+
+main([File]) =>
+    FD=open(File),             
+    FD.read_line()=Line,
+    separate(FD,Line,Solved,Unsolved),
+    printf("SOLVED = %d:\n",Solved.length),
+    foreach((P,Time) in Solved)
+        if var(Time) then Time = "unknown" end,
+        printf("%s (%s)\n",P, strip(Time))
+    end,
+    printf("NOT SOLVED=%d:\n",Unsolved.length),    
+    foreach((P,Time) in Unsolved)
+        if var(Time) then Time = "unknown" end,    
+        printf("%s (%s)\n",P, strip(Time))
+    end.
+
+separate(_,end_of_file,Solved,Unsolved) => Solved=[],Unsolved=[].
+separate(FD,L,Solved,Unsolved),
+    append(_,"solving",Name,L)
+=>
+    FD.read_line()=Line,    
+    solved_or_not(FD,Line,Name,Solved,Unsolved).
+separate(FD,_L,Solved,Unsolved) =>
+    FD.read_line()=Line,    
+    separate(FD,Line,Solved,Unsolved).
+
+solved_or_not(FD,L,Name,Solved,Unsolved),
+    (append("real",Time,L); append(Time,[u,s,e,r|_],L)) 
+=>
+    Unsolved=[(Name,Time)|UnsolvedR],
+    skip_until_solving(FD,Line,NextLine,_),
+    separate(FD,NextLine,Solved,UnsolvedR).
+solved_or_not(_FD,end_of_file,Name,Solved,Unsolved) =>
+    Solved=[], Unsolved=[(Name,_)].
+solved_or_not(FD,L,Name,Solved,Unsolved),
+    append(_,"solving",Post,L)
+=>
+    Unsolved=[(Name,_)|UnsolvedR],
+    separate(FD,L,Solved,UnsolvedR).
+solved_or_not(FD,L,Name,Solved,Unsolved),
+    (append(_,"====",_,L); append(_,"---",_,L))
+=>
+    Solved=[(Name,Time)|SolvedR],
+    FD.read_line()=Line,     
+    skip_until_solving(FD,Line,NextLine,Time),
+    separate(FD,NextLine,SolvedR,Unsolved).
+solved_or_not(FD,L,Name,Solved,Unsolved),
+    append(_,"UNSATI",_,L)
+=>
+    printf("UNSAT %s\n",Name),
+    Solved=[(Name,Time)|SolvedR],
+    FD.read_line()=Line,     
+    skip_until_solving(FD,Line,NextLine,Time),
+    separate(FD,NextLine,SolvedR,Unsolved).
+solved_or_not(FD,_,Name,Solved,Unsolved) =>
+    FD.read_line()=Line,     
+    solved_or_not(FD,Line,Name,Solved,Unsolved).
+
+skip_until_solving(_FD,end_of_file,NextLine,Time) => NextLine=end_of_file.
+skip_until_solving(FD,L,NextLine,Time),
+    (append("real",Time,L); append(Time,[u,s,e,r|_],L)) 
+=>
+    FD.read_line()=L1,
+    skip_until_solving(FD,L1,NextLine,_).
+skip_until_solving(_FD,L,NextLine,Time),
+    append(_,"solving",Post,L)
+ => 
+    NextLine=L.
+skip_until_solving(FD,_,NextLine,Time) =>
+    FD.read_line()=L,
+    skip_until_solving(FD,L,NextLine,Time).

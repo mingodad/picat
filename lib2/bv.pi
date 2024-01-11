@@ -1,0 +1,300 @@
+module bv.
+import sat.
+
+/*********************************************************
+%   File   : bv.pi
+%   Author : Neng-Fa Zhou (July 2018)
+%
+This module implements constraints over bit vectors. Picat
+supports big integers. Nevertheless, integer-domain values
+in Picat are limited to the range -2^56-1..2^56-1 on 64-bit
+platforms and -2^28-1..2^28-1 on 32-bit platforms. This bv
+module can be used to represent infinite integer-domain
+values.
+
+This is not a complete implementation; all operands of the
+binary operators (add, xor, and, or) are assumed to have
+the same sign, and many arithmetic operations, such as
+subtraction and multiplication are not implemented
+
+A bit vector is represented as a structure of the form:
+bv(Sign,M), where Sign is the sign (0 means non-negative,
+and 1 means negative), and M is the magnitude represented
+as an array of 0/1 domain variables.
+
+* new_bv(Size):
+    create a bit vector of Size bits.
+
+* int_to_bv(X) = BV:
+    converts an integer to a bit vector.
+
+* bv_to_int(BV) = X:
+    converts bit vector BV to an integer. BV must be ground.
+
+* bv_lshift(BV,I,RBV):
+    RBV = BV << I  (signed)
+
+* bv_rshift(BV,I,RBV):
+    RBV = BV >> I  (signed)
+
+* bv_xor(BV1,BV2,RBV):
+    RBV = BV1 ^ BV2
+    
+* bv_and(BV1,BV2,RBV):
+    RBV = BV1 /\ BV2
+
+* bv_or(BV1,BV2,RBV):
+    RBV = BV1 \/ BV2
+
+* bv_add(BV1,BV2,RBV):
+    RBV = BV1 + BV2
+
+* bv_eq(BV1,BV2):
+    BV1 = BV2
+
+* bv_neq(BV1,BV2):
+    BV1 != BV2
+*********************************************************/
+test =>
+   BV1 = new_bv(2),
+   BV2 = new_bv(3),
+   bv_add(BV1,BV2,BV3),
+   println(solve_all((BV1,BV2,BV3)).sort()).
+
+%%%
+new_bv(Size) = BV, int(Size), Size > 0 =>
+    BV = $bv(0,M),
+    M = new_array(Size),
+    M :: 0..1.
+new_bv(Size) = _BV =>
+    throw($invalid_arg(new_bv(Size))).
+
+%%%
+int_to_bv(X) = BV =>
+    (X >= 0 ->
+        Sign = 0,
+        AbsX = X
+    ;
+        Sign = 1,
+        AbsX = -X
+    ),
+    BV = $bv(Sign,M),
+    uint_to_radix(AbsX,2,M).
+    
+uint_to_radix(0,_Base,DVect) =>
+    DVect = {0}.
+uint_to_radix(Val,Base,DVect) =>
+    K = round(log(Base,Val)+0.5),
+    DVect = new_array(K),
+    uint_to_radix(Val,Base,DVect,1,K).
+
+uint_to_radix(_Val,_Base,_DVect,I,K), I>K => true.
+uint_to_radix(Val,Base,DVect,I,K) =>
+    B = Val mod Base,
+    DVect[I] = B,
+    Val1 is Val div Base,
+    I1 is I+1,
+    uint_to_radix(Val1,Base,DVect,I1,K).
+
+%%%
+bv_to_int(bv(Sign,M)) = X, integer(Sign), ground(M) =>
+    radix_to_uint(2,M,len(M),0,Val),
+    (Sign == 0 -> X = Val; X = -Val).
+bv_to_int(BV) = _X =>
+    throw($invalid_arg(bv_to_int(BV))).
+
+radix_to_uint(_Base,_DVect,0,Val0,Val) => Val = Val0.
+radix_to_uint(Base,DVect,I,Val0,Val) =>
+    Val1 is Val0*Base+DVect[I],
+    radix_to_uint(Base,DVect,I-1,Val1,Val).
+
+%%%
+bv_lshift(BV@bv(Sign,M),I,RBV), integer(I), I >= 0 =>
+    Size = len(M),
+    (var(RBV) ->
+        RSize = Size+I,
+        RBV = $bv(Sign,RM),
+        RM = new_array(RSize),
+        RM :: 0..1
+    ; RBV = $bv(0,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_lshift(BV,I,RBV)))
+    ),
+    foreach (Pos in 1..I)
+        bv_get_bit(RM,Pos,RSize,B),
+        B = 0
+    end,
+    bv_eq_unsigned(M,1,Size,RM,I+1,RSize).
+bv_lshift(BV,I,RBV) =>
+    throw($invalid_arg(bv_lshift(BV,I,RBV))).
+
+%%%
+bv_rshift(BV@bv(0,M),I,RBV), integer(I), I >= 0 =>
+    Size = len(M),
+    (var(RBV) ->
+        Diff = Size-I,
+        (Diff =< 0 ->
+            RBV = {0},
+            RSize = 1
+        ;
+            RSize = Diff,
+            RBV = $bv(0,RM),
+            RM = new_array(RSize),
+            RM :: 0..1
+        )
+    ; RBV = $bv(0,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_rshift(BV,I,RBV)))
+    ),
+    bv_eq_unsigned(M,I+1,Size,RM,1,RSize).
+bv_rshift(BV,I,RBV) =>
+    throw($invalid_arg(bv_rshift(BV,I,RBV))).
+
+%%%
+bv_and(BV1@bv(Sign,M1),BV2@bv(Sign,M2),RBV) =>
+    Size1 = len(M1),
+    Size2 = len(M2),
+    (var(RBV) ->
+        RSize = max(Size1,Size2),
+        RBV = $bv(Sign,RM),
+        RM = new_array(RSize),
+        RM :: 0..1
+    ; RBV = $bv(Sign,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_and(BV1,BV2,RBV)))
+    ),
+    bv_constrain_unsigned3(and,M1,1,Size1,M2,1,Size2,RM,1,RSize).
+bv_and(BV1,BV2,RBV) =>
+    throw($invalid_arg(bv_and(BV1,BV2,RBV))).
+
+%%%
+bv_or(BV1@bv(Sign,M1),BV2@bv(Sign,M2),RBV) =>
+    Size1 = len(M1),
+    Size2 = len(M2),
+    (var(RBV) ->
+        RSize = max(Size1,Size2),
+        RBV = $bv(Sign,RM),
+        RM = new_array(RSize),
+        RM :: 0..1
+    ; RBV = $bv(_,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_or(BV1,BV2,RBV)))
+    ),
+    bv_constrain_unsigned3(or,M1,1,Size1,M2,1,Size2,RM,1,RSize).
+bv_or(BV1,BV2,RBV) =>
+    throw($invalid_arg(bv_or(BV1,BV2,RBV))).
+
+%%%
+bv_xor(BV1@bv(Sign,M1),BV2@bv(Sign,M2),RBV) =>
+    Size1 = len(M1),
+    Size2 = len(M2),
+    (var(RBV) ->
+        RSize = max(Size1,Size2),
+        RBV = $bv(Sign,RM),
+        RM = new_array(RSize),
+        RM :: 0..1
+    ; RBV = $bv(_,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_xor(BV1,BV2,RBV)))
+    ),
+    bv_constrain_unsigned3(xor,M1,1,Size1,M2,1,Size2,RM,1,RSize).
+bv_xor(BV1,BV2,RBV) =>
+    throw($invalid_arg(bv_xor(BV1,BV2,RBV))).
+
+%%%
+bv_add(BV1@bv(Sign,M1),BV2@bv(Sign,M2),RBV) =>
+    Size1 = len(M1),
+    Size2 = len(M2),
+    (var(RBV) ->
+        RSize = max(Size1,Size2)+1,
+        RBV = $bv(Sign,RM),
+        RM = new_array(RSize),
+        RM :: 0..1
+    ; RBV = $bv(Sign,RM) ->
+        RSize = len(RM)
+    ;
+        throw($invalid_arg(bv_add(BV1,BV2,RBV)))
+    ),
+    Cin = 0,
+    bv_add_unsigned(M1,1,Size1,M2,1,Size2,RM,1,RSize,Cin).
+bv_add(BV1,BV2,RBV) =>
+    throw($invalid_arg(bv_add(BV1,BV2,RBV))).
+
+bv_add_unsigned(_M1,I1,Max1,_M2,I2,Max2,_M3,I3,Max3,Cin),
+    I1 > Max1, I2 > Max2, I3 > Max3
+=>
+    Cin = 0.
+bv_add_unsigned(M1,I1,Max1,M2,I2,Max2,M3,I3,Max3,Cin) =>
+    bv_get_bit(M1,I1,Max1,B1),
+    bv_get_bit(M2,I2,Max2,B2),
+    bv_get_bit(M3,I3,Max3,B3),
+    Cout :: 0..1,
+    (int(B1), int(B2), int(Cin) ->
+        Res = B1+B2+Cin, Cout = Res div 2, B3 = Res mod 2
+    ;
+        B1+B2+Cin #= 2*Cout+B3     %% adder
+    ),
+    bv_add_unsigned(M1,I1+1,Max1,M2,I2+1,Max2,M3,I3+1,Max3,Cout).
+
+%%%
+bv_eq(bv(Sign1,M1),bv(Sign2,M2)) =>
+    Sign1 = Sign2,
+    bv_eq_unsigned(M1,1,len(M1),M2,1,len(M2)).
+bv_eq(BV1,BV2) =>
+    throw($invalid_arg(bv_eq(BV1,BV2))).
+
+bv_eq_unsigned(_M1,I1,Max1,_M2,I2,Max2), I1 > Max1, I2 > Max2 => true.
+bv_eq_unsigned(M1,I1,Max1,M2,I2,Max2) =>
+    bv_get_bit(M1,I1,Max1,B1),
+    bv_get_bit(M2,I2,Max2,B2),    
+    B1 = B2,
+    bv_eq_unsigned(M1,I1+1,Max1,M2,I2+1,Max2).
+
+%%%
+bv_neq(bv(Sign1,M1),bv(Sign2,M2)) =>
+    ReifSign #<=> (Sign1 #!= Sign2),
+    Size1 = len(M1),
+    Size2 = len(M2),
+    Size = max(Size1,Size2),
+    F = new_array(Size+1),
+    F[Size+1] = ReifSign,
+    bv_reif_neq_unsigned(M1,Size1,M2,Size2,F,Size,1),
+    sum(F) #> 0.    
+bv_neq(BV1,BV2) =>
+    throw($invalid_arg(bv_neq(BV1,BV2))).
+
+bv_reif_neq_unsigned(_M1,Max1,_M2,Max2,_M3,Max3,I), I > Max1, I > Max2, I > Max3 =>
+    true.
+bv_reif_neq_unsigned(M1,Max1,M2,Max2,M3,Max3,I) =>
+    bv_get_bit(M1,I,Max1,B1),
+    bv_get_bit(M2,I,Max2,B2),
+    bv_get_bit(M3,I,Max3,B3),
+    B3 #<=> (B1 #!= B2),
+    bv_reif_neq_unsigned(M1,Max1,M2,Max2,M3,Max3,I+1).
+
+%
+bv_constrain_unsigned3(_OP,_M1,I1,Max1,_M2,I2,Max2,_M3,I3,Max3),
+    I1 > Max1, I2 > Max2, I3 > Max3
+=>
+    true.
+bv_constrain_unsigned3(OP,M1,I1,Max1,M2,I2,Max2,M3,I3,Max3) =>
+    bv_get_bit(M1,I1,Max1,B1),
+    bv_get_bit(M2,I2,Max2,B2),
+    bv_get_bit(M3,I3,Max3,B3),
+    bv_bit_op(OP,B1,B2,B3),
+    bv_constrain_unsigned3(OP,M1,I1+1,Max1,M2,I2+1,Max2,M3,I3+1,Max3).
+    
+bv_get_bit(_M,I,Max,B), I > Max => B = 0.
+bv_get_bit(M,I,_Max,B) => B = M[I].
+
+bv_bit_op(xor,B1,B2,B3), int(B1), int(B2) => B3 = B1 ^ B2.
+bv_bit_op(xor,B1,B2,B3) => B3 #<=> (B1 #^ B2).
+bv_bit_op(or,B1,B2,B3), int(B1), int(B2) => B3 = B1 \/ B2.
+bv_bit_op(or,B1,B2,B3) => B3 #<=> (B1 #\/ B2).
+bv_bit_op(and,B1,B2,B3), int(B1), int(B2) => B3 = B1 /\ B2.
+bv_bit_op(and,B1,B2,B3) => B3 #<=> (B1 #/\ B2).

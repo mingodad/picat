@@ -1,0 +1,148 @@
+import util.
+
+main =>
+    main(["trace_picat_063023", "trace_picat_imp_042223", "trace_julia_062723"]).
+
+timeout() = 1198.
+
+    /*
+main =>
+    main(["bench22/trace_element", "bench22/trace_element", "bench22/trace_element"]).
+*/	
+%title() = "{\\bf Benchmark} &  {\\bf Picat0629} & {\\bf Picat0529} & {\\bf RSAT0626} \\\\ \\hline".
+title() = "{\\bf Benchmark} &  {\\bf RSAT0728} & {\\bf RSAT0627}&  {\\bf Picat}  \\\\ \\hline".    
+
+main([F1,F2,F3]) =>
+   TO = timeout(),
+   extract_insts(F2,Insts),
+   extract_times(F1,L1),
+   extract_objectives(F1,O1),
+   extract_times(F2,L2),
+   extract_objectives(F2,O2),	
+   extract_times(F3,L3),
+   extract_objectives(F3,O3),
+/*    
+   println(O1),
+   println(len(O1)),
+   println(O2),
+   println(len(O2)),
+   println(O3),
+   println(len(O3)),
+*/
+   Solved1 = len([X : X in L1, X < TO]),
+   Solved2 = len([X : X in L2, X < TO]),
+   Solved3 = len([X : X in L3, X < TO]),
+   print_title,
+   printf("{\\bf TOTAL}   & %.2f  &    %.2f   &    %.2f \\\\ \n", sum(L1),sum(L2), sum(L3)),
+   printf("{\\bf AVE} & %.2f  &    %.2f   &    %.2f \\\\ \n", sum(L1)/97, sum(L2)/97, sum(L3)/97),
+   printf("{\\bf \\#SOLVED} & %d  &    %d   &    %d \\\\ \\hline \n", Solved1, Solved2, Solved3),
+   OLines1 = zip(Insts,L1,L2,L3),
+   OLines2 = zip(O1,O2,O3),	
+   print_body(OLines1,OLines2,50).
+
+
+print_title =>
+    println("\\begin{scriptsize}"),
+	println("\\begin{tabular}{|c|r|r|r|} \\hline"),
+	println(title()).
+	
+print_end =>
+    println("\\end{tabular}"),
+	println("\\end{scriptsize}").
+
+print_body([],_, _) =>
+    print_end.
+print_body(OLines1,OLines2, 0) =>
+    print_end,
+	println("\\clearpage"),    
+    print_title,
+    print_body(OLines1,OLines2,50).
+print_body([{Inst,T1,T2,T3}|OLines1], [{Obj1,Obj2,Obj3}|OLines2], N) =>
+       I = identify_bf(T1,T2,T3),
+	   printf("%s & ", Inst),
+	   print_time(I, 1, T1),
+	   printf("(%s)", Obj1),
+	   print(" & "),	   
+	   print_time(I, 2, T2),
+	   printf("(%s)", Obj2),	
+	   print(" & "),	   	   
+	   print_time(I, 3, T3),
+	   printf("(%s)", Obj3),		
+	   if N == 1; OLines = [] then
+    	   println("\\\\ \\hline \n")
+   	   else
+	       println("\\\\ \n")
+       end,
+	   print_body(OLines1, OLines2, N-1).
+
+print_time(I, I, T) =>
+       printf("{\\bf %.2f}", T).
+print_time(_, _, T), T > timeout() =>
+       printf("\\xcancel{%.2f}", T).
+print_time(_, _, T) =>
+       printf("%.2f", T).
+
+extract_insts(F,Insts) =>
+   Lines = read_file_lines(F),
+   Insts = [Inst : Line in Lines, (append("solving", Inst0, ['.',j,l|_],Line);append("solving", Inst0, ['.',p,i|_],Line)), dash2under(Inst0,Inst)].
+
+
+dash2under([],L) => L = [].
+dash2under(['-'|L0],L) =>
+    L = ['\\','_'|LR],
+	dash2under(L0,LR).
+dash2under(['_'|L0],L) =>
+    L = ['\\','_'|LR],
+	dash2under(L0,LR).
+dash2under([Ch|L0],L) =>
+    L = [Ch|LR],
+	dash2under(L0,LR).
+
+extract_times(File,L) =>
+   Lines = read_file_lines(File),
+   L = [my_to_number(Rest) : Line in Lines, append("real",Rest,Line)].
+
+my_to_number(Str) = T =>
+	append(M,"m",Rest, Str),
+	append(S,"s",_,Rest),
+	T1 = to_number(M)*60+to_number(S),
+	(T1 >= timeout() -> T = timeout()+1; T = T1).
+
+identify_bf(T1,T2,T3) = I =>
+    TO = timeout(),
+    (T1 < TO, T1 < T2, T1 < T3 ->
+	    I = 1
+    ;T2 < TO, T2 < T1, T2 < T3 ->
+	    I = 2
+    ;T3 < TO, T3 < T1, T3 < T2 ->
+	    I = 3
+	;
+	    I = 0
+	).
+
+extract_objectives(File,Objs) =>
+   Lines = read_file_lines(File),
+   extract_objectives_aux(Lines,Objs).
+
+extract_objectives_aux([],Objs) =>	Objs = [].
+extract_objectives_aux([Line|Lines],Objs),
+   (append("solving", _, ['.',j,l|_],Line); append("solving", NameStr, ['.',p,i|_],Line))
+=>
+	extract_objective(Lines,Lines1,Obj),
+	Objs = [Obj|Objs1],
+	extract_objectives_aux(Lines1,Objs1).
+extract_objectives_aux([_|Lines],Objs) =>
+	extract_objectives_aux(Lines,Objs).
+
+extract_objective([[r,e,a,l|_]|Lines],Lines1,Obj) =>
+	Lines1 = Lines,
+	Obj = "0".
+extract_objective([['%',' ',o,b,j,' ', '='|Line]|Lines],Lines1,Obj) =>
+	[Obj|_] = Line.split(),
+	Lines1 = Lines.
+extract_objective([['=','=','=','=','=','U','N','S','A','T'|Line]|Lines],Lines1,Obj) =>
+	Obj = "UNSAT",
+	Lines1 = Lines.
+extract_objective([_|Lines],Lines1,Obj) =>
+	extract_objective(Lines,Lines1,Obj).
+	

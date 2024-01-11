@@ -1,0 +1,286 @@
+import os.
+
+/****************************************************************************
+   pb2pi.pi (in Picat), by Neng-Fa Zhou, Jan. 11, 2016
+
+   This program converts PB instances from the competition format to Picat. 
+
+   In the competition format, a constraint has the form:
+
+    [Coe var]+ (>= | = ) Coe ;
+
+   and an objective function has the form:
+
+    min [Coe Var]+ ;
+
+   This program can be loaded into the Picat system and run by a query 
+   
+   Picat> cl("pb2pi")
+   Picat> main("nqueens_8")
+
+   Alternatively, this program can be run as a standalone command:
+
+       picat pb2pi nqueens_8
+
+   You need to ensure that the path to the Picat executable is set properly 
+   and the file "bp2pi.pi" and "nqueens_8.opb" are in the working directory.
+   Otherwise, the full paths to the executable and the files must be given.
+
+   If not files are given, the pb2pi converts all the opb files in the current
+   director to Picat, as in:
+
+       picat pb2pi
+
+*********************************************************************************/
+main =>
+    Fs = listdir("."),
+    foreach (F in Fs, append(_,".opb",F))
+        (pb2picat(F) -> true; true)
+    end.
+    
+main(InFile),string(InFile) =>
+    pb2picat(InFile).
+main([InFile]),string(InFile) =>
+    pb2picat(InFile).
+main(Args) =>
+    println($invalid_args(Args)).           
+
+pb2picat(InFile) =>
+    (append(MainFileStr,".opb",InFile) ->
+        OPBFile = InFile
+    ; 
+        MainFileStr = InFile,
+        OPBFile = InFile++".opb"
+    ),        
+    OutFile = MainFileStr++".jl",
+    InStream = open(OPBFile,read),
+    read_pb_cl_tokens(InStream,Tokens),
+    printf("converting %s\n",InFile),
+    VarsSet = new_set(),
+    catch(parse(InStream,Tokens,VarsSet,Constrs,Obj),Exception,(println(Exception),close(InStream),true)),
+    OutStream = open(OutFile,write),
+    printf(OutStream,"using CSP2SAT\n"),
+    printf(OutStream, "\nprintln(\"solving %s\")\n", MainFileStr),
+    println(OutStream, "csp = CSP2SAT.Model()"),
+    not not output_var_defs(OutStream,VarsSet),
+    output_constrs(OutStream,Constrs),
+    not not output_solve(OutStream,MainFileStr,Obj,VarsSet),
+    close(InStream),
+    close(OutStream).
+
+parse(_,end_of_file,_VarsSet,Constrs,_Obj) => Constrs = [].
+parse(InStream,[min,':'|Tokens],VarsSet,Constrs,Obj) => 
+    parse_exp(Tokens,[],VarsSet,Exp),
+    Obj = $min(Exp),
+    read_pb_cl_tokens(InStream,NextTokens),
+    parse(InStream,NextTokens,VarsSet,Constrs,Obj).
+parse(InStream,Tokens,VarsSet,Constrs,Obj) => 
+    Constrs = [Constr|ConstrsR],                                           
+    parse_constr(Tokens,VarsSet,Constr),
+    read_pb_cl_tokens(InStream,NextTokens),
+    parse(InStream,NextTokens,VarsSet,ConstrsR,Obj).
+
+parse_exp([+,X|Tokens],TokensR,VarsSet,Exp) =>
+    Coe = X,
+    Exp = [[Coe|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).
+parse_exp([-,X|Tokens],TokensR,VarsSet,Exp) =>
+    Coe = -X,
+    Exp = [[Coe|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).    
+parse_exp([X|Tokens],TokensR,VarsSet,Exp), integer(X) =>
+    Exp = [[X|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).        
+parse_exp(Tokens,TokensR,_VarsSet,Exp) =>
+    TokensR = Tokens,
+    Exp = [].
+
+parse_term([],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = [].
+parse_term(Tokens@[+|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@[-|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@[X|_],Term,TokensR,VarsSet), integer(X) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@['='|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@['>='|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(['~',X|Tokens],Term,TokensR,VarsSet) =>
+    VarsSet.put(X),
+    Term = [$(1-X)|Term1],
+    parse_term(Tokens,Term1,TokensR,VarsSet).
+parse_term([X|Tokens],Term,TokensR,VarsSet) =>
+    VarsSet.put(X),
+    Term = [X|Term1],
+    parse_term(Tokens,Term1,TokensR,VarsSet).
+
+% parse_constr(Tokens,VarsSet,Constr) ?=> println($parse(Tokens)),nl,fail.
+
+parse_constr(Tokens,VarsSet,Constr) =>
+    Constr = $constr(Exp,Op,C),                                    
+    parse_exp(Tokens,Tokens1,VarsSet,Exp),
+    Tokens1 = [Op|Tokens2],
+    parse_int(Tokens2,_,C).
+
+parse_int(['+',I|Tokens],TokensR,C) => C = I, TokensR = Tokens.
+parse_int(['-',I|Tokens],TokensR,C) => C = -I, TokensR = Tokens.
+parse_int([I|Tokens],TokensR,C) => C = I, TokensR = Tokens.
+
+/* tokenizer */
+read_pb_cl_tokens(InStream,Tokens) =>
+    skip_comment(InStream),
+    read_picat_token(InStream,Type,Token), % first token
+    read_pb_cl_tokens(InStream,Type,Token,Tokens).
+
+skip_comment(InStream) =>
+    Ch = peek_char(InStream),
+    skip_comment(InStream,Ch).
+
+skip_comment(InStream,'*') =>
+    _ = read_line(InStream),
+    skip_comment(InStream).
+skip_comment(InStream,Ch), w_space(Ch) =>
+    _ = read_char(InStream),
+    NextCh = peek_char(InStream),
+    skip_comment(InStream,NextCh).
+skip_comment(_InStream,_) => true.
+
+index (+)
+w_space(' ').
+w_space('\n').
+w_space('\t').
+w_space('\r').
+
+read_pb_cl_tokens(_InStream,end_of_file,_,Tokens) => Tokens=end_of_file.     % end-of-file
+read_pb_cl_tokens(_InStream,punctuation,';',Tokens) => 
+    Tokens = [].
+read_pb_cl_tokens(InStream,_Type,Token,Tokens) =>                   
+    Tokens=[Token|Tokens1],
+    read_picat_token(InStream,Type,PicatToken),
+    read_pb_cl_tokens(InStream,Type,PicatToken,Tokens1).
+
+%%%
+output_var_defs(OutStream,VarsSet) =>
+    keys(VarsSet) = Vars,
+    foreach (Var in Vars)
+        printf(OutStream,"_%w = CSP2SAT.bvar(csp)\n",Var)
+    end.
+
+output_constrs(_OutStream,[]) => true.
+output_constrs(OutStream,[constr(Exp,Op,C)|Constrs]) => 
+    not not output_constr(OutStream,Exp,Op,C),
+    output_constrs(OutStream,Constrs).
+    
+output_constr(OutStream,Exp,Op,C) =>
+    flatten_exp(OutStream,Exp,Exp1),    
+    output_op(OutStream,Op),
+    print(OutStream,'['),
+    output_exp(OutStream,Exp1),
+    print(OutStream,"], "),    
+    printf(OutStream, "%w)\n", C).
+
+output_op(OutStream,=) =>
+    print(OutStream, "CSP2SAT.eq(csp, ").
+output_op(OutStream,_) =>
+    print(OutStream, "CSP2SAT.ge(csp, ").
+    
+output_exp(_OutStream,[]) =>  true.
+output_exp(OutStream,[Term]) =>
+    output_term(OutStream,Term).    
+output_exp(OutStream,[Term|Exp]) =>
+    output_term(OutStream,Term),
+    print(OutStream, ", "),
+    output_exp(OutStream,Exp).
+
+output_term(OutStream,(X,Y)) =>
+    print(OutStream,'('),
+    output_factor(OutStream,X),
+    print(OutStream,','),
+    output_factor(OutStream,Y),
+    print(OutStream,')').
+output_term(OutStream,X) =>
+    output_factor(OutStream,X).
+
+output_solve(OutStream,_MainFileStr,min(Exp),VarsSet) =>
+    println(OutStream, "obj = CSP2SAT.var(csp)"),
+    output_constr(OutStream,Exp,=,obj),
+    print(OutStream,"    res = CSP2SAT.minimize!(csp, obj)\n"),
+    output_ans(OutStream,VarsSet,1).
+output_solve(OutStream,_MainFileStr,_Obj,VarsSet) =>
+    println(OutStream,"    res = CSP2SAT.solve!(csp)"),
+    output_ans(OutStream,VarsSet,0).
+
+output_ans(OutStream,VarsSet,ObjFlag) =>
+    keys(VarsSet).sort() = Vars,
+    println(OutStream,"if !res"),
+    println(OutStream,"    println(\"=====UNSATISFIABLE=====\")"),
+    println(OutStream,"else"),    
+    output_ans_aux(OutStream,Vars),
+    if ObjFlag == 1 then
+        println(OutStream,"    println(\"% obj = \", CSP2SAT.get_value(obj))")
+    end,
+    println(OutStream,"end").
+    
+output_ans_aux(OutStream,[V]) =>
+    printf(OutStream,"    println(\"%w\", \"=\", CSP2SAT.get_value(_%w))\n",V,V).
+output_ans_aux(OutStream,[V|Vars]) =>
+    printf(OutStream,"    println(\"%w\", \"=\", CSP2SAT.get_value(_%w))\n",V,V),
+    output_ans_aux(OutStream,Vars).
+output_ans_aux(_OutStream,[]) => true.
+
+flatten_exp(OutStream,[],FExp) => FExp = [].
+flatten_exp(OutStream,[Term|Exp],FExp) =>
+    FExp = [FTerm|FExp1],
+    flatten_term(OutStream,Term,FTerm),
+    flatten_exp(OutStream,Exp,FExp1).
+
+flatten_term(OutStream,[X],FTerm) =>
+    flatten_factor(OutStream,X,X1),
+    FTerm = X1.
+flatten_term(OutStream,[X,Y],FTerm) =>
+    flatten_factor(OutStream,X,X1),
+    flatten_factor(OutStream,Y,Y1),    
+    FTerm = (X1,Y1).
+flatten_term(OutStream,[X,Y|Term],FTerm) =>
+    flatten_factor(OutStream,X,X1),
+    flatten_factor(OutStream,Y,Y1),    
+    new_var_num(I),
+    T = to_atom([t|to_string(I)]),
+    printf(OutStream, "_%w = CSP2SAT.var(csp)\n", T),
+    print(OutStream, "CSP2SAT.mul_eq(csp, "),
+    output_factor(OutStream,X1),
+    print(OutStream,", "),
+    output_factor(OutStream,Y1),
+    print(OutStream,", "),
+    printf(OutStream,"_%w)\n", T),
+    flatten_term(OutStream,[T|Term],FTerm).
+
+flatten_factor(OutStream,(1-X),FX) =>
+    new_var_num(I),
+    FX = to_atom([t|to_string(I)]),
+    printf(OutStream, "_%w = CSP2SAT.bvar(csp)\n", FX),
+    printf(OutStream, "CSP2SAT.add_eq(csp, _%w, _%w, 1)\n", X, FX).
+flatten_factor(OutStream,X,FX) => FX = X.
+
+output_factor(OutStream,X), integer(X) =>
+    print(OutStream,X).
+output_factor(OutStream,X) =>
+    printf(OutStream,"_%w",X).    
+    
+new_var_num(I) =>
+    M = get_heap_map(),
+    I = M.get(var_id, 0),
+    M.put(var_id, I+1).
+    
+

@@ -31,6 +31,13 @@ The import relation is not transitive. Suppose that there are three modules: $A$
 
 The built-in command \texttt{cl("xxx")}\index{\texttt{cl/1}} compiles the file \texttt{xxx.pi} and loads the generated code into the interpreter. The built-in command \texttt{load("xxx")} loads the bytecode file \texttt{xxx.qi}. It compiles the source file \texttt{xxx.pi} only when necessary. The \texttt{load}\index{\texttt{load/1}} command  also imports the public symbols defined in the module to the interpreter.  This allows users to use these symbols on the command line without explicitly importing the symbols. If the file \texttt{xxx.pi} imports modules, those module files will be compiled and loaded when necessary. 
 
+A program file can contain \texttt{include} directives of the form:\index{\texttt{include} directive}
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{include $Name$}.
+\end{tabbing}
+where $Name$ is a string indicating a file name relative to the program file. The \texttt{include} directive causes the content of the file named $Name$ to be copied verbatim to where the directive occurs. The \texttt{include} directive allows users to split a large program into several source files. Note that the included source files cannot contain module or import declarations, and no definitions can span multiple files.
+
 \section{Binding Calls to Definitions}
 The Picat system has a global symbol table\index{symbol table} for atoms, a global symbol table\index{symbol table} for structure names, and a global symbol table\index{symbol table} for modules. For each module, Picat maintains a symbol table\index{symbol table} for the public predicate and function symbols defined in the module. Private symbols that are defined in a module are compiled away, and are never stored in the symbol table\index{symbol table}. While predicate and function symbols can be local to a module, atoms and structures are always global.
 

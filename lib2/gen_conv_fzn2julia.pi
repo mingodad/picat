@@ -1,0 +1,9 @@
+import os.
+
+main =>
+    Fs = sort(listdir(".")),
+    foreach (F in Fs, append(MainF,".fzn",F))
+   		printf("echo converting %s\n",F),
+      	printf("time picat ~/work/sat/fzn2julia %s > %s.jl\n", F, MainF)
+    end.
+                

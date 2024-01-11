@@ -1,0 +1,61 @@
+import util.
+
+
+timeout() = 29.
+
+main([F1,F2]) =>
+    TO = timeout(),
+    extract_insts(F2,Insts),
+    extract_objectives(F1,L1),
+    extract_objectives(F2,L2),
+    foreach ({I,O1,O2} in zip(Insts,L1,L2))
+        if O1 != O2 then
+            if O1 != "UNDEF" && O2 != "UNDEF" then
+                printf("%s %s %s \n", I, O1, O2)
+            end
+        end
+    end.
+
+extract_insts(F,Insts) =>
+   Lines = read_file_lines(F),
+   Insts = [Inst : Line in Lines, (append("solving", Inst0, ['.',j,l|_],Line);append("solving", Inst0, ['.',p,i|_],Line)), dash2under(Inst0,Inst)].
+
+
+dash2under([],L) => L = [].
+dash2under(['-'|L0],L) =>
+    L = ['\\','_'|LR],
+	dash2under(L0,LR).
+dash2under(['_'|L0],L) =>
+    L = ['\\','_'|LR],
+	dash2under(L0,LR).
+dash2under([Ch|L0],L) =>
+    L = [Ch|LR],
+	dash2under(L0,LR).
+
+extract_objectives(File,Objs) =>
+   Lines = read_file_lines(File),
+   extract_objectives_aux(Lines,Objs).
+
+extract_objectives_aux([],Objs) =>	Objs = [].
+extract_objectives_aux([Line|Lines],Objs),
+   (append("solving", _, ['.',j,l|_],Line); append("solving", NameStr, ['.',p,i|_],Line))
+=>
+	extract_objective(Lines,Lines1,Obj),
+	Objs = [Obj|Objs1],
+	extract_objectives_aux(Lines1,Objs1).
+extract_objectives_aux([_|Lines],Objs) =>
+	extract_objectives_aux(Lines,Objs).
+
+extract_objective([[r,e,a,l|_]|Lines],Lines1,Obj) =>
+	Lines1 = Lines,
+	Obj = "UNDEF".
+extract_objective([['%',' ',o,b,j,' ', '='|Line]|Lines],Lines1,Obj) =>
+	[Obj|_] = Line.split(),
+	Lines1 = Lines.
+extract_objective([['=','=','=','=','=','U','N','S','A','T'|Line]|Lines],Lines1,Obj) =>
+	Obj = "UNSAT",
+	Lines1 = Lines.
+extract_objective([_|Lines],Lines1,Obj) =>
+	extract_objective(Lines,Lines1,Obj).
+	
+    

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : sapi.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: External language interface
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -230,7 +230,7 @@ int SP_get_integer(SP_term_ref t, long *l) {
   Assigns to *d the C double corresponding to a Prolog number.
 */
 int SP_get_float(SP_term_ref t, double *d) {
-    double temp_d, floatval(BPLONG);
+    double temp_d;
     BPLONG_PTR top;
     DEREF(t);
     if (ISINT(t)) {
@@ -368,7 +368,6 @@ BPLONG SP_list_len(SP_term_ref t) {
 int SP_get_number_chars(SP_term_ref t, char **s) {
     BPLONG_PTR top;
     char buf[80];
-    extern double floatval(BPLONG);
     char *ptr;
     DEREF(t);
     if (ISINT(t)) {
@@ -583,7 +582,6 @@ SP_pred_ref SP_pred(BPULONG name_atom, long arity, BPULONG module_atom) {
 }
 
 int SP_query(SP_pred_ref predicate, ...) {
-    SYM_REC_PTR sym_ptr;
     va_list ap;
     SP_term_ref arg;
     BPLONG query;

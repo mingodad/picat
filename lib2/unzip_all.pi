@@ -1,0 +1,26 @@
+/* copy all the plain files from subdirectories to the current directory */
+
+import os.
+
+main([ExtStr]) =>
+    Wd = pwd(),
+    unzip_dir(ExtStr,Wd, Wd).
+
+unzip_dir(ExtStr, Wd, Dir) =>
+    Items = listdir(Dir),
+    foreach (Item in Items, Item !== ".", Item !== "..")
+       FullName = full_path(Dir, Item),
+       (directory(FullName) ->
+           true
+%           unzip_dir(ExtStr, Wd, FullName)
+       ; append(_,ExtStr,Item) ->
+           Command = "7z x " ++ FullName,
+           println(Command),
+           _ = command(Command)
+       ;
+          true
+       )
+    end.
+         
+full_path(Dir,Name) =
+    Dir ++ [separator()] ++ Name.

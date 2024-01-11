@@ -525,8 +525,8 @@ January 14, 2013 \\
     \item {\tt $X$ \verb+#^+ $Y$}
 \item \texttt{$Vars$ :: $Exp$}
 \item \texttt{$Vars$ notin $Exp$}
-\item \texttt{acyclic($Vs$,$Es$)} (sat only)
-\item \texttt{acyclic\_d($Vs$,$Es$)} (sat only)       
+\item \texttt{acyclic($Vs$,$Es$)}
+\item \texttt{acyclic\_d($Vs$,$Es$)}
 \item \texttt{all\_different($FDVars$)}
 \item \texttt{all\_different\_except\_0($FDVars$)}
 \item \texttt{all\_distinct($FDVars$)}
@@ -542,6 +542,7 @@ January 14, 2013 \\
 \item \texttt{diffn($RectangleList$)}
 \item \texttt{disjunctive\_tasks($Tasks$)} (cp only)
 \item \texttt{element($I$,$List$,$V$)}
+\item \texttt{element0($I$,$List$,$V$)}
 \item \texttt{exactly($N$,$L$,$V$)}:
 \item \texttt{fd\_degree($FDVar$) = $Degree$} (cp only)
 \item \texttt{fd\_disjoint($DVar1$,$DVar2$)} 
@@ -557,11 +558,11 @@ January 14, 2013 \\
 \item \texttt{fd\_true($FDVar$,$Elm$)}
 \item \texttt{fd\_vector\_min\_max($Min$,$Max$)}
 \item \texttt{global\_cardinality($List$,$Pairs$)}
-\item \texttt{hcp($Vs$,$Es$)} (sat only)
-\item \texttt{hcp($Vs$,$Es$,$K$)} (sat only)
-\item \texttt{hcp\_grid($A$)} (sat only)
-\item \texttt{hcp\_grid($A$,$Es$)} (sat only)
-\item \texttt{hcp\_grid($A$,$Es$,$K$)} (sat only)
+\item \texttt{hcp($Vs$,$Es$)}
+\item \texttt{hcp($Vs$,$Es$,$K$)}
+\item \texttt{hcp\_grid($A$)}
+\item \texttt{hcp\_grid($A$,$Es$)}
+\item \texttt{hcp\_grid($A$,$Es$,$K$)}
 \item \texttt{increasing($L$)}
 \item \texttt{increasing\_strict($L$)}
 \item \texttt{indomain($Var$)} (nondet) (cp only)
@@ -569,20 +570,21 @@ January 14, 2013 \\
 \item \texttt{lex\_le($L_1$,$L_2$)}
 \item \texttt{lex\_lt($L_1$,$L_2$)}
 \item \texttt{matrix\_element($Matrix$,$I$,$J$,$V$)}
+\item \texttt{matrix\_element0($Matrix$,$I$,$J$,$V$)}
 \item \texttt{neqs($NeqList$)} (cp only)
 \item \texttt{new\_dvar() = $FDVar$}
 \item \texttt{new\_fd\_var() = $FDVar$}
-\item \texttt{path($Vs$,$Es$,$Src$,$Dest$)} (sat only)    
-\item \texttt{path\_d($Vs$,$Es$,$Src$,$Dest$)} (sat only)    
+\item \texttt{path($Vs$,$Es$,$Src$,$Dest$)}
+\item \texttt{path\_d($Vs$,$Es$,$Src$,$Dest$)}
 \item \texttt{regular$(X,Q,S,D,Q0,F)$}
 \item \texttt{scalar\_product($A$,$X$,$Product$)} 
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}
-\item \texttt{scc($Vs$,$Es$)} (sat only) 
-\item \texttt{scc($Vs$,$Es$,$K$)} (sat only)
-\item \texttt{scc\_d($Vs$,$Es$)} (sat only) 
-\item \texttt{scc\_d($Vs$,$Es$,$K$)} (sat only)
-\item \texttt{scc\_grid($A$)} (sat only) 
-\item \texttt{scc\_grid($A$,$K$)} (sat only) 
+\item \texttt{scc($Vs$,$Es$)}
+\item \texttt{scc($Vs$,$Es$,$K$)}
+\item \texttt{scc\_d($Vs$,$Es$)}
+\item \texttt{scc\_d($Vs$,$Es$,$K$)}
+\item \texttt{scc\_grid($A$)}
+\item \texttt{scc\_grid($A$,$K$)}
 \item \texttt{serialized($Starts$,$Durations$)}
 \item \texttt{solve($Opts$,$Vars$)} (nondet)
 \item \texttt{solve($Vars$)} (nondet)
@@ -591,12 +593,12 @@ January 14, 2013 \\
 \item \texttt{solve\_suspended} (cp only)
 \item \texttt{solve\_suspended($Opt$)} (cp only)
 \item \texttt{subcircuit($FDVars$)}
-\item \texttt{subcircuit\_grid($A$)} (sat only)
-\item \texttt{subcircuit\_grid($A$,$K$)} (sat only) 
+\item \texttt{subcircuit\_grid($A$)}
+\item \texttt{subcircuit\_grid($A$,$K$)}
 \item \texttt{table\_in($DVars$,$R$)}
 \item \texttt{table\_notin($DVars$,$R$)}
-\item \texttt{tree($Vs$,$Es$)} (sat only) 
-\item \texttt{tree($Vs$,$Es$,$K$)} (sat only)
+\item \texttt{tree($Vs$,$Es$)}
+\item \texttt{tree($Vs$,$Es$,$K$)}
 \end{itemize}
 \end{scriptsize}
 \section*{Module \texttt{planner}}  

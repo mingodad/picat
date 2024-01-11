@@ -1,0 +1,11 @@
+main([File]) =>
+    Lines = read_file_lines(File),
+	foreach(Line in Lines)
+	    append(Target,[':'|_],Line),
+	    println(Line),
+		(append(MainTarget,".o",Target) ->
+		    printf("\tgcc -c -O3 %s.c\n",MainTarget)
+		;
+		    true
+		)
+    end.

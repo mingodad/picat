@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : numbervars.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: number_vars, copy_term, etc.
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -274,7 +274,7 @@ int c_COPY_TERM() {
 /* for a compound term, only copy the skelton, not the arguments */
 
 int c_COPY_TERM_SHALLOW() {
-    BPLONG term, cterm, temp;
+    BPLONG term, cterm;
 
     term = ARG(1, 2); cterm = ARG(2, 2);
     DEREF(term);
@@ -459,7 +459,6 @@ start:
         term = FOLLOW(struct_ptr+arity);
         goto start;
     } else {
-        BPLONG_PTR ptr;
         BPLONG_PTR susp_var_ptr;
 
         susp_var_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(term);

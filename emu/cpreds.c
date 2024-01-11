@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : cpreds.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Non-inline built-ins in C
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -284,6 +284,7 @@ BPLONG picat_get_integer(BPLONG t)
         bp_exception = integer_expected;
         return 0;
     }
+    return 0; // unreachable
 }
 
 double bp_get_float(BPLONG t)
@@ -1012,6 +1013,10 @@ int c_IS_SMALL_INT_c() {
 extern int fann_cpreds();
 #endif
 
+#ifdef SCIPSUITE
+extern int Cboot_scip();
+#endif
+
 #ifdef PRISM
 extern void bp4p_register_preds();
 #endif
@@ -1150,18 +1155,22 @@ void Cboot() {
       Cboot_glpk();
       #endif
     */
-    insert_cpred("c_sat_propagate_dom_bits", 2, c_sat_propagate_dom_bits);
 
     insert_cpred("c_REDUCE_DOMAINS_IC_EQ", 2, c_REDUCE_DOMAINS_IC_EQ);
     insert_cpred("c_REDUCE_DOMAINS_IC_GE", 2, c_REDUCE_DOMAINS_IC_GE);
     //  insert_cpred("c_REDUCE_DOMAIN_AC_ADD",3,c_REDUCE_DOMAIN_AC_ADD);
     insert_cpred("c_TA_TOP_f", 1, c_TA_TOP_f);
-    Cboot_sat();
 #ifdef SAT
+    insert_cpred("c_sat_propagate_dom_bits", 2, c_sat_propagate_dom_bits);
+    Cboot_sat();
     insert_cpred("c_call_espresso", 5, c_call_espresso);
     insert_cpred("c_call_espresso_pb", 6, c_call_espresso_pb);
 #endif
 
+#ifdef SCIPSUITE
+    Cboot_scip();
+#endif
+    
 #ifdef PRISM
     bp4p_register_preds();
 #endif

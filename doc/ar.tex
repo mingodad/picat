@@ -142,7 +142,12 @@ A constraint propagator is an actor that reacts to updates of the domains of the
       fd_set_false(X,C-Ey).
    x_in_c_y_ac(X,Y,C) => true.
 \end{verbatim}
-Whenever an inner element \texttt{Ey} is excluded from the domain of \texttt{Y}, this propagator is triggered to exclude \texttt{C-Ey}, which is the support of \texttt{Ey}, from the domain of \texttt{X}. For the constraint \verb-X+Y #= C-, users need to generate two propagators, namely, \texttt{x\_in\_c\_y\_ac(X,Y,C)} and \texttt{x\_in\_c\_y\_ac(Y,X,C)}, to maintain the arc consistency. Note that in addition to these two propagators, users also need to generate propagators for maintaining interval consistency, because \texttt{dom(Y,Ey)} only captures exclusions of inner elements, and does not capture bounds. The following propagator maintains interval consistency for the constraint:
+Whenever an inner element \texttt{Ey} is excluded from the domain of \texttt{Y}, this propagator is triggered to exclude \texttt{C-Ey}, which is the support of \texttt{Ey}, from the domain of \texttt{X}. For the constraint \verb-X+Y #= C-, users need to generate two propagators, namely,
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{x\_in\_c\_y\_ac(X,Y,C)} and \texttt{x\_in\_c\_y\_ac(Y,X,C)}
+\end{tabbing}
+to maintain the arc consistency. Note that in addition to these two propagators, users also need to generate propagators for maintaining interval consistency, because \texttt{dom(Y,Ey)} only captures exclusions of inner elements, and does not capture bounds. The following propagator maintains interval consistency for the constraint:
 \begin{verbatim}
    import cp.
 

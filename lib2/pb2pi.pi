@@ -1,0 +1,251 @@
+import os.
+
+/****************************************************************************
+   pb2pi.pi (in Picat), by Neng-Fa Zhou, Jan. 11, 2016
+
+   This program converts PB instances from the competition format to Picat. 
+
+   In the competition format, a constraint has the form:
+
+    [term]+ (>= | = ) Coe ;
+
+   and an objective function has the form:
+
+    min [term]+ ;
+
+   This program can be loaded into the Picat system and run by a query 
+   
+   Picat> cl("pb2pi")
+   Picat> main("nqueens_8")
+
+   Alternatively, this program can be run as a standalone command:
+
+       picat pb2pi nqueens_8
+
+   You need to ensure that the path to the Picat executable is set properly 
+   and the file "bp2pi.pi" and "nqueens_8.opb" are in the working directory.
+   Otherwise, the full paths to the executable and the files must be given.
+
+   If not files are given, the pb2pi converts all the opb files in the current
+   director to Picat, as in:
+
+       picat pb2pi
+
+*********************************************************************************/
+main =>
+    Fs = listdir("."),
+    foreach (F in Fs, append(_,".opb",F))
+        (not not pb2picat(F) -> true; true)
+    end.
+    
+main(InFile),string(InFile) =>
+    pb2picat(InFile).
+main([InFile]),string(InFile) =>
+    pb2picat(InFile).
+main(Args) =>
+    println($invalid_args(Args)).           
+
+pb2picat(InFile) =>
+    (append(MainFileStr,".opb",InFile) ->
+        OPBFile = InFile
+    ; 
+        MainFileStr = InFile,
+        OPBFile = InFile++".opb"
+    ),        
+    OutFile = MainFileStr++".pi",
+    InStream = open(OPBFile,read),
+    read_pb_cl_tokens(InStream,Tokens),
+    printf("converting %s\n",InFile),
+    VarsSet = new_set(),
+    catch(parse(InStream,Tokens,VarsSet,Constrs,Obj),Exception,(println(Exception),close(InStream),true)),
+    OutStream = open(OutFile,write),
+    printf(OutStream,"import sat.\n\n"),
+    printf(OutStream,"main ?=>\n"),
+    printf(OutStream,"    println(\"solving %s\"),\n",MainFileStr),
+    not not output_var_defs(OutStream,VarsSet),
+    output_constrs(OutStream,Constrs),
+    not not output_solve(OutStream,MainFileStr,Obj,VarsSet),
+    println(OutStream,"main => println(\"=====UNSATISFIABLE=====\").\n"),
+    close(InStream),
+    close(OutStream).
+
+parse(_,end_of_file,_VarsSet,Constrs,_Obj) => Constrs = [].
+parse(InStream,[min,':'|Tokens],VarsSet,Constrs,Obj) => 
+    parse_exp(Tokens,[],VarsSet,Exp),
+    Obj = $min(Exp),
+    read_pb_cl_tokens(InStream,NextTokens),
+    parse(InStream,NextTokens,VarsSet,Constrs,Obj).
+parse(InStream,Tokens,VarsSet,Constrs,Obj) => 
+    Constrs = [Constr|ConstrsR],                                           
+    parse_constr(Tokens,VarsSet,Constr),
+    read_pb_cl_tokens(InStream,NextTokens),
+    parse(InStream,NextTokens,VarsSet,ConstrsR,Obj).
+
+parse_exp([+,X|Tokens],TokensR,VarsSet,Exp) =>
+    Coe = X,
+    Exp = [[Coe|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).
+parse_exp([-,X|Tokens],TokensR,VarsSet,Exp) =>
+    Coe = -X,
+    Exp = [[Coe|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).    
+parse_exp([X|Tokens],TokensR,VarsSet,Exp), integer(X) =>
+    Exp = [[X|Term]|ExpR],
+    parse_term(Tokens,Term,Tokens1,VarsSet),
+    parse_exp(Tokens1,TokensR,VarsSet,ExpR).        
+parse_exp(Tokens,TokensR,_VarsSet,Exp) =>
+    TokensR = Tokens,
+    Exp = [].
+
+parse_term([],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = [].
+parse_term(Tokens@[+|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@[-|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@[X|_],Term,TokensR,VarsSet), integer(X) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@['='|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(Tokens@['>='|_],Term,TokensR,VarsSet) =>
+    Term = [],
+    TokensR = Tokens.
+parse_term(['~',X|Tokens],Term,TokensR,VarsSet) =>
+    VarsSet.put(X),
+    Term = [$(1-X)|Term1],
+    parse_term(Tokens,Term1,TokensR,VarsSet).
+parse_term([X|Tokens],Term,TokensR,VarsSet) =>
+    VarsSet.put(X),
+    Term = [X|Term1],
+    parse_term(Tokens,Term1,TokensR,VarsSet).
+
+% parse_constr(Tokens,VarsSet,Constr) ?=> println($parse(Tokens)),nl,fail.
+
+parse_constr(Tokens,VarsSet,Constr) =>
+    Constr = $constr(Exp,Op,C),                                    
+    parse_exp(Tokens,Tokens1,VarsSet,Exp),
+    Tokens1 = [Op|Tokens2],
+    parse_int(Tokens2,_,C).
+
+parse_int(['+',I|Tokens],TokensR,C) => C = I, TokensR = Tokens.
+parse_int(['-',I|Tokens],TokensR,C) => C = -I, TokensR = Tokens.
+parse_int([I|Tokens],TokensR,C) => C = I, TokensR = Tokens.
+
+/* tokenizer */
+read_pb_cl_tokens(InStream,Tokens) =>
+    skip_comment(InStream),
+    read_picat_token(InStream,Type,Token), % first token
+    read_pb_cl_tokens(InStream,Type,Token,Tokens).
+
+skip_comment(InStream) =>
+    Ch = peek_char(InStream),
+    skip_comment(InStream,Ch).
+
+skip_comment(InStream,'*') =>
+    _ = read_line(InStream),
+    skip_comment(InStream).
+skip_comment(InStream,Ch), w_space(Ch) =>
+    _ = read_char(InStream),
+    NextCh = peek_char(InStream),
+    skip_comment(InStream,NextCh).
+skip_comment(_InStream,_) => true.
+
+index (+)
+w_space(' ').
+w_space('\n').
+w_space('\t').
+w_space('\r').
+
+read_pb_cl_tokens(_InStream,end_of_file,_,Tokens) => Tokens=end_of_file.     % end-of-file
+read_pb_cl_tokens(_InStream,punctuation,';',Tokens) => 
+    Tokens = [].
+read_pb_cl_tokens(InStream,_Type,Token,Tokens) =>                   
+    Tokens=[Token|Tokens1],
+    read_picat_token(InStream,Type,PicatToken),
+    read_pb_cl_tokens(InStream,Type,PicatToken,Tokens1).
+
+%%%
+output_var_defs(OutStream,VarsSet) =>
+    keys(VarsSet) = Vars,
+    printf(OutStream,"    Vars = ["),
+    output_vars(OutStream,Vars),
+    printf(OutStream,"    Vars :: 0..1,\n").
+    
+output_vars(OutStream,[]) =>
+    println(OutStream,"],\n").
+output_vars(OutStream,[Var]) =>
+    printf(OutStream,"_%w],\n",Var).
+output_vars(OutStream,[Var|Vars]) =>
+    printf(OutStream,"_%w,",Var),
+    output_vars(OutStream,Vars).
+
+output_constrs(_OutStream,[]) => true.
+output_constrs(OutStream,[constr(Exp,Op,C)|Constrs]) =>
+    not not output_constr(OutStream,Exp,Op,C),
+    output_constrs(OutStream,Constrs).
+    
+output_constr(OutStream,Exp,Op,C) =>
+    printf(OutStream,"    "),
+    output_exp(OutStream,Exp),
+    printf(OutStream, " #%w %w,\n",Op,C).
+
+output_exp(_OutStream,[]) =>  true.
+output_exp(OutStream,[Term]) =>
+    output_term(OutStream,Term).
+output_exp(OutStream,[Term|Exp]) =>
+    output_term(OutStream,Term),
+    print(OutStream," + "),
+    output_exp(OutStream,Exp).
+
+output_term(OutStream,[F]) =>
+    output_factor(OutStream,F).
+output_term(OutStream,[F|Term]) =>
+    output_factor(OutStream,F),
+    print(OutStream," * "),
+    output_term(OutStream,Term).
+
+output_factor(OutStream,F), integer(F) =>
+    (F < 0 ->
+        printf(OutStream,"(%w)", F)
+    ;
+        printf(OutStream,"%w", F)
+    ).
+output_factor(OutStream,(1-X)) =>
+    printf(OutStream,"(1-_%w)", X).
+output_factor(OutStream,X) =>
+    printf(OutStream,"_%w", X).    
+
+output_solve(OutStream,_MainFileStr,min(Exp),VarsSet) =>
+    output_constr(OutStream,Exp,=,'Obj'),
+    println(OutStream,"    solve($[min(Obj)], Vars),"),
+    output_ans(OutStream,VarsSet,1).
+output_solve(OutStream,_MainFileStr,_Obj,VarsSet) =>
+%    printf(OutStream,"    solve([$dump(\"Picat/%s.cnf\")],Vars).\n",MainFileStr).
+    printf(OutStream,"    solve(Vars),\n"),
+    output_ans(OutStream,VarsSet,0,).
+
+output_ans(OutStream,VarsSet,ObjFlag) =>
+    keys(VarsSet).sort() = Vars,
+    output_ans_aux(OutStream,Vars),
+    if ObjFlag == 1 then
+        println(OutStream,"    printf(\"%% obj = %w\\n\", Obj).")
+    else
+        println(OutStream,"    true.")
+    end.
+
+output_ans_aux(OutStream,[]) => true.
+output_ans_aux(OutStream,[V]) =>
+    printf(OutStream,"    println(%w=_%w),\n",V,V).
+output_ans_aux(OutStream,[V|Vars]) =>
+    printf(OutStream,"    println(%w=_%w),\n",V,V),
+    output_ans_aux(OutStream,Vars).
+output_ans_aux(_OutStream,[]) => true.
+
+

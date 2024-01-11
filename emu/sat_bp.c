@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : sat_bp.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: SAT interface for B-Prolog and Picat
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -119,18 +119,18 @@ int b_SAT_ADD_CL_c(BPLONG cl) {
         cl = FOLLOW(lst_ptr+1); DEREF_NONVAR(cl);
     }
 
-	if (num_threads > 0) {
-	  for (ptr = local_top; ptr != lit_ptr; ptr--) {
-		PSAT_ADD(INTVAL(*ptr));
-	  }
-	  PSAT_ADD(0);
-	}
-	else {
-	  for (ptr = local_top; ptr != lit_ptr; ptr--) {
-		SAT_ADD(INTVAL(*ptr));
-	  }
-	  SAT_ADD(0);
-	}
+    if (num_threads > 0) {
+        for (ptr = local_top; ptr != lit_ptr; ptr--) {
+            PSAT_ADD(INTVAL(*ptr));
+        }
+        PSAT_ADD(0);
+    }
+    else {
+        for (ptr = local_top; ptr != lit_ptr; ptr--) {
+            SAT_ADD(INTVAL(*ptr));
+        }
+        SAT_ADD(0);
+    }
 
     return BP_TRUE;
 }

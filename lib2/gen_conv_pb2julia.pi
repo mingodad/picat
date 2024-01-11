@@ -1,0 +1,9 @@
+import os.
+
+main =>
+    Fs = listdir(".").sort(),
+    foreach (F in Fs, append(MainF,".opb",F))
+   		printf("echo converting %s\n",F),
+      	printf("time timeout -k 1200 1200 picat pb2julia %s\n", F)
+    end.
+                

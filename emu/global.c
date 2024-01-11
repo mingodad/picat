@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : global.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Management of the global database
 
  * This Source Code Form is subject to the terms of the Mozilla Public

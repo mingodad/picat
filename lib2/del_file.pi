@@ -1,0 +1,16 @@
+import os.
+
+main =>
+    Files = listdir("."),
+    foreach (File in Files, File != ".", File != "..")
+        if append(_,".jl",File) && contains(File,"println(\"incomplete instance\")") then
+            printf("echo deleting %s\n",File),
+            rm(File)
+        end
+    end.
+
+contains(File, Str) =>
+	Ls = read_file_lines(File),
+	member(L,Ls),
+	append(Str,_,L),!.
+	

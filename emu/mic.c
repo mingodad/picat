@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : mic.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: miscellaneous functions
  *            Includes MurmurHash by Austin Appleby
 
@@ -154,7 +154,6 @@ BPLONG cputime()
 */
 
 int c_OS_TYPE_f() {
-    SYM_REC_PTR sym_ptr;
     BPLONG op;
 
     op = unix_atom;
@@ -694,13 +693,12 @@ int b_BLDATOM_fc(BPLONG op1, BPLONG op2)
 
 int b_BLDNUM_fc(BPLONG op1, BPLONG op2)
 {  /* make op1 the number with name string op2       */
-    BPLONG a, n;
+    BPLONG a;
     CHAR_PTR s, name;
     BPLONG op3, sign, orig_op2;
     BPLONG_PTR top, ptr;
 
     s = name = (char *)heap_top;
-    n = 0;
     orig_op2 = op2;
 
     DEREF(op2);
@@ -729,7 +727,6 @@ int b_BLDNUM_fc(BPLONG op1, BPLONG op2)
             return BP_ERROR;
         }
         *s++ = (CHAR)a;
-        n++;
         op2 = FOLLOW(ptr+1);
         DEREF(op2);
     }
@@ -829,12 +826,12 @@ int b_SYSTEM0_cf(BPLONG op1, BPLONG op2)  /* op1: a list of int (string) for CSh
 }
 
 int c_LOAD_cfc() {
-    BPLONG op1, op2, op3;
+    BPLONG op1, op3;
     BPLONG_PTR top;
     SYM_REC_PTR sym_ptr;
 
     op1 = ARG(1, 3);
-    op2 = ARG(2, 3);
+    //    op2 = ARG(2, 3);
     op3 = ARG(3, 3);
 
     DEREF(op1); DEREF(op3);
@@ -1076,6 +1073,7 @@ BPLONG bp_hashval(BPLONG op) {
                   return (hcode_sum & HASH_BITS);
               },
               {return 0;});
+    return 0; // unreachable
 }
 
 int b_HASHVAL1_cf(BPLONG op1, BPLONG op2)  /* op1 a term, op2 the hash value of the main functor of op1*/
@@ -1364,7 +1362,7 @@ int c_SHOW_NONDET_FRAME() {
     op1 = ARG(1, 1);
     op1 = INTVAL(op1);
     tempreg = (BPLONG_PTR)*arreg;
-    printf("AR=   = " BPULONG_FMT_STR "\n", tempreg);
+    printf("AR=   = " BPULONG_FMT_STR "\n", (BPULONG)tempreg);
     printf("(AR)  = " BPULONG_FMT_STR "\n", *tempreg);
     printf("CPS   = " BPULONG_FMT_STR "\n", *(tempreg-1));
     printf("TOP   = " BPULONG_FMT_STR "\n", *(tempreg-2));
@@ -1658,7 +1656,7 @@ int b_NTH_ELM_ccf(BPLONG i, BPLONG l, BPLONG v)
 }
 
 
-void myquit(BPLONG  overflow_type, const char *src)
+void myquit(BPLONG overflow_type, const char *src)
 {
 #ifdef BPSOLVER
     // fprintf(stdout,"%% UNKNOWN\n");
@@ -1861,9 +1859,9 @@ int b_GET_ATTR_ccf(BPLONG var, BPLONG attr, BPLONG value)
         pair_ptr = (BPLONG_PTR)UNTAGGED_ADDR(pair);
         attr1 = FOLLOW(pair_ptr+1); DEREF(attr1);  /* (attr,value) */
         if (attr == attr1 || (TAG(attr) != ATM && key_identical(attr, attr1))) {
-	  ASSIGN_v_heap_term(value, FOLLOW(pair_ptr+2));
-	  return BP_TRUE;
-	}
+            ASSIGN_v_heap_term(value, FOLLOW(pair_ptr+2));
+            return BP_TRUE;
+        }
         attrs = FOLLOW(ptr+1); DEREF(attrs);
     }
     return BP_FALSE;
@@ -2128,6 +2126,7 @@ start:
     }
     return BP_TRUE;
     }
+    return BP_TRUE; // unreachable
 }
 
 /* len > 0 */
@@ -2557,9 +2556,6 @@ int b_IS_ARRAY_c(BPLONG term) {  /* is Picat array */
 }
 
 int b_IS_BIGINT_c(BPLONG term) {
-    SYM_REC_PTR sym_ptr;
-    CHAR_PTR char_ptr;
-
     SWITCH_OP_STRUCT(term, lab1,
                      {return BP_FALSE;},
                      {return (BPLONG)GET_STR_SYM_REC(term) == (BPLONG)bigint_psc;},
@@ -2603,7 +2599,7 @@ int b_IS_ALPHA_c(BPLONG term) {
     if (GET_LENGTH(sym_ptr) != 1) return BP_FALSE;
     char_ptr = (char *)GET_NAME(sym_ptr);
     c = *char_ptr;
-    return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') ? BP_TRUE : BP_FALSE;
+    return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) ? BP_TRUE : BP_FALSE;
 }
 
 int b_IS_ALPHA_DIGIT_c(BPLONG term) {
@@ -2615,7 +2611,7 @@ int b_IS_ALPHA_DIGIT_c(BPLONG term) {
     if (GET_LENGTH(sym_ptr) != 1) return BP_FALSE;
     char_ptr = (char *)GET_NAME(sym_ptr);
     c = *char_ptr;
-    return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9') ? BP_TRUE : BP_FALSE;
+    return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) ? BP_TRUE : BP_FALSE;
 }
 
 int b_IS_LOWERCASE_c(BPLONG term) {
@@ -2649,6 +2645,7 @@ int b_IS_CALLABLE_c(BPLONG term) {
               {return BP_FALSE;},
               {return BP_TRUE;},
               {return BP_FALSE;});
+    return BP_TRUE; // unreachable
 }
 
 /* added for XCSP competition 2022 */
@@ -2656,7 +2653,7 @@ int c_xk_token() {
     BPLONG term;
     SYM_REC_PTR sym_ptr;
     CHAR_PTR char_ptr;
-	char d;
+    char d;
 
     term = ARG(1,1);
     DEREF(term);
@@ -2664,8 +2661,8 @@ int c_xk_token() {
     sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(term);
     if (GET_LENGTH(sym_ptr) < 2) return BP_FALSE;
     char_ptr = GET_NAME(sym_ptr);
-	d = *(char_ptr+1);
-
+    d = *(char_ptr+1);
+        
     return (*char_ptr == 'x' && d >= '0' && d <= '9') ? BP_TRUE : BP_FALSE;
 }
 
@@ -2764,7 +2761,7 @@ void Cboot_mic()
     less_than_sym = ADDTAG(BP_NEW_SYM("<", 0), ATM);
     equal_sym = ADDTAG(BP_NEW_SYM("=", 0), ATM);
 
-	insert_cpred("c_xk_token", 1, c_xk_token);
+    insert_cpred("c_xk_token", 1, c_xk_token);
     insert_cpred("getpid", 1, c_getpid);
     insert_cpred("c_OS_TYPE_f", 1, c_OS_TYPE_f);
     insert_cpred("c_get_main_args", 1, c_get_main_args);
@@ -2852,7 +2849,6 @@ FORCE_INLINE UW32 fmix ( UW32 h )
 
 UW32 MurmurHash3_x86_32_uint32( const UW32 key, UW32 seed)
 {
-    int i;
     UW32 h1 = seed;
     UW32 c1 = 0xcc9e2d51;
     UW32 c2 = 0x1b873593;

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : clpfd.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Primitives on domain variables and constraints
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -58,7 +58,7 @@ int dvar_excludable_or_int(BPLONG op)
     if (IS_SUSP_VAR(op)) {
         dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
         if (IS_UN_DOMAIN(dv_ptr) ||
-            IS_IT_DOMAIN(dv_ptr) && !IS_SMALL_DOMAIN(dv_ptr)) return 0;
+            (IS_IT_DOMAIN(dv_ptr) && !IS_SMALL_DOMAIN(dv_ptr))) return 0;
         return 1;
     }
     return 0;
@@ -333,9 +333,6 @@ int b_select_ff(BPLONG Vars, BPLONG BestVar)
     BPLONG_PTR dv_ptr, dv_ptr0, ptr;
     BPLONG size, size0;
 
-    BPLONG Vars0;
-    Vars0 = Vars;
-
     DEREF_NONVAR(Vars);
     while (ISLIST(Vars)) {
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(Vars);
@@ -373,8 +370,6 @@ int b_SELECT_FF_MIN_cf(BPLONG Vars, BPLONG BestVar)
     BPLONG Var, size0, size;
     BPLONG_PTR dv_ptr, dv_ptr0, ptr;
 
-    BPLONG Vars0;
-    Vars0 = Vars;
 
     DEREF_NONVAR(Vars);
     while (ISLIST(Vars)) {
@@ -412,9 +407,6 @@ int b_SELECT_FF_MAX_cf(BPLONG Vars, BPLONG BestVar)
     BPLONG Var, size, size0;
     BPLONG_PTR dv_ptr, dv_ptr0, ptr;
 
-    BPLONG Vars0;
-    Vars0 = Vars;
-
     DEREF_NONVAR(Vars);
     while (ISLIST(Vars)) {
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(Vars);
@@ -451,9 +443,6 @@ int b_SELECT_MIN_cf(BPLONG Vars, BPLONG BestVar)
     BPLONG Var, min, min0;
     BPLONG_PTR dv_ptr, dv_ptr0, ptr;
 
-    BPLONG Vars0;
-    Vars0 = Vars;
-
     DEREF_NONVAR(Vars);
     while (ISLIST(Vars)) {
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(Vars);
@@ -489,9 +478,6 @@ int b_SELECT_MAX_cf(BPLONG Vars, BPLONG BestVar)
 {
     BPLONG Var, max0, max;
     BPLONG_PTR dv_ptr, dv_ptr0, ptr;
-
-    BPLONG Vars0;
-    Vars0 = Vars;
 
     DEREF_NONVAR(Vars);
     while (ISLIST(Vars)) {
@@ -650,7 +636,7 @@ start:
         term = FOLLOW(ptr+1);
         goto start;
     } else if (ISSTRUCT(term)) {
-        BPLONG i, arity, count;
+        BPLONG i, arity;
         ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
         arity = GET_ARITY((SYM_REC_PTR)FOLLOW(ptr));
         count = 0;
@@ -912,7 +898,7 @@ void print_event_queue() {
     int i;
     printf("trigger_no=" BPLONG_FMT_STR "\n", trigger_no);
     for (i = 1; i <= trigger_no; i++) {
-        printf("FLAG(%d) queue(" BPULONG_FMT_STR ")\n", event_flag[i], triggeredCs[i]);
+        printf("FLAG(%d) queue(" BPULONG_FMT_STR ")\n", event_flag[i], (BPULONG)triggeredCs[i]);
     }
     if (trigger_no >= 1) printf("\n");
 }
@@ -1355,7 +1341,6 @@ int b_REIFY_GE_CONSTR_ACTION(BPLONG B, BPLONG X, BPLONG Y)
 int b_REIFY_NEQ_CONSTR_ACTION(BPLONG B, BPLONG X, BPLONG Y)
 {
     BPLONG_PTR dv_ptr_x, dv_ptr_y, dv_ptr_b;
-
     /*
       B = FOLLOW(arreg+3);DEREF_NONVAR(B); 
       X = FOLLOW(arreg+2);DEREF_NONVAR(X); 
@@ -1486,8 +1471,8 @@ int b_MOD_CON_ccc(BPLONG X, BPLONG Y, BPLONG Z)
     dv_ptr_x = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(X);
     currX = DV_first(dv_ptr_x);
     maxX = DV_last(dv_ptr_x);
-	if (maxX >= 3000)
-	  return BP_TRUE;
+    if (maxX >= 3000)
+        return BP_TRUE;
     if (ISINT(Z)) {
         Z = INTVAL(Z);
         while (currX <= maxX) {

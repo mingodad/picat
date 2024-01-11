@@ -2,7 +2,7 @@
 #ifdef SAT
 /********************************************************************
  *   File   : espresso_bp.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Interface with Espresso for Picat
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -59,7 +59,7 @@ int c_call_espresso()
     n = GET_ARITY(sym_ptr);  /* n bits (Boolean variables) */
     PLA = init_PLA(n);
 
-	//    printf("=> call_espresso "); write_term(Vals); printf("\n");
+    //    printf("=> call_espresso "); write_term(Vals); printf("\n");
 
     setup_PLA(Vals, INTVAL(InFlag), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);
@@ -98,11 +98,11 @@ void prep_espresso() {
 }
 
 void run_espresso(pPLA PLA) {
-    pcover F, Fold, Dold;
-    bool error, exact_cover;
+    pcover Fold;
+    bool error;
     cost_t cost;
 
-    exact_cover = FALSE;  /* for -qm option, the default */
+    //    exact_cover = FALSE;  /* for -qm option, the default */
     Fold = sf_save(PLA->F);
     PLA->F = espresso(PLA->F, PLA->D, PLA->R);
     EXECUTE(error = verify(PLA->F, Fold, PLA->D), VERIFY_TIME, PLA->F, cost);
@@ -253,7 +253,7 @@ void setup_PLA(BPLONG Vals, BPLONG InFlag, pPLA PLA) {
 
 BPLONG retrieve_pla_cube(BPLONG_PTR ptrBNVect, register pset c)
 {
-    register int i, var;
+    register int var;
     BPLONG_PTR tail_ptr, heap_top0;
     BPLONG lst, elm;
 
@@ -286,7 +286,6 @@ BPLONG retrieve_pla_cube(BPLONG_PTR ptrBNVect, register pset c)
 }
 
 void retrieve_pla_cubes(BPLONG_PTR ptrBNVect, pPLA PLA, BPLONG Cls, BPLONG ClsR) {
-    int num;
     register pcube last, p;
     BPLONG_PTR tail_ptr;
     BPLONG lst;
@@ -340,7 +339,7 @@ int c_call_espresso_pb() {
     n = GET_ARITY(sym_ptr);  /* n bits (Boolean variables) */
     PLA = init_PLA(n);
 
-	//	printf("=>espresso_pb n = %d ",n); write_term(Coes); write_term(BNVect);printf("\n");
+    //  printf("=>espresso_pb n = %d ",n); write_term(Coes); write_term(BNVect);printf("\n");
 
     setup_PLA_pb(Coes, INTVAL(Rel), INTVAL(Const), PLA);
     //  fprint_pla(curr_out,PLA, FD_type);
@@ -368,7 +367,6 @@ void setup_PLA_pb(BPLONG Coes, BPLONG pb_rel, BPLONG pb_const, pPLA PLA) {
     bool savef, saved, saver;
     int val, val_is_in, tmp_val;
     BPLONG_PTR coes_ptr;
-    SYM_REC_PTR sym_ptr;
 
     needs_dcset = 1;
     needs_offset = 1;

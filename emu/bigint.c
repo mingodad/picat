@@ -636,14 +636,13 @@ void bp_twoscomplement_magnitude(BPLONG_PTR zsize_ptr, UBIGINT z) {
 
 /* x is two's complement of a positive bigint, y>0, the imaginary sign bit stays while being shifted right */
 void bp_shiftr_twoscomplement_int(BPLONG xsize, UBIGINT x, BPLONG y, BPLONG_PTR zsize_ptr, UBIGINT z) {
-    BPLONG i, j, zsize, rightShiftBlocks, leftShiftBits, remainingBits;
+    BPLONG i, j, zsize, rightShiftBlocks, leftShiftBits;
 
     // This calculation is wacky, but expressing the shift as a left bit shift
     // within each block lets us use getShiftedBlock.
     //  x[xsize-1] = (x[xsize-1] & MASK_LOW28);
     rightShiftBlocks = (y + 27) / 28;
     leftShiftBits = 28 * rightShiftBlocks - y;
-    remainingBits = y - 28*(rightShiftBlocks-1);
     zsize = xsize;
     if (rightShiftBlocks <= xsize) {
         for (j = rightShiftBlocks, i = 0; j <= xsize; j++, i++) {

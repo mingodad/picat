@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : table.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Primitives on table area
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -1090,7 +1090,7 @@ void complete_scc_elms(BPLONG_PTR subgoal_entry) {
 }
 
 void reset_temp_complete_scc_elms(BPLONG_PTR subgoal_entry) {
-    BPLONG_PTR ptr, entry, tmp_ptr;
+    BPLONG_PTR ptr, entry;
 
     ptr = (BPLONG_PTR)GT_SCC_ELMS(subgoal_entry);
     while (ptr != NULL) {
@@ -1164,7 +1164,8 @@ BPLONG_PTR allocateAnswerTable(BPLONG_PTR first_answer, int arity) {
 
 int addTableAnswer(BPLONG_PTR stack_arg_ptr, int arity, BPLONG_PTR subgoal_entry) {
     BPLONG_PTR answer_table, this_answer, answer, last_answer, bucket_ptr, this_table_arg_ptr, table_arg_ptr, entryPtr;
-    BPLONG_PTR trail_top0, old_table_top;
+    // BPLONG_PTR trail_top0;
+    BPLONG_PTR old_table_top;
     BPLONG i, answer_record_size, bucket_size, hcode;
 
     answer_table = (BPLONG_PTR)GT_ANSWER_TABLE(subgoal_entry);
@@ -1320,8 +1321,8 @@ int addTableOptimalAnswer(BPLONG_PTR stack_arg_ptr, int arity, BPLONG_PTR subgoa
     /* now add the new answer if the cardinality limit allows */
     last_answer = (BPLONG_PTR)ANSWERTABLE_LAST(answer_table);
     if (table_card == ANSWERTABLE_COUNT(answer_table)) {  /* replace */
-        if (maximize == 0 && isSmallerTabledAnswer(this_answer, last_answer, opt_arg_index) ||
-            maximize == 1 && isBiggerTabledAnswer(this_answer, last_answer, opt_arg_index)) {
+        if ((maximize == 0 && isSmallerTabledAnswer(this_answer, last_answer, opt_arg_index)) ||
+            (maximize == 1 && isBiggerTabledAnswer(this_answer, last_answer, opt_arg_index))) {
             removeAnswerFromAnswerTable(answer_table, last_answer, arity);
             copyTabledAnswerArgs(this_answer, last_answer, arity);
             if (ta_record_ptr->top == old_table_top+answer_record_size) {  /* reuse the last answer, so deallocate the space */
@@ -1527,7 +1528,6 @@ int c_VARIANT() {
 
 int b_VARIANT_cc(BPLONG op1, BPLONG op2) {
     int i;
-    BPLONG maxVarNo;
     BPLONG_PTR trail_top0;
     BPLONG initial_diff0;
 
@@ -1535,8 +1535,6 @@ int b_VARIANT_cc(BPLONG op1, BPLONG op2) {
 
     if (TAG(op1) == ATM || TAG(op2) == ATM)
         return op1 == op2;
-
-    maxVarNo = -1;
 
     initial_diff0 = (BPULONG)trail_up_addr-(BPULONG)trail_top;
 
@@ -1557,7 +1555,7 @@ int b_VARIANT_cc(BPLONG op1, BPLONG op2) {
   t2 is a numbered term, which needs to be dereferenced
 */
 int term_subsume_numberedterm(BPLONG t1, BPLONG t2) {
-    BPLONG_PTR top, ptr;
+    BPLONG_PTR top;
     BPLONG i, arity;
 
 beginning:
@@ -1874,11 +1872,9 @@ int c_set_all_table_cardinality_limit() {
 }
 
 int table_statistics() {
-    BPLONG i, count, subgoal_count, total_ans_count, max_ans_count, zero_ans_count, total_ans_access_count, max_ans_access_count, total_its_count, max_its_count, scc_nodes_count;
+    BPLONG i, count, subgoal_count, total_ans_count, max_ans_count, zero_ans_count, total_its_count, max_its_count, scc_nodes_count;
     BPLONG_PTR subgoal_entry, ptr;
     subgoal_count = 0;
-    total_ans_access_count = 0;
-    max_ans_access_count = 0;
     total_its_count = 0;
     max_its_count = 0;
     total_ans_count = 0;
@@ -1988,9 +1984,9 @@ void reset_temp_complete_subgoal_entries() {
         subgoal_entry = (BPLONG_PTR)FOLLOW(subgoalTable+i);
         while (subgoal_entry != NULL) {
             if (GT_TOP_AR(subgoal_entry) == SUBGOAL_TEMP_COMPLETE) {
-                printf("TEMP_COMPLETE " BPULONG_FMT_STR "\n", subgoal_entry);
+                printf("TEMP_COMPLETE " BPULONG_FMT_STR "\n", (BPULONG)subgoal_entry);
                 ptr = (BPLONG_PTR)GT_SCC_ROOT(subgoal_entry);
-                printf("SCC_ROOT = " BPULONG_FMT_STR "\n", ptr);
+                printf("SCC_ROOT = " BPULONG_FMT_STR "\n", (BPULONG)ptr);
                 printf("SCC_ROOT = " BPULONG_FMT_STR "\n", GT_TOP_AR(ptr));
             }
             //                GT_TOP_AR(subgoal_entry) = (BPLONG)NULL;
@@ -2246,7 +2242,7 @@ void expand_picat_table_map(MAP_RECORD_PTR mr_ptr) {
 }
 
 int b_PICAT_TABLE_MAP_PUT_ccc(BPLONG map_num, BPLONG key, BPLONG val) {
-    BPLONG i, key_cp, val_cp, this_hcode, this_ground_flag, dummy_hcode, dummy_ground_flag;
+    BPLONG key_cp, val_cp, this_hcode, this_ground_flag, dummy_hcode, dummy_ground_flag;
     BPLONG_PTR trail_top0, tmp_ptr, kvp_ptr_ptr;
     MAP_RECORD_PTR mr_ptr;
     KEY_VAL_PAIR_PTR kvp_ptr;

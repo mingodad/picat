@@ -1,0 +1,21 @@
+There are several make files in the fold "emu/" for
+different platforms. To make the executable for a
+platform, simply run the command
+
+make -f Makefile***
+
+For example, for MacOS, type
+
+make -f Makefile.mac64
+
+The interface between Picat and SCIP, which is supported
+for Linux and MacOS, is not included in the default make
+files. To make Picat including the SCIP interface, type
+
+sh make_picat_scip_linux
+
+or
+
+sh make_picat_scip_mac
+
+

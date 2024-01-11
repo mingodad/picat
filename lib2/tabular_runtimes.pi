@@ -1,0 +1,25 @@
+main(Files@[File1|_]) =>
+    extract_benchmarks(File1,Probs),
+    RTLists = [RTList : File in Files, extract_runtimes(File,RTList)],
+    foreach (Tuple in zip([Probs|RTLists]))
+        output_tuple(Tuple)
+    end.
+
+output_tuple(Tuple) =>
+    foreach (I in 1..len(Tuple))
+        print(Tuple[I]),
+        if I == len(Tuple) then
+            println("  \\\\")
+        else
+            print(" & ")
+        end
+    end.
+
+extract_benchmarks(File,Probs) =>
+    Lines = read_file_lines(File),
+    Probs = [Prob : Line in Lines, append(_,"solving ",Prob,Line)].
+    
+extract_runtimes(File,RTList) =>
+    Lines = read_file_lines(File),
+    RTList = [Runtime : Line in Lines, append(_,"real",Runtime,Line)].
+    

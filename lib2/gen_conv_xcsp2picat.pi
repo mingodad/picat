@@ -1,0 +1,9 @@
+import os.
+
+main =>
+    Fs = listdir(".").sort(),
+    foreach (F in Fs, append(MainF,".xml",F), MainF != "_tmp")
+   		printf("echo converting %s\n",F),
+      	printf("time timeout -k 120 120 picat ~/solvers/xcsp23/xcsp2picat %s > %s.pi\n", F, MainF)
+    end.
+                

@@ -1,0 +1,61 @@
+main =>
+    extract_insts(Insts),
+    printf("# instances = %w\n", length(Insts)),
+    extract_log(Insts).
+
+extract_insts(Insts) =>    
+    IS = open("trace_julia30_072423"),
+    Line = read_line(IS),
+    extract_insts(IS,Line,Insts),
+    close(IS).
+    
+extract_insts(IS,end_of_file,Insts) => Insts = [].
+extract_insts(IS,Line,Insts), append("solving ",Inst,Line), not append(_,".jl",Inst) =>
+    Insts = [Inst|Insts1],
+    Line1 = read_line(IS),
+    extract_insts(IS,Line1,Insts1).
+extract_insts(IS,Line,Insts) =>
+    Line1 = read_line(IS),
+    extract_insts(IS,Line1,Insts).
+
+extract_log(Insts) =>
+    IS = open("trace_picat30_072223"),
+    Line = read_line(IS),
+    extract_log(IS,Line,Insts),
+    close(IS).
+
+extract_log(IS,end_of_file,Insts) =>
+    true.
+extract_log(IS,Line,[]) => true.
+extract_log(IS,Line,Insts), append("solving ",Inst,Line), not append(_,".pi",Inst) =>
+    Insts = [Inst1|Insts1],
+    (Inst == Inst1 ->
+        println(Line++".pi"),
+        Line1 = read_line(IS),        
+        echo_until_next_solve(echo,IS,Line1,Insts1)
+    ;
+        printf("skip %s next inst %s\n",Inst,Inst1),
+        Line1 = read_line(IS),            
+        echo_until_next_solve(skip,IS,Line1,Insts)
+    ).
+extract_log(IS,Line,Insts) =>
+    Line1 = read_line(IS),
+    extract_log(IS,Line1,Insts).
+
+echo_until_next_solve(Flag,IS,end_of_file,Insts) => true.
+echo_until_next_solve(Flag,IS,Line,Insts), append("solving ",_,Line) =>
+    extract_log(IS,Line,Insts).
+echo_until_next_solve(Flag,IS,Line,Insts) =>
+    (Flag == echo ->
+         output_line(Line)
+    ;
+        true
+    ),
+    Line1 = read_line(IS),
+    echo_until_next_solve(Flag,IS,Line1,Insts).
+
+output_line([]) => nl.
+output_line(L) => println(L).
+    
+    
+    

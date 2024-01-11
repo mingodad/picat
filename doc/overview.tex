@@ -183,7 +183,12 @@ One = 1
 \section{Defining Predicates}
 A predicate\index{predicate} call either succeeds or fails, unless an exception\index{exception} occurs. A predicate\index{predicate} call can return multiple answers through backtracking. The built-in predicate \texttt{true}\index{\texttt{true}} always succeeds, and the built-in predicate \texttt{fail}\index{\texttt{fail}} (or \texttt{false}\index{\texttt{false}}) always fails. A \emph{goal}\index{goal} is made from predicate\index{predicate} calls and statements, including conjunction ($A,B$), disjunction ($A;B$), negation (not $A$), if-then-else\index{if statement}, \texttt{foreach} loops\index{foreach loop}, and \texttt{while} loops\index{while loop}.
 
-A predicate\index{predicate} is defined with pattern-matching rules. Picat has two types of pattern-matching rules: the non-backtrackable rule\index{non-backtrackable rule} $Head, Cond\ $\verb+=>+$\ Body$, and the backtrackable rule\index{backtrackable rule} $Head, Cond\ $\verb+?=>+$\ Body$. The $Head$ takes the form $p(t_1,\ldots,t_n)$, where $p$ is called the predicate\index{predicate} name, and $n$ is called the arity\index{arity}. When $n=0$, the parentheses can be omitted. The condition $Cond$, which is an optional goal\index{goal}, specifies a condition under which the rule is applicable. For a call $C$, if $C$ matches $Head$ and $Cond$ succeeds, meaning that the condition evaluates to true, the rule is said to be \emph{applicable} to $C$. When applying a rule to call $C$, Picat rewrites $C$ into $Body$. If the used rule is non-backtrackable\index{non-backtrackable rule}, then the rewriting is a commitment, and the program can never backtrack to $C$. If the used rule is backtrackable\index{backtrackable rule}, however, the program will backtrack to $C$ once $Body$ fails, meaning that $Body$ will be rewritten back to $C$, and the next applicable rule will be tried on $C$. 
+A predicate\index{predicate} is defined with pattern-matching rules. Picat has two types of pattern-matching rules:
+\begin{itemize}
+\item Non-backtrackable rule:\index{non-backtrackable rule} $Head, Cond\ $\verb+=>+$\ Body$.
+\item Backtrackable rule:\index{backtrackable rule} $Head, Cond\ $\verb+?=>+$\ Body$.
+\end{itemize}
+The $Head$ takes the form $p(t_1,\ldots,t_n)$, where $p$ is called the predicate\index{predicate} name, and $n$ is called the arity\index{arity}. When $n=0$, the parentheses can be omitted. The condition $Cond$, which is an optional goal\index{goal}, specifies a condition under which the rule is applicable. For a call $C$, if $C$ matches $Head$ and $Cond$ succeeds, meaning that the condition evaluates to true, the rule is said to be \emph{applicable} to $C$. When applying a rule to call $C$, Picat rewrites $C$ into $Body$. If the used rule is non-backtrackable\index{non-backtrackable rule}, then the rewriting is a commitment, and the program can never backtrack to $C$. If the used rule is backtrackable\index{backtrackable rule}, however, the program will backtrack to $C$ once $Body$ fails, meaning that $Body$ will be rewritten back to $C$, and the next applicable rule will be tried on $C$. 
 
 \subsection*{Example}
 \begin{verbatim}
@@ -566,7 +571,15 @@ instance(N,A) =>
 Recall that variables that occur within a loop, and do not occur before the loop in the outer scope\index{scope}, are local\index{local variable} to each iteration of the loop. For example, in the third \texttt{foreach}\index{foreach loop} statement of the \texttt{sudoku} predicate, the variables \texttt{Row}, \texttt{Col}, and \texttt{Square} are local\index{local variable}, and each iteration of the loop has its own values for these variables.
 
 \section{Exceptions}
-An exception\index{exception} is an event that occurs during the execution of a program that requires a special treatment. In Picat, an exception\index{exception} is just a term\index{term}. Example exceptions\index{exception} thrown by the system include \texttt{divide\_by\_zero}, \texttt{file\_not\_found}, \texttt{number\_expected}, \texttt{interrupt}\index{interrupt}, and \texttt{out\_of\_range}. The exception\index{exception} \texttt{interrupt(keyboard)}\index{interrupt} is raised when \texttt{ctrl-c} is typed during a program's execution. The built-in predicate \texttt{throw $Exception$}\index{\texttt{throw/1}} throws $Exception$. 
+An exception\index{exception} is an event that occurs during the execution of a program that requires a special treatment. In Picat, an exception\index{exception} is just a term\index{term}. Example exceptions\index{exception} thrown by the system include:
+\begin{itemize}
+\item \texttt{divide\_by\_zero}
+\item \texttt{file\_not\_found}
+\item \texttt{number\_expected}
+\item \texttt{interrupt}\index{interrupt}
+\item \texttt{out\_of\_range}
+\end{itemize}
+The exception\index{exception} \texttt{interrupt(keyboard)}\index{interrupt} is raised when \texttt{ctrl-c} is typed during a program's execution. The built-in predicate \texttt{throw $Exception$}\index{\texttt{throw/1}} throws $Exception$. 
 
 All exceptions, including those raised by built-ins and interruptions, can be caught by catchers. A catcher is a call in the form: {\tt catch($Goal$,$Exception$,$Handler$)} which is equivalent to $Goal$, except when an exception is raised during the execution of $Goal$ that unifies $Exception$. When such an exception is raised, all of the bindings that have been performed on variables in $Goal$ will be undone, and $Handler$ will be executed to handle the exception. 
 \index{\texttt{catch/3}}

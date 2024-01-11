@@ -1,0 +1,25 @@
+import os.
+
+main([Dir]) =>
+    Fs = listdir(Dir),
+	print("KISSAT_OBJ =  "),
+	Count = 0,
+	foreach (F in Fs, append(MainStr,".c",F))
+		printf("kis_%s.o ",MainStr),
+		Count := Count+1,
+		if Count mod 4 == 0 then
+			println(" \\"),
+			print("              ")
+		end
+	end,
+	nl,
+	foreach (F in Fs, append(MainStr,".c",F))
+		printf("kis_%s.o : %s/%s\n",MainStr, Dir, F),
+		printf("\t$(CC) $(KISSAT_FLAGS)  -o kis_%s.o %s/%s\n", MainStr, Dir, F)
+	end.
+	
+	
+	
+		
+		
+	

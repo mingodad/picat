@@ -727,7 +727,7 @@ extern BPLONG no_gcs;
         RESTORE_AR; RESTORE_TOP;                                \
         EXPAND_STACK(LARGE_MARGIN);                             \
     }                                                           \
-        toam_LOCAL_OVERFLOW_CHECK(7);                           \
+    toam_LOCAL_OVERFLOW_CHECK(7);                               \
 
 /*
   #define INVOKE_GC INVOKE_GC_UNCOND 

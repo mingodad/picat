@@ -1,0 +1,12 @@
+import os.
+
+main =>
+    Fs = listdir(".").sort(),
+    foreach (F in Fs, append(MainStr,".jl",F))
+        if not exists(MainStr++".pi") then
+            Command = "mv " ++ MainStr ++ ".*" ++ " hard",
+            println(Command),
+            _ = command(Command)
+        end
+    end.
+

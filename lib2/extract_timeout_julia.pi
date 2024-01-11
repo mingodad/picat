@@ -1,0 +1,26 @@
+import util.
+
+main([File]) =>
+    FD=open(File),             
+    FD.read_line()=Line,
+    separate(FD,Line).
+
+separate(_,end_of_file) => true.
+separate(FD,L),
+    append(_,"solving",Name,L),
+=>
+    FD.read_line()=Line,    
+    solved_or_not(FD,Line,Name).
+separate(FD,_L) =>
+    FD.read_line()=Line,    
+    separate(FD,Line).
+
+solved_or_not(FD,L,Name),
+    append("real",Time,L)
+=>
+    printf("%s %s\n",Name,Time),
+    FD.read_line()=Line,
+    separate(FD,Line).
+solved_or_not(FD,_,Name) =>
+    FD.read_line()=Line,     
+    solved_or_not(FD,Line,Name).

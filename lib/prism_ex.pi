@@ -1,21 +1,21 @@
 module prism_ex.
 
 chindsight(Goal) => chindsight_aux(Goal).
-chindsight(Goal,SubG,HProbs) => chindsight_aux(Goal,SubG,HProbs).
-chindsight_agg(Goal,Agg) => chindsight_agg_aux(Goal,Agg).
+chindsight(Goal,SubG, HProbs) => chindsight_aux(Goal,SubG,HProbs).
+chindsight_agg(Goal, Agg) => chindsight_agg_aux(Goal,Agg).
 hindsight(Goal) => hindsight_aux(Goal).
-hindsight(Goal,SubG,HProbs) => hindsight_aux(Goal,SubG,HProbs).
+hindsight(Goal,SubG, HProbs) => hindsight_aux(Goal,SubG,HProbs).
 
 chindsight_aux(Goal) =>
     bp.prism_dyna_change_goal(Goal,NGoal),
-	bp.chindsight(NGoal,_SubG,HProbs),
-	print_chindsight(HProbs).
+    bp.chindsight(NGoal,_SubG,HProbs),
+    print_chindsight(HProbs).
 
 chindsight_aux(Goal,SubG,HProbs) =>
     bp.prism_dyna_change_goal(Goal,NGoal),
     bp.prism_dyna_change_goal(SubG,NSubG),
-	bp.chindsight(NGoal,NSubG,HProbs0),
-	trans_expls(HProbs0,HProbs). 
+    bp.chindsight(NGoal,NSubG,HProbs0),
+    trans_expls(HProbs0,HProbs). 
 
 chindsight_agg_aux(Goal,Agg) =>
     bp.prism_dyna_change_goal(Goal,NGoal), 
@@ -25,11 +25,11 @@ chindsight_agg_aux(Goal,Agg) =>
 hindsight_aux(Goal) =>
     bp.prism_dyna_change_goal(Goal,NGoal), 
     hindsight(NGoal,_SubG,HProbs),
-	print_hindsight(HProbs).
+    print_hindsight(HProbs).
 
 hindsight_aux(Goal,SubG,HProbs) =>
     bp.prism_dyna_change_goal(Goal,NGoal),
     bp.prism_dyna_change_goal(SubG,NSubG),
-	bp.hindsight(NGoal,NSubG,HProbs0),
-	trans_expls(HProbs0,HProbs). 
+    bp.hindsight(NGoal,NSubG,HProbs0),
+    trans_expls(HProbs0,HProbs). 
 

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : loader.c
- *   Author : Updated by Neng-Fa ZHOU 1994-2023
+ *   Author : Updated by Neng-Fa ZHOU 1994-2024
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -390,7 +390,7 @@ int load_syms(BPLONG file_type)
 *************************************************************************/
 int c_GET_MODULE_SIGNATURE_cf() {
     BPLONG File;
-    CHAR_PTR file_name;
+    CHAR file_name[MAX_FILE_NAME_LEN];
     SYM_REC_PTR sym_ptr;
     CHAR name[256];
     BPLONG ep_offset;
@@ -400,14 +400,8 @@ int c_GET_MODULE_SIGNATURE_cf() {
     BPLONG ret_lst;
     BPLONG_PTR ret_lst_ptr;
 
-    File = ARG(1, 2); DEREF(File);
-    if (!ISATOM(File)) {
-        bp_exception = atom_expected;
-        return BP_FALSE;
-    }
-    sym_ptr = GET_ATM_SYM_REC(File);
-    file_name = GET_NAME(sym_ptr);
-
+    File = ARG(1, 2);
+    strcpy(file_name, get_file_name(File));
 #ifdef WIN32
     fp = fopen(file_name, "rb");
 #else
@@ -721,7 +715,7 @@ BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt)
     return ep2;
 }
 
-static void inserth(BPLONG ttype, BPLONG val, BPLONG_PTR label, struct hrec *bucket)
+static void inserth(BPLONG ttype, BPLONG  val, BPLONG_PTR label, struct hrec *bucket)
 {
     BPLONG_PTR temp;
 
@@ -1472,10 +1466,6 @@ SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
         }                                       \
     }
 
-void load_syms_fromlist(BPLONG BCSyms);
-void load_text_fromlist(BPLONG BCInsts);
-void load_hashtab_fromlist(BPLONG BCHashTabs);
-
 /* Load in-memory byte codes */
 int c_LOAD_BYTE_CODE_FROM_BPLISTS() {
     BPLONG BCSyms, BCInsts, BCHashTabs;
@@ -1782,11 +1772,9 @@ typedef struct {
 #include "bp_bc.h"
 #endif
 
+
 /* Load byte codes stored in C arrays */
 int load_byte_code_from_c_array() {
-    void load_syms_from_c_array();
-    void load_text_from_c_array();
-    void load_hashtab_from_c_array();
 
     load_syms_from_c_array();
     load_text_from_c_array();
@@ -1855,17 +1843,15 @@ void load_hashtab_from_c_array() {
     BPLONG val, ttype;
     BPLONG_PTR label;
 
-    BPLONG n_hashtabs = 0;
     count = 0;
     hash_array_size = sizeof(bc_indecies)/sizeof(int);
 
     //  printf("hash_array_size =%d\n",hash_array_size);
 
     while (count < hash_array_size) {
-        n_hashtabs++;
         hash_inst_addr = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
         //        hash_reg = bc_indecies[count++];
-        ++count;
+        bc_indecies[count++];
         clause_no = bc_indecies[count++];
         alt = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
 

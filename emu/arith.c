@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : arith.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: arithmetic functions 
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -252,7 +252,6 @@ BPLONG bp_math_sub(BPLONG op1, BPLONG op2)
 BPLONG bp_math_mul(BPLONG op1, BPLONG op2)
 {
     BPLONG_PTR top;
-    BPLONG op3;
 
     DEREF(op1); DEREF(op2);
     if (!ISNUM(op1)) {
@@ -1801,7 +1800,6 @@ int b_FLOAT_SQRT_cf(BPLONG op1, BPLONG op2)
 }
 
 BPLONG bp_float_abs(BPLONG op1) {
-
     if (!ISNUM(op1)) {
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
@@ -2059,11 +2057,11 @@ int b_FLOAT_FLOOR_cf(BPLONG op1, BPLONG op2)
         op1 = eval_arith(op1);
         if (op1 == BP_ERROR) return BP_ERROR;
     }
-	op1 = bp_float_floor(op1);
-	if (op1 == BP_ERROR)
-	  return BP_ERROR;
+    op1 = bp_float_floor(op1);
+    if (op1 == BP_ERROR)
+        return BP_ERROR;
     ASSIGN_f_atom(op2, op1);
-	return 1;
+    return 1;
 }
 
 
@@ -2101,17 +2099,14 @@ BPLONG bp_float_round(BPLONG op1)
     if (ISINT(op1) || IS_BIGINT(op1)) {
         return op1;
     } else {
-        int sign;
         f = floatval(op1);
 #ifdef M64BITS
         f = roundl(f);
 #else
         if (f < 0.0) {
             f = -f+0.5;
-            sign = -1;
         } else {
             f = f+0.5;
-            sign = 1;
         }
         TEST_NAN(f, op1);
         modf(f, &f);

@@ -49,13 +49,13 @@ nn_destroy_all() =>
 nn_train(NN,DataOrFile) =>
     nn_train(NN,DataOrFile,[]).
 
-nn_train(NN@fann(_),File,Opts), string(File) =>
-    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File),nn_train)),
+nn_train(NN@fann(_), File,Opts), string(File) =>
+    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File), nn_train)),
     bp.pi_fann_read_train_from_file(File,FANNData),
     nn_train_aux(NN,FANNData,Opts).
-nn_train(NN@fann(_),Data,Opts),
+nn_train(NN@fann(_), Data,Opts),
     check_data(NN,Data,NumInput,NumOutput,Len)
-=>
+ =>
     File = "__tmp.data",
     train_data_save_aux(Data,File,NumInput,NumOutput,Len),
     nn_train(NN,File,Opts).
@@ -74,13 +74,13 @@ nn_train_aux(NN,Data,Opts) =>
 %
 % save neural network
 %
-nn_save(NN@fann(_),File), string(File) =>
+nn_save(NN@fann(_), File), string(File) =>
     bp.pi_fann_save(NN,File,_Ret).
 nn_save(NN,File) =>
     (NN = $fann(_) ->
-        handle_exception($string_expected(File),nn_save)
+        handle_exception($string_expected(File), nn_save)
     ;
-        handle_exception($neural_net_expected(NN),nn_save)
+        handle_exception($neural_net_expected(NN), nn_save)
     ).
 
 %
@@ -90,7 +90,7 @@ nn_save(NN,File) =>
 nn_run(NN,Input) = Res =>
     Res = nn_run(NN,Input,[]).
 
-nn_run(NN@fann(_),Input,Opts) = Res =>
+nn_run(NN@fann(_), Input,Opts) = Res =>
     (array(Input) ->
         InputArr = Input
     ; list(Input) ->
@@ -121,16 +121,16 @@ nn_run(NN@fann(_),Input,Opts) = Res =>
         Res = ResTemp
     end.
 nn_run(NN,_Input,_Opts) = _Res =>
-    handle_exception($neural_net_expected(NN),nn_run).
+    handle_exception($neural_net_expected(NN), nn_run).
 
 %
 % create neural network from file
 %
 nn_load(File) = NN, string(File) =>
-    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File),nn_load)),
+    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File), nn_load)),
     bp.pi_fann_create_from_file(File, NN).
 nn_load(File) = _NN =>
-    handle_exception($file_name_expected(File),nn_load).    
+    handle_exception($file_name_expected(File), nn_load).    
 
 %
 % print the nn structure and parameters
@@ -139,12 +139,12 @@ nn_print(NN@fann(_)) =>
     bp.pi_fann_print_connections(NN),
     bp.pi_fann_print_parameters(NN).
 nn_print(NN) =>
-    handle_exception($neural_net_expected(NN),nn_print).
+    handle_exception($neural_net_expected(NN), nn_print).
 
 %
 % Set the activation function for all of the hidden layers.
 %
-nn_set_activation_function_hidden(NN@fann(_),AFunc), activation_function(AFunc) =>
+nn_set_activation_function_hidden(NN@fann(_), AFunc), activation_function(AFunc) =>
     get_fann_name(AFunc,FannName),
     bp.pi_fann_set_activation_function_hidden(NN,FannName).
 nn_set_activation_function_hidden(NN,AFunc) =>
@@ -157,7 +157,7 @@ nn_set_activation_function_hidden(NN,AFunc) =>
 %
 % Set the activation function for the output layer.
 %
-nn_set_activation_function_output(NN@fann(_),AFunc), activation_function(AFunc) =>
+nn_set_activation_function_output(NN@fann(_), AFunc), activation_function(AFunc) =>
     get_fann_name(AFunc,FannName),
     bp.pi_fann_set_activation_function_output(NN,FannName).
 nn_set_activation_function_output(NN,AFunc) =>
@@ -170,7 +170,7 @@ nn_set_activation_function_output(NN,AFunc) =>
 %
 % Set the activation function for all the neurons in the layer
 %
-nn_set_activation_function_layer(NN@fann(_),AFunc,Layer), activation_function(AFunc), int(Layer) =>
+nn_set_activation_function_layer(NN@fann(_), AFunc,Layer), activation_function(AFunc), int(Layer) =>
     get_fann_name(AFunc,FannName),
     (Layer < 2 -> handle_exception($invalid_layer_number(Layer), nn_set_activation_function_layer); true),
     bp.pi_fann_set_activation_function_layer(NN,FannName,Layer-1).
@@ -186,7 +186,7 @@ nn_set_activation_function_layer(NN,AFunc,Layer) =>
 %
 % Set the activation steepness for all the neurons in the layer
 %
-nn_set_activation_steepness_layer(NN@fann(_),Steepness,Layer), number(Steepness), int(Layer) =>
+nn_set_activation_steepness_layer(NN@fann(_), Steepness,Layer), number(Steepness), int(Layer) =>
     (Layer < 2 -> handle_exception($invalid_layer_number(Layer), nn_set_activation_steepness_layer); true),
     bp.pi_fann_set_activation_steepness_layer(NN,Steepness,Layer-1).
 nn_set_activation_steepness_layer(NN,Steepness,Layer) =>
@@ -201,7 +201,7 @@ nn_set_activation_steepness_layer(NN,Steepness,Layer) =>
 %
 % Set the activation steepness for all of the hidden layers.
 %
-nn_set_activation_steepness_hidden(NN@fann(_),Steepness), number(Steepness) =>
+nn_set_activation_steepness_hidden(NN@fann(_), Steepness), number(Steepness) =>
     bp.pi_fann_set_activation_steepness_hidden(NN,Steepness).
 nn_set_activation_steepness_hidden(NN,Steepness) =>
     (NN = $fann(_) ->
@@ -213,7 +213,7 @@ nn_set_activation_steepness_hidden(NN,Steepness) =>
 %
 % Set the activation steepness for the output layer.
 %
-nn_set_activation_steepness_output(NN@fann(_),Steepness), number(Steepness) =>
+nn_set_activation_steepness_output(NN@fann(_), Steepness), number(Steepness) =>
     bp.pi_fann_set_activation_steepness_output(NN,Steepness).
 nn_set_activation_steepness_output(NN,Steepness) =>
     (NN = $fann(_) ->
@@ -233,7 +233,7 @@ nn_train_data_size(Data) = Size, list(Data) =>
 nn_train_data_size(Data) = Size, array(Data) =>
     Size = length(Data).
 nn_train_data_size(Data) = _ =>
-    handle_exception($train_file_or_data_expected(Data),nn_train_data_size).
+    handle_exception($train_file_or_data_expected(Data), nn_train_data_size).
 
 %
 % access I'th training data pair
@@ -241,7 +241,7 @@ nn_train_data_size(Data) = _ =>
 nn_train_data_get(File,I) = Pair, string(File) =>
     nn_file_to_fann_train_data(File,nn_train_data_get,TrainDataId),
     bp.'$expect_integer'(I,nn_train_data_get),
-    (I > 0 -> true; handle_exception($positive_integer_expected(I),nn_train_data_get)),
+    (I > 0 -> true; handle_exception($positive_integer_expected(I), nn_train_data_get)),
     Pair = (In,Out),
     bp.pi_get_data_in_out(TrainDataId,I-1,In,Out).
 nn_train_data_get(Data,I) = Pair, list(Data) =>
@@ -251,14 +251,14 @@ nn_train_data_get(Data,I) = Pair, array(Data) =>
     bp.'$expect_integer'(I,nn_train_data_get),
     Pair = Data[I].    
 nn_train_data_get(Data,_I) = _ =>
-    handle_exception($train_file_or_data_expected(Data),nn_train_data_get).
+    handle_exception($train_file_or_data_expected(Data), nn_train_data_get).
     
 nn_file_to_fann_train_data(File,Source,TrainDataId) =>
     Map = get_heap_map(nn_train_map),
     (has_key(Map,File) ->
         TrainDataId = Map.get(File)
     ;
-       (bp.file_exists(File) -> true; handle_exception($file_not_exist(File),Source)),
+       (bp.file_exists(File) -> true; handle_exception($file_not_exist(File), Source)),
         bp.pi_fann_read_train_from_file(File,TrainDataId),
         Map.put(File,TrainDataId)
     ).
@@ -267,7 +267,7 @@ nn_file_to_fann_train_data(File,Source,TrainDataId) =>
 % load training data from a file into a Picat array
 %
 nn_train_data_load(File) = Data, string(File) =>
-    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File),nn_train_data_load)),
+    (bp.file_exists(File) -> true; handle_exception($file_not_exist(File), nn_train_data_load)),
     bp.pi_fann_read_train_from_file(File,TrainDataId),
     bp.pi_fann_length_train_data(TrainDataId,Size),
     Data = new_array(Size),
@@ -276,7 +276,7 @@ nn_train_data_load(File) = Data, string(File) =>
         Data[I] = (In,Out)
      end.
 nn_train_data_load(File) = _ =>
-    handle_exception($string_expected(File),nn_train_data_load).
+    handle_exception($string_expected(File), nn_train_data_load).
 
 %
 % save training data in a Picat collection into a file
@@ -314,7 +314,7 @@ check_data_aux(Data,NumInput,NumOutput,_Len0,Len), array(Data) =>
 check_data_aux(Data,_NumInput,_NumOutput,_Len0,_Len) =>
     handle_exception($array_or_list_expected(Data), nn_train).
 
-check_data_pair((Input,Output),NumInput,NumOutput) =>
+check_data_pair((Input,Output), NumInput,NumOutput) =>
     (array(Input) ->
         (len(Input) = NumInput -> true; handle_exception($expected_num_of_inputs(NumInput), nn_train))
     ; list(Input) ->
@@ -428,77 +428,77 @@ parse_training_options(_,_,Max_epochs,Epochs_between_reports,Desired_error,[]) =
     if (var(Desired_error)) then
         Desired_error = 0.000001
     end.
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[maxep(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [maxep(X)|Y]) =>
     Max_epochs = X,
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[report(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [report(X)|Y]) =>
     Epochs_between_reports = X,
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[derror(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [derror(X)|Y]) =>
     Desired_error = X,
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[train_func(X)|Y]) =>
-    (get_fann_name(X,FannName) -> true; handle_exception($unrecognized_name(X),nn_train)),
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [train_func(X)|Y]) =>
+    (get_fann_name(X, FannName) -> true; handle_exception($unrecognized_name(X), nn_train)),
     bp.pi_fann_set_training_algorithm(NN, FannName),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[lrate(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [lrate(X)|Y]) =>
     bp.pi_fann_set_learning_rate(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[momentum(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [momentum(X)|Y]) =>
     bp.pi_fann_set_learning_momentum(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[error_func(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [error_func(X)|Y]) =>
     bp.pi_fann_set_train_error_function(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[stop_func(X)|Y]) =>
-    (get_fann_name(X,FannName) -> true; handle_exception($unrecognized_name(X),nn_train)),
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [stop_func(X)|Y]) =>
+    (get_fann_name(X, FannName) -> true; handle_exception($unrecognized_name(X), nn_train)),
     bp.pi_fann_set_train_stop_function(NN, FannName),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[bfl(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [bfl(X)|Y]) =>
     bp.pi_fann_set_bit_fail_limit(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[qp_decay(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [qp_decay(X)|Y]) =>
     bp.pi_fann_set_quickprop_decay(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[qp_mu(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [qp_mu(X)|Y]) =>
     bp.pi_fann_set_quickprop_mu(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[rp_increase(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [rp_increase(X)|Y]) =>
     bp.pi_fann_set_rprop_increase_factor(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[rp_decrease(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [rp_decrease(X)|Y]) =>
     bp.pi_fann_set_rprop_decrease_factor(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[rp_deltamin(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [rp_deltamin(X)|Y]) =>
     bp.pi_fann_set_rprop_delta_min(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[rp_deltamax(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [rp_deltamax(X)|Y]) =>
     bp.pi_fann_set_rprop_delta_max(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[rp_deltazero(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [rp_deltazero(X)|Y]) =>
     bp.pi_fann_set_rprop_delta_zero(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[sp_weight(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [sp_weight(X)|Y]) =>
     bp.pi_fann_set_sarprop_weight_decay_shift(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[sp_thresh(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [sp_thresh(X)|Y]) =>
     bp.pi_fann_set_sarprop_step_error_threshold_factor(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[sp_shift(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [sp_shift(X)|Y]) =>
     bp.pi_fann_set_sarprop_step_error_shift(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[sp_temp(X)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [sp_temp(X)|Y]) =>
     bp.pi_fann_set_sarprop_temperature(NN, X),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[scale(Imin,Imax,Omin,Omax)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [scale(Imin,Imax,Omin,Omax)|Y]) =>
     bp.pi_fann_set_scaling_params(NN, Data, Imin, Imax, Omin, Omax, _Ret),
     bp.pi_fann_scale_train(NN, Data),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[inscale(Imin,Imax)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [inscale(Imin,Imax)|Y]) =>
     bp.pi_fann_set_input_scaling_params(NN, Data, Imin, Imax, _Ret),
     bp.pi_fann_scale_train(NN, Data),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
-parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,[outscale(Omin,Omax)|Y]) =>
+parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error, [outscale(Omin,Omax)|Y]) =>
     bp.pi_fann_set_output_scaling_params(NN, Data, Omin, Omax, _Ret),
     bp.pi_fann_scale_train(NN, Data),
     parse_training_options(NN,Data,Max_epochs,Epochs_between_reports,Desired_error,Y).
@@ -602,10 +602,10 @@ parse_run_options(_,ScaleIn,ScaleOut,[]) =>
     if (var(ScaleOut)) then
         ScaleOut = 0
     end.
-parse_run_options(NN,ScaleIn,ScaleOut,[$scaleIn(X)|Y]) =>
+parse_run_options(NN,ScaleIn,ScaleOut, [$scaleIn(X)|Y]) =>
     ScaleIn = X,
     parse_run_options(NN,ScaleIn,ScaleOut,Y).
-parse_run_options(NN,ScaleIn,ScaleOut,[$scaleOut(X)|Y]) =>
+parse_run_options(NN,ScaleIn,ScaleOut, [$scaleOut(X)|Y]) =>
     ScaleOut = X,
     parse_run_options(NN,ScaleIn,ScaleOut,Y).
 parse_run_options(NN,ScaleIn,ScaleOut,[resetMSE|Y]) =>

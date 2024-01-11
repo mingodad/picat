@@ -1,0 +1,32 @@
+import os.
+
+main =>
+    Dirs = listdir("."),
+    foreach (Dir in Dirs, not append(".",_,Dir), directory(Dir))
+        Files = listdir(Dir),
+		if (member("data",Files)) then
+		    DFiles = listdir(Dir++"/data"),
+			foreach (DFile in DFiles, (append(_,".dzn",DFile); append(_,".json",DFile)))
+			    cp(Dir++"/data/"++DFile, Dir++"/"++DFile)
+			end
+		end,
+		if (member("instances",Files)) then
+		    DFiles = listdir(Dir++"/instances"),
+			foreach (DFile in DFiles, (append(_,".dzn",DFile); append(_,".json",DFile)))
+			    cp(Dir++"/instances/"++DFile, Dir++"/"++DFile)
+			end
+		end,
+        if once ((member(MznFile,Files), append(MznStr,".mzn",MznFile),not append(".",_,MznStr))),
+           member(DznFile,Files), (append(_,".dzn",DznFile); append(_,".json",DznFile)) then
+           foreach (File in Files, (append(InsStr,".dzn",File); append(InsStr,".json",File)), not append(".",_,File))
+                printf("echo converting %s\n",File),
+                printf("minizinc -c -G picat  --fzn %s_%s.fzn %s %s\n", Dir, InsStr, Dir++"/"++MznFile, Dir++"/"++File)
+           end
+        else
+           foreach (File in Files, append(MznStr,".mzn",File), not append(".",_,File))
+                printf("echo converting %s\n",File),
+                printf("minizinc -c -G picat  --fzn %s_%s.fzn %s\n", Dir, MznStr, Dir++"/"++File)
+           end
+       end
+    end.
+                

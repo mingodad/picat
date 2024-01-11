@@ -1,0 +1,24 @@
+import os.
+
+main =>
+    Fs = [F : F in listdir(".").sort(), append(_,".opb",F)],
+    foreach (F in Fs)
+        if os.size(F) <= 2000000 && not contains_big_int(F) then
+            cp(F, "small/"++F)
+        end
+    end.
+
+contains_big_int(F) =>
+    IS = open(F),
+    Token = read_picat_token(IS),
+    (contains_big_int(IS,Token) -> Res = true; Res = false),
+    close(IS),
+    Res = true.
+
+contains_big_int(IS,end_of_file) => fail.
+contains_big_int(IS,Token), integer(Token), (Token =< -2147483648 || Token >= 2147483647) => true.
+contains_big_int(IS,Token) =>
+    NextToken = read_picat_token(IS),
+    contains_big_int(IS,NextToken).
+    
+    

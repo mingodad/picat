@@ -1,0 +1,100 @@
+'::'(Vars,Domain) =>
+    bp.'_$_picat_mip_in'(Vars,Domain).
+
+% element(I,FDVars,V) => element(I,FDVars,V).
+element(I,FDVars,V) =>
+    (array(FDVars) -> to_list(FDVars) = List; List = FDVars),
+    (bp.dvar_or_int_list(List) -> true; handle_exception($dvar_or_int_list_expected(List), element)),
+    bp.'$element'(I,List,V,mip).
+
+% 0-based indexing
+% element0(I,FDVars,V) => element0(I,FDVars,V).
+element0(I,FDVars,V) =>
+    (array(FDVars) -> to_list(FDVars) = List; List = FDVars),
+    (bp.dvar_or_int_list(List) -> true; handle_exception($dvar_or_int_list_expected(List), element)),
+    bp.'$element0'(I,List,V,mip).
+
+% all_distinct(FDVars) => all_distinct(FDVars).
+all_distinct(FDVars) =>
+    all_different(FDVars).
+
+% all_different(FDVars) => all_different(FDVars).
+all_different(FDVars), array(FDVars) =>
+    alldifferent_aux(FDVars).
+all_different(FDVars), list(FDVars) =>
+    Arr = to_array(FDVars),
+    alldifferent_aux(Arr).
+all_different(FDVars) =>
+    handle_exception($list_or_array_expected(FDVars), all_different).
+
+alldifferent_aux(Arr) =>
+    N = len(Arr),
+    foreach (I in 1..N-1, J in I+1..N)
+        Arr[I] #!= Arr[J]
+    end.
+
+%
+% Requires that all non-zero values in Xs are distinct.
+%
+alldifferent_except_0(Xs) =>
+    all_different_except_0(Xs).
+
+all_different_except_0(Xs) =>
+    (list(Xs) ->
+        Arr = to_array(Xs)
+    ;array(Xs) ->
+        Arr = Xs
+    ;
+        handle_exception($dvar_or_int_collection_expected(Xs), all_different_except_0)
+    ),
+    all_different_except_0_aux(Arr).
+
+all_different_except_0_aux(Xs) =>
+    N = len(Xs),
+    foreach(I in 1..N-1, J in I+1..N)
+        Xs[I] #= 0 #\/ Xs[J] #= 0 #\/ Xs[I] #!= Xs[J]
+    end.
+
+/************************************************************************* 
+subcircuit(L):  L is a list or an array of variables X1,X2,...,Xn.
+L forms a subcircuit where Xi = j (j \= i) means that j is the successor of i 
+and Xi = i means that i is not in the circuit. No sub-cycles are allowed.
+*************************************************************************/
+subcircuit(L), list(L) =>
+    subcircuit_aux(L.to_array()).
+subcircuit(A), array(A) =>
+    subcircuit_aux(A).
+subcircuit(L) =>
+    handle_exception($array_or_list_expected(L), subcircuit).
+
+subcircuit_aux(A) =>
+    A.length = N,
+    A :: 1..N,
+    M = new_array(N,N),                          % M[I,I] = 1 means node I is not in the circuit
+    M :: 0..1,
+    foreach(I in 1..N, J in 1..N)
+        M[I, J] #<=> (A[I] #= J)
+    end,
+    foreach (J in 1..N)                          % all_different(A)
+        sum([M[I,J] : I in 1..N]) #= 1,
+        sum([M[J,I] : I in 1..N]) #= 1        
+    end,
+     %
+    FirstIn = new_array(N),                     
+    FirstIn :: 0..1,
+    sum(FirstIn) #=< 1,                          % no node is first if the circuit is empty
+     %
+    OrderM = new_array(N,N),                     % order the nodes in the circuit, starting at I for which FirstIn[I]=1
+    foreach(I in 1..N) OrderM[I,I] = 0 end,      % not reflexive
+    OrderM :: 0..1,
+    foreach (I in 1..N)
+        FirstIn[I] #=> #~ M[I,I],
+        FirstIn[I] #=> sum([OrderM[J,I] : J in 1..N, J !== I]) #= 0,
+        foreach (J in 1..N, I !== J)
+            M[I,J] #/\ #~ FirstIn[J] #=> OrderM[I,J],
+            OrderM[I,J]+OrderM[J,I] #=< 1,
+            foreach (K in 1..N, K !== I, K !== J)
+                OrderM[I,K] #/\ OrderM[K,J] #=> OrderM[I,J]
+            end
+        end
+    end.

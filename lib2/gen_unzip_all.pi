@@ -1,0 +1,8 @@
+import os.
+
+main =>
+    Files = listdir(".").sort(),
+    foreach (File in Files, append(_,"lzma", File))
+        printf("7z x %s\n", File)
+    end.
+	

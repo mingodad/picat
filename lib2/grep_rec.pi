@@ -1,0 +1,27 @@
+import os.
+    
+main([Word]) =>
+    lookup_dir(".",Word).
+
+lookup_dir(Dir,Word) =>
+    Fs = listdir(Dir),
+    foreach (F in Fs, F !== ".", F !== "..")
+        lookup(Dir++"/"++F,Word)
+    end.
+
+lookup(F,Word), directory(F) =>
+    lookup_dir(F,Word).
+lookup(F,Word), (append(_,".h",F); append(_,".cc",F); append(_,".c",F); append(_,".inc",F)) =>
+    lookup_plain(F,Word).
+lookup(F,Word) => true.
+
+lookup_plain(F,Word) =>
+    Lines = read_file_lines(F),
+    foreach (Line in Lines)
+        if append(_,Word,_,Line) then
+            printf("%s: %s\n",F,Line)
+        end
+    end.
+
+            
+    

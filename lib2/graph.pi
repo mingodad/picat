@@ -1,0 +1,130 @@
+% module graph.
+
+% mst(Graph,Tree) => mst(Graph,Tree).
+% mst(Graph,Tree,Cost) => mst(Graph,Tree,Cost).
+% shortest_path(Graph,V1,V2,Path) => shortest_path(Graph,V1,V2,Path).
+% shortest_path(Graph,V1,V2,Path,Cost) => shortest_path(Graph,V1,V2,Path,Cost).
+
+% Kruskal's algorithm
+% mst(Graph,Tree,Cost): If this predicate succeeds, it binds Tree to a minimum 
+% spanning tree of Graph, and Cost to the cost of Tree. This predicate fails if 
+% the graph has disconnected nodes.
+% Graph = [{V1,V2,W12),...],
+
+mst(Graph,Tree) =>
+    mst(Graph,Tree,_).
+
+mst(Graph,Tree,Cost) =>
+    NodesMap = new_map(),                     
+    check_graph(Graph,NodesMap,mst),
+    SGraph = sort(Graph,3),  % sort the edges by weight
+    Nodes = keys(NodesMap),
+    kruskal(Nodes,SGraph,Tree,Cost).
+
+check_graph([],_NodesMap,_Source) => true.
+check_graph([{V1,V2,W}|Graph],NodesMap,Source), ground(V1), ground(V2), number(W) =>
+    (map(NodesMap) -> NodesMap.put(V1,1), NodesMap.put(V2,1); true),
+    check_graph(Graph,NodesMap,Source).
+check_graph([{V1,V2,W}|_],_NodesMap,Source) =>
+    (ground(V1) -> true; handle_exception($ground_term_expected(V1),Source)),
+    (ground(V2) -> true; handle_exception($ground_term_expected(V2),Source)),
+    (number(W) -> true; handle_exception($number_expected(W),Source)).
+check_graph([Vertex|_],_NodesMap,Source) =>    
+    handle_exception($array_expected(Vertex),Source).
+check_graph(Graph,_NodesMap,Source) =>    
+    handle_exception($list_expected(Graph),Source).
+ 
+kruskal(Nodes,Edges,Tree,Cost) =>
+    Forest = new_map(),
+    foreach (Node in Nodes)
+        Forest.put(Node,Node)  % the parent of Node is Node itself
+    end,
+    Size = len(Nodes),
+    add_edges(Edges,Size-1,Forest,Tree,[],0,Cost).
+
+add_edges(_,0,_Forest,Tree,TreeR,Cost0,Cost) =>
+    Tree = TreeR, Cost = Cost0.
+add_edges([Edge@{V1,V2,W}|Edges],Count,Forest,Tree,TreeR,Cost0,Cost) =>
+    Root1 = forest_find_root(Forest,V1),
+    Root2 = forest_find_root(Forest,V2),
+    if Root1 !== Root2 then
+        Tree = [Edge|Tree1],
+        Cost1 = Cost0+W,
+        Count1 = Count-1,
+        Forest.put(Root1,V2)    % the parent of Root1 is V2
+    else
+        Tree = Tree1,
+        Cost1 = Cost0,
+        Count1 = Count
+    end,
+    add_edges(Edges,Count1,Forest,Tree1,TreeR,Cost1,Cost).
+
+forest_find_root(Forest,V) = Root =>
+    Parent = Forest.get(V),
+    if Parent == V then
+        Root = V
+    else
+        Root = forest_find_root(Forest,Parent)
+    end.
+
+% shortest_path(Graph,V1,V2,Path,Cost): If this predicate succeeds, it binds Path to 
+% a shortest path from V1 to V2 in Graph, and binds Cost to the cost of the path.
+% This predicate fails if there is no path from V1 to V2.
+
+shortest_path(Graph,V1,V2,Path) =>
+    shortest_path(Graph,V1,V2,Path,_Cost).
+
+shortest_path(Graph,V1,V2,Path,Cost) =>
+    (ground(V1) -> true; handle_exception($ground_term_expected(V1),shortest_path)),
+    (ground(V2) -> true; handle_exception($ground_term_expected(V2),shortest_path)),
+    ADList = new_map(),    % Adjacent list
+    edges_to_adjacent_list(Graph,ADList),
+    tabled_shortest_path(V1,V2,Path,Cost,ADList).
+
+edges_to_adjacent_list([],_ADList) => true.
+edges_to_adjacent_list([{V1,V2,W}|Graph],ADList) =>
+    (ground(V1) -> true; handle_exception($ground_term_expected(V1),shortest_path)),
+    (ground(V2) -> true; handle_exception($ground_term_expected(V2),shortest_path)),
+    (number(W) -> true; handle_exception($number_expected(W),shortest_path)),
+    Neibs = ADList.get(V1,[]),
+    ADList.put(V1,[(V2,W)|Neibs]),
+    edges_to_adjacent_list(Graph,ADList).
+edges_to_adjacent_list(Graph,_ADList) =>
+    handle_exception($list_of_arrays(Graph),shortest_path).
+
+table (+,+,-,-,nt)
+tabled_shortest_path(V,V,Path,Cost,_ADList) =>
+    Path = [], Cost = 0.
+tabled_shortest_path(V1,V2,Path,Cost,ADList) =>
+    ADList.get(V1,[]) = Neibs,
+    member((Next,W),Neibs),
+    tabled_shortest_path(Next,V2,Path1,Cost1,ADList),
+    Cost = Cost1+W,
+    Path = [{V1,Next,W}|Path1].
+
+test1 =>
+    Edges = [ {'A', 'B', 7}, {'A', 'D', 5},
+              {'B', 'C', 8}, {'B', 'D', 9}, {'B', 'E', 7},
+              {'C', 'E', 5},
+              {'D', 'E', 15}, {'D', 'F', 6},
+              {'E', 'F', 8}, {'E', 'G', 9},
+              {'F', 'G', 11}],
+    mst(Edges,Tree,Cost),
+    writeln($mst(Tree)),
+    writeln($mst(Cost)),
+    shortest_path(Edges,'A','G',Path,PathCost),
+    writeln($shortestP_path(Path,PathCost)).
+
+
+test2 =>
+    Edges = [ {'A', 'B', 1}, {'A', 'D', 4}, {'A', 'E', 3}, 
+              {'B', 'D', 4}, {'B', 'E', 2}, 
+              {'C', 'E', 4}, {'C', 'F', 5},
+              {'D', 'E', 4}, 
+              {'E', 'F', 7}],
+    mst(Edges,Tree,Cost),
+    writeln($mst(Tree)),
+    writeln($mst(Cost)),
+    shortest_path(Edges,'A','F',Path,PathCost),
+    writeln($shortestP_path(Path,PathCost)).
+

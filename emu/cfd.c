@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : cfd.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Primitives on composite finite domains (tuples)
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -24,8 +24,7 @@
   be added to the domain later. This is unusual but convenient.
 */
 
-BPLONG_PTR new_bv_domain_var(BPLONG from, BPLONG to, BPLONG first, BPLONG last,
-        BPLONG size, BPULONG bv_word)
+BPLONG_PTR new_bv_domain_var(BPLONG from, BPLONG to, BPLONG first, BPLONG last, BPLONG size, BPULONG bv_word)
 {
     BPLONG_PTR dv_ptr, top;
     BPLONG i;
@@ -307,7 +306,7 @@ int b_CFD_BUILD_TRIES_NOTIN(BPLONG CompVars, BPLONG HTable, BPLONG A2Tries)
 {
     BPLONG_PTR comp_vars_ptr, local_top0;
     BPLONG_PTR MinArray, MaxArray, CompVarArray, CompVarMaxArray, tries_ptr, tuple_ptr, htable_ptr;
-    BPLONG compvar, tuple, n, nk, array_size, i, htable_size;
+    BPLONG compvar, n, nk, array_size, i, htable_size;
     SYM_REC_PTR sym_ptr;
     BPLONG max_domain_size();
 
@@ -368,7 +367,7 @@ int b_CFD_BUILD_TRIES_NOTIN(BPLONG CompVars, BPLONG HTable, BPLONG A2Tries)
 
     tuple_ptr = local_top;  /* space for a tuple */
     FOLLOW(tuple_ptr) = (BPLONG)sym_ptr;
-    tuple = ADDTAG(tuple_ptr, STR);
+    //    tuple = ADDTAG(tuple_ptr, STR);
 
 
     compute_mins_maxs_notin(0, n, nk, htable_ptr, htable_size, tuple_ptr, CompVarArray, MinArray, MaxArray);
@@ -433,9 +432,7 @@ void compute_mins_maxs_in(BPLONG n, BPLONG nk, BPLONG Tuples, BPLONG_PTR MinArra
 }
 
 /* iterate through all possible tuples from V1*V2*...*Vn that are not in hashtable */
-void compute_mins_maxs_notin(BPLONG arg_no, BPLONG n, BPLONG nk, BPLONG_PTR htable_ptr,
-        BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray,
-        BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
+void compute_mins_maxs_notin(BPLONG arg_no, BPLONG n, BPLONG nk, BPLONG_PTR htable_ptr, BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG compvar, i, j;
 
@@ -478,8 +475,7 @@ void compute_mins_maxs_notin(BPLONG arg_no, BPLONG n, BPLONG nk, BPLONG_PTR htab
 }
 
 /* initialize supports Sijk (supports in Vj of k in Vi)  */
-void initialize_supports(BPLONG n, BPLONG nk, BPLONG_PTR tries_ptr,
-        BPLONG_PTR CompVarMaxArray, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
+void initialize_supports(BPLONG n, BPLONG nk, BPLONG_PTR tries_ptr, BPLONG_PTR CompVarMaxArray, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j, k, tries_ij, min, max;
     BPLONG_PTR tries_ij_ptr;
@@ -557,9 +553,7 @@ void compute_supports_in(BPLONG n, BPLONG Tuples, BPLONG_PTR tries_ptr, BPLONG_P
     }
 }
 
-void compute_supports_notin(BPLONG arg_no, BPLONG n, BPLONG_PTR htable_ptr,
-        BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray,
-        BPLONG_PTR tries_ptr, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
+void compute_supports_notin(BPLONG arg_no, BPLONG n, BPLONG_PTR htable_ptr, BPLONG htable_size, BPLONG_PTR tuple_ptr, BPLONG_PTR CompVarArray, BPLONG_PTR tries_ptr, BPLONG_PTR MinArray, BPLONG_PTR MaxArray)
 {
     BPLONG i, j;
 
@@ -775,7 +769,7 @@ int b_CFD_DOM(BPLONG X, BPLONG Ex, BPLONG Constr)
 
     if (ISINT(Sx)) {
         y = last = INTVAL(Sx);
-    } else if (IS_SUSP_VAR(Sx)) {
+    } else {  // if (IS_SUSP_VAR(Sx)) {
         dv_ptr_sx = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(Sx);
         y = DV_first(dv_ptr_sx);
         last = DV_last(dv_ptr_sx);

@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : file.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #include "dynamic.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "extern_decl.h"
 extern char *string_in;
 
 #ifndef WIN32
@@ -61,7 +62,7 @@ extern char *string_in;
 #if defined(WIN32) && defined(M64BITS)
 #define sys_access(a, b) _access(a, b)
 #else
-    int access(const char *pathname, int mode);
+int access(const char *pathname, int mode);
 #define sys_access(a, b) access(a, b)
 #endif
 
@@ -81,7 +82,7 @@ extern char *string_in;
 
 BPLONG line_position = 0;
 BPLONG out_line_no = 0;
-static UW16 fileerrors = 0;  /* abort, or not on file errors */
+// static UW16 fileerrors = 0;  /* abort, or not on file errors */
 static SYM_REC_PTR user_sym_ptr, user_input_sym_ptr, user_output_sym_ptr, user_error_sym_ptr, sym_ptr;
 
 static FILE *tempfile;
@@ -452,7 +453,7 @@ int check_file_term(BPLONG term)
 }
 #endif
 
-int get_file_name_aux(char *s1) {
+char *expand_file_name(char *s1) {
     CHAR_PTR s2;
     BPLONG i;
     int len;
@@ -473,18 +474,17 @@ int get_file_name_aux(char *s1) {
             }
             scat(s2, &s1[1], full_file_name);
         }
-    }
-    else{
+    } else {
         strcpy(full_file_name, s1);
     }
     len = strlen(full_file_name);
     if (len > 1 && (full_file_name[len-1] == '/' || full_file_name[len-1] == '\\'))  /* get rid of trailing /*/
         full_file_name[len-1] = '\0';
-    return 1;
+    return full_file_name;
 }
 
 #ifdef PICAT
-int get_file_name(BPLONG op) {
+char *get_file_name(BPLONG op) {
     CHAR s1[MAX_STR_LEN];
 
     DEREF(op);
@@ -493,16 +493,16 @@ int get_file_name(BPLONG op) {
     } else {
         picat_str_to_c_str(op, s1, MAX_STR_LEN);
     }
-    return get_file_name_aux(s1);
+    return expand_file_name(s1);
 }
 #else
-int get_file_name(BPLONG op)
+char *get_file_name(BPLONG op)
 {
     CHAR s1[MAX_STR_LEN];
 
     DEREF(op);
     namestring(GET_SYM_REC(op), s1);
-    return get_file_name_aux(s1);
+    return expand_file_name(s1);
 }
 #endif
 
@@ -1047,12 +1047,12 @@ int b_WRITE_QUICK_c(BPLONG op)
                   if (IS_FLOAT_PSC(op)) {
                       bp_write_double(op);
                   } else if (IS_BIGINT_PSC(op)) {
-			BPLONG_PTR ptr;
-			BPLONG size;					
-			ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-			size = FOLLOW(ptr+1); size = INTVAL(size);
-			if (size > 36) return BP_FALSE;
-			return bp_write_bigint(op);
+                      BPLONG_PTR ptr;
+                      BPLONG size;
+                      ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
+                      size = FOLLOW(ptr+1); size = INTVAL(size);
+                      if (size > 36) return BP_FALSE;
+                      return bp_write_bigint(op);
                   } else if (cg_is_component(op)) {
                       cg_print_component(op);
                   } else return BP_FALSE;
@@ -1176,12 +1176,12 @@ int b_WRITEQ_QUICK_c(BPLONG op)
                   if (IS_FLOAT_PSC(op)) {
                       bp_write_double(op);
                   } else if (IS_BIGINT_PSC(op)) {
-			BPLONG_PTR ptr;
-			BPLONG size;
-			ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
-			size = FOLLOW(ptr+1); size = INTVAL(size);
-			if (size > 36) return BP_FALSE;
-			return bp_write_bigint(op);
+                      BPLONG_PTR ptr;
+                      BPLONG size;
+                      ptr = (BPLONG_PTR)UNTAGGED_ADDR(op);
+                      size = FOLLOW(ptr+1); size = INTVAL(size);
+                      if (size > 36) return BP_FALSE;
+                      return bp_write_bigint(op);
                   } else return BP_FALSE;
               },
               {dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op);
@@ -1528,7 +1528,6 @@ int c_UNGETC()
 
 int b_GET_f(BPLONG op)
 {
-    BPLONG_PTR top;
     BPLONG n;
 
     do {
@@ -1544,7 +1543,6 @@ int b_GET_f(BPLONG op)
 
 int c_rm_file() {
     BPLONG op;
-    char *f_name;
 
     op = ARG(1, 1);
     if (check_file_term(op) != BP_TRUE) return BP_ERROR;
@@ -3173,7 +3171,6 @@ int print_term_to_buf(BPLONG term) {
             sprintf(bp_buf, "%.15lf", floatval(term));
             bp_trim_trailing_zeros(bp_buf);
         } else if (IS_BIGINT(term)) {
-            CHAR_PTR ch_ptr;
             int j, i = bp_write_bigint_to_str(term, bp_buf, MAX_STR_LEN);  /* stored in bp_buf from index i to MAX_STR_LEN-1 */
             if (i == BP_ERROR) return BP_ERROR;
             j = 0;
@@ -3182,10 +3179,10 @@ int print_term_to_buf(BPLONG term) {
                 i++; j++;
             }
         } else {
-		  return BP_FALSE;
+            return BP_FALSE;
         }
     } else {
-	  return BP_FALSE;
+        return BP_FALSE;
     }
 
     return BP_TRUE;
@@ -3232,7 +3229,6 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size) {
     CHAR_PTR ch_ptr = buf;
     CHAR_PTR s;
     int j, len, i = 0;
-    BPLONG lst0 = lst;
 
     //  printf("=>picat_str_to_c_str "); write_term(lst); printf("\n");
 
@@ -3248,8 +3244,6 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size) {
         s = GET_NAME(sym_ptr);
         len = GET_LENGTH(sym_ptr);
         if (i+len >= buf_size) {
-		  //		    printf("hreg = " BPULONG_FMT_STR " local_top = " BPULONG_FMT_STR " buf_size = " BPULONG_FMT_STR " \n", heap_top, local_top, buf_size);
-		  //		    write_term(lst0); printf("\n");
             quit("buff overfolow in picat_str_to_c_str");
         }
         for (j = 0; j < len; j++) {
@@ -3262,9 +3256,9 @@ void picat_str_to_c_str(BPLONG lst, char *buf, BPLONG buf_size) {
 
 /* term must be one of the following: variable, atom, integer, and real */
 int b_TO_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
-  if (print_term_to_buf(term) == BP_FALSE) return BP_FALSE;
-  c_str_to_picat_str(bp_buf, lst, lstr);
-  return BP_TRUE;
+    if (print_term_to_buf(term) == BP_FALSE) return BP_FALSE;
+    c_str_to_picat_str(bp_buf, lst, lstr);
+    return BP_TRUE;
 }
 
 int b_TO_QUOTED_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
@@ -3272,8 +3266,8 @@ int b_TO_QUOTED_STRING_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
 
     DEREF(term);
     if (!ISATOM(term)) {
-	  return b_TO_STRING_cff(term, lst, lstr);
-	}
+        return b_TO_STRING_cff(term, lst, lstr);
+    }
     sym_ptr = GET_ATM_SYM_REC(term);
     bp_write_qname_to_bp_buf(GET_NAME(sym_ptr), GET_LENGTH(sym_ptr));
     c_str_to_picat_str(bp_buf, lst, lstr);
@@ -3310,21 +3304,21 @@ int b_TO_CODES_cff(BPLONG term, BPLONG lst, BPLONG lstr) {
 
 /* print a primitive into FD, fails if term is not primitive */
 int b_PICAT_PRINT_PRIMITIVE_cc(BPLONG FDIndex, BPLONG term) {
-  DEREF(FDIndex);
-  out_file_i = INTVAL(FDIndex);
-  //  CHECK_FILE_INDEX(out_file_i);
-  curr_out = file_table[out_file_i].fdes;
-  return b_WRITE_QUICK_c(term);
+    DEREF(FDIndex);
+    out_file_i = INTVAL(FDIndex);
+    //  CHECK_FILE_INDEX(out_file_i);
+    curr_out = file_table[out_file_i].fdes;
+    return b_WRITE_QUICK_c(term);
 }
 
 /* write a primitive into FD, fails if term is not primitive */
 int b_PICAT_WRITE_PRIMITIVE_cc(BPLONG FDIndex, BPLONG term) {
-  DEREF(FDIndex);
-  out_file_i = INTVAL(FDIndex);
-  //  CHECK_FILE_INDEX(out_file_i);
-  curr_out = file_table[out_file_i].fdes;
+    DEREF(FDIndex);
+    out_file_i = INTVAL(FDIndex);
+    //  CHECK_FILE_INDEX(out_file_i);
+    curr_out = file_table[out_file_i].fdes;
 
-  return b_WRITEQ_QUICK_c(term);
+    return b_WRITEQ_QUICK_c(term);
 }
 
 int c_PICAT_FORMAT_TO_STRING_ccff() {
@@ -3332,14 +3326,14 @@ int c_PICAT_FORMAT_TO_STRING_ccff() {
     char *ch_ptr;
 
     char format_str[MAX_STR_LEN];
-	
+
     Format = ARG(1, 4); DEREF(Format);
     Val = ARG(2, 4); DEREF(Val);
     Str = ARG(3, 4); DEREF(Str);
     StrR = ARG(4, 4); DEREF(StrR);
 
     picat_str_to_c_str(Format, format_str, MAX_STR_LEN);
-	ch_ptr = bp_buf;
+    ch_ptr = bp_buf;
     if (ISINT(Val)) {
         sprintf(ch_ptr, format_str, INTVAL(Val));
     } else if (ISFLOAT(Val)) {
@@ -3944,7 +3938,7 @@ int b_WRITE_BYTE_cc(BPLONG FDIndex, BPLONG op) {
 int b_put_char(FILE *out_fptr, BPLONG op) {
     SYM_REC_PTR sym_ptr;
     BPLONG len;
-    char *ch_ptr, *ch_ptr_end;
+    char *ch_ptr;
     sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(op);
     len = GET_LENGTH(sym_ptr);
     ch_ptr = GET_NAME(sym_ptr);

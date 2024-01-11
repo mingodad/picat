@@ -112,6 +112,13 @@ Note that the command \verb+ctrl-d+ terminates the interpreter if the line is em
 \subsection{How to Compile and Load Programs}
 A Picat program is stored in one or more text files with the extension name \texttt{pi}. A file name\index{file name} is a string of characters. Picat treats both  \verb+'/'+ and \verb+'\'+ as file name\index{file name} separators. Nevertheless, since \verb+'\'+ is used as the escape character in quoted strings, two consecutive backslashes must be used, as in \verb+"c:\\work\\myfile.pi"+, if \verb+'\'+ is used as the separator.
 
+A program file can contain \texttt{include} directives of the form:\index{\texttt{include} directive}
+\begin{tabbing}
+aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
+\> \texttt{include $Name$}.
+\end{tabbing}
+The \texttt{include} directive causes the content of the file named $Name$ to be copied verbatim to where the directive occurs. 
+
 For the sake of demonstration we assume the existence of a file named \texttt{welcome.pi} in the current working directory that stores the following program:
 \begin{verbatim}
     main =>

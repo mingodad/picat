@@ -1,0 +1,47 @@
+import os.
+
+main =>
+    Fs = listdir(".").sort(),
+    foreach (F in Fs, append(MainStr,".jl",F))
+        if not complete(F) then
+            Command = "mv " ++ MainStr ++ ".*" ++ " hard",
+            println(Command),
+            _ = command(Command)
+        end
+    end.
+
+complete(File) =>
+    IS = open(File),
+    my_read_lines(IS,Lines),
+    close(IS),
+    member(Line, Lines),
+%    append(_,[s,o,l,v,e,'('|_],Line),
+    append([r,e,s,' ', '='|_],_,Line),    
+    !.
+    
+my_read_lines(IS,Lines) =>
+    my_read_line(IS,Line),
+    (Line == end_of_file ->
+        Lines = []
+    ;
+        Lines = [Line|LinesR],
+        my_read_lines(IS,LinesR)
+    ).
+
+my_read_line(IS,Line) =>
+    Ch = read_char(IS),
+    (Ch == end_of_file ->
+        Line = end_of_file
+    ;
+        my_read_line(IS,Ch,Line)
+    ).
+    
+my_read_line(IS,'\n',Line) => Line = [].
+my_read_line(IS,end_of_file,Line) => Line = [].
+my_read_line(IS,Ch,Line) =>
+    Line = [Ch|LineR],
+    NextCh = read_char(IS),
+    my_read_line(IS,NextCh,LineR).
+        
+    
+        

@@ -208,9 +208,9 @@ A global constraint is a constraint over multiple variables. A global constraint
 Picat provides the following global constraints.
 
 \begin{itemize}
-\item \texttt{acyclic($Vs$,$Es$)}\index{\texttt{acyclic/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ contains no cycles, where $Vs$ is a list of pairs of the form $\{V,B\}$ and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+\item \texttt{acyclic($Vs$,$Es$)}\index{\texttt{acyclic/2}}: This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ contains no cycles, where $Vs$ is a list of pairs of the form $\{V,B\}$ and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
 
-\item \texttt{acyclic\_d($Vs$,$Es$)}\index{\texttt{acyclic\_d/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ contains no cycles, where $Vs$ and $Es$ are the same as those in \texttt{acyclic($Vs$,$Es$)}, except that the graph is directed.
+\item \texttt{acyclic\_d($Vs$,$Es$)}\index{\texttt{acyclic\_d/2}}: This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ contains no cycles, where $Vs$ and $Es$ are the same as those in \texttt{acyclic($Vs$,$Es$)}, except that the graph is directed.
     
 \item \texttt{all\_different($FDVars$)}\index{\texttt{all\_different/1}}: This constraint ensures that each pair of variables in the list or array $FDVars$ is different. This constraint is compiled into a set of inequality constraints. For each pair of variables $V1$ and $V2$ in $FDVars$, \texttt{all\_different($FDVars$)}\index{\texttt{all\_different/1}} generates the constraint {\tt $V1$ \verb+#!=+ $V2$}.
 
@@ -258,6 +258,8 @@ Picat provides the following global constraints.
 
 \item \texttt{element($I$,$List$,$V$)}\index{\texttt{element/3}}: This constraint is true if the $I$th element of $List$ is $V$, where $I$ and $V$ are integer-domain variables, and $List$ is a list of integer-domain variables.
 
+\item \texttt{element0($I$,$List$,$V$)}\index{\texttt{element0/3}}: This constraint is the same as \texttt{element($I$,$List$,$V$)}, except that 0-based, rather than 1-based, indexing is used.
+
 \item \texttt{exactly($N$,$L$,$V$)}\index{\texttt{exactly/3}}: This constraint succeeds if there are exactly $N$ elements in $L$ that are equal to $V$, where $N$ and $V$ must be integer-domain variables, and $L$ must be a list of integer-domain variables.
 
 \item \texttt{global\_cardinality($List$,$Pairs$)}\index{\texttt{global\_cardinality/2}}: Let $List$ be a list of integer-domain variables \texttt{[$X_1$, $\ldots$, $X_d$]}, and $Pairs$ be a list of pairs \texttt{[$K_1$-$V_1$, $\ldots$, $K_n$-$V_n$]}, where each key \texttt{$K_i$} is a unique integer, and each \texttt{$V_i$} is an integer-domain variable. The constraint is true if every element of $List$ is equal to some key, and, for each pair \texttt{$K_i$-$V_i$}, exactly \texttt{$V_i$} elements of $List$ are equal to \texttt{$K_i$}. This constraint can be defined as follows:
@@ -268,7 +270,7 @@ Picat provides the following global constraints.
         end.
 \end{verbatim}
 
-\item \texttt{hcp($Vs$,$Es$)}\index{\texttt{hcp/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ forms a Hamiltonian cycle\index{Hamiltonian cycle}, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. The \texttt{circuit} and \texttt{subcircuit} constraints can be implemented as follows by using \texttt{hcp}:
+\item \texttt{hcp($Vs$,$Es$)}\index{\texttt{hcp/2}}: This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ forms a Hamiltonian cycle\index{Hamiltonian cycle}, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. The \texttt{circuit} and \texttt{subcircuit} constraints can be implemented as follows by using \texttt{hcp}:
 \begin{verbatim}
     circuit(L) =>
         N = len(L),
@@ -292,9 +294,9 @@ Picat provides the following global constraints.
         hcp(Vs,Es).
 \end{verbatim}
 
-\item \texttt{hcp($Vs$,$Es$,$K$)}\index{\texttt{hcp/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{hcp($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+\item \texttt{hcp($Vs$,$Es$,$K$)}\index{\texttt{hcp/3}}:  This constraint is the same as \texttt{hcp($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
 
-\item \texttt{hcp\_grid($A$)}\index{\texttt{hcp\_grid/1}} (only available in \texttt{sat}):  This constraint ensures that the \textit{grid}\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{hcp}:
+\item \texttt{hcp\_grid($A$)}\index{\texttt{hcp\_grid/1}}:  This constraint ensures that the \textit{grid}\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{hcp}:
 \begin{verbatim}
     hcp_grid(A) =>
         NRows = len(A),
@@ -316,9 +318,9 @@ Picat provides the following global constraints.
                     A[R1,C1] !== 0].
 \end{verbatim}
 
-\item \texttt{hcp\_grid($A$,$Es$)}\index{\texttt{hcp\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \texttt{hcp\_grid($A$)}, except that it also restricts the edges to $Es$, which consists of triplets of the form $\{V_1,V_2,B\}$. In a triplet in $Es$, $V_1$ and $V_2$ take the form $(R,C)$, where $R$ is a row number and $C$ is a column number, and $B$ is a Boolean variable, which denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. If $Es$ is a variable, then it is bound to the edges of the grid graph.  
+\item \texttt{hcp\_grid($A$,$Es$)}\index{\texttt{hcp\_grid/2}}: This constraint is the same as \texttt{hcp\_grid($A$)}, except that it also restricts the edges to $Es$, which consists of triplets of the form $\{V_1,V_2,B\}$. In a triplet in $Es$, $V_1$ and $V_2$ take the form $(R,C)$, where $R$ is a row number and $C$ is a column number, and $B$ is a Boolean variable, which denotes that $V_1$ is connected to $V_2$  by an edge in the graph if and only if $B = 1$. If $Es$ is a variable, then it is bound to the edges of the grid graph.  
 
-\item \texttt{hcp\_grid($A$,$Es$,$K$)}\index{\texttt{hcp\_grid/3}} (only available in \texttt{sat}): This constraint is the same as\\ \texttt{hcp\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+\item \texttt{hcp\_grid($A$,$Es$,$K$)}\index{\texttt{hcp\_grid/3}}: This constraint is the same as\\ \texttt{hcp\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
 
 \item \texttt{increasing($L$)}\index{\texttt{increasing/1}}: The sequence (an array or a list) $L$ is in (non-strictly) increasing order.
 
@@ -330,13 +332,15 @@ Picat provides the following global constraints.
 
 \item \texttt{matrix\_element($Matrix$,$I$,$J$,$V$)}\index{\texttt{matrix\_element/4}}: This constraint is true if the entry at $<$$I$,$J$$>$ in $Matrix$ is $V$, where $I$, $J$, and $V$ are integer-domain variables, and $Matrix$ is an two-dimensional array of integer-domain variables.
 
+\item \texttt{matrix\_element0($Matrix$,$I$,$J$,$V$)}\index{\texttt{matrix\_element0/4}}: This constraint is the same as the above, except that it uses 0-based, rather than 1-based, indexing for the entries of the matrix. 
+
 \item \texttt{neqs($NeqList$)}\index{\texttt{neqs/1}}: $NeqList$ is a list of inequality constraints of the form $X$ \verb+#!=+ $Y$, where $X$ and $Y$ are integer-domain variables. This constraint is equivalent to the conjunction of the inequality constraints in $NeqList$, but it extracts \texttt{all\_distinct}\index{\texttt{all\_distinct/1}} constraints from the inequality constraints. 
 
 \item \texttt{nvalue($N$,$List$)}\index{\texttt{nvalue/2}}: The number of distinct values in $List$ is $N$, where $List$ is a list of integer-domain variables.
 
-\item \texttt{path($Vs$,$Es$,$Src$,$Dest$)}\index{\texttt{path/4}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is a path from $Src$ to $Dest$, where $Vs$ is a list of pairs of the form $\{V,B\}$, $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$, $Src$ is a vertex, and $Dest$ is a vertex or a list of vertices. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term representing a vertex and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+\item \texttt{path($Vs$,$Es$,$Src$,$Dest$)}\index{\texttt{path/4}}: This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is a path from $Src$ to $Dest$, where $Vs$ is a list of pairs of the form $\{V,B\}$, $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$, $Src$ is a vertex, and $Dest$ is a vertex or a list of vertices. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term representing a vertex and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
 
-\item \texttt{path\_d($Vs$,$Es$,$Src$,$Dest$)}\index{\texttt{path\_d/4}} (only available in \texttt{sat}): This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ is a path from $Src$ to $Dest$, where $Vs$ and $Es$ are the same as those in \texttt{path($Vs$,$Es$,$Src$,$Dest$)}, except that the graph is directed.
+\item \texttt{path\_d($Vs$,$Es$,$Src$,$Dest$)}\index{\texttt{path\_d/4}}: This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ is a path from $Src$ to $Dest$, where $Vs$ and $Es$ are the same as those in \texttt{path($Vs$,$Es$,$Src$,$Dest$)}, except that the graph is directed.
 
 \item \texttt{regular$(L, Q, S, M, Q0, F)$}\index{\texttt{regular/6}}:  Given a finite automaton (DFA or NFA) of $Q$ states numbered 1, 2, $\ldots$, $Q$ with input $1..S$, transition matrix $M$, initial state $Q0$ (1 $\le\ Q0\ \le Q$), and a list of accepting states $F$, this constraint is true if the list $L$ is accepted by the automaton. The transition matrix $M$ represents a mapping from $1..Q\times 1..S$ to $0..Q$, where $0$ denotes the {\it error} state.  For a DFA, every entry in $M$ is an integer, and for an NFA, entries can be a list of integers.
 
@@ -344,11 +348,11 @@ Picat provides the following global constraints.
 
 \item \texttt{scalar\_product($A$,$X$,$Rel$,$Product$)}\index{\texttt{scalar\_product/4}}: The scalar product of $A$ and $X$ has the relation $Rel$ with $Product$, where $Rel$ is one of the following operators: \verb+#=+, \verb+#!=+, \verb+#>=+, \verb+#>+, \verb+#=<+ (\verb+#<=+), and \verb+#<+. 
 
-\item \texttt{scc($Vs$,$Es$)}\index{\texttt{scc/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is strongly connected, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+\item \texttt{scc($Vs$,$Es$)}\index{\texttt{scc/2}}: This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is strongly connected, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the graph if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the graph if and only if $B = 1$ and both $V_1$ and $V_2$ are in the graph. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
 
-\item \texttt{scc($Vs$,$Es$,$K$)}\index{\texttt{scc/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{scc($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+\item \texttt{scc($Vs$,$Es$,$K$)}\index{\texttt{scc/3}}:  This constraint is the same as \texttt{scc($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
 
-\item \texttt{scc\_grid($A$)}\index{\texttt{scc\_grid/1}} (only available in \texttt{sat}):  This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean variables, forms a strongly connected undirected graph. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{scc}:
+\item \texttt{scc\_grid($A$)}\index{\texttt{scc\_grid/1}}:  This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean variables, forms a strongly connected undirected graph. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only cells labeled 1 are considered as vertices of the graph. This constraint is implemented as follows by using \texttt{scc}:
 \begin{verbatim}
     scc_grid(A) =>
         NRows = len(A),
@@ -372,23 +376,23 @@ Picat provides the following global constraints.
 \end{verbatim}
 Note that there is an edge between each pair of neighboring cells in the resulting graph as long as the cells are in the graph.
 
-\item \texttt{scc\_grid($A$,$K$)}\index{\texttt{scc\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \texttt{scc\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+\item \texttt{scc\_grid($A$,$K$)}\index{\texttt{scc\_grid/2}}: This constraint is the same as \texttt{scc\_grid($A$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
 
-\item \texttt{scc\_d($Vs$,$Es$)}\index{\texttt{scc\_d/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ is strongly connected, where $Vs$ and $Es$ are the same as those in \texttt{scc($Vs$,$Es$)}, except that the graph is directed.
+\item \texttt{scc\_d($Vs$,$Es$)}\index{\texttt{scc\_d/2}}: This constraint ensures that the \textit{directed}\index{directed graph} graph represented by $Vs$ and $Es$ is strongly connected, where $Vs$ and $Es$ are the same as those in \texttt{scc($Vs$,$Es$)}, except that the graph is directed.
 
-\item \texttt{scc\_d($Vs$,$Es$,$K$)}\index{\texttt{scc\_d/3}} (only available in \texttt{sat}): This constraint is the same as \texttt{scc\_d($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
+\item \texttt{scc\_d($Vs$,$Es$,$K$)}\index{\texttt{scc\_d/3}}: This constraint is the same as \texttt{scc\_d($Vs$,$Es$)}, except that it also constrains the number of vertices in the graph to be $K$. 
 
 \item \texttt{serialized($Starts$,$Durations$)}\index{\texttt{serialized/2}}: This constraint describes a set of non-overlapping tasks, where $Starts$ and $Durations$ are lists of integer-domain variables, and the lists have the same length. Let $Os$ be a list of 1s that has the same length as $Starts$. This constraint is equivalent to \texttt{cumulative($Starts$,$Durations$,$Os$,1)}\index{\texttt{cumulative/4}}.
 
 \item \texttt{subcircuit($FDVars$)}\index{\texttt{subcircuit/1}}: This constraint is the same as \texttt{circuit($FDVars$)}\index{\texttt{circuit/1}}, except that not all of the vertices are required to be in the circuit. If the $i$th element of $FDVars$ is $i$, then the vertex $i$ is not part of the circuit. 
 
-\item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}} (only available in \texttt{sat}): This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle\index{Hamiltonian cycle}. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph.
+\item \texttt{subcircuit\_grid($A$)}\index{\texttt{subcircuit\_grid/1}}: This constraint ensures that the grid\index{grid graph} graph represented by $A$, which is a two-dimensional array of Boolean (0/1) variables, forms a Hamiltonian cycle\index{Hamiltonian cycle}. In a grid graph, each cell is directly connected horizontally and vertically, but not diagonally, to its neighbors. Only non-zero cells are considered as vertices of the graph.
 
-\item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}} (only available in \texttt{sat}): This constraint is the same as \\\texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$, 
+\item \texttt{subcircuit\_grid($A$,$K$)}\index{\texttt{subcircuit\_grid/2}}: This constraint is the same as \\\texttt{subcircuit\_grid($A$)}, except that it also constrains the number of vertices in the graph to be $K$, 
 
-\item \texttt{tree($Vs$,$Es$)}\index{\texttt{tree/2}} (only available in \texttt{sat}): This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is a tree, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the tree if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the tree if and only if $B = 1$ and both $V_1$ and $V_2$ are in the tree. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
+\item \texttt{tree($Vs$,$Es$)}\index{\texttt{tree/2}}: This constraint ensures that the \textit{undirected}\index{undirected graph} graph represented by $Vs$ and $Es$ is a tree, where $Vs$ is a list of pairs of the form $\{V,B\}$, and $Es$ is a list of triplets of the form $\{V_1,V_2,B\}$. A pair $\{V,B\}$ in $Vs$, where $V$ is a ground term and $B$ is a Boolean variable, denotes that $V$ is in the tree if and only if $B = 1$. A triplet $\{V_1,V_2,B\}$ denotes that $V_1$ is connected with $V_2$  by an edge in the tree if and only if $B = 1$ and both $V_1$ and $V_2$ are in the tree. Note that the graph to be constructed is assumed to be undirected. If there exists a triplet $\{V_1,V_2,B\}$ in $Es$, then the triplet $\{V_2,V_1,B\}$ will be added to $Es$ if it is not specified.
 
-\item \texttt{tree($Vs$,$Es$,$K$)}\index{\texttt{tree/3}} (only available in \texttt{sat}):  This constraint is the same as \texttt{tree($Vs$,$Es$)}, except that it also constrains the number of vertices in the tree to be $K$. 
+\item \texttt{tree($Vs$,$Es$,$K$)}\index{\texttt{tree/3}}:  This constraint is the same as \texttt{tree($Vs$,$Es$)}, except that it also constrains the number of vertices in the tree to be $K$. 
 \end{itemize}
 
 \section{Solver Invocation}
@@ -473,8 +477,7 @@ aa \= aaa \= aaa \= aaa \= aaa \= aaa \= aaa \kill
 \end{tabbing}
 where $SolFile$ is a file for the solution, and $TmpFile$ is a file that stores the CPLEX-format constraints. Picat throws \texttt{existence\_error} if the command \texttt{gurobi\_cl} is not available.
 % \item \texttt{sol($File$)}: Instruct the mip solver to save the solution into $File$ rather than the default file ``\_\_tmp.sol''.
-\item \texttt{tmp($File$)}: Dump the CPLEX format to $File$ rather than the default file ``\_\_tmp.lp'', before calling the mip solver. The name $File$  must be a string or an atom that has the extension name ``.lp''. When this file name is specified, the mip solver will save the solution into a file name that has the same main name as $File$ but the extension name ``.sol''.
-% \item \texttt{\$format(clp)}: dumps the constraints in B-Prolog format to \texttt{stdout}.
+\item \texttt{scip}: \index{\texttt{scip}}Instruct Picat to use the SCIP MIP solver. Picat provides an internal interface to the SCIP solver through the C language.\footnote{The SCIP interface is not included in the pre-made binary executables, and users must build an executable from the source code following the installation instructions.} Note that, unlike other linear programming solvers, SCIP only returns integer solutions although it allows real coefficients and contiguous-domain variables.
 \end{itemize}
 
 \subsection{Solving Options for \texttt{smt}}

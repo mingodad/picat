@@ -1,0 +1,57 @@
+/****************************************************************************
+Uncompress compact integer sequences in XCSP.
+For example, 5x3 is converted to 5 5 5.
+****************************************************************************/
+    
+main([File]) =>
+    uncompress_integers(File).
+    
+uncompress_integers(InFile) =>
+    garbage_collect(100_000_000),
+    OS = open("_tmp.xml",write),
+    Lines = read_file_lines(InFile),
+    proc_lines(OS,Lines),
+    close(OS).
+
+proc_lines(OS,[]) => true.
+proc_lines(OS,[Line|Lines]) =>
+    proc_line(OS,Line),
+    proc_lines(OS,Lines).
+
+proc_line(OS,[]) =>
+    nl(OS).
+proc_line(OS,['>',D|Line]), ascii_digit(D) =>
+    print(OS,'>'),
+    proc_integer(OS,Line,[D]).
+proc_line(OS,[' ',D|Line]), ascii_digit(D) =>
+    print(OS,' '),    
+    proc_integer(OS,Line,[D]).
+proc_line(OS,['>','-',D|Line]), ascii_digit(D) =>
+    print(OS,'>'),    
+    proc_integer(OS,Line,[D,'-']).
+proc_line(OS,[' ','-',D|Line]), ascii_digit(D) =>
+    print(OS,' '),        
+    proc_integer(OS,Line,[D,'-']).
+proc_line(OS,[Ch|Line]) =>
+    print(OS,Ch),
+    proc_line(OS,Line).
+
+proc_integer(OS,[D|Line],IntStr), ascii_digit(D) =>
+    proc_integer(OS,Line,[D|IntStr]).
+proc_integer(OS,[x,D|Line],IntStr), ascii_digit(D) =>
+    N = ord(D) - ord('0'),
+    proc_integer_aux(OS,Line,IntStr,N).
+proc_integer(OS,Line,IntStr) =>
+    printf(OS,"%s",reverse(IntStr)),
+    proc_line(OS,Line).
+
+proc_integer_aux(OS,[D|Line],IntStr,N), ascii_digit(D) =>
+    N1 is N*10+(ord(D) - ord('0')),
+    proc_integer_aux(OS,Line,IntStr,N1).
+proc_integer_aux(OS,Line,IntStr,N) =>
+    RIntStr = reverse(IntStr),
+    foreach (_ in 1..N-1)
+        printf(OS,"%s ", RIntStr)
+    end,
+    printf(OS,"%s", RIntStr),
+    proc_line(OS,Line).

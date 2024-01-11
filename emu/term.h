@@ -76,8 +76,8 @@
 #define ISCOMPOUND(op) (((op) & 0x1L) == STR && (op) > 0)
 #define IS_VAR_OR_STRUCT(op) (((op) & MASK2) == 0)
 
-#define MAKEINT32(op) (((int)(op) << 2) | INT_TAG32)
-#define MAKEINT(op) (((BPLONG)(op) << 2) | INT_TAG)
+#define MAKEINT32(op) (((unsigned int)(op) << 2) | INT_TAG32)
+#define MAKEINT(op) (((BPULONG)(op) << 2) | INT_TAG)
 #define MAKE_INT_OR_BIGINT(op) (BP_IN_1W_INT_RANGE(op) ? MAKEINT(op) : bp_int_to_bigint(op))
 #define INTVAL(op) (((BPLONG)(op) << 1) >> 3)
 #define VALOF_INT_OR_BIGINT(op) (ISINT(op) ? INTVAL(op) : bp_bigint_to_int(op))

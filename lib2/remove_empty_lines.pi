@@ -1,0 +1,7 @@
+main([File]) =>
+    Ls = read_file_lines(File),
+	foreach (L in Ls, L !== [])
+	    println(L)
+	end.
+	
+	   

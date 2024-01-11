@@ -1,0 +1,22 @@
+/* copy all the plain files from subdirectories to the current directory */
+
+import os.
+
+main =>
+    Wd = pwd(),
+    remove_dir(Wd, Wd).
+
+remove_dir(Wd, Dir) =>
+    Items = listdir(Dir),
+    foreach (Item in Items, Item !== ".", Item !== "..")
+       FullName = full_path(Dir, Item),
+       (directory(FullName) ->
+           Command = "rm -r " ++ FullName,
+		   _ = command(Command)
+        ;
+           true
+        )
+    end.
+         
+full_path(Dir,Name) =
+    Dir ++ [separator()] ++ Name.

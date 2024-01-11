@@ -1,0 +1,12 @@
+rm -r scipsuite
+tar xvf scipsuite.tar.gz
+cd scipsuite
+sed -i "s/add_library(libscip/add_library(libscip STATIC/g" scip/src/CMakeLists.txt
+mkdir build && cd build
+cmake -DNO_EXTERNAL_CODE=on -DSOPLEX=on -DTPI=tny ..
+make libscip
+cd ../..
+make -f Makefile.linux64.scip clean
+make -f Makefile.linux64.scip
+
+

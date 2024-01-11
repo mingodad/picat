@@ -1,0 +1,1028 @@
+module cg.
+import cp.
+
+%%% constraints defined in cp, no need to import cp once cg is imported
+%
+'::'(Vars,Domain) =>  cp.'::'(Vars,Domain).
+
+'#='(X,Y) => cp.'#='(X,Y).
+
+'#>='(X,Y) => cp.'#>='(X,Y).
+
+'#>'(X,Y) => cp.'#>'(X,Y).
+
+'#<'(X,Y) => cp.'#<'(X,Y).
+
+'#=<'(X,Y) => cp.'#=<'(X,Y).
+
+'#!='(X,Y) => cp.'#!='(X,Y).
+
+'#\\='(X,Y) => cp.'#\\='(X,Y).
+
+'#<=>'(X,Y) => cp.'#<=>'(X,Y).
+
+'#=>'(X,Y) => cp.'#=>'(X,Y).
+
+'#/\\'(X,Y) => cp.'#/\\'(X,Y).
+
+'#\\/'(X,Y) => cp.'#\\/'(X,Y).
+
+'#^'(X,Y) => cp.'#^'(X,Y).
+
+'#~'(X) => cp.'#~'(X).
+
+%%% create graphical components
+%
+new_window = Window =>
+    Window = $'_Window'(X,Y,Width,Height,_Title,LM,TM,_MenuBar,_Enabled),    % LM -- left margin, TM -- top margin
+    [X,Y,Width,Height,LM,TM] :: 0..1000.
+
+new_component = Component =>
+    nextInstanceNo(No),
+    Component = $'_Component'(X,Y,Width,Height,_Window,_Color,_PW,_PH,No,_Handlers),
+    Width #>= 0,
+    Height #>= 0,
+    X #>=0,
+    Y #>=0.
+
+new_arc = Arc =>
+    Arc = $'_Arc'(Component,StartAngle,ArcAngle,Fill),
+    Fill :: 0..1,
+    Component = new_component(),    
+    StartAngle :: 0..360,
+    ArcAngle :: 0..360.
+
+new_button = Button =>
+    Button = $'_Button'(Component,_Label,_Enabled), 
+    Component = new_component().
+
+new_circle = Circle =>
+    Circle = $'_Circle'(Component,Fill),
+    Fill :: 0..1,    
+    Component = new_component(),
+    Component.width #= Component.height.
+
+new_image = Image =>
+    Image = $'_Image'(Component,_Id,_Source),
+    Component = new_component().
+
+new_label = Label =>
+    Label = $'_Label'(Component,_Text,_Alignment,_Font,_FontSize,_FontStyle),
+    Component = new_component().    
+
+new_line = Line =>
+    Line = $'_Line'(Component,X1,Y1,X2,Y2,_Ext),  % _Ext contains other attributes, such as thickness and arrows
+    Component = new_component(),
+    getComponentBound(Component,X,Y,W,H),
+    X #=< X1, X #=< X2,
+    Y #=< Y1, Y #=< Y2,
+    MaxX #= X+W, MaxY #= Y+H,
+    MaxX #>= X1, MaxX #>= X2,
+    MaxY #>= Y1, MaxY #>= Y2.
+
+new_oval = Oval =>
+    Oval = $'_Oval'(Component,Fill),
+    Fill :: 0..1,    
+    Component = new_component().
+
+new_polygon(N) = Polygon, integer(N), N > 0 =>
+    Polygon = $'_Polygon'(Component,N,Xs,Ys,Fill),
+    Fill :: 0..1,    
+    Component = new_component(),
+    getComponentBound(Component,MinX,MinY,W,H),
+     MaxX #= MinX+W,
+     MaxY #= MinY+H,
+     Xs = new_list(N),
+     Ys = new_list(N),
+     foreach ({X,Y} in zip(Xs,Ys))
+         X #>= MinX, X #=< MaxX,
+         Y #>= MinY, Y #=< MaxY
+     end.
+new_polygon(N) = _ =>
+    handle_exception($positive_int_expected(N),new_polygon).
+
+new_rectangle = Rectangle =>
+    Rectangle = $'_Rectangle'(Component,Fill),
+    Fill :: 0..1,    
+    Component = new_component().
+
+new_round_rectangle = RoundRectangle =>
+    RoundRectangle = $'_RoundRectangle'(Component,ArcWidth,ArcHeight,Fill),
+    Fill :: 0..1,    
+    Component = new_component(),    
+    2*ArcWidth #=< Component.width,
+    2*ArcHeight #=< Component.height.
+
+new_square = Square =>
+    Square = $'_Square'(Component,Fill),
+    Fill :: 0..1,
+    Component = new_component(),        
+    Component.width #= Component.height.
+
+new_star(N) = Star, int(N), N > 1 =>
+    Star = $'_Star'(Component,N,CenterX,CenterY,Angle,InnerDiameter,Fill),
+    Fill :: 0..1,    
+    Component = new_component(),
+    Component.width #= Component.height,
+    CenterX #= Component.centerX,
+    CenterY #= Component.centerY,
+    InnerDiameter #< Component.width,
+    Angle :: 0..360.
+new_star(N) = _ =>
+    handle_exception($positive_int_expected(N),new_star).
+    
+new_text_box = TextBox =>
+    TextBox = $'_TextBox'(Component,_Text,_Alignment,_Font,_Padding,_FontSize,_FontStyle),
+    Component = new_component().
+
+new_triangle = Triangle =>
+    Triangle = $'_Triangle'(Component,X1,Y1,X2,Y2,X3,Y3,Fill),
+    Fill :: 0..1,    
+    Component = new_component(),    
+    getComponentBound(Component,X,Y,W,H),
+    X #=< X1,
+    X #=< X2,
+    X #=< X3,
+    Y #=< Y1,
+    Y #=< Y2,
+    Y #=< Y3,
+    MaxX #= X+W,
+    MaxY #= Y+H,
+    MaxX #>= X1,
+    MaxX #>= X2,
+    MaxX #>= X3,
+    MaxY #>= Y1,
+    MaxY #>= Y2,
+    MaxY #>= Y3.
+
+%%% functions for accessing attributes
+%
+x('_Component'(X,_Y,_W,_H,_Window,_Color,_PW,_PH,_No,_Handlers)) = X.
+x(Component) = X, cg_component(Component) =>
+   X = x(Component[1]).
+x(Component) = _X =>
+    handle_exception($cg_component_expected(Component),x).
+
+y('_Component'(_X,Y,_W,_H,_Window,_Color,_PW,_PH,_No,_Handlers)) = Y.
+y(Component) = Y, cg_component(Component) =>
+   Y = y(Component[1]).
+y(Component) = _Y =>
+    handle_exception($cg_component_expected(Component),y).
+
+width('_Component'(_X,_Y,W,_H,_Window,_Color,_PW,_PH,_No,_Handlers)) = W.
+width(Component) = W, cg_component(Component) =>
+   W = width(Component[1]).
+width(Component) = _W =>
+    handle_exception($cg_component_expected(Component),width).
+
+height('_Component'(_X,_Y,_W,H,_Window,_Color,_PW,_PH,_No,_Handlers)) = H.
+height(Component) = H, cg_component(Component) =>
+   H = height(Component[1]).
+height(Component) = _H =>
+    handle_exception($cg_component_expected(Component),height).
+
+color('_Component'(_X,_Y,_W,_H,_Window,Color,_PW,_PH,_No,_Handlers)) = Color.
+color(Component) = H, cg_component(Component) =>
+   H = color(Component[1]).
+color(Component) = _H =>
+    handle_exception($cg_component_expected(Component),color).
+
+preferredWidth('_Component'(_X,_Y,_W,_H,_Window,_Color,PW,_PH,_No,_Handlers)) = PrefWidth =>
+    PrefWidth = PW.
+preferredWidth(Component) = PrefWidth, cg_component(Component) =>
+    PrefWidth = preferredWidth(Component[1]).
+preferredWidth(Component) = _ =>
+    handle_exception($cg_component_expected(Component),preferredWidth).
+
+preferredHeight('_Component'(_X,_Y,_W,_H,_Window,_Color,_PW,PH,_No,_Handlers)) = PrefHeight =>
+    PrefHeight = PH.
+preferredHeight(Component) = PrefHeight, cg_component(Component) =>
+    PrefHeight = preferredHeight(Component[1]).
+preferredHeight(Component) = _ =>
+    handle_exception($cg_component_expected(Component),preferredHeight).
+
+
+h('_Window'(_X,_Y,_W,H,_Title,_LM,_TM,_MenuBar,_Enabled)) = H.
+w('_Window'(_X,_Y,W,_H,_Title,_LM,_TM,_MenuBar,_Enabled)) = W.
+
+
+% derived attributes
+centerX(Component) = CenterX =>
+    CenterX #= Component.x+Component.width//2.
+
+centerY(Component) = CenterY =>
+    CenterY #= Component.y+Component.height//2.
+
+rightX(Component) = RightX =>
+    RightX #= Component.x+Component.width.
+
+bottomY(Component) = BottomY =>
+    BottomY #= Component.y+Component.height.
+
+x1('_Line'(_Component,X1,_Y1,_X2,_Y2,_Ext)) = X1.
+x1('_Triangle'(_Component,X1,_Y1,_X2,_Y2,_X3,_Y3,_Fill)) = X1.
+
+x2('_Line'(_Component,_X1,_Y1,X2,_Y2,_Ext)) = X2.
+x2('_Triangle'(_Component,_X1,_Y1,X2,_Y2,_X3,_Y3,_Fill)) = X2.
+
+y1('_Line'(_Component,_X1,Y1,_X2,_Y2,_Ext)) = Y1.
+y1('_Triangle'(_Component,_X1,Y1,_X2,_Y2,_X3,_Y3,_Fill)) = Y1.
+
+y2('_Line'(_Component,_X1,_Y1,_X2,Y2,_Ext)) = Y2.
+y2('_Triangle'(_Component,_X1,_Y1,_X2,Y2,_X3,_Y3,_Fill)) = Y2.
+
+x3('_Triangle'(_Component,_X1,_Y1,_X2,_Y2,X3,_Y3,_Fill)) = X3.
+y3('_Triangle'(_Component,_X1,_Y1,_X2,_Y2,_X3,Y3,_Fill)) = Y3.
+
+point1('_Line'(_Component,X1,Y1,_X2,_Y2,_Ext)) = $point(X1,Y1).
+point1('_Triangle'(_Component,X1,Y1,_X2,_Y2,_X3,_Y3,_Fill)) = $point(X1,Y1).
+
+point2('_Line'(_Component,_X1,_Y1,X2,Y2,_Ext)) = $point(X2,Y2).
+point2('_Triangle'(_Component,_X1,_Y1,X2,Y2,_X3,_Y3,_Fill)) = $point(X2,Y2).
+
+point3('_Triangle'(_Component,_X1,_Y1,_X2,_Y2,X3,Y3,_Fill)) = $point(X3,Y3).
+
+n('_Polygon'(_Component,N,_Xs,_Ys,_Fill)) = N.
+n('_Star'(_Component,N,_CenterX,_CenterY,_Angle,_InnerDiameter,_Fill)) = N.
+
+angle0('_Star'(_Component,_N,_CenterX,_CenterY,Angle,_InnerDiameter,_Fill)) = Angle.
+
+
+fill('_Polygon'(_Component,_N,_Xs,_Ys,Fill)) = Fill.
+fill('_Star'(_Component,_N,_CenterX,_CenterY,_Angle,_InnerDiameter,Fill)) = Fill.
+fill('_Triangle'(_Component,_X1,_Y1,_X2,_Y2,_X3,_Y3,Fill)) = Fill.
+fill('_Rectangle'(_Component,Fill)) = Fill.
+fill('_Square'(_Component,Fill)) = Fill.
+fill('_Circle'(_Componenet,Fill)) = Fill.
+fill('_Oval'(_Componenet,Fill)) = Fill.
+fill('_Arc'(_Component,_StartAngle,_ArcAngle,Fill)) = Fill.
+
+startAngle('_Arc'(_Component,StartAngle,_ArcAngle,_Fill)) = StartAngle.
+arcAngle('_Arc'(_Component,_StartAngle,ArcAngle,_Fill)) = ArcAngle.
+
+xs('_Polygon'(_Component,_N,Xs,_Ys,_Fill)) = Xs.
+ys('_Polygon'(_Component,_N,_Xs,Ys,_Fill)) = Ys.
+
+
+
+text('_TextBox'(_Component,Text,_Alignment,_Font,_Padding,_FontSize,_FontStyle)) = Text.
+text('_Label'(_Component,Text,_Alignment,_Font,_FontSize,_FontStyle)) = Text.
+
+align('_TextBox'(_Component,_Text,Alignment,_Font,_Padding,_FontSize,_FontStyle)) = Alignment.
+align('_Label'(_Component,_Text,Alignment,_Font,_FontSize,_FontStyle)) = Alignment.
+
+font('_TextBox'(_Component,_Text,_Alignment,Font,_Padding,_FontSize,_FontStyle)) = Font.
+font('_Label'(_Component,_Text,_Alignment,Font,_FontSize,_FontStyle)) = Font.
+
+font_size('_TextBox'(_Component,_Text,_Alignment,_Font,_Padding,FontSize,_FontStyle)) = FontSize.
+font_size('_Label'(_Component,_Text,_Alignment,_Font,FontSize,_FontStyle)) = FontSize.
+
+
+font_style('_TextBox'(_Component,_Text,_Alignment,_Font,_Padding,_FontSize,FontStyle)) = FontStyle.
+font_style('_Label'(_Component,_Text,_Alignment,_Font,_FontSize,FontStyle)) = FontStyle.
+
+
+padding('_TextBox'(_Component,_Text,_Alignment,_Font,Padding,_FontSize,_FontStyle)) = Padding.
+
+diameter('_Circle'(Component,_Fill)) = Diameter =>
+    Diameter = Component.width.
+diameter('_Star'(Component,_N,_CenterX,_CenterY,_Angle,_InnerDiameter,_Fill)) = Diameter =>
+    Diameter = Component.width.
+    
+innerDiameter('_Star'(_Component,_N,_CenterX,_CenterY,_Angle,InnerDiameter,_Fill)) = InnerDiameter.
+
+leftTopPoint(Component) = $point(X,Y) =>
+    getComponentBound(Component,X,Y,_W,_H).
+
+rightTopPoint(Component) = $point(RightX,Y) =>
+    RightX = Component.rightX,
+    Y = Component.y.
+
+leftBottomPoint(Component) = $point(X,BottomY) =>
+    X = Component.x,
+    BottomY = Component.bottomY.
+
+rightBottomPoint(Component) = $point(RightX,BottomY) =>
+    RightX = Component.rightX,
+    BottomY = Component.bottomY.
+
+centerPoint(Component) = $point(X,Y) =>
+    X = Component.centerX,
+    Y = Component.centerY.
+
+
+%%% constraints
+grid(Rows) =>
+    grid(Rows,0,0).
+
+grid(Rows,PadX,PadY),
+    check_comps_list_list_to_array(Rows,Array)
+=>
+    grid_array(Array,PadX,PadY).
+grid(Rows,PadX,PadY),
+    array(Rows),
+    M = len(Rows[1]),
+    foreach (Row in Rows)
+        len(Row) = M
+    end
+=>
+    grid_array(Rows,PadX,PadY).    
+grid(Rows,_PadX,_PadY) =>
+    handle_exception($illegal_grid(Rows),grid).
+
+grid_array(Array,PadX,PadY),
+    var_or_int(PadX),
+    var_or_int(PadY)
+=>
+    GridHeight = GridWidth,
+    StartX #>= 0,
+    StartY #>= 0,
+    NoRows = len(Array),
+	NoCols = len(Array[1]),
+	writeln((NoRows,NoCols)),
+    WVector = {GridWidth : _ in 1..NoCols},
+    HVector = {GridHeight : _ in 1..NoRows},
+    postTableRows(Array,1,NoRows,StartX,PadX,PadY,WVector,HVector),
+    postTableColumns(Array,1,NoCols,NoRows,StartY,PadX,PadY,WVector,HVector).
+grid_array(_Grid,PadX,PadY) =>
+    (var_or_int(PadX) ->
+        handle_exception($var_or_int_expected(PadY),grid)
+    ;
+        handle_exception($var_or_int_expected(PadX),grid)
+    ).
+
+
+%%%
+%
+tabular(Rows) =>
+    tabular(Rows,0,0).
+
+tabular(Rows,PadX,PadY),
+    check_comps_list_list_to_array(Rows,Array)
+=>
+    tabular_array(Array,PadX,PadY).
+tabular(Rows,PadX,PadY),
+    array(Rows),
+    M = len(Rows[1]),
+    foreach (Row in Rows)
+        len(Row) = M
+    end
+=>
+    tabular_array(Rows,PadX,PadY).    
+tabular(Rows,_PadX,_PadY) =>
+    handle_exception($illegal_tabular(Rows),tabular).
+
+tabular_array(Array,PadX,PadY),
+    var_or_int(PadX),
+    var_or_int(PadY)
+=>
+    StartX #>= 0,
+    StartY #>= 0,
+    NoRows = len(Array),
+	NoCols = len(Array[1]),
+    WVector = {_GridWidth : _ in 1..NoCols},
+    HVector = {_GridHeight : _ in 1..NoRows},
+    postTableRows(Array,1,NoRows,StartX,PadX,PadY,WVector,HVector),
+    postTableColumns(Array,1,NoCols,NoRows,StartY,PadX,PadY,WVector,HVector).
+tabular_array(_Grid,PadX,PadY) =>
+    (var_or_int(PadX) ->
+        handle_exception($var_or_int_expected(PadY),tabular)
+    ;
+        handle_exception($var_or_int_expected(PadX),tabular)
+    ).
+
+postTableRows(_Array,N0,N,_StartX,_PadX,_PadY,_WVector,_HVector), N0 > N =>
+    true.
+postTableRows(Array,N0,N,StartX,PadX,PadY,WVector,HVector) =>
+    Row = Array[N0],
+    NoCols = len(Row),
+    N1 is N0+1,
+    postTableRowItems(Array,N0,1,NoCols,nil,0,StartX,PadX,PadX,WVector),
+    postTableRows(Array,N1,N,StartX,PadX,PadY,WVector,HVector).
+
+postTableRowItems(Array,RowNo,N0,N,PrevItem,PrevWidth,PrevX,PadX,TotalWidth,WVector) =>
+    (N0>N ->
+        PrevWidth+PadX #= TotalWidth
+    ;
+        Row = Array[RowNo],
+        Item = Row[N0],
+        getComponentBound(Item,X1,_Y1,Width1,_Height1),
+        WVector[N0] = ColWidth,
+        (Item==PrevItem ->
+             NewTotalWidth #= TotalWidth+ColWidth,
+              NewPrevX = PrevX,
+              NewPrevWidth = PrevWidth
+         ;
+             PrevWidth+PadX #= TotalWidth,
+              X1 #= PrevX+PrevWidth+PadX,
+              NewTotalWidth = ColWidth,
+              NewPrevX = X1,
+              NewPrevWidth = Width1
+        ),
+        N1 is N0+1,
+        postTableRowItems(Array,RowNo,N1,N,Item,NewPrevWidth,NewPrevX,PadX,NewTotalWidth,WVector)
+    ).
+
+postTableColumns(_Array,N0,N,_NoRows,_StartY,_PadX,_PadY,_WVector,_HVector), N0 > N => true.
+postTableColumns(Array,N0,N,NoRows,StartY,PadX,PadY,WVector,HVector) =>
+    postTableColumn(Array,N0,1,NoRows,nil,0,StartY,PadY,PadY,HVector),
+    N1 is N0+1,
+    postTableColumns(Array,N1,N,NoRows,StartY,PadX,PadY,WVector,HVector).
+    
+postTableColumn(Array,ColNo,RowNo0,RowNo,PrevItem,PrevHeight,PrevY,PadY,TotalHeight,HVector) =>
+    (RowNo0 > RowNo ->
+        PrevHeight+PadY #= TotalHeight
+    ;
+        Array[RowNo0] = Row,
+        Row[ColNo] = Item,
+        getComponentBound(Item,_X1,Y1,_Width1,Height1),
+        HVector[RowNo0] = RowHeight,
+        (Item==PrevItem ->
+            NewTotalHeight #= TotalHeight+RowHeight,
+            NewPrevY = PrevY,
+            NewPrevHeight = PrevHeight
+        ;
+             PrevHeight+PadY #= TotalHeight,
+            Y1 #= PrevY+PrevHeight+PadY,
+             NewTotalHeight = RowHeight,
+            NewPrevY = Y1,
+            NewPrevHeight = Height1
+        ),
+        RowNo1 is RowNo0+1,
+        postTableColumn(Array,ColNo,RowNo1,RowNo,Item,NewPrevHeight,NewPrevY,PadY,NewTotalHeight,HVector)
+    ).
+
+/*********************************************************************************************
+  visualize a tree represented by the term:
+
+    tree(Root,Type,DisX,DisY,Centered)
+
+  where
+
+      Root: the node of the root. Each root is represented by
+
+            node(Box,Children)
+
+               where Box is the layout area for the node and Children is the list of roots of the sub-trees.
+
+      Type: top_down, left_right, bottom_up, right_left
+
+      DisX: the x-distance of each two neighboring children if Type is top_down or bottom_up
+            the distance between the root and the children, otherwise
+
+      DisY: The y-distance of each of the two neighoring children if Typeis left_right or right_left
+            The distance between the root and the child, otherwise
+
+      Centered: centered -- root is located in the middle of the children
+                itemized -- itemized
+*********************************************************************************************/
+
+tree(Root) =>
+    tree(Root,top_down,0,0,centered).
+
+tree(Root,Type,DisX,DisY,Centered) =>
+    cgCheckTreeType(Type),
+    var_or_int(DisX),
+    var_or_int(DisY),
+    cgCheckCentered(Centered),
+    lr_node(Root,NRoot,_,_),!,
+    cgConstrainNode(NRoot,Type,DisX,DisY,Centered).
+    
+cgCheckTreeType(left_right) => true.
+cgCheckTreeType(top_down) => true.
+cgCheckTreeType(bottom_up) => true.
+cgCheckTreeType(right_left) => true.
+cgCheckTreeType(Type) => handle_exception(Type,tree).
+
+cgCheckCentered(centered) => true.
+cgCheckCentered(itemized) => true.
+cgCheckCentered(Centered) => handle_exception(Centered,tree).
+
+% compute the left and right-most leaves
+lr_node(node(Box,Children),NNode,LM,RM), cg_component(Box) =>
+    (Children==[]->
+         LM = Box,
+         RM = Box,
+         NNode = $node(Box,[],nil,nil,LM,RM)
+    ;
+         NNode = $node(Box,NChildren,LC,RC,LM,RM),
+          lr_children(Children,NChildren,LC,RC,LM,RM)
+    ).
+lr_node(Node,_NNode,_LM,_RM) => handle_exception(illegal_tree_node,Node).
+
+lr_children([Node|Nodes],NChildren,LC,RC,LM,RM) =>
+    NChildren = [NNode|NChildren1],
+    lr_node(Node,NNode,LM,RM1), 
+    node_box(Node,LC),
+    (Nodes==[]->
+        RC=LC, RM=RM1, NChildren1=[]
+    ;
+        lr_children1(Nodes,NChildren1,RC,RM)
+    ).
+lr_children(Nodes,_NChildren,_LC,_RC,_LM,_RM) => handle_exception(Nodes,tree).
+
+node_box(node(Box,_),Box1) => Box = Box1.
+
+lr_children1([Node],NChildren,RC,RM) => 
+    NChildren = [NNode],
+    lr_node(Node,NNode,_,RM),
+    node_box(Node,RC).
+lr_children1([Node|Nodes],NChildren,RC,RM) => 
+    NChildren = [NNode|NChildren1],
+    lr_node(Node,NNode,_,_),
+    lr_children1(Nodes,NChildren1,RC,RM).
+lr_children1(Nodes,_NChildren,_RC,_RM) => handle_exception(Nodes,tree).
+    
+cgConstrainNode(node(Box,Children,LC,RC,_LM,_RM),Type,DisX,DisY,Centered) =>
+    cgConstrainParentChildren(Box,LC,RC,Type,DisX,DisY,Centered),
+    cgConstrainChildren(Children,Type,DisX,DisY,Centered,_Attr).
+
+cgConstrainParentChildren(_Box,nil,nil,_,_DisX,_DisY,_Centered) => true.
+cgConstrainParentChildren(Box,LC,RC,top_down,_DisX,DisY,centered) =>
+    Box.centerX #= (LC.centerX+RC.centerX)//2,
+    Box.bottomY + DisY #= LC.y.
+cgConstrainParentChildren(Box,LC,_RC,top_down,DisX,DisY,itemized) =>
+    Box.rightX + DisX #= LC.x,
+    Box.y + DisY #= LC.y.
+cgConstrainParentChildren(Box,LC,RC,bottom_up,_DisX,DisY,centered) => 
+    Box.centerX #= (LC.centerX+RC.centerX)//2,
+    Box.y #= LC.bottomY+DisY.
+cgConstrainParentChildren(Box,LC,_RC,bottom_up,DisX,DisY,itemized) => 
+    Box.rightX + DisX #= LC.x,
+    Box.y #= LC.y+DisY.
+cgConstrainParentChildren(Box,LC,RC,left_right,DisX,_DisY,centered) =>
+    Box.centerY #= (LC.centerY+RC.centerY)//2,
+    Box.rightX + DisX #= LC.x.
+cgConstrainParentChildren(Box,LC,_RC,left_right,DisX,DisY,itemized) =>
+    Box.bottomY + DisY #= LC.y,
+    Box.x + DisX #= LC.x.
+cgConstrainParentChildren(Box,LC,RC,right_left,DisX,_DisY,centered) =>
+    Box.centerY #= (LC.centerY+RC.centerY)//2,
+    Box.x  #= LC.rightX+DisX.
+cgConstrainParentChildren(Box,LC,_RC,right_left,DisX,DisY,itemized) =>
+    Box.bottomY + DisY #= LC.y,
+    Box.x  #= LC.x+DisX.
+
+cgConstrainChildren([],_Type,_DisX,_DisY,_Centered,_SameAttr) => true.
+cgConstrainChildren([C],Type,DisX,DisY,Centered,SameAttr) => 
+    cgConstraintSameAttr(C,Type,SameAttr),
+    cgConstrainNode(C,Type,DisX,DisY,Centered).
+cgConstrainChildren([C1,C2|Children],Type,DisX,DisY,Centered,SameAttr) => 
+    cgConstraintSameAttr(C1,Type,SameAttr),
+    cgConstrainNode(C1,Type,DisX,DisY,Centered),
+    cgConstrainSibling(C1,C2,Type,DisX,DisY,Centered),
+    cgConstrainChildren([C2|Children],Type,DisX,DisY,Centered,SameAttr).
+
+cgConstrainSibling(C1,C2,Type,DisX,_DisY,Centered),
+    C1 = $node(_Box1,_Children1,_LC1,_RC1,_LM1,RM1),
+    C2 = $node(Box2,_Children2,_LC2,_RC2,LM2,_RM2),
+    Type = top_down
+=>
+    (Centered == centered ->
+        RM1.rightX+DisX #=< LM2.x
+    ;
+        RM1.rightX+DisX #= Box2.x
+    ).
+cgConstrainSibling(C1,C2,Type,_DisX,DisY,Centered),
+    C1 = $node(_Box1,_Children1,_LC1,_RC1,_LM1,RM1),
+    C2 = $node(Box2,_Children2,_LC2,_RC2,LM2,_RM2),
+    Type = left_right
+=>
+    (Centered== centered ->
+        RM1.bottomY+DisY #=< LM2.y
+    ;
+        RM1.bottomY+DisY #= Box2.y
+    ).
+cgConstrainSibling(C1,C2,bottom_up,DisX,DisY,Centered) =>
+    cgConstrainSibling(C1,C2,top_down,DisX,DisY,Centered).
+cgConstrainSibling(C1,C2,right_left,DisX,DisY,Centered) =>
+    cgConstrainSibling(C1,C2,left_right,DisX,DisY,Centered).
+
+cgConstraintSameAttr(node(Box1,_Children1,_LC1,_RC1,_LM1,_RM1),Type,SameAttr),
+    top_down = Type
+=>    
+    Box1.y #= SameAttr.
+cgConstraintSameAttr(node(Box1,_Children1,_LC1,_RC1,_LM1,_RM1),Type,SameAttr),
+    bottom_up = Type
+=>
+    Box1.y #= SameAttr.
+cgConstraintSameAttr(node(Box1,_Children1,_LC1,_RC1,_LM1,_RM1),Type,SameAttr),
+    left_right = Type
+=>    
+    Box1.x #= SameAttr.
+cgConstraintSameAttr(node(Box1,_Children1,_LC1,_RC1,_LM1,_RM1),Type,SameAttr),
+    right_left = Type
+=>
+    Box1.x #= SameAttr.
+
+%%% Pack graphical objects to determine the attributes
+%
+cgPack(Comps,Win) =>
+    cgCompsInsideWindow(Comps,Win),
+    cgFixWindow(Win),
+
+foreach (Comp in Comps)
+    writeln(Comp)
+end,
+
+    cgPickupSizePosVars(Comps,WVars,HVars,XVars,YVars),
+    cgInstantiateSizeVars(WVars),
+    cgInstantiateSizeVars(HVars),
+    cgInstantiatePosVars(XVars),
+    cgInstantiatePosVars(YVars),
+    %
+    cgInstantiateComponents(Comps).
+
+cgCompsInsideWindow(Comps,'_Window'(_WinX,_WinY,WinWidth,WinHeight,_Title,LM,TM,_MenuBar,_Enabled)) =>
+    foreach (Comp in Comps)
+        getComponentBound(Comp,X,Y,W,H),
+        X #>= LM,
+        Y #>= TM,
+        X+W #=< WinWidth,
+        Y+H #=< WinHeight
+    end.
+
+cgFixWindow('_Window'(X,Y,W,H,_Title,LM,TM,_MenuBar,_Enabled)) =>
+    (var(X) -> X=0; true),
+    (var(Y) -> Y=0; true),
+    (var(W) -> cgInstantiateSizeVar($size(W,450)); true),
+    (var(H) -> cgInstantiateSizeVar($size(H,450)); true),
+    (var(LM) -> LM=0; true),
+    (var(TM) -> TM=0; true).
+
+cgPickupSizePosVars([],WVars,HVars,XVars,YVars) => WVars = [], HVars = [], XVars = [], YVars = [].
+cgPickupSizePosVars(['_Line'(_Component,X1,Y1,X2,Y2,_Ext)|Comps],WVars,HVars,XVars,YVars) =>
+    (var(X1) -> XVars = [$position(X1,0)|XVars1]; XVars = XVars1),
+    (var(X2) -> XVars1 = [$position(X2,0)|XVars2]; XVars1 = XVars2),
+    (var(Y1) -> YVars = [$position(Y1,0)|YVars1]; YVars = YVars1),
+    (var(Y2) -> YVars1 = [$position(Y2,0)|YVars2]; YVars1=YVars2),
+    cgPickupSizePosVars(Comps,WVars,HVars,XVars2,YVars2).
+cgPickupSizePosVars(['_Triangle'(_Component,X1,Y1,X2,Y2,X3,Y3,_Fill)|Comps],WVars,HVars,XVars,YVars) =>
+    (var(X1)->XVars=[$position(X1,0)|XVars1];XVars=XVars1),
+    (var(X2)->XVars1=[$position(X2,0)|XVars2];XVars1=XVars2),
+    (var(X3)->XVars2=[$position(X3,0)|XVars3];XVars2=XVars3),
+    (var(Y1)->YVars=[$position(Y1,0)|YVars1];YVars=YVars1),
+    (var(Y2)->YVars1=[$position(Y2,0)|YVars2];YVars1=YVars2),
+    (var(Y3)->YVars2=[$position(Y3,0)|YVars3];YVars2=YVars3),
+    cgPickupSizePosVars(Comps,WVars,HVars,XVars3,YVars3).
+cgPickupSizePosVars(['_Polygon'(_Component,N,Xs,Ys,_Fill)|Comps],WVars,HVars,XVars,YVars) =>
+    cgPickupPosVarsFromArray(XVars,XVars1,1,N,Xs),
+    cgPickupPosVarsFromArray(YVars,YVars1,1,N,Ys),
+    cgPickupSizePosVars(Comps,WVars,HVars,XVars1,YVars1).
+cgPickupSizePosVars([Comp|Comps],WVars,HVars,XVars,YVars) =>
+    getComponentBound(Comp,X,Y,W,H),
+    cgPickupWidthVar(Comp,W,WVars,WVars1),
+    cgPickupHeightVar(Comp,H,HVars,HVars1),
+    cgPickupPosVar(X,W,XVars,XVars1),
+    cgPickupPosVar(Y,H,YVars,YVars1),
+    cgPickupSizePosVars(Comps,WVars1,HVars1,XVars1,YVars1).
+
+cgPickupWidthVar(Comp,Var,Vars,Vars1), var(Var)  =>
+    Vars=[$size(Var,PSize)|Vars1],
+    PSize = Comp.preferredWidth,
+    (var(PSize) -> PSize=20; true).
+cgPickupWidthVar(_Comp,_Var,Vars,Vars1) => Vars=Vars1.
+
+cgPickupHeightVar(Comp,Var,Vars,Vars1), var(Var) =>
+    Vars=[$size(Var,PSize)|Vars1],
+    PSize = Comp.preferredHeight,
+    (var(PSize) -> PSize=20; true).
+cgPickupHeightVar(_Comp,_Var,Vars,Vars1) => Vars=Vars1.
+
+cgPickupPosVar(X,W,Vars,Vars1), var(X) =>
+    Vars=[$position(X,W)|Vars1].
+cgPickupPosVar(_X,_W,Vars,Vars1) => Vars=Vars1.
+
+%%
+/*
+cgInstantiateSizeVars(Vars) ?=>
+    writeln($insSize(Vars)),
+    fail.
+*/
+cgInstantiateSizeVars([]) => true.
+cgInstantiateSizeVars([size(Var,_)|Vars]), integer(Var)  =>
+    cgInstantiateSizeVars(Vars).
+cgInstantiateSizeVars(Vars@[Var@size(SizeDVar,PSize)|_]) =>
+    Size = fd_min(SizeDVar),
+    selectSizeVar(Vars,Var,Size,PSize,BestVar),
+%    writeln($bestvar(BestVar)),
+    cgInstantiateSizeVar(BestVar),
+%    writeln($bestvar(BestVar)),    
+    cgInstantiateSizeVars(Vars).
+
+cgInstantiateSizeVar(size(X,PSize)) =>
+    fd_min_max(X,Min,Max),
+    ((PSize >= Min, PSize =< Max) ->
+        Start = PSize
+    ; 
+        Start = Min
+    ),
+    indomain_dvar(X,Start).
+
+selectSizeVar([],CurrVar,_CurrSize,_CurrPSize,BestVar) => BestVar = CurrVar.
+selectSizeVar([Var@size(SizeDVar,PSize)|Rest],CurrVar,CurrSize,CurrPSize,BestVar),
+    dvar(SizeDVar)
+=>
+    MinSize = fd_min(SizeDVar),
+    chooseBetterSizeVar(Var,MinSize,PSize,CurrVar,CurrSize,CurrPSize,BetterVar,BetterSize,BetterPSize),
+    selectSizeVar(Rest,BetterVar,BetterSize,BetterPSize,BestVar).
+selectSizeVar([_Var|Vars],CurrVar,CurrSize,CurrPSize,BestVar) =>
+    selectSizeVar(Vars,CurrVar,CurrSize,CurrPSize,BestVar).
+
+chooseBetterSizeVar(Var,MinSize,PSize,_CurrVar,CurrSize,_CurrPSize,BetterVar,BetterSize,BetterPSize),
+    MinSize < CurrSize
+=>
+    BetterSize = MinSize,
+    BetterPSize = PSize,
+    BetterVar = Var.
+chooseBetterSizeVar(Var,MinSize,PSize,_CurrVar,CurrSize,CurrPSize,BetterVar,BetterSize,BetterPSize),
+    MinSize == CurrSize,
+    PSize > CurrPSize
+=>    
+    BetterSize = MinSize,
+    BetterPSize = PSize,
+    BetterVar = Var.
+chooseBetterSizeVar(_Var,_MinSize,_PSize,CurrVar,CurrSize,CurrPSize,BetterVar,BetterSize,BetterPSize) =>
+    BetterSize = CurrSize,
+    BetterPSize = CurrPSize,
+    BetterVar = CurrVar.
+
+%%
+cgInstantiatePosVars([]) => true.
+cgInstantiatePosVars([position(X,_)|Vars]), integer(X) =>
+    cgInstantiatePosVars(Vars).
+cgInstantiatePosVars(Vars@[position(X,Size)|Rest]) =>
+    Min = fd_min(X),
+    selectPosVar(Rest,X,Size,Min,BestPosVar),
+    indomain(BestPosVar),
+    cgInstantiatePosVars(Vars).
+
+selectPosVar([],CurrPosVar,_CurrSize,_CurrMin,BestPosVar) =>
+    BestPosVar = CurrPosVar.
+selectPosVar([position(X,Size)|PosVars],CurrPosVar,CurrSize,CurrMin,BestPosVar),
+    dvar(X)
+=>    
+    Min = fd_min(X),
+    chooseBetterPosVar(X,Size,Min,CurrPosVar,CurrSize,CurrMin,BetterVar,BetterSize,BetterMin),
+    selectPosVar(PosVars,BetterVar,BetterSize,BetterMin,BestPosVar).
+selectPosVar([_PosVar|PosVars],CurrPosVar,CurrSize,CurrMin,BestPosVar) =>
+    selectPosVar(PosVars,CurrPosVar,CurrSize,CurrMin,BestPosVar).
+    
+chooseBetterPosVar(PosVar,Size,Min,_CurrPosVar,CurrSize,_CurrMin,BetterVar,BetterSize,BetterMin),
+    Size > CurrSize
+=>    
+    BetterSize = Size,
+    BetterMin = Min,
+    BetterVar = PosVar.
+chooseBetterPosVar(PosVar,Size,Min,_CurrPosVar,CurrSize,CurrMin,BetterVar,BetterSize,BetterMin),
+    Size == CurrSize,
+    Min < CurrMin
+=>    
+    BetterSize = Size,
+    BetterMin = Min,
+    BetterVar = PosVar.
+chooseBetterPosVar(_PosVar,_Size,_Min,CurrPosVar,CurrSize,CurrMin,BetterVar,BetterSize,BetterMin) =>
+    BetterSize = CurrSize,
+    BetterMin = CurrMin,
+    BetterVar = CurrPosVar.
+
+%%
+cgInstantiateComponents([]) => true.
+cgInstantiateComponents([Comp|Comps]) =>
+    cgInstantiateComponent(Comp),
+    cgInstantiateComponents(Comps).
+
+cgInstantiateComponent('_Component'(_X,_Y,_Width,_Height,_Action,Color,_PW,_PH,_No,_Handlers)) =>
+    cgInstantiateColor(Color).
+cgInstantiateComponent('_Arc'(Component,StartAngle,ArcAngle,Fill)) =>
+    cgInstantiateComponent(Component),
+    cgInstantiateBool(Fill),
+    indomain(StartAngle),
+    indomain(ArcAngle).
+cgInstantiateComponent('_Button'(Component,_Label,_Enabled)) =>
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Circle'(Component,Fill)) =>
+    cgInstantiateComponent(Component),
+    cgInstantiateBool(Fill).
+cgInstantiateComponent('_Image'(Component,_Id,_Name)) =>     
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Label'(Component,_Text,Alignment,Font,FontSize,FontStyle)) =>
+    cgInstantiateComponent(Component),
+    cgInstantiateAlignment(Alignment),
+    cgInstantiateFont(Font),
+    cgInstantiateFontSize(FontSize),
+    cgInstantiateFontStyle(FontStyle).
+cgInstantiateComponent('_TextBox'(Component,_Text,Alignment,Font,Padding,FontSize,FontStyle)) =>
+    cgInstantiateComponent(Component),
+    cgInstantiateAlignment(Alignment),
+    cgInstantiateFont(Font),
+    cgInstantiatePadding(Padding),
+    cgInstantiateFontSize(FontSize),
+    cgInstantiateFontStyle(FontStyle).
+cgInstantiateComponent('_Line'(Component,_X1,_Y1,_X2,_Y2,_Ext)) =>
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Oval'(Component,Fill)) =>
+    cgInstantiateComponent(Component),
+    cgInstantiateBool(Fill).
+cgInstantiateComponent('_Polygon'(Component,_N,_Xs,_Ys,Fill)) =>
+    cgInstantiateBool(Fill),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Rectangle'(Component,Fill)) =>
+    cgInstantiateBool(Fill),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_RoundRectangle'(Component,ArcWidth,ArcHeight,Fill)) =>
+    cgInstantiateBool(Fill),
+    indomain(ArcWidth),
+    indomain(ArcHeight),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Square'(Component,Fill)) =>
+    cgInstantiateBool(Fill),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent(Comp@'_Star'(Component,_N,_X0,_Y0,_Angle0,_SmallDiameter,Fill)) =>
+    cgInstantiateBool(Fill),
+    cgPackStar(Comp),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent('_Triangle'(Component,_X1,_Y1,_X2,_Y2,_X3,_Y3,Fill)) =>
+    cgInstantiateBool(Fill),
+    cgInstantiateComponent(Component).
+cgInstantiateComponent(_) => true.
+    
+cgInstantiateBool(X) => (X=1; X=0).
+
+cgInstantiateString(T), var(T) => T = "".
+
+cgInstantiateColor(X), nonvar(X) => (X=black;X=blue;X=dark_red;X=green;X=grey;X=gray;X=pink;X=red;X=yellow;X=white;X='dark red').
+cgInstantiateColor(X) => X = black.
+
+cgInstantiateFont(X), nonvar(X) => (X=system;X=courier;X=times;X=helvetica).
+cgInstantiateFont(X) => X = system.
+
+cgInstantiateFontStyle(X), nonvar(X) => (X=plain;X=bold;X=italic).
+cgInstantiateFontStyle(X) => X = plain.
+
+cgInstantiateFontSize(X), nonvar(X) => true.
+cgInstantiateFontSize(X) => X = 12.
+
+cgInstantiateAlignment(X), nonvar(X) => (X=left;X=center;X=right).
+cgInstantiateAlignment(X) => X = left.
+
+%cgInstantiatePadding(X),X < 0 => false.
+cgInstantiatePadding(X),nonvar(X) => true.
+cgInstantiatePadding(X) => X = 0.
+
+cgPackStar('_Star'(Component,_N,X0,Y0,Angle0,SmallDiameter,_Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    CenterX #= X+W//2,
+    CenterY #= Y+H//2,
+    PI = pi,
+    (var(SmallDiameter) -> SmallDiameter is round(W*2/5); true),
+    (var(Angle0) -> Angle0 = 90; true),
+    (var(X0)-> X0 is CenterX+round(W/2*cos(Angle0/180*PI)); true),
+    (var(Y0)-> Y0 is CenterY-round(W/2*sin(Angle0/180*PI)); true).
+
+%%% show (currently only print)
+show([]) => true.
+show(Comps@[_|_]),
+    cg_components(Comps)
+=>
+    Win = new_window(),
+    cgPack(Comps,Win),
+    foreach(Comp in Comps)
+        c_show(Comp),
+        writeln(Comp)
+    end,
+    bp.c_canvas(Win.w,Win.h).
+show(Comp),
+    cg_component(Comp)
+=>
+    Win = new_window(),
+    cgPack([Comp],Win),
+    c_show(Comp),
+    bp.c_canvas(Win.w,Win.h).
+
+c_show('_Arc'(Component,StartAngle,ArcAngle,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($arc(X,Y,W,H,Component.color,StartAngle,ArcAngle,Fill)),
+    bp.c_arc(X,Y,W,H,Component.color,StartAngle,ArcAngle,Fill).
+c_show('_Button'(Component,Label,_Enabled)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($button(X,Y,W,H,label(Label))).
+c_show('_Circle'(Component,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($circle(X,Y,W,H,Component.color,Fill)),
+    bp.c_circle(X,Y,W,Component.color,Fill).
+c_show('_Image'(Component,_Id,Source)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($image(X,Y,W,H,Source)).
+c_show('_Label'(Component,Text,Alignment,Font,FontSize,FontStyle)) =>
+    getComponentBound(Component,X,Y,W,H),
+    (var(Alignment) -> Alignment = left; true),
+    println($label(X,Y,W,H,Text,Alignment,Component.color,Font,FontSize,FontStyle)),
+    bp.c_label(X,Y,W,H,Text,Alignment,Component.color,Font,FontSize,FontStyle).
+c_show('_Line'(Component,X1,Y1,X2,Y2,_Ext)) =>
+    println($line(X1,Y1,X2,Y2)),
+    bp.c_line(X1,Y1,X2,Y2,Component.color).
+c_show('_Oval'(Component,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($oval(X,Y,W,H,Component.color,Fill)),
+    bp.c_oval(X,Y,W,H,Component.color,Fill).
+c_show('_Polygon'(Component,N,Xs,Ys,Fill)) =>
+    println($polygon(N,Xs,Ys,Component.color,Fill)),
+    bp.c_polygon(N,Xs,Ys,Component.color,Fill).
+c_show('_Rectangle'(Component,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($rectangle(X,Y,W,H,Component.color,Fill)),
+    bp.c_rectangle(X,Y,W,H,Component.color,Fill).
+c_show('_RoundRectangle'(Component,ArcWidth,ArcHeight,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($roundRectangle(X,Y,W,H,ArcWidth,ArcHeight,Fill)).
+c_show('_Square'(Component,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($square(X,Y,W,H,Fill)),
+    bp.c_rectangle(X,Y,W,H,Component.color,Fill).
+c_show('_Star'(Component,N,CenterX,CenterY,Angle,InnerDiameter,Fill)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($star(X,Y,W,H,N,CenterX,CenterY,Angle,InnerDiameter,Component.color,Fill)),
+    bp.c_star(X,Y,W,H,N,CenterX,CenterY,Angle,InnerDiameter,Component.color,Fill).
+c_show('_TextBox'(Component,Text,Alignment,Font,Padding,FontSize,FontStyle)) =>
+    getComponentBound(Component,X,Y,W,H),
+    println($textBox(X,Y,W,H,Text,Alignment,Component.color,Font,FontSize,FontStyle,Padding)),
+    bp.c_text(X,Y,W,H,Text,Alignment,Component.color,Font,FontSize,FontStyle,Padding).
+c_show('_Triangle'(Component,X1,Y1,X2,Y2,X3,Y3,Fill)) =>
+    println($triangle(X1,Y1,X2,Y2,X3,Y3,Component.color,Fill)),
+    bp.c_triangle(X1,Y1,X2,Y2,X3,Y3,Component.color,Fill).    
+
+
+%%% utilities
+%
+cgPickupPosVarsFromArray(Vars,VarsR,N0,N,_A), N0 > N => Vars = VarsR.
+cgPickupPosVarsFromArray(Vars,VarsR,N0,N,A) =>
+    A[N0] = Elm,
+    Vars=[$position(Elm,0)|Vars1],
+    N1 is N0+1,
+    cgPickupPosVarsFromArray(Vars1,VarsR,N1,N,A).
+
+check_comps_list_list_to_array(Rows@[Row|_],Array) =>
+    N = len(Rows),
+    M = len(Row),
+    Array = new_array(N),
+    check_comps_copy_list_list_to_array(Rows,1,N,M,Array).
+
+check_comps_copy_list_list_to_array(_Rows,N0,N,_M,_Array), N0 > N => true.
+check_comps_copy_list_list_to_array([Row@[_|_]|Rows],N0,N,M,Array) =>
+    Arg = to_array(Row),
+    len(Arg) = M,
+    Array[N0] = Arg,
+    N1 is N0+1,
+    check_comps_copy_list_list_to_array(Rows,N1,N,M,Array).
+
+nextInstanceNo(No) =>
+    M = get_global_map(),
+    No = M.get(cg_component_num,0),
+    M.put(cg_component_num,No+1).
+
+getComponentBound('_Component'(_X,_Y,_W,_H,_Window,_Color,_PW,_PH,_No,_Handlers),X,Y,W,H) =>
+    X = _X,
+    Y = _Y,
+    W = _W,
+    H = _H.
+getComponentBound(O,X,Y,W,H),cg_component(O) =>
+    getComponentBound(O[1],X,Y,W,H).
+getComponentBound(O,_X,_Y,_W,_H) =>
+    handle_exception($cg_component_expected(O),getComponentBound).
+
+cg_components([]) => true.
+cg_components([Comp|Comps]) =>
+    cg_component(Comp),
+    cg_components(Comps).
+
+cg_component('_Arc'(_Component,_StartAngle,_ArcAngle,_Fill)) => true.
+cg_component('_Button'(_Component,_Label,_Enabled)) => true.
+cg_component('_Circle'(_Component,_Fill)) => true.
+cg_component('_Component'(_X,_Y,_W,_H,_Window,_Color,_PW,_PH,_No,_Handlers)) => true.
+cg_component('_Image'(_Component,_Id,_Source)) => true.
+cg_component('_Label'(_Component,_Text,_Alignment,_Font,_FontSize,_FontStyle)) => true.
+cg_component('_Line'(_Component,_X1,_Y1,_X2,_Y2,_Ext)) => true.
+cg_component('_Oval'(_Component,_Fill)) => true.
+cg_component('_Polygon'(_Component,_N,_Xs,_Ys,_Fill)) => true.
+cg_component('_Rectangle'(_Component,_Fill)) => true.
+cg_component('_RoundRectangle'(_Component,_ArcWidth,_ArcHeight,_Fill)) => true.
+cg_component('_Square'(_Component,_Fill)) => true.
+cg_component('_Star'(_Component,_N,_CenterX,_CenterY,_Angle,_InnerDiameter,_Fill)) => true.
+cg_component('_TextBox'(_Component,_Text,_Alignment,_Font,_Padding,_FontSize,_FontStyle)) => true.
+cg_component('_Triangle'(_Component,_X1,_Y1,_X2,_Y2,_X3,_Y3,_Fill)) => true.
+
+var_or_int(Var), var(Var) => true.
+var_or_int(Int), int(Int) => true.
+
+/*
+indomain_dvar(V,Value) ?=>
+    writeln($attemp(V,Value)),fail.
+*/
+indomain_dvar(V,_Value), integer(V) => true.
+indomain_dvar(V,Value) ?=>
+    V=Value.
+indomain_dvar(V,Value) =>
+    Next = fd_next(V,Value),
+    indomain_dvar(V,Next).
+

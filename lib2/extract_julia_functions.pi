@@ -1,0 +1,21 @@
+main =>
+    extract_keywords0("constrs.jl",KWs1),
+    extract_keywords0("glob_constrs.jl",KWs2),
+    foreach (KW in sort(KWs1++KWs2))
+        printf("fun(\"%s\") => true.\n", KW)
+    end.
+
+extract_keywords0(F,KWs) =>
+    Lines = read_file_lines(F),
+    extract_keywords(Lines,KWs).
+
+extract_keywords([],KWs) => KWs = [].
+extract_keywords([Line|Lines],KWs), append("function ",Func,['('|_],Line) =>
+    KWs = [Func|KWs1],
+    extract_keywords(Lines,KWs1).
+extract_keywords([Line|Lines],KWs) =>
+    extract_keywords(Lines,KWs).
+    
+    
+    
+    

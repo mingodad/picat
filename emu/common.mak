@@ -3,13 +3,14 @@ CPPC=$(CPP) -c
 
 OBJ = dis.o init.o init_sym.o loader.o inst_inf.o main.o toam.o unify.o \
 	file.o domain.o cfd.o float1.o arith.o token.o global.o \
-	builtins.o mic.o numbervars.o cpreds.o univ.o assert.o findall.o clause.o \
+	builtins.o mic.o numbervars.o cpreds.o univ.o assert_bp.o findall.o clause.o \
     	delay.o clpfd.o clpfd_libs.o event.o toamprofile.o \
     	kapi.o getline.o table.o gcstack.o gcheap.o gcqueue.o debug.o \
-    	expand.o bigint.o sapi.o kissat_picat.o espresso_bp.o \
+    	expand_bp.o bigint.o sapi.o kissat_picat.o espresso_bp.o \
 	picat_utilities.o fann.o fann_cascade.o fann_error.o fann_io.o fann_train.o \
 	fann_train_data.o fann_interface.o
 
+ESPRESSO_FLAGS = -O3 -I. -Iespresso
 ESPRESSO_OBJ = black_white.o canonical.o cofactor.o cols.o compl.o contain.o cpu_time.o cubestr.o \
                cvrin.o cvrm.o cvrmisc.o cvrout.o dominate.o equiv.o espresso.o espresso_expand.o \
                essen.o essentiality.o exact.o gasp.o gimpel.o globals.o hack.o indep.o irred.o \
@@ -17,6 +18,7 @@ ESPRESSO_OBJ = black_white.o canonical.o cofactor.o cols.o compl.o contain.o cpu
                set.o setc.o sharp.o sigma.o signature.o signature_exact.o sminterf.o solution.o \
                sparse.o unate.o util_signature.o verify.o
 
+KISSAT_FLAGS = -O3 -W -Wall -DNEMBEDDED -DNDEBUG -DNMETRICS -DQUIET -DNSTATISTICS  -DNPROOFS
 KISSAT_OBJ =  kis_allocate.o kis_analyze.o kis_ands.o kis_application.o\
               kis_arena.o kis_assign.o kis_autarky.o kis_averages.o kis_backtrack.o\
               kis_backward.o kis_build.o kis_bump.o kis_check.o kis_clause.o\
@@ -84,8 +86,8 @@ cpreds.o	: cpreds.c term.h basic.h bapi.h
 	$(CCC) $(CFLAGS) cpreds.c
 univ.o	: univ.c term.h basic.h bapi.h
 	$(CCC) $(CFLAGS) univ.c
-assert.o	: assert.c term.h basic.h bapi.h
-	$(CCC) $(CFLAGS) assert.c
+assert_bp.o	: assert_bp.c term.h basic.h bapi.h
+	$(CCC) $(CFLAGS) assert_bp.c
 findall.o	: findall.c term.h basic.h bapi.h
 	$(CCC) $(CFLAGS) findall.c
 clause.o	: clause.c term.h basic.h bapi.h dynamic.h
@@ -112,8 +114,8 @@ gcheap.o : gcheap.c gc.h term.h basic.h bapi.h frame.h
 	$(CCC) $(CFLAGS) gcheap.c
 gQueue.o : gcqueue.c gc.h term.h basic.h bapi.h frame.h
 	$(CCC) $(CFLAGS) gcqueue.c
-expand.o : expand.c gc.h term.h basic.h bapi.h frame.h
-	$(CCC) $(CFLAGS) expand.c
+expand_bp.o : expand_bp.c gc.h term.h basic.h bapi.h frame.h
+	$(CCC) $(CFLAGS) expand_bp.c
 espresso_bp.o : espresso_bp.c term.h basic.h bapi.h frame.h
 	$(CCC) $(CFLAGS) -Iespresso espresso_bp.c
 sapi.o : sapi.c sapi.h term.h basic.h bapi.h frame.h
@@ -217,177 +219,177 @@ util_signature.o : espresso/util_signature.c
 verify.o : espresso/verify.c
 	$(CCC) $(ESPRESSO_FLAGS) -o verify.o espresso/verify.c
 kis_allocate.o : kissat/src/allocate.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_allocate.o kissat/src/allocate.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_allocate.o kissat/src/allocate.c
 kis_analyze.o : kissat/src/analyze.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_analyze.o kissat/src/analyze.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_analyze.o kissat/src/analyze.c
 kis_ands.o : kissat/src/ands.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_ands.o kissat/src/ands.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_ands.o kissat/src/ands.c
 kis_application.o : kissat/src/application.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_application.o kissat/src/application.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_application.o kissat/src/application.c
 kis_arena.o : kissat/src/arena.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_arena.o kissat/src/arena.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_arena.o kissat/src/arena.c
 kis_assign.o : kissat/src/assign.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_assign.o kissat/src/assign.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_assign.o kissat/src/assign.c
 kis_autarky.o : kissat/src/autarky.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_autarky.o kissat/src/autarky.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_autarky.o kissat/src/autarky.c
 kis_averages.o : kissat/src/averages.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_averages.o kissat/src/averages.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_averages.o kissat/src/averages.c
 kis_backtrack.o : kissat/src/backtrack.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_backtrack.o kissat/src/backtrack.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_backtrack.o kissat/src/backtrack.c
 kis_backward.o : kissat/src/backward.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_backward.o kissat/src/backward.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_backward.o kissat/src/backward.c
 kis_build.o : kissat/src/build.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_build.o kissat/src/build.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_build.o kissat/src/build.c
 kis_bump.o : kissat/src/bump.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_bump.o kissat/src/bump.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_bump.o kissat/src/bump.c
 kis_check.o : kissat/src/check.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_check.o kissat/src/check.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_check.o kissat/src/check.c
 kis_clause.o : kissat/src/clause.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_clause.o kissat/src/clause.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_clause.o kissat/src/clause.c
 kis_clueue.o : kissat/src/clueue.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_clueue.o kissat/src/clueue.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_clueue.o kissat/src/clueue.c
 kis_collect.o : kissat/src/collect.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_collect.o kissat/src/collect.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_collect.o kissat/src/collect.c
 kis_colors.o : kissat/src/colors.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_colors.o kissat/src/colors.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_colors.o kissat/src/colors.c
 kis_compact.o : kissat/src/compact.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_compact.o kissat/src/compact.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_compact.o kissat/src/compact.c
 kis_config.o : kissat/src/config.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_config.o kissat/src/config.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_config.o kissat/src/config.c
 kis_decide.o : kissat/src/decide.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_decide.o kissat/src/decide.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_decide.o kissat/src/decide.c
 kis_deduce.o : kissat/src/deduce.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_deduce.o kissat/src/deduce.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_deduce.o kissat/src/deduce.c
 kis_dense.o : kissat/src/dense.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_dense.o kissat/src/dense.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_dense.o kissat/src/dense.c
 kis_dominate.o : kissat/src/dominate.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_dominate.o kissat/src/dominate.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_dominate.o kissat/src/dominate.c
 kis_dump.o : kissat/src/dump.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_dump.o kissat/src/dump.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_dump.o kissat/src/dump.c
 kis_eliminate.o : kissat/src/eliminate.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_eliminate.o kissat/src/eliminate.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_eliminate.o kissat/src/eliminate.c
 kis_equivalences.o : kissat/src/equivalences.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_equivalences.o kissat/src/equivalences.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_equivalences.o kissat/src/equivalences.c
 kis_error.o : kissat/src/error.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_error.o kissat/src/error.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_error.o kissat/src/error.c
 kis_extend.o : kissat/src/extend.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_extend.o kissat/src/extend.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_extend.o kissat/src/extend.c
 kis_failed.o : kissat/src/failed.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_failed.o kissat/src/failed.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_failed.o kissat/src/failed.c
 kis_file.o : kissat/src/file.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_file.o kissat/src/file.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_file.o kissat/src/file.c
 kis_flags.o : kissat/src/flags.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_flags.o kissat/src/flags.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_flags.o kissat/src/flags.c
 kis_format.o : kissat/src/format.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_format.o kissat/src/format.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_format.o kissat/src/format.c
 kis_forward.o : kissat/src/forward.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_forward.o kissat/src/forward.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_forward.o kissat/src/forward.c
 kis_frames.o : kissat/src/frames.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_frames.o kissat/src/frames.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_frames.o kissat/src/frames.c
 kis_gates.o : kissat/src/gates.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_gates.o kissat/src/gates.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_gates.o kissat/src/gates.c
 kis_handle.o : kissat/src/handle.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_handle.o kissat/src/handle.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_handle.o kissat/src/handle.c
 kis_heap.o : kissat/src/heap.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_heap.o kissat/src/heap.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_heap.o kissat/src/heap.c
 kis_ifthenelse.o : kissat/src/ifthenelse.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_ifthenelse.o kissat/src/ifthenelse.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_ifthenelse.o kissat/src/ifthenelse.c
 kis_import.o : kissat/src/import.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_import.o kissat/src/import.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_import.o kissat/src/import.c
 kis_internal.o : kissat/src/internal.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_internal.o kissat/src/internal.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_internal.o kissat/src/internal.c
 kis_learn.o : kissat/src/learn.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_learn.o kissat/src/learn.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_learn.o kissat/src/learn.c
 kis_limits.o : kissat/src/limits.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_limits.o kissat/src/limits.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_limits.o kissat/src/limits.c
 kis_logging.o : kissat/src/logging.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_logging.o kissat/src/logging.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_logging.o kissat/src/logging.c
 kis_main.o : kissat/src/main.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_main.o kissat/src/main.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_main.o kissat/src/main.c
 kis_minimize.o : kissat/src/minimize.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_minimize.o kissat/src/minimize.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_minimize.o kissat/src/minimize.c
 kis_mode.o : kissat/src/mode.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_mode.o kissat/src/mode.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_mode.o kissat/src/mode.c
 kis_options.o : kissat/src/options.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_options.o kissat/src/options.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_options.o kissat/src/options.c
 kis_parse.o : kissat/src/parse.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_parse.o kissat/src/parse.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_parse.o kissat/src/parse.c
 kis_phases.o : kissat/src/phases.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_phases.o kissat/src/phases.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_phases.o kissat/src/phases.c
 kis_print.o : kissat/src/print.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_print.o kissat/src/print.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_print.o kissat/src/print.c
 kis_probe.o : kissat/src/probe.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_probe.o kissat/src/probe.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_probe.o kissat/src/probe.c
 kis_profile.o : kissat/src/profile.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_profile.o kissat/src/profile.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_profile.o kissat/src/profile.c
 kis_promote.o : kissat/src/promote.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_promote.o kissat/src/promote.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_promote.o kissat/src/promote.c
 kis_proof.o : kissat/src/proof.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_proof.o kissat/src/proof.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_proof.o kissat/src/proof.c
 kis_propdense.o : kissat/src/propdense.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_propdense.o kissat/src/propdense.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_propdense.o kissat/src/propdense.c
 kis_prophyper.o : kissat/src/prophyper.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_prophyper.o kissat/src/prophyper.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_prophyper.o kissat/src/prophyper.c
 kis_proprobe.o : kissat/src/proprobe.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_proprobe.o kissat/src/proprobe.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_proprobe.o kissat/src/proprobe.c
 kis_propsearch.o : kissat/src/propsearch.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_propsearch.o kissat/src/propsearch.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_propsearch.o kissat/src/propsearch.c
 kis_queue.o : kissat/src/queue.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_queue.o kissat/src/queue.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_queue.o kissat/src/queue.c
 kis_reduce.o : kissat/src/reduce.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_reduce.o kissat/src/reduce.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_reduce.o kissat/src/reduce.c
 kis_reluctant.o : kissat/src/reluctant.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_reluctant.o kissat/src/reluctant.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_reluctant.o kissat/src/reluctant.c
 kis_rephase.o : kissat/src/rephase.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_rephase.o kissat/src/rephase.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_rephase.o kissat/src/rephase.c
 kis_report.o : kissat/src/report.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_report.o kissat/src/report.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_report.o kissat/src/report.c
 kis_resize.o : kissat/src/resize.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_resize.o kissat/src/resize.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_resize.o kissat/src/resize.c
 kis_resolve.o : kissat/src/resolve.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_resolve.o kissat/src/resolve.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_resolve.o kissat/src/resolve.c
 kis_resources.o : kissat/src/resources.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_resources.o kissat/src/resources.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_resources.o kissat/src/resources.c
 kis_restart.o : kissat/src/restart.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_restart.o kissat/src/restart.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_restart.o kissat/src/restart.c
 kis_search.o : kissat/src/search.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_search.o kissat/src/search.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_search.o kissat/src/search.c
 kis_smooth.o : kissat/src/smooth.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_smooth.o kissat/src/smooth.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_smooth.o kissat/src/smooth.c
 kis_sort.o : kissat/src/sort.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_sort.o kissat/src/sort.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_sort.o kissat/src/sort.c
 kis_stack.o : kissat/src/stack.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_stack.o kissat/src/stack.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_stack.o kissat/src/stack.c
 kis_statistics.o : kissat/src/statistics.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_statistics.o kissat/src/statistics.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_statistics.o kissat/src/statistics.c
 kis_strengthen.o : kissat/src/strengthen.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_strengthen.o kissat/src/strengthen.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_strengthen.o kissat/src/strengthen.c
 kis_substitute.o : kissat/src/substitute.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_substitute.o kissat/src/substitute.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_substitute.o kissat/src/substitute.c
 kis_terminate.o : kissat/src/terminate.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_terminate.o kissat/src/terminate.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_terminate.o kissat/src/terminate.c
 kis_ternary.o : kissat/src/ternary.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_ternary.o kissat/src/ternary.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_ternary.o kissat/src/ternary.c
 kis_trail.o : kissat/src/trail.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_trail.o kissat/src/trail.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_trail.o kissat/src/trail.c
 kis_transitive.o : kissat/src/transitive.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_transitive.o kissat/src/transitive.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_transitive.o kissat/src/transitive.c
 kis_utilities.o : kissat/src/utilities.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_utilities.o kissat/src/utilities.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_utilities.o kissat/src/utilities.c
 kis_vector.o : kissat/src/vector.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_vector.o kissat/src/vector.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_vector.o kissat/src/vector.c
 kis_vivify.o : kissat/src/vivify.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_vivify.o kissat/src/vivify.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_vivify.o kissat/src/vivify.c
 kis_walk.o : kissat/src/walk.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_walk.o kissat/src/walk.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_walk.o kissat/src/walk.c
 kis_watch.o : kissat/src/watch.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_watch.o kissat/src/watch.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_watch.o kissat/src/watch.c
 kis_weaken.o : kissat/src/weaken.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_weaken.o kissat/src/weaken.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_weaken.o kissat/src/weaken.c
 kis_witness.o : kissat/src/witness.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_witness.o kissat/src/witness.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_witness.o kissat/src/witness.c
 kis_xors.o : kissat/src/xors.c
-	$(CC) $(KISSAT_FLAGS)  -o kis_xors.o kissat/src/xors.c
+	$(CCC) $(KISSAT_FLAGS)  -o kis_xors.o kissat/src/xors.c
 picat_utilities.o : picat_utilities.c
 	$(CCC) $(CFLAGS) picat_utilities.c
 fann.o : fann/src/fann.c

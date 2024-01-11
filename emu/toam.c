@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : toam.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: Emulator of ATOAM
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -146,7 +146,6 @@ int toam(BPLONG_PTR P, BPLONG_PTR AR, BPLONG_PTR LOCAL_TOP)
     register SYM_REC_PTR sym_ptr = NULL;
     register BPLONG arity, i;
     register BPLONG_PTR dv_ptr;
-    BYTE table_flag;
     BPLONG_PTR ep;
 
     BPLONG head_arity;

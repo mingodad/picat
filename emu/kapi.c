@@ -1,6 +1,6 @@
 /********************************************************************
  *   File   : kapi.c
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2023
+ *   Author : Neng-Fa ZHOU Copyright (C) 1994-2024
  *   Purpose: External language interface
 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -21,7 +21,6 @@
 
 SYM_REC_PTR objectRef;
 extern char *string_in;
-extern char *bp_get_name(BPLONG t);
 
 /* Prolog to C */
 /*
@@ -34,7 +33,6 @@ double PvalueOfReal(BPLONG term)
 {
     BPLONG_PTR top;
 
-    extern double floatval(BPLONG term);
     DEREF(term);
     return floatval(term);
 }
@@ -242,7 +240,7 @@ int Pexecute(char *cmd)
     return bp_call_string(cmd);
 }
 
-int PinitP(int argc, char *argv[])
+int PinitP(int argc, char **argv)
 {
     return initialize_bprolog(argc, argv);
 }

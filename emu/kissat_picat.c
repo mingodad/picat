@@ -22,7 +22,7 @@ static kissat *sat_solver = (kissat *)NULL;
 
 int sat_nvars;
 int sat_nvars_limit;  /* used by plglib, the size of the dynamic arrays */
-static int num_threads = 0;
+// static int num_threads = 0;
 
 int b_SAT_GET_INC_VAR_NUM_f(BPLONG Num){
     ASSIGN_f_atom(Num,MAKEINT(sat_nvars));
@@ -65,7 +65,7 @@ int b_SAT_ADD_CL_c(BPLONG cl) {
 }
 
 int c_sat_init(){
-    BPLONG NThreads, NVars;
+    BPLONG NVars;
 
 	//    NThreads = ARG(1,2);  DEREF_NONVAR(NThreads);
 	//    num_threads = (int)INTVAL(NThreads);
@@ -90,7 +90,7 @@ int c_sat_start(){
         
     if (SAT_SATISFIABLE){
         BPLONG_PTR ptr;
-        BPLONG var, varNum, bit, negVar;
+        BPLONG var, varNum, bit;
 
         while (ISLIST(lst)){
             BPLONG_PTR sv_ptr;
